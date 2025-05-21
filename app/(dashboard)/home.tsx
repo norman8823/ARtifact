@@ -93,7 +93,10 @@ export default function HomeScreen() {
     const isATap = deltaX < 10 && deltaY < 10;
 
     if (isATap) {
-      router.push("/artDetail");
+      router.push({
+        pathname: "/artDetail",
+        params: { source: "Home" },
+      });
     }
 
     // Reset touch tracking

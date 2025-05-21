@@ -103,7 +103,14 @@ export default function CollectionScreen() {
 
           <ThemedView style={styles.featuredList}>
             {FEATURED_WORKS.map((work) => (
-              <Link key={work.id} href="/artDetail" asChild>
+              <Link
+                key={work.id}
+                href={{
+                  pathname: "/artDetail",
+                  params: { source: "Collection" },
+                }}
+                asChild
+              >
                 <Pressable>
                   <ThemedView style={styles.workCard}>
                     <Image
