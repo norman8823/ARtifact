@@ -4,6 +4,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -13,6 +14,7 @@ import {
 
 export default function ProfileSettingsScreen() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "Sarah Johnson",
     phone: "+1 555 123 4567",
@@ -35,11 +37,13 @@ export default function ProfileSettingsScreen() {
         {/* Avatar */}
         <ThemedView style={styles.avatarBlock}>
           <View style={styles.avatarContainer}>
-            <ThemedView style={styles.avatar}>
-              <ThemedText style={styles.avatarText}>SJ</ThemedText>
-            </ThemedView>
-            <Pressable style={styles.editAvatarButton}>
-              <FontAwesome name="pencil" size={12} color="#fff" />
+            <Pressable onPress={() => setShowPhotoModal(true)}>
+              <ThemedView style={styles.avatar}>
+                <ThemedText style={styles.avatarText}>SJ</ThemedText>
+              </ThemedView>
+              <Pressable style={styles.editAvatarButton}>
+                <FontAwesome name="pencil" size={12} color="#fff" />
+              </Pressable>
             </Pressable>
           </View>
           <ThemedText style={styles.editPhotoText}>
@@ -157,6 +161,62 @@ export default function ProfileSettingsScreen() {
           </ThemedText>
         </Pressable>
       </ScrollView>
+
+      {/* Photo Selection Modal */}
+      <Modal
+        visible={showPhotoModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowPhotoModal(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setShowPhotoModal(false)}
+        >
+          <Pressable style={styles.modalContent}>
+            <Pressable
+              style={styles.modalButton}
+              onPress={() => {
+                // Handle photo library
+                setShowPhotoModal(false);
+              }}
+            >
+              <FontAwesome
+                name="image-o"
+                size={20}
+                color="#333"
+                style={styles.modalIcon}
+              />
+              <ThemedText style={styles.modalButtonText}>
+                Photo Library
+              </ThemedText>
+            </Pressable>
+
+            <Pressable
+              style={styles.modalButton}
+              onPress={() => {
+                // Handle camera
+                setShowPhotoModal(false);
+              }}
+            >
+              <FontAwesome
+                name="camera"
+                size={20}
+                color="#333"
+                style={styles.modalIcon}
+              />
+              <ThemedText style={styles.modalButtonText}>Take Photo</ThemedText>
+            </Pressable>
+
+            <Pressable
+              style={[styles.modalButton, styles.cancelButton]}
+              onPress={() => setShowPhotoModal(false)}
+            >
+              <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </ThemedView>
   );
 }
@@ -281,5 +341,41 @@ const styles = StyleSheet.create({
     color: "#666",
     fontSize: 16,
     fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    width: "90%",
+    maxWidth: 375,
+    overflow: "hidden",
+  },
+  modalButton: {
+    width: "100%",
+    paddingVertical: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+  },
+  modalIcon: {
+    marginRight: 12,
+  },
+  modalButtonText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  cancelButton: {
+    borderBottomWidth: 0,
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    color: "#666",
   },
 });
