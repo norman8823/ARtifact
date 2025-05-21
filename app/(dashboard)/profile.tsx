@@ -113,7 +113,10 @@ export default function ProfileScreen() {
               Upgrade to Premium
             </ThemedText>
           </Pressable>
-          <Pressable style={styles.logoutButton}>
+          <Pressable
+            style={styles.logoutButton}
+            onPress={() => router.replace("/")}
+          >
             <ThemedText style={styles.logoutButtonText}>Logout</ThemedText>
           </Pressable>
         </ThemedView>
