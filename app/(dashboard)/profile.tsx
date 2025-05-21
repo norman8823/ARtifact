@@ -50,7 +50,10 @@ export default function ProfileScreen() {
 
       {/* Stats Grid */}
       <ThemedView style={styles.statsGrid}>
-        <Pressable style={styles.statCard}>
+        <Pressable
+          style={styles.statCard}
+          onPress={() => router.push("/artworks-visited")}
+        >
           <ThemedText style={styles.statNumber}>47</ThemedText>
           <ThemedText style={styles.statLabel}>Artworks Visited</ThemedText>
         </Pressable>
