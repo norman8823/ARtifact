@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import {
   Dimensions,
   Pressable,
@@ -23,7 +23,10 @@ export default function ProfileScreen() {
       {/* Profile Header */}
       <ThemedView style={styles.header}>
         <ThemedText style={styles.headerTitle}>Profile</ThemedText>
-        <Pressable style={styles.settingsButton}>
+        <Pressable
+          style={styles.settingsButton}
+          onPress={() => router.push("/profileSettings")}
+        >
           <FontAwesome name="gear" size={24} color="#333" />
         </Pressable>
       </ThemedView>
