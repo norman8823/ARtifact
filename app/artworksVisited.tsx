@@ -127,7 +127,7 @@ export default function ArtworksVisitedScreen() {
                   contentFit="cover"
                 />
                 <ThemedView style={styles.checkmarkContainer}>
-                  <FontAwesome name="check" size={12} color="#fff" />
+                  <FontAwesome name="eye" size={12} color="#fff" />
                 </ThemedView>
               </ThemedView>
               <ThemedText style={styles.title} numberOfLines={1}>
