@@ -52,14 +52,17 @@ export default function ProfileScreen() {
       <ThemedView style={styles.statsGrid}>
         <Pressable
           style={styles.statCard}
-          onPress={() => router.push("/artworks-visited")}
+          onPress={() => router.push("/artworksVisited")}
         >
           <ThemedText style={styles.statNumber}>47</ThemedText>
           <ThemedText style={styles.statLabel}>Artworks Visited</ThemedText>
         </Pressable>
-        <Pressable style={styles.statCard}>
+        <Pressable
+          style={styles.statCard}
+          onPress={() => router.push("/favorites")}
+        >
           <ThemedText style={styles.statNumber}>23</ThemedText>
-          <ThemedText style={styles.statLabel}>Saved Works</ThemedText>
+          <ThemedText style={styles.statLabel}>Favorites</ThemedText>
         </Pressable>
         <Pressable style={styles.statCard}>
           <ThemedText style={styles.statNumber}>12</ThemedText>
