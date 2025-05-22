@@ -57,9 +57,12 @@ export default function ProfileScreen() {
           <ThemedText style={styles.statNumber}>47</ThemedText>
           <ThemedText style={styles.statLabel}>Artworks Visited</ThemedText>
         </Pressable>
-        <Pressable style={styles.statCard}>
+        <Pressable
+          style={styles.statCard}
+          onPress={() => router.push("/favorites")}
+        >
           <ThemedText style={styles.statNumber}>23</ThemedText>
-          <ThemedText style={styles.statLabel}>Saved Works</ThemedText>
+          <ThemedText style={styles.statLabel}>Favorites</ThemedText>
         </Pressable>
         <Pressable style={styles.statCard}>
           <ThemedText style={styles.statNumber}>12</ThemedText>
