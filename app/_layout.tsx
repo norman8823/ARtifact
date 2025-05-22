@@ -63,9 +63,17 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="artDetail"
-          options={{
-            headerTitle: "Art Detail",
-            headerBackTitle: "Collection",
+          options={({ route }) => {
+            const params = route.params as { from?: string; id?: string };
+            return {
+              headerTitle: "Art Detail",
+              headerBackTitle:
+                params?.from === "questDetail"
+                  ? "Quest Detail"
+                  : params?.from === "collection"
+                  ? "Collection"
+                  : "Home",
+            };
           }}
         />
         <Stack.Screen
