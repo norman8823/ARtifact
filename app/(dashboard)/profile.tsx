@@ -349,6 +349,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   rankLabels: {
+    backgroundColor: "#f5f5f5",
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 8,
@@ -388,12 +389,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   settingLeft: {
+    backgroundColor: "#f5f5f5",
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
   },
   settingLabel: {
     fontSize: 16,
+    backgroundColor: "#f5f5f5",
   },
   subscriptionCard: {
     backgroundColor: "#f5f5f5",
@@ -402,6 +405,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   subscriptionHeader: {
+    backgroundColor: "#f5f5f5",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
