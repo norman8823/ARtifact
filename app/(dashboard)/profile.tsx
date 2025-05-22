@@ -2,9 +2,11 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
+import { useState } from "react";
 import {
   Dimensions,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -14,6 +16,8 @@ import {
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function ProfileScreen() {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   return (
     <ScrollView
       style={styles.container}
@@ -77,7 +81,10 @@ export default function ProfileScreen() {
       <ThemedView style={styles.rankProgress}>
         <ThemedView style={styles.rankHeader}>
           <ThemedText style={styles.sectionTitle}>Rank Progress</ThemedText>
-          <Pressable style={styles.helpButton}>
+          <Pressable
+            style={styles.helpButton}
+            onPress={() => setIsModalVisible(true)}
+          >
             <FontAwesome name="question" size={12} color="#666" />
           </Pressable>
         </ThemedView>
@@ -130,6 +137,95 @@ export default function ProfileScreen() {
           </Pressable>
         </ThemedView>
       </ThemedView>
+
+      {/* Simple Modal */}
+      <Modal
+        visible={isModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <ThemedView style={styles.modalOverlay}>
+          <ThemedView style={styles.modalContent}>
+            {/* Header */}
+            <ThemedView style={styles.modalHeader}>
+              <ThemedView style={styles.modalHeaderLeft}>
+                <FontAwesome name="th-list" size={16} color="#666666" />
+                <ThemedText style={styles.modalTitle}>Rank Levels</ThemedText>
+              </ThemedView>
+              <Pressable
+                style={styles.closeButton}
+                onPress={() => setIsModalVisible(false)}
+              >
+                <FontAwesome name="times" size={20} color="#666666" />
+              </Pressable>
+            </ThemedView>
+
+            {/* Rank List */}
+            <ThemedView style={styles.rankList}>
+              {/* Art Rookie */}
+              <ThemedView style={styles.rankItem}>
+                <ThemedView style={styles.rankIcon}>
+                  <FontAwesome name="leaf" size={16} color="#666666" />
+                </ThemedView>
+                <ThemedView style={styles.rankDetails}>
+                  <ThemedText style={styles.rankName}>Art Rookie</ThemedText>
+                  <ThemedText style={styles.rankXP}>0-500 XP</ThemedText>
+                  <ThemedText style={styles.rankDescription}>
+                    Begin your journey and start discovering art!
+                  </ThemedText>
+                </ThemedView>
+              </ThemedView>
+
+              {/* Art Enthusiast */}
+              <ThemedView style={styles.rankItem}>
+                <ThemedView style={styles.rankIcon}>
+                  <FontAwesome name="paint-brush" size={16} color="#666666" />
+                </ThemedView>
+                <ThemedView style={styles.rankDetails}>
+                  <ThemedText style={styles.rankName}>
+                    Art Enthusiast
+                  </ThemedText>
+                  <ThemedText style={styles.rankXP}>501-1,500 XP</ThemedText>
+                  <ThemedText style={styles.rankDescription}>
+                    You're building a collection and learning fast.
+                  </ThemedText>
+                </ThemedView>
+              </ThemedView>
+
+              {/* Art Expert */}
+              <ThemedView style={styles.rankItem}>
+                <ThemedView
+                  style={[styles.rankIcon, styles.rankIconHighlighted]}
+                >
+                  <FontAwesome name="star" size={16} color="#FFFFFF" />
+                </ThemedView>
+                <ThemedView style={styles.rankDetails}>
+                  <ThemedText style={styles.rankName}>Art Expert</ThemedText>
+                  <ThemedText style={styles.rankXP}>1,501-3,000 XP</ThemedText>
+                  <ThemedText style={styles.rankDescription}>
+                    Recognized for your knowledge and dedication.
+                  </ThemedText>
+                </ThemedView>
+              </ThemedView>
+
+              {/* Art Master */}
+              <ThemedView style={styles.rankItem}>
+                <ThemedView style={styles.rankIcon}>
+                  <FontAwesome name="trophy" size={16} color="#666666" />
+                </ThemedView>
+                <ThemedView style={styles.rankDetails}>
+                  <ThemedText style={styles.rankName}>Art Master</ThemedText>
+                  <ThemedText style={styles.rankXP}>3,001+ XP</ThemedText>
+                  <ThemedText style={styles.rankDescription}>
+                    You're a true master—share your love of art with all!
+                  </ThemedText>
+                </ThemedView>
+              </ThemedView>
+            </ThemedView>
+          </ThemedView>
+        </ThemedView>
+      </Modal>
     </ScrollView>
   );
 }
@@ -335,5 +431,78 @@ const styles = StyleSheet.create({
     color: "#333",
     fontSize: 14,
     fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    padding: 24,
+    width: "90%",
+    maxWidth: 340,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  modalHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rankList: {
+    gap: 16,
+  },
+  rankItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  rankIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F5F5F5",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rankIconHighlighted: {
+    backgroundColor: "#111111",
+  },
+  rankDetails: {
+    flex: 1,
+  },
+  rankName: {
+    fontSize: 16,
+    fontWeight: "500",
+    marginBottom: 2,
+  },
+  rankXP: {
+    fontSize: 14,
+    color: "#666666",
+    marginBottom: 4,
+  },
+  rankDescription: {
+    fontSize: 12,
+    color: "#666666",
   },
 });
