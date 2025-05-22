@@ -48,9 +48,9 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="completedQuests"
+          name="questsCompleted"
           options={{
-            headerTitle: "Completed Quests",
+            headerTitle: "Quests Completed",
             headerBackTitle: "Profile",
           }}
         />

@@ -64,9 +64,12 @@ export default function ProfileScreen() {
           <ThemedText style={styles.statNumber}>23</ThemedText>
           <ThemedText style={styles.statLabel}>Favorites</ThemedText>
         </Pressable>
-        <Pressable style={styles.statCard}>
+        <Pressable
+          style={styles.statCard}
+          onPress={() => router.push("/questsCompleted")}
+        >
           <ThemedText style={styles.statNumber}>12</ThemedText>
-          <ThemedText style={styles.statLabel}>Quests Done</ThemedText>
+          <ThemedText style={styles.statLabel}>Quests Completed</ThemedText>
         </Pressable>
       </ThemedView>
 
