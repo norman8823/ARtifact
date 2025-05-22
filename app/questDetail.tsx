@@ -180,7 +180,7 @@ export default function QuestDetailScreen() {
                   pathname: "/artDetail",
                   params: {
                     id: artwork.id,
-                    from: "questDetail",
+                    source: "Quest Detail",
                   },
                 });
               }}
