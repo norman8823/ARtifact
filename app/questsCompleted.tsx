@@ -4,7 +4,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Stack } from "expo-router";
 import { ScrollView, StyleSheet } from "react-native";
 
-const COMPLETED_QUESTS = [
+const QUESTS_COMPLETED = [
   {
     id: 1,
     title: "Face to Face",
@@ -42,12 +42,12 @@ const COMPLETED_QUESTS = [
   },
 ];
 
-export default function CompletedQuestsScreen() {
+export default function QuestsCompletedScreen() {
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen
         options={{
-          title: "Completed Quests",
+          title: "Quests Completed",
           headerShadowVisible: false,
           headerBackTitle: "Profile",
         }}
@@ -58,7 +58,7 @@ export default function CompletedQuestsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ThemedView style={styles.questList}>
-          {COMPLETED_QUESTS.map((quest) => (
+          {QUESTS_COMPLETED.map((quest) => (
             <ThemedView key={quest.id} style={styles.questCard}>
               <ThemedView style={styles.questHeader}>
                 <ThemedView style={styles.questInfo}>
