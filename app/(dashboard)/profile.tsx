@@ -104,7 +104,7 @@ export default function ProfileScreen() {
         <ThemedView style={styles.subscriptionCard}>
           <ThemedView style={styles.subscriptionHeader}>
             <ThemedView style={styles.settingLeft}>
-              <FontAwesome name="crown" size={20} color="#666" />
+              <FontAwesome name="star" size={20} color="#666" />
               <ThemedText style={styles.settingLabel}>Subscription</ThemedText>
             </ThemedView>
             <ThemedView style={styles.planBadge}>

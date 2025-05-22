@@ -182,7 +182,7 @@ export default function ProfileSettingsScreen() {
               }}
             >
               <FontAwesome
-                name="image-o"
+                name="image"
                 size={20}
                 color="#333"
                 style={styles.modalIcon}
