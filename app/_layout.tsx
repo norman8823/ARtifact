@@ -34,9 +34,9 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="artworkVisited"
+          name="artworksVisited"
           options={{
-            headerTitle: "Artwork Visited",
+            headerTitle: "Artworks Visited",
             headerBackTitle: "Profile",
           }}
         />
