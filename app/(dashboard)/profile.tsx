@@ -145,8 +145,14 @@ export default function ProfileScreen() {
         animationType="fade"
         onRequestClose={() => setIsModalVisible(false)}
       >
-        <ThemedView style={styles.modalOverlay}>
-          <ThemedView style={styles.modalContent}>
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setIsModalVisible(false)}
+        >
+          <Pressable
+            style={styles.modalContent}
+            onPress={(e) => e.stopPropagation()}
+          >
             {/* Header */}
             <ThemedView style={styles.modalHeader}>
               <ThemedView style={styles.modalHeaderLeft}>
@@ -223,8 +229,8 @@ export default function ProfileScreen() {
                 </ThemedView>
               </ThemedView>
             </ThemedView>
-          </ThemedView>
-        </ThemedView>
+          </Pressable>
+        </Pressable>
       </Modal>
     </ScrollView>
   );
