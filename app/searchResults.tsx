@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, router } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, TextInput } from "react-native";
 
@@ -88,7 +88,13 @@ export default function SearchResultsScreen() {
               key={result.id}
               style={styles.resultCard}
               onPress={() => {
-                // Navigate to art detail
+                router.push({
+                  pathname: "/artDetail",
+                  params: {
+                    id: result.id,
+                    source: "Search Results",
+                  },
+                });
               }}
             >
               <ThemedView style={styles.artworkImageContainer}>
