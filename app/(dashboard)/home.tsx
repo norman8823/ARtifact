@@ -2,9 +2,15 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link, router } from "expo-router";
+import { Link, router, useNavigation } from "expo-router";
 import React, { useRef, useState } from "react";
-import { Dimensions, Pressable, ScrollView, StyleSheet } from "react-native";
+import {
+  AppState,
+  Dimensions,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -44,6 +50,13 @@ const FEATURED_ARTWORKS: Artwork[] = [
     image:
       "https://upload.wikimedia.org/wikipedia/commons/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg",
   },
+  {
+    id: 4,
+    title: "Girl with a Pearl Earring",
+    artist: "Johannes Vermeer",
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/800px-1665_Girl_with_a_Pearl_Earring.jpg",
+  },
 ];
 
 const COLLECTIONS: Collection[] = [
@@ -75,8 +88,19 @@ const COLLECTIONS: Collection[] = [
 
 export default function HomeScreen() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+  const navigation = useNavigation();
+
+  // Handle navigation focus
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      setIsAutoPlaying(true);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const handleGestureStart = (event: any) => {
     touchStartX.current = event.nativeEvent.pageX;
@@ -93,6 +117,7 @@ export default function HomeScreen() {
     const isATap = deltaX < 10 && deltaY < 10;
 
     if (isATap) {
+      setIsAutoPlaying(false); // Pause autoplay when navigating away
       router.push({
         pathname: "/artDetail",
         params: { source: "Home" },
@@ -102,6 +127,25 @@ export default function HomeScreen() {
     // Reset touch tracking
     touchStartX.current = null;
     touchStartY.current = null;
+  };
+
+  const carouselRef = useRef<any>(null);
+
+  const handlePrevious = () => {
+    if (carouselRef.current) {
+      carouselRef.current.prev();
+    }
+  };
+
+  const handleNext = () => {
+    if (carouselRef.current) {
+      carouselRef.current.next();
+    }
+  };
+
+  const handleProgressChange = (_: number, absoluteProgress: number) => {
+    const newIndex = Math.round(absoluteProgress) % FEATURED_ARTWORKS.length;
+    setActiveIndex(newIndex);
   };
 
   const renderFeaturedItem = (item: Artwork) => (
@@ -151,19 +195,38 @@ export default function HomeScreen() {
       {/* Featured Artworks */}
       <ThemedView style={styles.section}>
         <ThemedText style={styles.sectionTitle}>Featured Artworks</ThemedText>
-        <Carousel
-          loop
-          width={SCREEN_WIDTH - 40}
-          height={400}
-          autoPlay={true}
-          data={FEATURED_ARTWORKS}
-          scrollAnimationDuration={2000}
-          autoPlayInterval={4000}
-          onProgressChange={(_, absoluteProgress) =>
-            setActiveIndex(Math.round(absoluteProgress))
-          }
-          renderItem={({ item }) => renderFeaturedItem(item)}
-        />
+        <ThemedView style={styles.carouselContainer}>
+          <Carousel
+            ref={carouselRef}
+            loop
+            width={SCREEN_WIDTH - 40}
+            height={400}
+            autoPlay={isAutoPlaying}
+            data={FEATURED_ARTWORKS}
+            scrollAnimationDuration={1000}
+            autoPlayInterval={3000}
+            onProgressChange={handleProgressChange}
+            renderItem={({ item }) => renderFeaturedItem(item)}
+            enabled={false}
+            mode="parallax"
+            modeConfig={{
+              parallaxScrollingScale: 0.9,
+              parallaxScrollingOffset: 40,
+            }}
+          />
+          <Pressable
+            style={[styles.carouselButton, styles.carouselButtonLeft]}
+            onPress={handlePrevious}
+          >
+            <FontAwesome name="chevron-left" size={20} color="#666" />
+          </Pressable>
+          <Pressable
+            style={[styles.carouselButton, styles.carouselButtonRight]}
+            onPress={handleNext}
+          >
+            <FontAwesome name="chevron-right" size={20} color="#666" />
+          </Pressable>
+        </ThemedView>
         {renderPagination()}
       </ThemedView>
 
@@ -219,7 +282,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 20,
-    paddingBottom: 100, // Add extra padding at the bottom for tab bar
+    paddingBottom: 100,
   },
   header: {
     flexDirection: "row",
@@ -242,16 +305,42 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   lastSection: {
-    marginBottom: 40, // Extra margin for the last section
+    marginBottom: 40,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",
     marginBottom: 16,
   },
+  carouselContainer: {
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  carouselButton: {
+    position: "absolute",
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    elevation: 5,
+    zIndex: 1,
+    top: 130,
+  },
+  carouselButtonLeft: {
+    left: 0,
+  },
+  carouselButtonRight: {
+    right: 0,
+  },
   featuredItem: {
-    width: SCREEN_WIDTH - 80,
-    marginHorizontal: 20,
+    width: SCREEN_WIDTH - 40,
+    paddingHorizontal: 20,
   },
   featuredImage: {
     width: "100%",
