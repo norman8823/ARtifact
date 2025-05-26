@@ -1,7 +1,7 @@
 import { ThemedView } from "@/components/ThemedView";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   Dimensions,
@@ -31,6 +31,7 @@ const ARTWORKS: ArtworkItem[] = Array.from({ length: 30 }, (_, index) => ({
 
 export default function ExploreScreen() {
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
 
   const renderItem = ({ item }: { item: ArtworkItem }) => (
     <Link
@@ -67,6 +68,17 @@ export default function ExploreScreen() {
             placeholderTextColor="#999"
             value={searchQuery}
             onChangeText={setSearchQuery}
+            onSubmitEditing={() => {
+              if (searchQuery.trim()) {
+                router.push({
+                  pathname: "/searchResults",
+                  params: { query: searchQuery.trim() },
+                });
+              } else {
+                router.push("/searchResults");
+              }
+            }}
+            returnKeyType="search"
           />
         </ThemedView>
       </ThemedView>

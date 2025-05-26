@@ -83,6 +83,13 @@ export default function RootLayout() {
             headerBackTitle: "ArtQuest",
           }}
         />
+        <Stack.Screen
+          name="searchResults"
+          options={{
+            headerTitle: "Search Results",
+            headerBackTitle: "Explore",
+          }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
