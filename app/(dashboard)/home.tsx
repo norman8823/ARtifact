@@ -184,7 +184,7 @@ export default function HomeScreen() {
     >
       {/* Header */}
       <ThemedView style={styles.header}>
-        <ThemedText style={styles.headerTitle}>Artifact</ThemedText>
+        <ThemedText style={styles.headerTitle}>ARtifact</ThemedText>
         <Link href="/profile" asChild>
           <Pressable style={styles.profileIcon}>
             <FontAwesome name="user-circle" size={32} color="#666" />

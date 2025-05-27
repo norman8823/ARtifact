@@ -219,6 +219,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
+    padding: 12,
+    alignItems: "center",
   },
   workImage: {
     width: 90,
@@ -228,7 +230,7 @@ const styles = StyleSheet.create({
   },
   workInfo: {
     flex: 1,
-    padding: 12,
+    paddingHorizontal: 16,
   },
   workTitle: {
     fontSize: 16,
