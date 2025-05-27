@@ -1,0 +1,110 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+
+type User @model @auth(rules: [{ allow: owner }]) {
+  id: ID! # Cognito Sub
+  username: String!
+  email: String!
+  phone: String
+  profileImage: String
+  isPremium: Boolean
+  remainingFreeScans: Int
+  xpPoints: Int
+}
+
+type Artwork @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+  id: ID! # MET Object ID
+  isCurated: Boolean
+  isFeatured: Boolean
+  hasAudio: Boolean
+  primaryImage: String
+  primaryImageSmall: String
+  additionalImages: [String]
+  departmentId: ID!
+  department: String
+  objectType: String
+  title: String!
+  culture: String
+  artistDisplayName: String
+  objectDate: String
+  medium: String
+  dimensions: String
+  classification: String
+  galleryNumber: String
+  tags: [String]
+  description: String
+}
+
+type Favorited @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  userId: ID! @index(name: "byUser", sortKeyFields: ["artworkId"])
+  artworkId: ID!
+  timestamp: AWSDateTime
+}
+
+type Visited @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  userId: ID! @index(name: "byUserVisited", sortKeyFields: ["artworkId"])
+  artworkId: ID!
+  timestamp: AWSDateTime
+}
+
+type Department @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+  id: ID!
+  displayName: String!
+  description: String
+  coverImage: String
+}
+
+type AudioContent @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+  id: ID!
+  artworkId: ID! @index(name: "byArtworkAudio", sortKeyFields: ["id"])
+  audioURL: String
+  transcript: String
+  duration: Int
+}
+
+type ArtFact @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+  id: ID!
+  artworkId: ID! @index(name: "byArtworkFact", sortKeyFields: ["timestamp"])
+  content: String
+  isActive: Boolean
+  timestamp: AWSDateTime
+}
+
+type Quest @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+  id: ID!
+  title: String!
+  description: String
+  icon: String
+  xpReward: Int
+  requiredArtworks: [String]
+  isPremium: Boolean
+  galleryMap: String
+}
+
+type UserQuest @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  userId: ID! @index(name: "byUserQuest", sortKeyFields: ["questId"])
+  questId: ID!
+  artworksVisited: [String]
+  isCompleted: Boolean
+  timestamp: AWSDateTime
+}
+
+type Rank @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+  id: ID!
+  title: String!
+  minXP: Int
+  maxXP: Int
+  icon: String
+  description: String
+}
+
+type UserXP @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  userId: ID! @index(name: "byUserXP", sortKeyFields: ["timestamp"])
+  xpPoints: Int
+  timestamp: AWSDateTime
+}
