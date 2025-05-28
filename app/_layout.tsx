@@ -26,6 +26,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="googleLogin" options={{ headerShown: false }} />
+        <Stack.Screen name="appleLogin" options={{ headerShown: false }} />
         <Stack.Screen name="(dashboard)" options={{ headerShown: false }} />
         <Stack.Screen
           name="profileSettings"

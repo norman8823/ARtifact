@@ -103,7 +103,10 @@ export default function LandingScreen() {
             </ThemedText>
           </Pressable>
 
-          <Pressable style={styles.socialButton}>
+          <Pressable
+            style={styles.socialButton}
+            onPress={() => router.push("/appleLogin")}
+          >
             <FontAwesome
               name="apple"
               size={20}
