@@ -70,7 +70,10 @@ export default function LandingScreen() {
             <FontAwesome name="chevron-right" size={16} color="#999" />
           </Pressable>
 
-          <Pressable style={styles.loginButton}>
+          <Pressable
+            style={styles.loginButton}
+            onPress={() => router.push("/emailLogin")}
+          >
             <ThemedView style={styles.buttonContent}>
               <FontAwesome
                 name="envelope"

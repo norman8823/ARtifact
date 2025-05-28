@@ -5,19 +5,11 @@ import { router } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, TextInput } from "react-native";
 import { useState } from "react";
 
-export default function PhoneLoginScreen() {
-  const [phoneNumber, setPhoneNumber] = useState("");
+export default function EmailLoginScreen() {
+  const [email, setEmail] = useState("");
 
-  const formatPhoneNumber = (text: string) => {
-    const cleaned = text.replace(/\D/g, "");
-    if (cleaned.length === 0) return "";
-    if (cleaned.length <= 3) return `(${cleaned}`;
-    if (cleaned.length <= 6)
-      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`;
-    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(
-      6,
-      10
-    )}`;
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
   return (
@@ -31,7 +23,7 @@ export default function PhoneLoginScreen() {
           <Pressable style={styles.backButton} onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={20} color="#333" />
           </Pressable>
-          <ThemedText style={styles.title}>Phone Login</ThemedText>
+          <ThemedText style={styles.title}>Email Login</ThemedText>
           <ThemedView style={styles.placeholder} />
         </ThemedView>
       </ThemedView>
@@ -41,28 +33,30 @@ export default function PhoneLoginScreen() {
         {/* Login Instructions */}
         <ThemedView style={styles.instructions}>
           <ThemedText style={styles.instructionsTitle}>
-            Enter your phone number
+            Enter your email
           </ThemedText>
           <ThemedText style={styles.instructionsText}>
-            We'll send you a verification code to confirm your identity.
+            Please enter your email address to receive a verification code.
           </ThemedText>
         </ThemedView>
 
-        {/* Phone Input Form */}
+        {/* Email Input Form */}
         <ThemedView style={styles.formContainer}>
-          <ThemedView style={styles.phoneInputContainer}>
-            <ThemedView style={styles.phoneInputWrapper}>
-              <ThemedView style={styles.countryCode}>
-                <ThemedText style={styles.countryCodeText}>+1</ThemedText>
-                <FontAwesome name="chevron-down" size={12} color="#666" />
-              </ThemedView>
+          <ThemedView style={styles.emailInputContainer}>
+            <ThemedView style={styles.emailInputWrapper}>
+              <FontAwesome
+                name="envelope"
+                size={20}
+                color="#666"
+                style={styles.emailIcon}
+              />
               <TextInput
-                style={styles.phoneInput}
-                placeholder="(123) 456-7890"
-                keyboardType="phone-pad"
-                value={phoneNumber}
-                onChangeText={(text) => setPhoneNumber(formatPhoneNumber(text))}
-                maxLength={14}
+                style={styles.emailInput}
+                placeholder="Your email address"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
               />
             </ThemedView>
           </ThemedView>
@@ -70,9 +64,9 @@ export default function PhoneLoginScreen() {
           <Pressable
             style={[
               styles.sendCodeButton,
-              !phoneNumber && styles.sendCodeButtonDisabled,
+              (!email || !isValidEmail(email)) && styles.sendCodeButtonDisabled,
             ]}
-            disabled={!phoneNumber}
+            disabled={!email || !isValidEmail(email)}
           >
             <ThemedText style={styles.sendCodeButtonText}>
               Send verification code
@@ -91,11 +85,11 @@ export default function PhoneLoginScreen() {
           <ThemedView style={styles.alternativeButtons}>
             <Pressable
               style={styles.alternativeButton}
-              onPress={() => router.replace("/emailLogin")}
+              onPress={() => router.replace("/phoneLogin")}
             >
-              <FontAwesome name="envelope" size={24} color="#333" />
+              <FontAwesome name="phone" size={24} color="#333" />
               <ThemedText style={styles.alternativeButtonText}>
-                Email
+                Phone
               </ThemedText>
             </Pressable>
 
@@ -125,8 +119,8 @@ export default function PhoneLoginScreen() {
         <ThemedView style={styles.securityNote}>
           <FontAwesome name="shield" size={20} color="#007AFF" />
           <ThemedText style={styles.securityNoteText}>
-            Your phone number is only used for authentication and will never be
-            shared with third parties.
+            Your email is only used for authentication and will never be shared
+            with third parties.
           </ThemedText>
         </ThemedView>
       </ThemedView>
@@ -198,32 +192,21 @@ const styles = StyleSheet.create({
   formContainer: {
     marginBottom: 32,
   },
-  phoneInputContainer: {
+  emailInputContainer: {
     marginBottom: 24,
   },
-  phoneInputWrapper: {
+  emailInputWrapper: {
     flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: "#E5E5E5",
     borderRadius: 12,
-    overflow: "hidden",
     backgroundColor: "#FFFFFF",
   },
-  countryCode: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderRightWidth: 1,
-    borderRightColor: "#E5E5E5",
-    backgroundColor: "#FFFFFF",
+  emailIcon: {
+    marginLeft: 16,
   },
-  countryCodeText: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginRight: 8,
-  },
-  phoneInput: {
+  emailInput: {
     flex: 1,
     padding: 16,
     fontSize: 16,
