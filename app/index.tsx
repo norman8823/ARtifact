@@ -52,7 +52,10 @@ export default function LandingScreen() {
 
         {/* Login Options */}
         <ThemedView style={styles.loginOptions}>
-          <Pressable style={styles.loginButton}>
+          <Pressable
+            style={styles.loginButton}
+            onPress={() => router.push("/phoneLogin")}
+          >
             <ThemedView style={styles.buttonContent}>
               <FontAwesome
                 name="phone"
