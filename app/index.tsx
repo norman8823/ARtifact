@@ -2,10 +2,12 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { Pressable, ScrollView, StyleSheet } from "react-native";
 
 export default function LandingScreen() {
+  const router = useRouter();
+
   return (
     <ScrollView
       style={styles.container}
@@ -86,7 +88,10 @@ export default function LandingScreen() {
             <ThemedView style={styles.dividerLine} />
           </ThemedView>
 
-          <Pressable style={styles.socialButton}>
+          <Pressable
+            style={styles.socialButton}
+            onPress={() => router.push("/googleLogin")}
+          >
             <FontAwesome
               name="google"
               size={20}
