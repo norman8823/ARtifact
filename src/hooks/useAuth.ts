@@ -1,6 +1,7 @@
 import { type SignInOutput } from "@aws-amplify/auth";
 import { confirmSignUp, signIn, signOut, signUp } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
+import { useUserData } from "./useUserData";
 
 export interface AuthError {
   message: string;
@@ -14,9 +15,10 @@ export interface UseAuthReturn {
   signUpWithEmail: (
     email: string,
     password: string,
-    phoneNumber: string
+    phoneNumber: string,
+    username: string
   ) => Promise<{ isVerificationRequired: boolean }>;
-  confirmEmailSignUp: (email: string, code: string) => Promise<void>;
+  confirmEmailSignUp: (email: string, code: string) => Promise<SignInOutput>;
   signInWithEmail: (email: string, password: string) => Promise<SignInOutput>;
   signOut: () => Promise<void>;
 }
@@ -24,6 +26,9 @@ export interface UseAuthReturn {
 export function useAuth(): UseAuthReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<AuthError | null>(null);
+  const [tempPassword, setTempPassword] = useState<string>("");
+  const [tempUsername, setTempUsername] = useState<string>("");
+  const { ensureUserInDB } = useUserData();
 
   const handleError = (err: any) => {
     const errorDetails = {
@@ -45,11 +50,20 @@ export function useAuth(): UseAuthReturn {
   };
 
   const signUpWithEmail = useCallback(
-    async (email: string, password: string, phoneNumber: string) => {
+    async (
+      email: string,
+      password: string,
+      phoneNumber: string,
+      username: string
+    ) => {
       setIsLoading(true);
       setError(null);
       try {
         console.log("Starting sign up process for email:", email);
+        // Store password and username for auto sign-in after confirmation
+        setTempPassword(password);
+        setTempUsername(username);
+
         const signUpResult = await signUp({
           username: email,
           password,
@@ -59,34 +73,12 @@ export function useAuth(): UseAuthReturn {
               phone_number: phoneNumber.startsWith("+")
                 ? phoneNumber
                 : `+${phoneNumber}`,
+              preferred_username: username,
             },
           },
         });
         console.log("Sign up result:", JSON.stringify(signUpResult, null, 2));
         return { isVerificationRequired: true };
-      } catch (err: any) {
-        return handleError(err);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
-
-  const confirmEmailSignUp = useCallback(
-    async (email: string, code: string) => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        console.log("Starting confirmation for email:", email);
-        const confirmResult = await confirmSignUp({
-          username: email,
-          confirmationCode: code,
-        });
-        console.log(
-          "Confirmation result:",
-          JSON.stringify(confirmResult, null, 2)
-        );
       } catch (err: any) {
         return handleError(err);
       } finally {
@@ -123,6 +115,11 @@ export function useAuth(): UseAuthReturn {
           )
         );
 
+        if (signInResult.isSignedIn) {
+          // Ensure user exists in DynamoDB with the correct username and email
+          await ensureUserInDB(tempUsername || undefined, email);
+        }
+
         return signInResult;
       } catch (err: any) {
         return handleError(err);
@@ -130,7 +127,39 @@ export function useAuth(): UseAuthReturn {
         setIsLoading(false);
       }
     },
-    []
+    [ensureUserInDB, tempUsername]
+  );
+
+  const confirmEmailSignUp = useCallback(
+    async (email: string, code: string) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        console.log("Starting confirmation for email:", email);
+        const confirmResult = await confirmSignUp({
+          username: email,
+          confirmationCode: code,
+        });
+        console.log(
+          "Confirmation result:",
+          JSON.stringify(confirmResult, null, 2)
+        );
+
+        // After successful confirmation, automatically sign in
+        const signInResult = await signInWithEmail(email, tempPassword);
+
+        // Clear stored credentials
+        setTempPassword("");
+        setTempUsername("");
+
+        return signInResult;
+      } catch (err: any) {
+        return handleError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [signInWithEmail, tempPassword]
   );
 
   const handleSignOut = useCallback(async () => {
@@ -138,8 +167,8 @@ export function useAuth(): UseAuthReturn {
     setIsLoading(true);
     setError(null);
     try {
-      const signOutResult = await signOut();
-      console.log("Sign out result:", JSON.stringify(signOutResult, null, 2));
+      await signOut();
+      console.log("Sign out completed successfully");
     } catch (err: any) {
       return handleError(err);
     } finally {

@@ -22,31 +22,36 @@ if (missingVars.length > 0) {
   );
 }
 
-const awsConfig = {
-  Auth: {
-    Cognito: {
-      userPoolClientId: requiredEnvVars.userPoolClientId,
-      userPoolId: requiredEnvVars.userPoolId,
-      region: requiredEnvVars.region,
-      signUpVerificationMethod: "code",
-      authenticationFlowType: "USER_PASSWORD_AUTH",
-      tokenInvalidationOptions: {
-        invalidateTokensOnSignOut: true,
-      },
-    },
-  },
-};
-
-// For debugging
-console.log("AWS Configuration:", JSON.stringify(awsConfig, null, 2));
+// Ensure all required values are defined
+if (
+  !requiredEnvVars.region ||
+  !requiredEnvVars.userPoolId ||
+  !requiredEnvVars.userPoolClientId
+) {
+  throw new Error("Required environment variables are undefined");
+}
 
 try {
-  console.log("Configuring Amplify with:", JSON.stringify(awsConfig, null, 2));
-  Amplify.configure(awsConfig);
+  // Configure both Auth and API
+  Amplify.configure({
+    Auth: {
+      Cognito: {
+        userPoolId: requiredEnvVars.userPoolId,
+        userPoolClientId: requiredEnvVars.userPoolClientId,
+      },
+    },
+    API: {
+      GraphQL: {
+        endpoint:
+          "https://pxkzi6ejozb2pnbdngzlqzecdu.appsync-api.us-east-1.amazonaws.com/graphql",
+        region: requiredEnvVars.region,
+        defaultAuthMode: "userPool",
+      },
+    },
+  });
 
   console.log("Setting up token storage...");
   cognitoUserPoolsTokenProvider.setKeyValueStorage(AsyncStorage);
-
   console.log("Amplify configured successfully");
 } catch (error) {
   console.error("Error configuring Amplify:", error);
