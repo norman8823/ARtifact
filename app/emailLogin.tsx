@@ -3,7 +3,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { useAuth } from "@/src/hooks/useAuth";
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -26,6 +26,7 @@ export default function EmailLoginScreen() {
     signUpWithEmail,
     confirmEmailSignUp,
     signInWithEmail,
+    signOut,
     isLoading,
     error,
   } = useAuth();
@@ -47,8 +48,23 @@ export default function EmailLoginScreen() {
     try {
       if (needsVerification) {
         await confirmEmailSignUp(email, verificationCode);
-        // After successful verification, redirect to the main app
-        router.replace("/home");
+        // After successful verification, show success message and switch to sign in
+        Alert.alert(
+          "Verification Successful",
+          "Your account has been verified. Please sign in.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                setNeedsVerification(false);
+                setIsSignUp(false);
+                setPassword("");
+                setPhoneNumber("");
+                setVerificationCode("");
+              },
+            },
+          ]
+        );
         return;
       }
 

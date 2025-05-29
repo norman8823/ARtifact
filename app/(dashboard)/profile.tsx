@@ -1,10 +1,12 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useAuth } from "@/src/hooks/useAuth";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   Dimensions,
   Modal,
   Pressable,
@@ -17,6 +19,23 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function ProfileScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { signOut, isLoading } = useAuth();
+
+  const handleLogout = async () => {
+    console.log("Logout button pressed");
+    try {
+      console.log("Calling sign out...");
+      await signOut();
+      console.log("Sign out completed, redirecting to login screen...");
+      router.replace("/");
+    } catch (error: any) {
+      console.error("Logout error in profile screen:", error);
+      Alert.alert(
+        "Logout Error",
+        error.message || "An error occurred while logging out"
+      );
+    }
+  };
 
   return (
     <ScrollView
@@ -131,9 +150,12 @@ export default function ProfileScreen() {
           </Pressable>
           <Pressable
             style={styles.logoutButton}
-            onPress={() => router.replace("/")}
+            onPress={handleLogout}
+            disabled={isLoading}
           >
-            <ThemedText style={styles.logoutButtonText}>Logout</ThemedText>
+            <ThemedText style={styles.logoutButtonText}>
+              {isLoading ? "Logging out..." : "Logout"}
+            </ThemedText>
           </Pressable>
         </ThemedView>
       </ThemedView>
