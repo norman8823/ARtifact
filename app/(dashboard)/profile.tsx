@@ -1,10 +1,11 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useUserData } from "@/src/hooks/useUserData";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -20,6 +21,20 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 export default function ProfileScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { signOut, isLoading } = useAuth();
+  const { currentUser, ensureUserInDB } = useUserData();
+
+  // Load user data when component mounts
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        await ensureUserInDB();
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      }
+    };
+
+    loadUserData();
+  }, [ensureUserInDB]);
 
   const handleLogout = async () => {
     console.log("Logout button pressed");
@@ -62,7 +77,9 @@ export default function ProfileScreen() {
           }}
           style={styles.avatar}
         />
-        <ThemedText style={styles.userName}>Sarah Johnson</ThemedText>
+        <ThemedText style={styles.userName}>
+          {currentUser?.username || "Loading..."}
+        </ThemedText>
         <ThemedView style={styles.rankContainer}>
           <ThemedView style={styles.rankBadge}>
             <ThemedText style={styles.rankText}>Art Expert</ThemedText>

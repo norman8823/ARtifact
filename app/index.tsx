@@ -1,12 +1,29 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { FontAwesome } from "@expo/vector-icons";
+import { getCurrentUser } from "aws-amplify/auth";
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
+import { useEffect } from "react";
 import { Pressable, ScrollView, StyleSheet } from "react-native";
 
 export default function LandingScreen() {
   const router = useRouter();
+
+  // Check for existing authenticated user
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        await getCurrentUser();
+        console.log("User already authenticated, redirecting to home");
+        router.replace("/home");
+      } catch (error) {
+        console.log("No authenticated user found");
+      }
+    };
+
+    checkAuthentication();
+  }, []);
 
   return (
     <ScrollView
