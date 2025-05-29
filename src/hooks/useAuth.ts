@@ -73,7 +73,6 @@ export function useAuth(): UseAuthReturn {
               phone_number: phoneNumber.startsWith("+")
                 ? phoneNumber
                 : `+${phoneNumber}`,
-              preferred_username: username,
             },
           },
         });

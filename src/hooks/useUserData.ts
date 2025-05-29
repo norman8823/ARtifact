@@ -47,33 +47,63 @@ export function useUserData() {
     []
   );
 
-  const getUserByOwnerFromDB = useCallback(async (ownerId: string) => {
-    try {
-      console.log("Searching for user with owner ID:", ownerId);
-      const result = await client.graphql({
-        query: listUsers,
-        variables: {
-          filter: {
-            owner: {
-              contains: ownerId,
+  const getUserByOwnerFromDB = useCallback(
+    async (ownerId: string, email?: string) => {
+      try {
+        // First, let's see all users to understand what's in the database
+        console.log("Fetching all users to debug...");
+        const allUsersResult = await client.graphql({
+          query: listUsers,
+          variables: {
+            limit: 100, // Adjust if needed
+          },
+        });
+        console.log(
+          "All users in DB:",
+          JSON.stringify(allUsersResult.data.listUsers.items, null, 2)
+        );
+
+        // Create possible owner ID formats
+        const ownerIdFormats = [
+          ownerId, // Plain ID
+          `${ownerId}::${ownerId}`, // ID::ID format
+        ];
+
+        console.log("Searching for user with formats:", ownerIdFormats);
+        console.log("Or email:", email);
+
+        const result = await client.graphql({
+          query: listUsers,
+          variables: {
+            filter: {
+              or: [
+                ...ownerIdFormats.map((id) => ({ owner: { eq: id } })),
+                ...(email ? [{ email: { eq: email } }] : []),
+              ],
             },
           },
-          limit: 1,
-        },
-      });
+        });
 
-      const users = result.data.listUsers.items;
-      if (users && users.length > 0) {
-        console.log("Found existing user:", users[0]);
-        return users[0];
+        console.log(
+          "Search query result:",
+          JSON.stringify(result.data.listUsers.items, null, 2)
+        );
+
+        const users = result.data.listUsers.items;
+        if (users && users.length > 0) {
+          console.log("Found existing user:", users[0]);
+          return users[0];
+        }
+
+        console.log("No matching user found");
+        return null;
+      } catch (error) {
+        console.error("Error fetching user from DB:", error);
+        throw error;
       }
-      console.log("No user found with owner ID:", ownerId);
-      return null;
-    } catch (error) {
-      console.error("Error fetching user from DB:", error);
-      throw error;
-    }
-  }, []);
+    },
+    []
+  );
 
   const ensureUserInDB = useCallback(
     async (preferredUsername?: string, userEmail?: string) => {
@@ -82,8 +112,8 @@ export function useUserData() {
         const { userId } = await getCurrentUser();
         console.log("Current authenticated user ID:", userId);
 
-        // Try to fetch existing user by owner ID
-        const existingUser = await getUserByOwnerFromDB(userId);
+        // Try to fetch existing user by owner ID or email
+        const existingUser = await getUserByOwnerFromDB(userId, userEmail);
 
         if (existingUser) {
           console.log("Using existing user:", existingUser);
