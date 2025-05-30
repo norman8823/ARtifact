@@ -2,7 +2,7 @@
   "version": "1",
   "cognitoConfig": {
     "identityPoolName": "ARtifactIdentityPool",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "artifa037df7ce",
     "userPoolName": "ARtifactUsers",
     "autoVerifiedAttributes": [
