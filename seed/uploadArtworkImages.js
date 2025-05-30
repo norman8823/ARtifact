@@ -1,17 +1,18 @@
-const fs = require('fs');
-const path = require('path');
-const AWS = require('aws-sdk');
-require('dotenv').config(); // Load .env file
+const fs = require("fs");
+const path = require("path");
+const AWS = require("aws-sdk");
+require("dotenv").config(); // Load .env file
 
-// Load from .env
-const {
-  AWS_ACCESS_KEY_ID,
-  AWS_SECRET_ACCESS_KEY,
-  AWS_REGION,
-  S3_BUCKET_NAME,
-} = process.env;
+// Load credentials from .env
+const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET_NAME } =
+  process.env;
 
-if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !S3_BUCKET_NAME || !AWS_REGION) {
+if (
+  !AWS_ACCESS_KEY_ID ||
+  !AWS_SECRET_ACCESS_KEY ||
+  !S3_BUCKET_NAME ||
+  !AWS_REGION
+) {
   console.error("❌ Missing required .env variables");
   process.exit(1);
 }
@@ -24,27 +25,29 @@ AWS.config.update({
 });
 
 const mimeTypes = {
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.png': 'image/png',
-  '.webp': 'image/webp',
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
 };
 
 const s3 = new AWS.S3();
-const LOCAL_DIR = './artworkImages'; // or wherever your local folder lives
+const LOCAL_DIR = "./artworkImages"; // or wherever your local folder lives
 
 const uploadFile = async (localPath, s3Key) => {
   const fileStream = fs.createReadStream(localPath);
   const ext = path.extname(localPath).toLowerCase();
-  const contentType = mimeTypes[ext] || 'application/octet-stream';
+  const contentType = mimeTypes[ext] || "application/octet-stream";
 
   try {
-    await s3.upload({
-      Bucket: S3_BUCKET_NAME,
-      Key: s3Key,
-      Body: fileStream,
-      ContentType: contentType,
-    }).promise();
+    await s3
+      .upload({
+        Bucket: S3_BUCKET_NAME,
+        Key: s3Key,
+        Body: fileStream,
+        ContentType: contentType,
+      })
+      .promise();
     console.log(`✅ Uploaded: ${s3Key}`);
   } catch (err) {
     console.error(`❌ Failed to upload ${s3Key}: ${err.message}`);
@@ -65,7 +68,7 @@ const uploadArtworkImages = async () => {
     for (const entry of entries) {
       const fullPath = path.join(folderPath, entry);
 
-      if (entry === 'additional' && fs.lstatSync(fullPath).isDirectory()) {
+      if (entry === "additional" && fs.lstatSync(fullPath).isDirectory()) {
         const additionalFiles = fs.readdirSync(fullPath);
         for (const addImg of additionalFiles) {
           const addPath = path.join(fullPath, addImg);
