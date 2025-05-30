@@ -1,0 +1,14 @@
+{
+  "resourceName": "ARtifactStorage",
+  "policyUUID": "07c6dc6b",
+  "bucketName": "artifactbucket",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ"
+  ],
+  "groupAccess": {}
+}

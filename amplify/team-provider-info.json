@@ -17,6 +17,9 @@
       },
       "api": {
         "artifact": {}
+      },
+      "storage": {
+        "ARtifactStorage": {}
       }
     }
   }
