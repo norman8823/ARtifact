@@ -91,11 +91,14 @@ export const createArtwork = /* GraphQL */ `mutation CreateArtwork(
     additionalImages
     departmentId
     department
+    departmentDescription
+    departmentImageUrl
     objectType
     title
     culture
     artistDisplayName
     objectDate
+    objectURL
     medium
     dimensions
     classification
@@ -125,11 +128,14 @@ export const updateArtwork = /* GraphQL */ `mutation UpdateArtwork(
     additionalImages
     departmentId
     department
+    departmentDescription
+    departmentImageUrl
     objectType
     title
     culture
     artistDisplayName
     objectDate
+    objectURL
     medium
     dimensions
     classification
@@ -159,11 +165,14 @@ export const deleteArtwork = /* GraphQL */ `mutation DeleteArtwork(
     additionalImages
     departmentId
     department
+    departmentDescription
+    departmentImageUrl
     objectType
     title
     culture
     artistDisplayName
     objectDate
+    objectURL
     medium
     dimensions
     classification

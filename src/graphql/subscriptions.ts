@@ -322,11 +322,14 @@ export const onCreateArtwork = /* GraphQL */ `subscription OnCreateArtwork($filt
     additionalImages
     departmentId
     department
+    departmentDescription
+    departmentImageUrl
     objectType
     title
     culture
     artistDisplayName
     objectDate
+    objectURL
     medium
     dimensions
     classification
@@ -353,11 +356,14 @@ export const onUpdateArtwork = /* GraphQL */ `subscription OnUpdateArtwork($filt
     additionalImages
     departmentId
     department
+    departmentDescription
+    departmentImageUrl
     objectType
     title
     culture
     artistDisplayName
     objectDate
+    objectURL
     medium
     dimensions
     classification
@@ -384,11 +390,14 @@ export const onDeleteArtwork = /* GraphQL */ `subscription OnDeleteArtwork($filt
     additionalImages
     departmentId
     department
+    departmentDescription
+    departmentImageUrl
     objectType
     title
     culture
     artistDisplayName
     objectDate
+    objectURL
     medium
     dimensions
     classification
