@@ -45,9 +45,15 @@ try {
 // Insert each item
 const seedArtworks = async () => {
   for (const artwork of artworks) {
+    const timestamp = new Date().toISOString();
+
     const params = {
       TableName: ARTWORK_TABLE_NAME,
-      Item: artwork,
+      Item: {
+        ...artwork,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      },
     };
 
     try {

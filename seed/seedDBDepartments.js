@@ -45,9 +45,15 @@ try {
 // Seed departments
 const seedDepartments = async () => {
   for (const department of departments) {
+    const timestamp = new Date().toISOString();
+
     const params = {
       TableName: DEPARTMENT_TABLE_NAME,
-      Item: department,
+      Item: {
+        ...department,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      },
     };
 
     try {
