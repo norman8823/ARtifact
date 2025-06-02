@@ -1,118 +1,116 @@
-{
-  "departments": [
-    {
-      "departmentId": 1,
-      "displayName": "American Decorative Arts",
-      "description": "The American Wing's ever-evolving collection comprises some 20,000 works by African American, Euro American, Native American, and Latin American artists, ranging from the colonial to early-modern period.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/1.jpg"
-    },
-    {
-      "departmentId": 3,
-      "displayName": "Ancient Near Eastern Art",
-      "description": "Includes more than 7,000 works ranging in date from the eighth millennium B.C. through the centuries just beyond the time of the Arab conquests of the seventh century A.D.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/3.jpg"
-    },
-    {
-      "departmentId": 4,
-      "displayName": "Arms and Armor",
-      "description": "Collecting, preserving, researching, publishing, and exhibiting distinguished examples representing the art of the armorer, swordsmith, and gunmaker.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/4.jpg"
-    },
-    {
-      "departmentId": 5,
-      "displayName": "Arts of Africa, Oceania, and the Americas",
-      "description": "The Met's collection of art of the peoples of sub-Saharan Africa, the Pacific Islands, and North, Central, and South America comprises more than eleven thousand works of art of varied materials and types, representing diverse cultural traditions from as early as 3000 B.C.E. to the present.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/5.jpg"
-    },
-    {
-      "departmentId": 6,
-      "displayName": "Asian Art",
-      "description": "The Met's collection of Asian art—more than 35,000 objects, ranging in date from the third millennium B.C. to the twenty-first century—is one of the largest and most comprehensive in the world.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/6.jpg"
-    },
-    {
-      "departmentId": 7,
-      "displayName": "The Cloisters",
-      "description": "Displayed in both The Met Fifth Avenue and in the Museum's branch in northern Manhattan, The Met Cloisters, the collection encompasses the art of the Mediterranean and Europe from the fall of Rome in the fourth century to the beginning of the Renaissance in the early sixteenth century.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/7.jpg"
-    },
-    {
-      "departmentId": 8,
-      "displayName": "The Costume Institute",
-      "description": "The Costume Institute's collection of more than 33,000 costumes and accessories represents five continents and seven centuries of fashionable dress and accessories for men, women, and children.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/8.jpg"
-    },
-    {
-      "departmentId": 9,
-      "displayName": "Drawings and Prints",
-      "description": "The Met's collection of drawings and prints—one of the most comprehensive and distinguished of its kind in the world—began with a gift of 670 works from Cornelius Vanderbilt, a Museum trustee, in 1880.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/9.jpg"
-    },
-    {
-      "departmentId": 10,
-      "displayName": "Egyptian Art",
-      "description": "The Met's collection of ancient Egyptian art consists of approximately 26,000 objects of artistic, historical, and cultural importance, dating from the Paleolithic to the Roman period.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/10.jpg"
-    },
-    {
-      "departmentId": 11,
-      "displayName": "European Paintings",
-      "description": "The Met's celebrated European Paintings collection encompasses more than 2,500 works of art from the thirteenth through the early twentieth century.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/11.jpg"
-    },
-    {
-      "departmentId": 12,
-      "displayName": "European Sculpture and Decorative Arts",
-      "description": "The Met's comprehensive collection of European sculpture and decorative arts reflect the development of a number of art forms in Western European countries from the early fifteenth through the early twentieth century.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/12.jpg"
-    },
-    {
-      "departmentId": 13,
-      "displayName": "Greek and Roman Art",
-      "description": "The Museum's collection of Greek and Roman art comprises more than 30,000 works ranging in date from the Neolithic period to the time of the Roman emperor Constantine's conversion to Christianity in A.D. 312.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/13.jpg"
-    },
-    {
-      "departmentId": 14,
-      "displayName": "Islamic Art",
-      "description": "The Met's collection of Islamic art is one of the most comprehensive in the world and ranges in date from the seventh to the twenty-first century. Its more than 15,000 objects reflect the great diversity and range of the cultural traditions from Spain to Indonesia.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/14.jpg"
-    },
-    {
-      "departmentId": 15,
-      "displayName": "The Robert Lehman Collection",
-      "description": "The Robert Lehman Collection is one of the most distinguished privately assembled art collections in the United States. Robert Lehman's bequest to The Met is a remarkable example of twentieth-century American collecting.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/15.jpg"
-    },
-    {
-      "departmentId": 16,
-      "displayName": "The Libraries",
-      "description": "With its collection of more than one million volumes, extensive digital collections, and online resources, Watson Library is one of the world's most comprehensive art libraries.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/16.jpg"
-    },
-    {
-      "departmentId": 17,
-      "displayName": "Medieval Art",
-      "description": "The Museum's collection of medieval and Byzantine art is among the most comprehensive in the world, encompassing the art of the Mediterranean and Europe from the fall of Rome to the beginning of the Renaissance.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/17.jpg"
-    },
-    {
-      "departmentId": 18,
-      "displayName": "Musical Instruments",
-      "description": "The Museum's collection of musical instruments includes approximately 5,000 examples from six continents and the Pacific Islands, dating from about 300 B.C. to the present.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/18.jpg"
-    },
-    {
-      "departmentId": 19,
-      "displayName": "Photographs",
-      "description": "The Met's Department of Photographs houses a collection of more than 75,000 works spanning the history of photography from its invention in the 1830s to the present.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/19.jpg"
-    },
-    {
-      "departmentId": 21,
-      "displayName": "Modern Art",
-      "description": "The Met's engagement with art from 1890 to today includes the acquisition and exhibition of works in a range of media, spanning movements in modernism to contemporary practices from across the globe.",
-      "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/21.jpg"
-    }
-  ]
-}
+[
+  {
+    "id": "1",
+    "displayName": "American Decorative Arts",
+    "description": "The American Wing's ever-evolving collection comprises some 20,000 works by African American, Euro American, Native American, and Latin American artists, ranging from the colonial to early-modern period.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/1.jpg"
+  },
+  {
+    "id": "3",
+    "displayName": "Ancient Near Eastern Art",
+    "description": "Includes more than 7,000 works ranging in date from the eighth millennium B.C. through the centuries just beyond the time of the Arab conquests of the seventh century A.D.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/3.jpg"
+  },
+  {
+    "id": "4",
+    "displayName": "Arms and Armor",
+    "description": "Collecting, preserving, researching, publishing, and exhibiting distinguished examples representing the art of the armorer, swordsmith, and gunmaker.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/4.jpg"
+  },
+  {
+    "id": "5",
+    "displayName": "Arts of Africa, Oceania, and the Americas",
+    "description": "The Met's collection of art of the peoples of sub-Saharan Africa, the Pacific Islands, and North, Central, and South America comprises more than eleven thousand works of art of varied materials and types, representing diverse cultural traditions from as early as 3000 B.C.E. to the present.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/5.jpg"
+  },
+  {
+    "id": "6",
+    "displayName": "Asian Art",
+    "description": "The Met's collection of Asian art—more than 35,000 objects, ranging in date from the third millennium B.C. to the twenty-first century—is one of the largest and most comprehensive in the world.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/6.jpg"
+  },
+  {
+    "id": "7",
+    "displayName": "The Cloisters",
+    "description": "Displayed in both The Met Fifth Avenue and in the Museum's branch in northern Manhattan, The Met Cloisters, the collection encompasses the art of the Mediterranean and Europe from the fall of Rome in the fourth century to the beginning of the Renaissance in the early sixteenth century.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/7.jpg"
+  },
+  {
+    "id": "8",
+    "displayName": "The Costume Institute",
+    "description": "The Costume Institute's collection of more than 33,000 costumes and accessories represents five continents and seven centuries of fashionable dress and accessories for men, women, and children.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/8.jpg"
+  },
+  {
+    "id": "9",
+    "displayName": "Drawings and Prints",
+    "description": "The Met's collection of drawings and prints—one of the most comprehensive and distinguished of its kind in the world—began with a gift of 670 works from Cornelius Vanderbilt, a Museum trustee, in 1880.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/9.jpg"
+  },
+  {
+    "id": "10",
+    "displayName": "Egyptian Art",
+    "description": "The Met's collection of ancient Egyptian art consists of approximately 26,000 objects of artistic, historical, and cultural importance, dating from the Paleolithic to the Roman period.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/10.jpg"
+  },
+  {
+    "id": "11",
+    "displayName": "European Paintings",
+    "description": "The Met's celebrated European Paintings collection encompasses more than 2,500 works of art from the thirteenth through the early twentieth century.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/11.jpg"
+  },
+  {
+    "id": "12",
+    "displayName": "European Sculpture and Decorative Arts",
+    "description": "The Met's comprehensive collection of European sculpture and decorative arts reflect the development of a number of art forms in Western European countries from the early fifteenth through the early twentieth century.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/12.jpg"
+  },
+  {
+    "id": "13",
+    "displayName": "Greek and Roman Art",
+    "description": "The Museum's collection of Greek and Roman art comprises more than 30,000 works ranging in date from the Neolithic period to the time of the Roman emperor Constantine's conversion to Christianity in A.D. 312.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/13.jpg"
+  },
+  {
+    "id": "14",
+    "displayName": "Islamic Art",
+    "description": "The Met's collection of Islamic art is one of the most comprehensive in the world and ranges in date from the seventh to the twenty-first century. Its more than 15,000 objects reflect the great diversity and range of the cultural traditions from Spain to Indonesia.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/14.jpg"
+  },
+  {
+    "id": "15",
+    "displayName": "The Robert Lehman Collection",
+    "description": "The Robert Lehman Collection is one of the most distinguished privately assembled art collections in the United States. Robert Lehman's bequest to The Met is a remarkable example of twentieth-century American collecting.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/15.jpg"
+  },
+  {
+    "id": "16",
+    "displayName": "The Libraries",
+    "description": "With its collection of more than one million volumes, extensive digital collections, and online resources, Watson Library is one of the world's most comprehensive art libraries.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/16.jpg"
+  },
+  {
+    "id": "17",
+    "displayName": "Medieval Art",
+    "description": "The Museum's collection of medieval and Byzantine art is among the most comprehensive in the world, encompassing the art of the Mediterranean and Europe from the fall of Rome to the beginning of the Renaissance.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/17.jpg"
+  },
+  {
+    "id": "18",
+    "displayName": "Musical Instruments",
+    "description": "The Museum's collection of musical instruments includes approximately 5,000 examples from six continents and the Pacific Islands, dating from about 300 B.C. to the present.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/18.jpg"
+  },
+  {
+    "id": "19",
+    "displayName": "Photographs",
+    "description": "The Met's Department of Photographs houses a collection of more than 75,000 works spanning the history of photography from its invention in the 1830s to the present.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/19.jpg"
+  },
+  {
+    "id": "21",
+    "displayName": "Modern Art",
+    "description": "The Met's engagement with art from 1890 to today includes the acquisition and exhibition of works in a range of media, spanning movements in modernism to contemporary practices from across the globe.",
+    "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/21.jpg"
+  }
+]
