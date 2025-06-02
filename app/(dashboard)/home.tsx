@@ -1,85 +1,42 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Link, router, useNavigation } from "expo-router";
-import React, { useRef, useState } from "react";
-import {
-  AppState,
-  Dimensions,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Dimensions, Pressable, ScrollView, StyleSheet } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-interface Artwork {
-  id: number;
-  title: string;
-  artist: string;
-  image: string;
-}
-
 interface Collection {
-  id: number;
+  id: string;
   title: string;
   image: string;
 }
-
-const FEATURED_ARTWORKS: Artwork[] = [
-  {
-    id: 1,
-    title: "The Starry Night",
-    artist: "Vincent van Gogh",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/500px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
-  },
-  {
-    id: 2,
-    title: "The Persistence of Memory",
-    artist: "Salvador Dalí",
-    image:
-      "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",
-  },
-  {
-    id: 3,
-    title: "The Scream",
-    artist: "Edvard Munch",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg",
-  },
-  {
-    id: 4,
-    title: "Girl with a Pearl Earring",
-    artist: "Johannes Vermeer",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/800px-1665_Girl_with_a_Pearl_Earring.jpg",
-  },
-];
 
 const COLLECTIONS: Collection[] = [
   {
-    id: 1,
+    id: "1",
     title: "American Decorative Arts",
     image:
       "https://www.metmuseum.org/-/media/images/about-the-met/collection-areas/american-wing/the-american-wing-court_teaser.jpg?sc_lang=en",
   },
   {
-    id: 2,
+    id: "2",
     title: "Arms and Armor",
     image:
       "https://www.metmuseum.org/-/media/images/about-the-met/collection-areas/arms-and-armor/arms-and-armor_teaser.jpg",
   },
   {
-    id: 3,
+    id: "3",
     title: "Asian Art",
     image:
       "https://collectionapi.metmuseum.org/api/collection/v1/iiif/78870/preview",
   },
   {
-    id: 4,
+    id: "4",
     title: "The Costume Institute",
     image:
       "https://fashionista.com/.image/t_share/MTY4NjA4NDk0NTUzOTMzNDQ3/sandy-schreier-metropolitan-museum-of-art-costume-institute-exhibition-review.jpg",
@@ -89,12 +46,23 @@ const COLLECTIONS: Collection[] = [
 export default function HomeScreen() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   const navigation = useNavigation();
+  const { getFeaturedArtworks, isLoading, error } = useArtworks();
+
+  // Fetch featured artworks on mount
+  useEffect(() => {
+    const loadArtworks = async () => {
+      const artworks = await getFeaturedArtworks();
+      setFeaturedArtworks(artworks);
+    };
+    loadArtworks();
+  }, [getFeaturedArtworks]);
 
   // Handle navigation focus
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       setIsAutoPlaying(true);
     });
@@ -144,7 +112,7 @@ export default function HomeScreen() {
   };
 
   const handleProgressChange = (_: number, absoluteProgress: number) => {
-    const newIndex = Math.round(absoluteProgress) % FEATURED_ARTWORKS.length;
+    const newIndex = Math.round(absoluteProgress) % featuredArtworks.length;
     setActiveIndex(newIndex);
   };
 
@@ -154,16 +122,21 @@ export default function HomeScreen() {
       onTouchEnd={handleGestureEnd}
       style={styles.featuredItem}
     >
-      <Image source={{ uri: item.image }} style={styles.featuredImage} />
+      <Image
+        source={{ uri: item.primaryImage || undefined }}
+        style={styles.featuredImage}
+      />
       <ThemedText style={styles.artworkTitle}>{item.title}</ThemedText>
-      <ThemedText style={styles.artistName}>{item.artist}</ThemedText>
+      <ThemedText style={styles.artistName}>
+        {item.artistDisplayName || "Unknown Artist"}
+      </ThemedText>
     </Pressable>
   );
 
   const renderPagination = () => {
     return (
       <ThemedView style={styles.paginationContainer}>
-        {FEATURED_ARTWORKS.map((_, index) => (
+        {featuredArtworks.map((_, index) => (
           <ThemedView
             key={index}
             style={[
@@ -175,6 +148,24 @@ export default function HomeScreen() {
       </ThemedView>
     );
   };
+
+  // Show loading state
+  if (isLoading && featuredArtworks.length === 0) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ThemedText>Loading featured artworks...</ThemedText>
+      </ThemedView>
+    );
+  }
+
+  // Show error state
+  if (error && featuredArtworks.length === 0) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ThemedText>Error loading artworks: {error.message}</ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <ScrollView
@@ -196,56 +187,69 @@ export default function HomeScreen() {
       <ThemedView style={styles.section}>
         <ThemedText style={styles.sectionTitle}>Featured Artworks</ThemedText>
         <ThemedView style={styles.carouselContainer}>
-          <Carousel
-            ref={carouselRef}
-            loop
-            width={SCREEN_WIDTH - 40}
-            height={400}
-            autoPlay={isAutoPlaying}
-            data={FEATURED_ARTWORKS}
-            scrollAnimationDuration={1000}
-            autoPlayInterval={3000}
-            onProgressChange={handleProgressChange}
-            renderItem={({ item }) => renderFeaturedItem(item)}
-            enabled={false}
-            mode="parallax"
-            modeConfig={{
-              parallaxScrollingScale: 0.9,
-              parallaxScrollingOffset: 40,
-            }}
-          />
-          <Pressable
-            style={[styles.carouselButton, styles.carouselButtonLeft]}
-            onPress={handlePrevious}
-          >
-            <FontAwesome name="chevron-left" size={20} color="#666" />
-          </Pressable>
-          <Pressable
-            style={[styles.carouselButton, styles.carouselButtonRight]}
-            onPress={handleNext}
-          >
-            <FontAwesome name="chevron-right" size={20} color="#666" />
-          </Pressable>
+          {featuredArtworks.length > 0 ? (
+            <>
+              <Carousel
+                ref={carouselRef}
+                loop
+                width={SCREEN_WIDTH - 40}
+                height={400}
+                autoPlay={isAutoPlaying}
+                data={featuredArtworks}
+                scrollAnimationDuration={2000}
+                autoPlayInterval={5000}
+                onProgressChange={handleProgressChange}
+                renderItem={({ item }) => renderFeaturedItem(item)}
+              />
+              <Pressable
+                style={[styles.carouselButton, styles.prevButton]}
+                onPress={handlePrevious}
+              >
+                <FontAwesome name="chevron-left" size={24} color="#fff" />
+              </Pressable>
+              <Pressable
+                style={[styles.carouselButton, styles.nextButton]}
+                onPress={handleNext}
+              >
+                <FontAwesome name="chevron-right" size={24} color="#fff" />
+              </Pressable>
+            </>
+          ) : (
+            <ThemedView style={styles.noArtworksContainer}>
+              <ThemedText>No featured artworks available</ThemedText>
+            </ThemedView>
+          )}
+          {renderPagination()}
         </ThemedView>
-        {renderPagination()}
       </ThemedView>
 
-      {/* Browse Collections */}
+      {/* Collections */}
       <ThemedView style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>Browse Collections</ThemedText>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ThemedText style={styles.sectionTitle}>Collections</ThemedText>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.collectionsContainer}
+        >
           {COLLECTIONS.map((collection) => (
-            <Link key={collection.id} href="/collection" asChild>
-              <Pressable style={styles.collectionItem}>
-                <Image
-                  source={{ uri: collection.image }}
-                  style={styles.collectionImage}
-                />
-                <ThemedText style={styles.collectionTitle}>
-                  {collection.title}
-                </ThemedText>
-              </Pressable>
-            </Link>
+            <Pressable
+              key={collection.id}
+              style={styles.collectionItem}
+              onPress={() => {
+                router.push({
+                  pathname: "/collection",
+                  params: { id: collection.id },
+                });
+              }}
+            >
+              <Image
+                source={{ uri: collection.image }}
+                style={styles.collectionImage}
+              />
+              <ThemedText style={styles.collectionTitle}>
+                {collection.title}
+              </ThemedText>
+            </Pressable>
           ))}
         </ScrollView>
       </ThemedView>
@@ -280,29 +284,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  centerContent: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   contentContainer: {
-    padding: 20,
-    paddingBottom: 100,
+    paddingBottom: 20,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "bold",
   },
   profileIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 5,
   },
   section: {
-    marginBottom: 24,
+    marginTop: 20,
   },
   lastSection: {
     marginBottom: 40,
@@ -310,82 +315,97 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",
-    marginBottom: 16,
-  },
-  carouselContainer: {
-    position: "relative",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  carouselButton: {
-    position: "absolute",
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    elevation: 5,
-    zIndex: 1,
-    top: 130,
-  },
-  carouselButtonLeft: {
-    left: 0,
-  },
-  carouselButtonRight: {
-    right: 0,
-  },
-  featuredItem: {
-    width: SCREEN_WIDTH - 40,
+    marginBottom: 15,
     paddingHorizontal: 20,
   },
+  carouselContainer: {
+    alignItems: "center",
+    paddingHorizontal: 20,
+    marginBottom: 10,
+    position: "relative",
+  },
+  noArtworksContainer: {
+    width: SCREEN_WIDTH - 40,
+    height: 400,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  featuredItem: {
+    flex: 1,
+    borderRadius: 15,
+    overflow: "hidden",
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
   featuredImage: {
-    width: "100%",
-    height: 300,
-    borderRadius: 12,
+    flex: 1,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    resizeMode: "cover",
   },
   artworkTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "600",
-    marginTop: 8,
+    marginTop: 12,
+    paddingHorizontal: 15,
   },
   artistName: {
     fontSize: 14,
     color: "#666",
-    marginTop: 4,
+    marginTop: 6,
+    paddingHorizontal: 15,
+    marginBottom: 12,
   },
   paginationContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 16,
+    marginTop: 15,
+    marginBottom: 5,
   },
   paginationDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#ccc",
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
     marginHorizontal: 4,
   },
   paginationDotActive: {
-    backgroundColor: "#007AFF",
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#000",
+  },
+  collectionsContainer: {
+    paddingHorizontal: 15,
   },
   collectionItem: {
-    marginRight: 16,
-    width: (SCREEN_WIDTH - 56) / 2,
+    width: 200,
+    marginHorizontal: 5,
+    borderRadius: 10,
+    overflow: "hidden",
   },
   collectionImage: {
     width: "100%",
-    height: 180,
-    borderRadius: 12,
+    height: 150,
+    borderRadius: 10,
   },
   collectionTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "500",
     marginTop: 8,
+    paddingHorizontal: 5,
   },
   triviaCard: {
     backgroundColor: "#f5f5f5",
@@ -418,5 +438,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
     marginLeft: 6,
+  },
+  carouselButton: {
+    position: "absolute",
+    top: "50%",
+    transform: [{ translateY: -20 }],
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1,
+  },
+  prevButton: {
+    left: 30,
+  },
+  nextButton: {
+    right: 30,
   },
 });
