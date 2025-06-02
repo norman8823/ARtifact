@@ -211,8 +211,7 @@ export const listUserXPS = /* GraphQL */ `query ListUserXPS(
   APITypes.ListUserXPSQueryVariables,
   APITypes.ListUserXPSQuery
 >;
-export const favoritedsByUserIdAndArtworkId =
-  /* GraphQL */ `query FavoritedsByUserIdAndArtworkId(
+export const favoritedsByUserIdAndArtworkId = /* GraphQL */ `query FavoritedsByUserIdAndArtworkId(
   $userId: ID!
   $artworkId: ModelIDKeyConditionInput
   $sortDirection: ModelSortDirection
@@ -243,11 +242,10 @@ export const favoritedsByUserIdAndArtworkId =
   }
 }
 ` as GeneratedQuery<
-    APITypes.FavoritedsByUserIdAndArtworkIdQueryVariables,
-    APITypes.FavoritedsByUserIdAndArtworkIdQuery
-  >;
-export const visitedsByUserIdAndArtworkId =
-  /* GraphQL */ `query VisitedsByUserIdAndArtworkId(
+  APITypes.FavoritedsByUserIdAndArtworkIdQueryVariables,
+  APITypes.FavoritedsByUserIdAndArtworkIdQuery
+>;
+export const visitedsByUserIdAndArtworkId = /* GraphQL */ `query VisitedsByUserIdAndArtworkId(
   $userId: ID!
   $artworkId: ModelIDKeyConditionInput
   $sortDirection: ModelSortDirection
@@ -278,11 +276,10 @@ export const visitedsByUserIdAndArtworkId =
   }
 }
 ` as GeneratedQuery<
-    APITypes.VisitedsByUserIdAndArtworkIdQueryVariables,
-    APITypes.VisitedsByUserIdAndArtworkIdQuery
-  >;
-export const userQuestsByUserIdAndQuestId =
-  /* GraphQL */ `query UserQuestsByUserIdAndQuestId(
+  APITypes.VisitedsByUserIdAndArtworkIdQueryVariables,
+  APITypes.VisitedsByUserIdAndArtworkIdQuery
+>;
+export const userQuestsByUserIdAndQuestId = /* GraphQL */ `query UserQuestsByUserIdAndQuestId(
   $userId: ID!
   $questId: ModelIDKeyConditionInput
   $sortDirection: ModelSortDirection
@@ -315,11 +312,10 @@ export const userQuestsByUserIdAndQuestId =
   }
 }
 ` as GeneratedQuery<
-    APITypes.UserQuestsByUserIdAndQuestIdQueryVariables,
-    APITypes.UserQuestsByUserIdAndQuestIdQuery
-  >;
-export const userXPSByUserIdAndTimestamp =
-  /* GraphQL */ `query UserXPSByUserIdAndTimestamp(
+  APITypes.UserQuestsByUserIdAndQuestIdQueryVariables,
+  APITypes.UserQuestsByUserIdAndQuestIdQuery
+>;
+export const userXPSByUserIdAndTimestamp = /* GraphQL */ `query UserXPSByUserIdAndTimestamp(
   $userId: ID!
   $timestamp: ModelStringKeyConditionInput
   $sortDirection: ModelSortDirection
@@ -350,9 +346,9 @@ export const userXPSByUserIdAndTimestamp =
   }
 }
 ` as GeneratedQuery<
-    APITypes.UserXPSByUserIdAndTimestampQueryVariables,
-    APITypes.UserXPSByUserIdAndTimestampQuery
-  >;
+  APITypes.UserXPSByUserIdAndTimestampQueryVariables,
+  APITypes.UserXPSByUserIdAndTimestampQuery
+>;
 export const getArtwork = /* GraphQL */ `query GetArtwork($id: ID!) {
   getArtwork(id: $id) {
     id
@@ -364,11 +360,14 @@ export const getArtwork = /* GraphQL */ `query GetArtwork($id: ID!) {
     additionalImages
     departmentId
     department
+    departmentDescription
+    departmentImageUrl
     objectType
     title
     culture
     artistDisplayName
     objectDate
+    objectURL
     medium
     dimensions
     classification
@@ -400,11 +399,14 @@ export const listArtworks = /* GraphQL */ `query ListArtworks(
       additionalImages
       departmentId
       department
+      departmentDescription
+      departmentImageUrl
       objectType
       title
       culture
       artistDisplayName
       objectDate
+      objectURL
       medium
       dimensions
       classification
@@ -501,8 +503,7 @@ export const listAudioContents = /* GraphQL */ `query ListAudioContents(
   APITypes.ListAudioContentsQueryVariables,
   APITypes.ListAudioContentsQuery
 >;
-export const audioContentsByArtworkIdAndId =
-  /* GraphQL */ `query AudioContentsByArtworkIdAndId(
+export const audioContentsByArtworkIdAndId = /* GraphQL */ `query AudioContentsByArtworkIdAndId(
   $artworkId: ID!
   $id: ModelIDKeyConditionInput
   $sortDirection: ModelSortDirection
@@ -533,9 +534,9 @@ export const audioContentsByArtworkIdAndId =
   }
 }
 ` as GeneratedQuery<
-    APITypes.AudioContentsByArtworkIdAndIdQueryVariables,
-    APITypes.AudioContentsByArtworkIdAndIdQuery
-  >;
+  APITypes.AudioContentsByArtworkIdAndIdQueryVariables,
+  APITypes.AudioContentsByArtworkIdAndIdQuery
+>;
 export const getArtFact = /* GraphQL */ `query GetArtFact($id: ID!) {
   getArtFact(id: $id) {
     id
@@ -576,8 +577,7 @@ export const listArtFacts = /* GraphQL */ `query ListArtFacts(
   APITypes.ListArtFactsQueryVariables,
   APITypes.ListArtFactsQuery
 >;
-export const artFactsByArtworkIdAndTimestamp =
-  /* GraphQL */ `query ArtFactsByArtworkIdAndTimestamp(
+export const artFactsByArtworkIdAndTimestamp = /* GraphQL */ `query ArtFactsByArtworkIdAndTimestamp(
   $artworkId: ID!
   $timestamp: ModelStringKeyConditionInput
   $sortDirection: ModelSortDirection
@@ -608,9 +608,9 @@ export const artFactsByArtworkIdAndTimestamp =
   }
 }
 ` as GeneratedQuery<
-    APITypes.ArtFactsByArtworkIdAndTimestampQueryVariables,
-    APITypes.ArtFactsByArtworkIdAndTimestampQuery
-  >;
+  APITypes.ArtFactsByArtworkIdAndTimestampQueryVariables,
+  APITypes.ArtFactsByArtworkIdAndTimestampQuery
+>;
 export const getQuest = /* GraphQL */ `query GetQuest($id: ID!) {
   getQuest(id: $id) {
     id
@@ -690,22 +690,3 @@ export const listRanks = /* GraphQL */ `query ListRanks(
   }
 }
 ` as GeneratedQuery<APITypes.ListRanksQueryVariables, APITypes.ListRanksQuery>;
-export const getUserByOwner =
-  /* GraphQL */ `query GetUserByOwner($owner: String!) {
-  listUsers(filter: { owner: { eq: $owner } }, limit: 1) {
-    items {
-      id
-      username
-      email
-      phone
-      profileImage
-      isPremium
-      remainingFreeScans
-      xpPoints
-      createdAt
-      updatedAt
-      owner
-      __typename
-    }
-  }
-}` as GeneratedQuery<APITypes.ListUsersQueryVariables, APITypes.ListUsersQuery>;
