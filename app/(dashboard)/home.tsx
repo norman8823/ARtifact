@@ -196,22 +196,28 @@ export default function HomeScreen() {
                 height={400}
                 autoPlay={isAutoPlaying}
                 data={featuredArtworks}
-                scrollAnimationDuration={2000}
-                autoPlayInterval={5000}
+                scrollAnimationDuration={1000}
+                autoPlayInterval={3000}
                 onProgressChange={handleProgressChange}
                 renderItem={({ item }) => renderFeaturedItem(item)}
+                enabled={false}
+                mode="parallax"
+                modeConfig={{
+                  parallaxScrollingScale: 0.9,
+                  parallaxScrollingOffset: 40,
+                }}
               />
               <Pressable
-                style={[styles.carouselButton, styles.prevButton]}
+                style={[styles.carouselButton, styles.carouselButtonLeft]}
                 onPress={handlePrevious}
               >
-                <FontAwesome name="chevron-left" size={24} color="#fff" />
+                <FontAwesome name="chevron-left" size={20} color="#666" />
               </Pressable>
               <Pressable
-                style={[styles.carouselButton, styles.nextButton]}
+                style={[styles.carouselButton, styles.carouselButtonRight]}
                 onPress={handleNext}
               >
-                <FontAwesome name="chevron-right" size={24} color="#fff" />
+                <FontAwesome name="chevron-right" size={20} color="#666" />
               </Pressable>
             </>
           ) : (
@@ -319,10 +325,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   carouselContainer: {
-    alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 10,
     position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
   },
   noArtworksContainer: {
     width: SCREEN_WIDTH - 40,
@@ -338,21 +343,13 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   featuredItem: {
-    flex: 1,
-    borderRadius: 15,
-    overflow: "hidden",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    width: SCREEN_WIDTH - 40,
+    paddingHorizontal: 20,
   },
   featuredImage: {
-    flex: 1,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    resizeMode: "cover",
+    width: "100%",
+    height: 300,
+    borderRadius: 12,
   },
   artworkTitle: {
     fontSize: 18,
@@ -441,20 +438,23 @@ const styles = StyleSheet.create({
   },
   carouselButton: {
     position: "absolute",
-    top: "50%",
-    transform: [{ translateY: -20 }],
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    elevation: 5,
     zIndex: 1,
+    top: 130,
   },
-  prevButton: {
-    left: 30,
+  carouselButtonLeft: {
+    left: 0,
   },
-  nextButton: {
-    right: 30,
+  carouselButtonRight: {
+    right: 0,
   },
 });
