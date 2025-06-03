@@ -5,9 +5,17 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Pressable, ScrollView, StyleSheet } from "react-native";
+import {
+  Dimensions,
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
+const THUMBNAIL_SIZE = 60;
+const THUMBNAIL_SPACING = 8;
 
 export default function ArtDetailScreen() {
   const params = useLocalSearchParams();
@@ -24,6 +32,7 @@ export default function ArtDetailScreen() {
 
   const { getArtworkById, isLoading, error } = useArtwork();
   const [artwork, setArtwork] = useState<Artwork | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     console.log("Art Detail Screen - Effect running with id:", id);
@@ -33,6 +42,7 @@ export default function ArtDetailScreen() {
           console.log("Art Detail Screen - Got artwork result:", result);
           if (result) {
             setArtwork(result);
+            setSelectedImage(result.primaryImage);
           } else {
             console.log("Art Detail Screen - No artwork found for id:", id);
           }
@@ -72,6 +82,28 @@ export default function ArtDetailScreen() {
     );
   }
 
+  // Combine primary image with additional images for the gallery
+  const allImages = [
+    artwork.primaryImage,
+    ...(artwork.additionalImages || []),
+  ].filter((img): img is string => !!img);
+
+  const renderThumbnail = ({ item: imageUrl }: { item: string }) => (
+    <Pressable
+      style={[
+        styles.thumbnail,
+        selectedImage === imageUrl && styles.thumbnailSelected,
+      ]}
+      onPress={() => setSelectedImage(imageUrl)}
+    >
+      <Image
+        source={{ uri: imageUrl }}
+        style={styles.thumbnailImage}
+        contentFit="cover"
+      />
+    </Pressable>
+  );
+
   return (
     <>
       <Stack.Screen
@@ -85,11 +117,21 @@ export default function ArtDetailScreen() {
         <ThemedView style={styles.imageContainer}>
           <Image
             source={{
-              uri: artwork.primaryImage || undefined,
+              uri: selectedImage || artwork.primaryImage || undefined,
             }}
             style={styles.artworkImage}
             contentFit="cover"
           />
+          {allImages.length > 1 && (
+            <FlatList
+              data={allImages}
+              renderItem={renderThumbnail}
+              keyExtractor={(item) => item}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.thumbnailContainer}
+            />
+          )}
         </ThemedView>
 
         {/* Artwork Info */}
@@ -199,12 +241,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageContainer: {
-    height: 300,
     backgroundColor: "#f5f5f5",
   },
   artworkImage: {
     width: "100%",
-    height: "100%",
+    height: 300,
   },
   infoContainer: {
     padding: 24,
@@ -358,5 +399,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+  },
+  thumbnailContainer: {
+    padding: THUMBNAIL_SPACING,
+    backgroundColor: "#fff",
+  },
+  thumbnail: {
+    width: THUMBNAIL_SIZE,
+    height: THUMBNAIL_SIZE,
+    marginRight: THUMBNAIL_SPACING,
+    borderRadius: 4,
+    overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
+  thumbnailSelected: {
+    borderColor: "#000",
+  },
+  thumbnailImage: {
+    width: "100%",
+    height: "100%",
   },
 });

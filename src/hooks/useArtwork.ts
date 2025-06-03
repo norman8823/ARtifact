@@ -13,6 +13,7 @@ export interface Artwork {
   artistDisplayName: string | null;
   primaryImage: string | null;
   primaryImageSmall: string | null;
+  additionalImages: string[] | null;
   isFeatured: boolean | null;
   hasAudio: boolean | null;
   objectDate: string | null;
@@ -27,22 +28,22 @@ export function useArtwork() {
   const [error, setError] = useState<Error | null>(null);
 
   const getArtworkById = useCallback(async (id: string) => {
-    console.log("useArtwork - Starting getArtworkById with id:", id);
+    // console.log("useArtwork - Starting getArtworkById with id:", id);
     setIsLoading(true);
     setError(null);
     try {
       // Check authentication state
-      console.log("useArtwork - Checking authentication state...");
+      // console.log("useArtwork - Checking authentication state...");
       try {
         const user = await getCurrentUser();
-        console.log("useArtwork - Current user:", user.username);
+        // console.log("useArtwork - Current user:", user.username);
 
         const session = await fetchAuthSession();
-        console.log("useArtwork - Auth session tokens:", {
-          accessToken:
-            session.tokens?.accessToken?.toString().substring(0, 20) + "...",
-          idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
-        });
+        // console.log("useArtwork - Auth session tokens:", {
+        //   accessToken:
+        //     session.tokens?.accessToken?.toString().substring(0, 20) + "...",
+        //   idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
+        // });
 
         // Make sure we have valid tokens before proceeding
         if (!session.tokens?.accessToken || !session.tokens?.idToken) {
@@ -54,7 +55,7 @@ export function useArtwork() {
         throw new Error("Authentication required");
       }
 
-      console.log("useArtwork - Making GraphQL query for artwork:", id);
+      // console.log("useArtwork - Making GraphQL query for artwork:", id);
       const result = await client.graphql<GetArtworkQuery>({
         query: getArtwork,
         variables: {
@@ -63,10 +64,10 @@ export function useArtwork() {
         authMode: "userPool" as any,
       });
 
-      console.log(
-        "useArtwork - Raw API Response:",
-        JSON.stringify(result, null, 2)
-      );
+      // console.log(
+      //   "useArtwork - Raw API Response:",
+      //   JSON.stringify(result, null, 2)
+      // );
 
       // Type guard for GraphQL errors
       if ("errors" in result && result.errors) {
@@ -100,6 +101,7 @@ export function useArtwork() {
         artistDisplayName: artwork.artistDisplayName,
         primaryImage: artwork.primaryImage,
         primaryImageSmall: artwork.primaryImageSmall,
+        additionalImages: artwork.additionalImages,
         isFeatured: artwork.isFeatured,
         hasAudio: artwork.hasAudio,
         objectDate: artwork.objectDate,
