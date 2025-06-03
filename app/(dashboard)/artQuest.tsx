@@ -1,34 +1,41 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { type Quest as BaseQuest, useQuests } from "@/src/hooks/useQuests";
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet } from "react-native";
 
 type QuestDifficulty = "Easy" | "Medium" | "Hard";
 
-interface Quest {
-  id: string;
-  title: string;
-  description: string;
-  xpReward: number;
-  difficulty: QuestDifficulty;
-  location?: string;
-  progress?: {
+interface ActiveQuest extends BaseQuest {
+  progress: {
     current: number;
     total: number;
   };
 }
 
 export default function ArtQuestScreen() {
-  const [activeQuests] = useState<Quest[]>([
+  const { getAllQuests, isLoading, error } = useQuests();
+  const [availableQuests, setAvailableQuests] = useState<BaseQuest[]>([]);
+
+  // Fetch quests when component mounts
+  useEffect(() => {
+    getAllQuests().then((quests) => {
+      setAvailableQuests(quests);
+    });
+  }, [getAllQuests]);
+
+  const [activeQuests] = useState<ActiveQuest[]>([
     {
       id: "1",
       title: "Euro Trip",
       description: "Visit 3 masterpieces from different European countries",
       xpReward: 300,
-      difficulty: "Medium",
-      location: "Gallery 24, European Collection",
+      icon: null,
+      requiredArtworks: null,
+      isPremium: false,
+      galleryMap: "Gallery 24, European Collection",
       progress: {
         current: 2,
         total: 3,
@@ -39,8 +46,10 @@ export default function ArtQuestScreen() {
       title: "Time Warp",
       description: "Visit artworks from 3 different centuries",
       xpReward: 250,
-      difficulty: "Medium",
-      location: "Various Galleries",
+      icon: null,
+      requiredArtworks: null,
+      isPremium: false,
+      galleryMap: "Various Galleries",
       progress: {
         current: 1,
         total: 3,
@@ -48,29 +57,23 @@ export default function ArtQuestScreen() {
     },
   ]);
 
-  const [availableQuests] = useState<Quest[]>([
-    {
-      id: "3",
-      title: "Face to Face",
-      description: "Discover the evolution of portraiture across 3 styles",
-      xpReward: 300,
-      difficulty: "Medium",
-    },
-    {
-      id: "4",
-      title: "Mixed Media",
-      description: "Experience 5 different art mediums",
-      xpReward: 400,
-      difficulty: "Hard",
-    },
-    {
-      id: "5",
-      title: "Art Essentials",
-      description: "Visit the museum's 5 most iconic works",
-      xpReward: 300,
-      difficulty: "Easy",
-    },
-  ]);
+  // Show loading state
+  if (isLoading) {
+    return (
+      <ThemedView style={[styles.container, styles.loadingContainer]}>
+        <ThemedText>Loading quests...</ThemedText>
+      </ThemedView>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <ThemedView style={[styles.container, styles.loadingContainer]}>
+        <ThemedText>Error loading quests: {error.message}</ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <ScrollView
@@ -152,7 +155,7 @@ export default function ArtQuestScreen() {
             <ThemedView style={styles.locationContainer}>
               <FontAwesome name="map-marker" size={14} color="#666" />
               <ThemedText style={styles.locationText}>
-                {quest.location}
+                {quest.galleryMap}
               </ThemedText>
             </ThemedView>
           </Pressable>
@@ -182,6 +185,13 @@ export default function ArtQuestScreen() {
                   <ThemedText style={styles.questTitle}>
                     {quest.title}
                   </ThemedText>
+                  {quest.isPremium && (
+                    <ThemedView style={styles.premiumBadge}>
+                      <ThemedText style={styles.premiumText}>
+                        Premium
+                      </ThemedText>
+                    </ThemedView>
+                  )}
                   <ThemedView style={styles.xpBadge}>
                     <ThemedText style={styles.xpText}>
                       {quest.xpReward} XP
@@ -210,6 +220,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   contentContainer: {
     paddingBottom: 100,
@@ -362,6 +377,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   startButtonText: {
+    color: "#333",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  premiumBadge: {
+    backgroundColor: "#FFD700",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: "flex-start",
+  },
+  premiumText: {
     color: "#333",
     fontSize: 14,
     fontWeight: "500",
