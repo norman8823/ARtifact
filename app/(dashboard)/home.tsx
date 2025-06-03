@@ -75,7 +75,7 @@ export default function HomeScreen() {
     touchStartY.current = event.nativeEvent.pageY;
   };
 
-  const handleGestureEnd = (event: any) => {
+  const handleGestureEnd = (event: any, artwork: Artwork) => {
     if (touchStartX.current === null || touchStartY.current === null) return;
 
     const deltaX = Math.abs(event.nativeEvent.pageX - touchStartX.current);
@@ -88,7 +88,10 @@ export default function HomeScreen() {
       setIsAutoPlaying(false); // Pause autoplay when navigating away
       router.push({
         pathname: "/artDetail",
-        params: { source: "Home" },
+        params: {
+          id: artwork.id,
+          source: "Home",
+        },
       });
     }
 
@@ -119,7 +122,7 @@ export default function HomeScreen() {
   const renderFeaturedItem = (item: Artwork) => (
     <Pressable
       onTouchStart={handleGestureStart}
-      onTouchEnd={handleGestureEnd}
+      onTouchEnd={(e) => handleGestureEnd(e, item)}
       style={styles.featuredItem}
     >
       <Image
