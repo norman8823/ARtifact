@@ -369,27 +369,32 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     padding: 24,
+    paddingBottom: 56,
     gap: 16,
   },
   titleRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
+    paddingRight: 56,
   },
   title: {
     fontSize: 24,
     fontWeight: "600",
     color: "#111",
     marginBottom: 4,
+    flex: 1,
   },
   artist: {
     fontSize: 16,
     color: "#444",
     marginBottom: 2,
+    flex: 1,
   },
   period: {
     fontSize: 14,
     color: "#666",
+    flex: 1,
   },
   favoriteButton: {
     width: 40,
@@ -405,6 +410,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
+    position: "absolute",
+    right: 8,
+    top: 0,
   },
   arButton: {
     width: "100%",
@@ -447,19 +455,24 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
     paddingVertical: 16,
     gap: 12,
+    marginTop: 8,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
+    gap: 8,
   },
   detailLabel: {
     fontSize: 14,
     color: "#666",
+    flex: 1,
   },
   detailValue: {
     fontSize: 14,
     color: "#111",
+    flex: 2,
+    textAlign: "right",
   },
   description: {
     fontSize: 14,
