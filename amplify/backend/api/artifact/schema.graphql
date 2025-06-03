@@ -18,6 +18,7 @@ type Artwork @model @auth(rules: [{ allow: public, operations: [read] }, { allow
   isCurated: Boolean
   isFeatured: Boolean
   hasAudio: Boolean
+  hasAR: Boolean
   primaryImage: String
   primaryImageSmall: String
   additionalImages: [String]

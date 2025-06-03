@@ -1,11 +1,18 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
+import { useDepartments, type Department } from "@/src/hooks/useDepartments";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Link, router, useNavigation } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { Dimensions, Pressable, ScrollView, StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -47,10 +54,20 @@ export default function HomeScreen() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   const navigation = useNavigation();
-  const { getFeaturedArtworks, isLoading, error } = useArtworks();
+  const {
+    getFeaturedArtworks,
+    isLoading: isLoadingArtworks,
+    error: artworksError,
+  } = useArtworks();
+  const {
+    getAllDepartments,
+    isLoading: isLoadingDepartments,
+    error: departmentsError,
+  } = useDepartments();
 
   // Fetch featured artworks on mount
   useEffect(() => {
@@ -60,6 +77,15 @@ export default function HomeScreen() {
     };
     loadArtworks();
   }, [getFeaturedArtworks]);
+
+  // Fetch departments on mount
+  useEffect(() => {
+    const loadDepartments = async () => {
+      const fetchedDepartments = await getAllDepartments();
+      setDepartments(fetchedDepartments);
+    };
+    loadDepartments();
+  }, [getAllDepartments]);
 
   // Handle navigation focus
   useEffect(() => {
@@ -153,19 +179,28 @@ export default function HomeScreen() {
   };
 
   // Show loading state
-  if (isLoading && featuredArtworks.length === 0) {
+  if (
+    (isLoadingArtworks && featuredArtworks.length === 0) ||
+    (isLoadingDepartments && departments.length === 0)
+  ) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
-        <ThemedText>Loading featured artworks...</ThemedText>
+        <ActivityIndicator size="large" />
       </ThemedView>
     );
   }
 
   // Show error state
-  if (error && featuredArtworks.length === 0) {
+  if (
+    (artworksError && featuredArtworks.length === 0) ||
+    (departmentsError && departments.length === 0)
+  ) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
-        <ThemedText>Error loading artworks: {error.message}</ThemedText>
+        <ThemedText>
+          Error loading content:{" "}
+          {artworksError?.message || departmentsError?.message}
+        </ThemedText>
       </ThemedView>
     );
   }
@@ -240,23 +275,23 @@ export default function HomeScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.collectionsContainer}
         >
-          {COLLECTIONS.map((collection) => (
+          {departments.map((department) => (
             <Pressable
-              key={collection.id}
+              key={department.id}
               style={styles.collectionItem}
               onPress={() => {
                 router.push({
                   pathname: "/collection",
-                  params: { id: collection.id },
+                  params: { id: department.id },
                 });
               }}
             >
               <Image
-                source={{ uri: collection.image }}
+                source={{ uri: department.coverImage || undefined }}
                 style={styles.collectionImage}
               />
               <ThemedText style={styles.collectionTitle}>
-                {collection.title}
+                {department.displayName}
               </ThemedText>
             </Pressable>
           ))}

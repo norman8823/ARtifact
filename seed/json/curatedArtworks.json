@@ -7,7 +7,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/11621/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/11621/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 1,
+    "departmentId": "1",
     "department": "The American Wing",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/1.jpg",
     "departmentDescription": "The American Wing's ever-evolving collection comprises some 20,000 works by African American, Euro American, Native American, and Latin American artists, ranging from the colonial to early-modern period.",
@@ -22,7 +22,8 @@
     "galleryNumber": "719",
     "tags": ["Boys", "Girls", "Men", "Portraits"],
     "description": "Purchase, Morris K. Jesup and Maria DeWitt Jesup Funds, Gift of George I. Seney and Bequest of Vera Ruth Miller, by exchange; and Gift of Anita Pohndorff Yates, in memory of her father, F. G. Pohndorff, 1984",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/11621"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/11621",
+    "hasAR": false
   },
   {
     "id": "10796",
@@ -32,7 +33,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/10796/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/10796/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 1,
+    "departmentId": "1",
     "department": "The American Wing",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/1.jpg",
     "departmentDescription": "The American Wing's ever-evolving collection comprises some 20,000 works by African American, Euro American, Native American, and Latin American artists, ranging from the colonial to early-modern period.",
@@ -47,7 +48,8 @@
     "galleryNumber": "774",
     "tags": ["Landscapes", "Cows"],
     "description": "Bequest of Mary Starr Van Winkle, 1970",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/10796"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/10796",
+    "hasAR": false
   },
   {
     "id": "325664",
@@ -59,7 +61,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/325664/additional/1.jpg"
     ],
-    "departmentId": 3,
+    "departmentId": "3",
     "department": "Ancient Near Eastern Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/3.jpg",
     "departmentDescription": "Includes more than 7,000 works ranging in date from the eighth millennium B.C. through the centuries just beyond the time of the Arab conquests of the seventh century A.D.",
@@ -74,7 +76,8 @@
     "galleryNumber": "202",
     "tags": ["Bulls"],
     "description": "Rogers Fund, 1964",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/325664"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/325664",
+    "hasAR": false
   },
   {
     "id": "324030",
@@ -84,7 +87,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/324030/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/324030/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 3,
+    "departmentId": "3",
     "department": "Ancient Near Eastern Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/3.jpg",
     "departmentDescription": "Includes more than 7,000 works ranging in date from the eighth millennium B.C. through the centuries just beyond the time of the Arab conquests of the seventh century A.D.",
@@ -99,7 +102,8 @@
     "galleryNumber": "202",
     "tags": ["Animals"],
     "description": "Rogers Fund, 1947",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/324030"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/324030",
+    "hasAR": false
   },
   {
     "id": "321676",
@@ -114,7 +118,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/321676/additional/3.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/321676/additional/4.jpg"
     ],
-    "departmentId": 3,
+    "departmentId": "3",
     "department": "Ancient Near Eastern Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/3.jpg",
     "departmentDescription": "Includes more than 7,000 works ranging in date from the eighth millennium B.C. through the centuries just beyond the time of the Arab conquests of the seventh century A.D.",
@@ -129,7 +133,8 @@
     "galleryNumber": "202",
     "tags": [],
     "description": "Purchase, 1886",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/321676"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/321676",
+    "hasAR": false
   },
   {
     "id": "29318",
@@ -139,7 +144,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/29318/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/29318/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 4,
+    "departmentId": "4",
     "department": "Arms and Armor",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/4.jpg",
     "departmentDescription": "Collecting, preserving, researching, publishing, and exhibiting distinguished examples representing the art of the armorer, swordsmith, and gunmaker.",
@@ -154,7 +159,8 @@
     "galleryNumber": null,
     "tags": [],
     "description": "Gift of Stephen V. Grancsay, 1942",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/29318"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/29318",
+    "hasAR": false
   },
   {
     "id": "22139",
@@ -166,7 +172,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/22139/additional/1.jpg"
     ],
-    "departmentId": 4,
+    "departmentId": "4",
     "department": "Arms and Armor",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/4.jpg",
     "departmentDescription": "Collecting, preserving, researching, publishing, and exhibiting distinguished examples representing the art of the armorer, swordsmith, and gunmaker.",
@@ -181,7 +187,8 @@
     "galleryNumber": "371",
     "tags": [],
     "description": "Frederick C. Hewitt Fund, 1911",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/22139"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/22139",
+    "hasAR": false
   },
   {
     "id": "316393",
@@ -193,7 +200,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/316393/additional/1.jpg"
     ],
-    "departmentId": 5,
+    "departmentId": "5",
     "department": "The Michael C. Rockefeller Wing",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/5.jpg",
     "departmentDescription": "The Met's collection of art of the peoples of sub-Saharan Africa, the Pacific Islands, and North, Central, and South America comprises more than eleven thousand works of art of varied materials and types, representing diverse cultural traditions from as early as 3000 B.C.E. to the present.",
@@ -208,7 +215,8 @@
     "galleryNumber": null,
     "tags": ["Shields", "Warriors", "Spears", "Men"],
     "description": "Gift of Mr. and Mrs. Klaus G. Perls, 1990",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/316393"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/316393",
+    "hasAR": false
   },
   {
     "id": "314034",
@@ -224,7 +232,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/314034/additional/4.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/314034/additional/5.jpg"
     ],
-    "departmentId": 5,
+    "departmentId": "5",
     "department": "The Michael C. Rockefeller Wing",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/5.jpg",
     "departmentDescription": "The Met's collection of art of the peoples of sub-Saharan Africa, the Pacific Islands, and North, Central, and South America comprises more than eleven thousand works of art of varied materials and types, representing diverse cultural traditions from as early as 3000 B.C.E. to the present.",
@@ -239,7 +247,8 @@
     "galleryNumber": null,
     "tags": ["Caryatids", "Women"],
     "description": "Purchase, Buckeye Trust and Charles B. Benenson Gifts, Rogers Fund and funds from various donors, 1979",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/314034"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/314034",
+    "hasAR": false
   },
   {
     "id": "316173",
@@ -254,7 +263,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/316173/additional/3.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/316173/additional/4.jpg"
     ],
-    "departmentId": 5,
+    "departmentId": "5",
     "department": "The Michael C. Rockefeller Wing",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/5.jpg",
     "departmentDescription": "The Met's collection of art of the peoples of sub-Saharan Africa, the Pacific Islands, and North, Central, and South America comprises more than eleven thousand works of art of varied materials and types, representing diverse cultural traditions from as early as 3000 B.C.E. to the present.",
@@ -269,7 +278,8 @@
     "galleryNumber": null,
     "tags": ["Musical Instruments", "Men"],
     "description": "Rogers Fund, 1988",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/316173"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/316173",
+    "hasAR": false
   },
   {
     "id": "313240",
@@ -286,7 +296,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/313240/additional/5.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/313240/additional/6.jpg"
     ],
-    "departmentId": 5,
+    "departmentId": "5",
     "department": "The Michael C. Rockefeller Wing",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/5.jpg",
     "departmentDescription": "The Met's collection of art of the peoples of sub-Saharan Africa, the Pacific Islands, and North, Central, and South America comprises more than eleven thousand works of art of varied materials and types, representing diverse cultural traditions from as early as 3000 B.C.E. to the present.",
@@ -301,7 +311,8 @@
     "galleryNumber": null,
     "tags": ["Thrones", "Kings", "Men"],
     "description": "The Michael C. Rockefeller Memorial Collection, Bequest of Nelson A. Rockefeller, 1979",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/313240"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/313240",
+    "hasAR": false
   },
   {
     "id": "313386",
@@ -311,7 +322,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/313386/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/313386/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 5,
+    "departmentId": "5",
     "department": "The Michael C. Rockefeller Wing",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/5.jpg",
     "departmentDescription": "The Met's collection of art of the peoples of sub-Saharan Africa, the Pacific Islands, and North, Central, and South America comprises more than eleven thousand works of art of varied materials and types, representing diverse cultural traditions from as early as 3000 B.C.E. to the present.",
@@ -326,7 +337,8 @@
     "galleryNumber": null,
     "tags": ["Men", "Rattles"],
     "description": "The Michael C. Rockefeller Memorial Collection, Bequest of Nelson A. Rockefeller, 1979",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/313386"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/313386",
+    "hasAR": false
   },
   {
     "id": "309959",
@@ -336,7 +348,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/309959/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/309959/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 5,
+    "departmentId": "5",
     "department": "The Michael C. Rockefeller Wing",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/5.jpg",
     "departmentDescription": "The Met's collection of art of the peoples of sub-Saharan Africa, the Pacific Islands, and North, Central, and South America comprises more than eleven thousand works of art of varied materials and types, representing diverse cultural traditions from as early as 3000 B.C.E. to the present.",
@@ -351,7 +363,8 @@
     "galleryNumber": null,
     "tags": [],
     "description": "Gift and Bequest of Alice K. Bache, 1974, 1977",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/309959"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/309959",
+    "hasAR": false
   },
   {
     "id": "42716",
@@ -363,7 +376,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/42716/additional/1.jpg"
     ],
-    "departmentId": 6,
+    "departmentId": "6",
     "department": "Asian Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/6.jpg",
     "departmentDescription": "The Met's collection of Asian art—more than 35,000 objects, ranging in date from the third millennium B.C. to the twenty-first century—is one of the largest and most comprehensive in the world.",
@@ -378,7 +391,8 @@
     "galleryNumber": "206",
     "tags": ["Bodhisattvas", "Buddhism", "Buddha", "Medicine"],
     "description": "Gift of Arthur M. Sackler, in honor of his parents, Isaac and Sophie Sackler, 1965",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/42716"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/42716",
+    "hasAR": false
   },
   {
     "id": "897102",
@@ -390,7 +404,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/897102/additional/1.jpg"
     ],
-    "departmentId": 6,
+    "departmentId": "6",
     "department": "Asian Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/6.jpg",
     "departmentDescription": "The Met's collection of Asian art—more than 35,000 objects, ranging in date from the third millennium B.C. to the twenty-first century—is one of the largest and most comprehensive in the world.",
@@ -405,7 +419,8 @@
     "galleryNumber": "224",
     "tags": [],
     "description": "Mary and Cheney Cowles Collection, Gift of Mary and Cheney Cowles, 2023",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/897102"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/897102",
+    "hasAR": false
   },
   {
     "id": "78594",
@@ -434,7 +449,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/78594/additional/17.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/78594/additional/18.jpg"
     ],
-    "departmentId": 6,
+    "departmentId": "6",
     "department": "Asian Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/6.jpg",
     "departmentDescription": "The Met's collection of Asian art—more than 35,000 objects, ranging in date from the third millennium B.C. to the twenty-first century—is one of the largest and most comprehensive in the world.",
@@ -449,7 +464,8 @@
     "galleryNumber": "231",
     "tags": ["Houses", "Landscapes"],
     "description": "Purchase, Mary and James G. Wallach Foundation Gift, 2013",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/78594"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/78594",
+    "hasAR": false
   },
   {
     "id": "159209",
@@ -462,7 +478,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/159209/additional/1.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/159209/additional/2.jpg"
     ],
-    "departmentId": 8,
+    "departmentId": "8",
     "department": "Costume Institute",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/8.jpg",
     "departmentDescription": "The Costume Institute's collection of more than 33,000 costumes and accessories represents five continents and seven centuries of fashionable dress and accessories for men, women, and children.",
@@ -477,7 +493,8 @@
     "galleryNumber": null,
     "tags": [],
     "description": "Brooklyn Museum Costume Collection at The Metropolitan Museum of Art, Gift of the Brooklyn Museum, 2009; Gift of the estate of Miss S. E. White, 1939",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/159209"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/159209",
+    "hasAR": false
   },
   {
     "id": "382503",
@@ -487,7 +504,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/382503/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/382503/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 9,
+    "departmentId": "9",
     "department": "Drawings and Prints",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/9.jpg",
     "departmentDescription": "The Met's collection of drawings and prints—one of the most comprehensive and distinguished of its kind in the world—began with a gift of 670 works from Cornelius Vanderbilt, a Museum trustee, in 1880.",
@@ -502,7 +519,8 @@
     "galleryNumber": "690",
     "tags": ["Men", "Women"],
     "description": "Purchase, Guy Wildenstein and Stephen A. Geiger Gifts, 2008",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/382503"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/382503",
+    "hasAR": false
   },
   {
     "id": "349137",
@@ -514,7 +532,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/349137/additional/1.jpg"
     ],
-    "departmentId": 9,
+    "departmentId": "9",
     "department": "Drawings and Prints",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/9.jpg",
     "departmentDescription": "The Met's collection of drawings and prints—one of the most comprehensive and distinguished of its kind in the world—began with a gift of 670 works from Cornelius Vanderbilt, a Museum trustee, in 1880.",
@@ -529,7 +547,8 @@
     "galleryNumber": "690",
     "tags": ["Men", "Whales", "Horses"],
     "description": "The Elisha Whittelsey Collection, The Elisha Whittelsey Fund, 1951",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/349137"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/349137",
+    "hasAR": false
   },
   {
     "id": "910609",
@@ -539,7 +558,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/910609/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/910609/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 9,
+    "departmentId": "9",
     "department": "Drawings and Prints",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/9.jpg",
     "departmentDescription": "The Met's collection of drawings and prints—one of the most comprehensive and distinguished of its kind in the world—began with a gift of 670 works from Cornelius Vanderbilt, a Museum trustee, in 1880.",
@@ -554,7 +573,8 @@
     "galleryNumber": "690",
     "tags": [],
     "description": "Purchase, Mr. and Mrs. Hubert Goldschmidt Gift and Harvey Salzman Gift, 2024",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/910609"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/910609",
+    "hasAR": false
   },
   {
     "id": "548343",
@@ -571,7 +591,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/548343/additional/5.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/548343/additional/6.jpg"
     ],
-    "departmentId": 10,
+    "departmentId": "10",
     "department": "Egyptian Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/10.jpg",
     "departmentDescription": "The Met's collection of ancient Egyptian art consists of approximately 26,000 objects of artistic, historical, and cultural importance, dating from the Paleolithic to the Roman period.",
@@ -586,7 +606,8 @@
     "galleryNumber": "119",
     "tags": [],
     "description": "Theodore M. Davis Collection, Bequest of Theodore M. Davis, 1915",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/548343"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/548343",
+    "hasAR": false
   },
   {
     "id": "545879",
@@ -605,7 +626,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/545879/additional/7.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/545879/additional/8.jpg"
     ],
-    "departmentId": 10,
+    "departmentId": "10",
     "department": "Egyptian Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/10.jpg",
     "departmentDescription": "The Met's collection of ancient Egyptian art consists of approximately 26,000 objects of artistic, historical, and cultural importance, dating from the Paleolithic to the Roman period.",
@@ -620,7 +641,8 @@
     "galleryNumber": "103",
     "tags": [],
     "description": "Purchase, Fletcher Fund and The Guide Foundation Inc. Gift, 1966",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/545879"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/545879",
+    "hasAR": false
   },
   {
     "id": "544346",
@@ -632,7 +654,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/544346/additional/1.jpg"
     ],
-    "departmentId": 10,
+    "departmentId": "10",
     "department": "Egyptian Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/10.jpg",
     "departmentDescription": "The Met's collection of ancient Egyptian art consists of approximately 26,000 objects of artistic, historical, and cultural importance, dating from the Paleolithic to the Roman period.",
@@ -647,7 +669,8 @@
     "galleryNumber": "114",
     "tags": ["Men", "Women", "Hieroglyphs"],
     "description": "Rogers Fund, 1916",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/544346"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/544346",
+    "hasAR": false
   },
   {
     "id": "436532",
@@ -657,7 +680,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/436532/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/436532/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 11,
+    "departmentId": "11",
     "department": "European Paintings",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/11.jpg",
     "departmentDescription": "The Met's celebrated European Paintings collection encompasses more than 2,500 works of art from the thirteenth through the early twentieth century.",
@@ -672,7 +695,8 @@
     "galleryNumber": "825",
     "tags": ["Men", "Self-portraits"],
     "description": "Bequest of Miss Adelaide Milton de Groot (1876-1967), 1967",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/436532"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/436532",
+    "hasAR": false
   },
   {
     "id": "437397",
@@ -682,7 +706,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/437397/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/437397/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 11,
+    "departmentId": "11",
     "department": "European Paintings",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/11.jpg",
     "departmentDescription": "The Met's celebrated European Paintings collection encompasses more than 2,500 works of art from the thirteenth through the early twentieth century.",
@@ -697,7 +721,8 @@
     "galleryNumber": "616",
     "tags": ["Men", "Self-portraits"],
     "description": "Bequest of Benjamin Altman, 1913",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/437397"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/437397",
+    "hasAR": false
   },
   {
     "id": "437658",
@@ -707,7 +732,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/437658/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/437658/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 11,
+    "departmentId": "11",
     "department": "European Paintings",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/11.jpg",
     "departmentDescription": "The Met's celebrated European Paintings collection encompasses more than 2,500 works of art from the thirteenth through the early twentieth century.",
@@ -730,7 +755,8 @@
       "Rivers"
     ],
     "description": "Bequest of Sam A. Lewisohn, 1951",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/437658"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/437658",
+    "hasAR": false
   },
   {
     "id": "204806",
@@ -743,7 +769,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/204806/additional/1.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/204806/additional/2.jpg"
     ],
-    "departmentId": 12,
+    "departmentId": "12",
     "department": "European Sculpture and Decorative Arts",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/12.jpg",
     "departmentDescription": "The Met's comprehensive collection of European sculpture and decorative arts reflect the development of a number of art forms in Western European countries from the early fifteenth through the early twentieth century.",
@@ -758,7 +784,8 @@
     "galleryNumber": "534",
     "tags": ["Women"],
     "description": "Harris Brisbane Dick Fund, 1967",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/204806"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/204806",
+    "hasAR": false
   },
   {
     "id": "204812",
@@ -777,7 +804,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/204812/additional/7.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/204812/additional/8.jpg"
     ],
-    "departmentId": 12,
+    "departmentId": "12",
     "department": "European Sculpture and Decorative Arts",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/12.jpg",
     "departmentDescription": "The Met's comprehensive collection of European sculpture and decorative arts reflect the development of a number of art forms in Western European countries from the early fifteenth through the early twentieth century.",
@@ -792,7 +819,8 @@
     "galleryNumber": "548",
     "tags": ["Suffering", "Boys", "Male Nudes"],
     "description": "Purchase, Josephine Bay Paul and C. Michael Paul Foundation Inc. Gift, Charles Ulrick and Josephine Bay Foundation Inc. Gift, and Fletcher Fund, 1967",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/204812"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/204812",
+    "hasAR": false
   },
   {
     "id": "211486",
@@ -809,7 +837,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/211486/additional/5.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/211486/additional/6.jpg"
     ],
-    "departmentId": 12,
+    "departmentId": "12",
     "department": "European Sculpture and Decorative Arts",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/12.jpg",
     "departmentDescription": "The Met's comprehensive collection of European sculpture and decorative arts reflect the development of a number of art forms in Western European countries from the early fifteenth through the early twentieth century.",
@@ -824,7 +852,8 @@
     "galleryNumber": "548",
     "tags": ["Suffering", "Satyrs"],
     "description": "Rogers Fund and Harris Brisbane Dick Fund, 2002",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/211486"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/211486",
+    "hasAR": false
   },
   {
     "id": "202996",
@@ -838,7 +867,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/202996/additional/2.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/202996/additional/3.jpg"
     ],
-    "departmentId": 12,
+    "departmentId": "12",
     "department": "European Sculpture and Decorative Arts",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/12.jpg",
     "departmentDescription": "The Met's comprehensive collection of European sculpture and decorative arts reflect the development of a number of art forms in Western European countries from the early fifteenth through the early twentieth century.",
@@ -853,7 +882,8 @@
     "galleryNumber": "525",
     "tags": [],
     "description": "Purchase, Mr. and Mrs. Charles Wrightsman Gift, 1963",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/202996"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/202996",
+    "hasAR": false
   },
   {
     "id": "248891",
@@ -873,7 +903,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/248891/additional/8.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/248891/additional/9.jpg"
     ],
-    "departmentId": 13,
+    "departmentId": "13",
     "department": "Greek and Roman Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/13.jpg",
     "departmentDescription": "The Museum's collection of Greek and Roman art comprises more than 30,000 works ranging in date from the Neolithic period to the time of the Roman emperor Constantine's conversion to Christianity in A.D. 312.",
@@ -888,7 +918,8 @@
     "galleryNumber": "162",
     "tags": ["Boys"],
     "description": "Rogers Fund, 1914",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/248891"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/248891",
+    "hasAR": false
   },
   {
     "id": "250951",
@@ -901,7 +932,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/250951/additional/1.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/250951/additional/2.jpg"
     ],
-    "departmentId": 13,
+    "departmentId": "13",
     "department": "Greek and Roman Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/13.jpg",
     "departmentDescription": "The Museum's collection of Greek and Roman art comprises more than 30,000 works ranging in date from the Neolithic period to the time of the Roman emperor Constantine's conversion to Christianity in A.D. 312.",
@@ -916,7 +947,8 @@
     "galleryNumber": "153",
     "tags": ["Palmettes"],
     "description": "Rogers Fund, 1920",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/250951"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/250951",
+    "hasAR": false
   },
   {
     "id": "252453",
@@ -926,7 +958,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/252453/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/252453/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 13,
+    "departmentId": "13",
     "department": "Greek and Roman Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/13.jpg",
     "departmentDescription": "The Museum's collection of Greek and Roman art comprises more than 30,000 works ranging in date from the Neolithic period to the time of the Roman emperor Constantine's conversion to Christianity in A.D. 312.",
@@ -941,7 +973,8 @@
     "galleryNumber": "160",
     "tags": [],
     "description": "Gift of The American Society for the Excavation of Sardis, 1926",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/252453"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/252453",
+    "hasAR": false
   },
   {
     "id": "451042",
@@ -977,7 +1010,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/451042/additional/24.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/451042/additional/25.jpg"
     ],
-    "departmentId": 14,
+    "departmentId": "14",
     "department": "Islamic Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/14.jpg",
     "departmentDescription": "The Met's collection of Islamic art is one of the most comprehensive in the world and ranges in date from the seventh to the twenty-first century. Its more than 15,000 objects reflect the great diversity and range of the cultural traditions from Spain to Indonesia.",
@@ -992,7 +1025,8 @@
     "galleryNumber": "453",
     "tags": ["Animals"],
     "description": "Rogers Fund, 1951",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/451042"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/451042",
+    "hasAR": false
   },
   {
     "id": "452102",
@@ -1030,7 +1064,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/452102/additional/26.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/452102/additional/27.jpg"
     ],
-    "departmentId": 14,
+    "departmentId": "14",
     "department": "Islamic Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/14.jpg",
     "departmentDescription": "The Met's collection of Islamic art is one of the most comprehensive in the world and ranges in date from the seventh to the twenty-first century. Its more than 15,000 objects reflect the great diversity and range of the cultural traditions from Spain to Indonesia.",
@@ -1045,7 +1079,8 @@
     "galleryNumber": "461",
     "tags": [],
     "description": "Gift of The Hagop Kevorkian Fund, 1970",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/452102"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/452102",
+    "hasAR": false
   },
   {
     "id": "451023",
@@ -1059,7 +1094,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/451023/additional/2.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/451023/additional/3.jpg"
     ],
-    "departmentId": 14,
+    "departmentId": "14",
     "department": "Islamic Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/14.jpg",
     "departmentDescription": "The Met's collection of Islamic art is one of the most comprehensive in the world and ranges in date from the seventh to the twenty-first century. Its more than 15,000 objects reflect the great diversity and range of the cultural traditions from Spain to Indonesia.",
@@ -1074,7 +1109,8 @@
     "galleryNumber": "462",
     "tags": ["Couples", "Men", "Women"],
     "description": "Purchase, Francis M. Weld Gift, 1950",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/451023"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/451023",
+    "hasAR": false
   },
   {
     "id": "449537",
@@ -1091,7 +1127,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/449537/additional/5.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/449537/additional/6.jpg"
     ],
-    "departmentId": 14,
+    "departmentId": "14",
     "department": "Islamic Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/14.jpg",
     "departmentDescription": "The Met's collection of Islamic art is one of the most comprehensive in the world and ranges in date from the seventh to the twenty-first century. Its more than 15,000 objects reflect the great diversity and range of the cultural traditions from Spain to Indonesia.",
@@ -1106,7 +1142,8 @@
     "galleryNumber": "455",
     "tags": ["Arabic"],
     "description": "Harris Brisbane Dick Fund, 1939",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/449537"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/449537",
+    "hasAR": false
   },
   {
     "id": "458998",
@@ -1124,7 +1161,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/458998/additional/6.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/458998/additional/7.jpg"
     ],
-    "departmentId": 15,
+    "departmentId": "15",
     "department": "Robert Lehman Collection",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/15.jpg",
     "departmentDescription": "The Robert Lehman Collection is one of the most distinguished privately assembled art collections in the United States. Robert Lehman's bequest to The Met is a remarkable example of twentieth-century American collecting.",
@@ -1139,7 +1176,8 @@
     "galleryNumber": "952",
     "tags": ["Women", "Assumption of the Virgin", "Angels", "Virgin Mary"],
     "description": "Robert Lehman Collection, 1975",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/458998"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/458998",
+    "hasAR": false
   },
   {
     "id": "459131",
@@ -1152,7 +1190,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/459131/additional/1.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/459131/additional/2.jpg"
     ],
-    "departmentId": 15,
+    "departmentId": "15",
     "department": "Robert Lehman Collection",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/15.jpg",
     "departmentDescription": "The Robert Lehman Collection is one of the most distinguished privately assembled art collections in the United States. Robert Lehman's bequest to The Met is a remarkable example of twentieth-century American collecting.",
@@ -1167,7 +1205,8 @@
     "galleryNumber": "952",
     "tags": ["Men", "Last Supper", "Saints"],
     "description": "Robert Lehman Collection, 1975",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/459131"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/459131",
+    "hasAR": false
   },
   {
     "id": "459202",
@@ -1195,7 +1234,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/459202/additional/16.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/459202/additional/17.jpg"
     ],
-    "departmentId": 15,
+    "departmentId": "15",
     "department": "Robert Lehman Collection",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/15.jpg",
     "departmentDescription": "The Robert Lehman Collection is one of the most distinguished privately assembled art collections in the United States. Robert Lehman's bequest to The Met is a remarkable example of twentieth-century American collecting.",
@@ -1210,7 +1249,8 @@
     "galleryNumber": "958",
     "tags": ["Aristotle", "Women", "Men"],
     "description": "Robert Lehman Collection, 1975",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/459202"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/459202",
+    "hasAR": false
   },
   {
     "id": "469959",
@@ -1222,7 +1262,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/469959/additional/1.jpg"
     ],
-    "departmentId": 7,
+    "departmentId": "7",
     "department": "The Cloisters",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/7.jpg",
     "departmentDescription": "Displayed in both The Met Fifth Avenue and in the Museum's branch in northern Manhattan, The Met Cloisters, the collection encompasses the art of the Mediterranean and Europe from the fall of Rome in the fourth century to the beginning of the Renaissance in the early sixteenth century.",
@@ -1237,7 +1277,8 @@
     "galleryNumber": "009",
     "tags": ["Adoration of the Magi"],
     "description": "The Cloisters Collection, 1986",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/469959"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/469959",
+    "hasAR": false
   },
   {
     "id": "471911",
@@ -1256,7 +1297,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/471911/additional/7.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/471911/additional/8.jpg"
     ],
-    "departmentId": 7,
+    "departmentId": "7",
     "department": "The Cloisters",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/7.jpg",
     "departmentDescription": "Displayed in both The Met Fifth Avenue and in the Museum's branch in northern Manhattan, The Met Cloisters, the collection encompasses the art of the Mediterranean and Europe from the fall of Rome in the fourth century to the beginning of the Renaissance in the early sixteenth century.",
@@ -1278,7 +1319,8 @@
       "Visitation"
     ],
     "description": "The Cloisters Collection, 1962",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/471911"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/471911",
+    "hasAR": false
   },
   {
     "id": "471179",
@@ -1292,7 +1334,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/471179/additional/2.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/471179/additional/3.jpg"
     ],
-    "departmentId": 7,
+    "departmentId": "7",
     "department": "The Cloisters",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/7.jpg",
     "departmentDescription": "Displayed in both The Met Fifth Avenue and in the Museum's branch in northern Manhattan, The Met Cloisters, the collection encompasses the art of the Mediterranean and Europe from the fall of Rome in the fourth century to the beginning of the Renaissance in the early sixteenth century.",
@@ -1307,7 +1349,8 @@
     "galleryNumber": "006",
     "tags": [],
     "description": "The Cloisters Collection, 1935",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/471179"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/471179",
+    "hasAR": false
   },
   {
     "id": "749592",
@@ -1320,7 +1363,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/749592/additional/1.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/749592/additional/2.jpg"
     ],
-    "departmentId": 16,
+    "departmentId": "16",
     "department": "The Libraries",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/16.jpg",
     "departmentDescription": "With its collection of more than one million volumes, extensive digital collections, and online resources, Watson Library is one of the world's most comprehensive art libraries.",
@@ -1335,7 +1378,8 @@
     "galleryNumber": "999",
     "tags": [],
     "description": null,
-    "objectURL": "https://www.metmuseum.org/art/collection/search/749592"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/749592",
+    "hasAR": false
   },
   {
     "id": "699505",
@@ -1349,7 +1393,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/699505/additional/2.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/699505/additional/3.jpg"
     ],
-    "departmentId": 16,
+    "departmentId": "16",
     "department": "The Libraries",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/16.jpg",
     "departmentDescription": "With its collection of more than one million volumes, extensive digital collections, and online resources, Watson Library is one of the world's most comprehensive art libraries.",
@@ -1364,7 +1408,8 @@
     "galleryNumber": "999",
     "tags": [],
     "description": null,
-    "objectURL": "https://www.metmuseum.org/art/collection/search/699505"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/699505",
+    "hasAR": false
   },
   {
     "id": "466286",
@@ -1390,7 +1435,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/466286/additional/14.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/466286/additional/15.jpg"
     ],
-    "departmentId": 17,
+    "departmentId": "17",
     "department": "Medieval Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/17.jpg",
     "departmentDescription": "The Museum's collection of medieval and Byzantine art is among the most comprehensive in the world, encompassing the art of the Mediterranean and Europe from the fall of Rome to the beginning of the Renaissance.",
@@ -1405,7 +1450,8 @@
     "galleryNumber": "301",
     "tags": [],
     "description": "Purchase, Lila Acheson Wallace Gift, 1995",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/466286"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/466286",
+    "hasAR": false
   },
   {
     "id": "466296",
@@ -1423,7 +1469,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/466296/additional/6.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/466296/additional/7.jpg"
     ],
-    "departmentId": 17,
+    "departmentId": "17",
     "department": "Medieval Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/17.jpg",
     "departmentDescription": "The Museum's collection of medieval and Byzantine art is among the most comprehensive in the world, encompassing the art of the Mediterranean and Europe from the fall of Rome to the beginning of the Renaissance.",
@@ -1438,7 +1484,8 @@
     "galleryNumber": "303",
     "tags": [],
     "description": "Purchase, Louis V. Bell Fund and Henry G. Keasbey Bequest, 1997",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/466296"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/466296",
+    "hasAR": false
   },
   {
     "id": "466289",
@@ -1451,7 +1498,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/466289/additional/1.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/466289/additional/2.jpg"
     ],
-    "departmentId": 17,
+    "departmentId": "17",
     "department": "Medieval Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/17.jpg",
     "departmentDescription": "The Museum's collection of medieval and Byzantine art is among the most comprehensive in the world, encompassing the art of the Mediterranean and Europe from the fall of Rome to the beginning of the Renaissance.",
@@ -1466,7 +1513,8 @@
     "galleryNumber": "304",
     "tags": ["Men", "Boats", "Games"],
     "description": "Purchase, Stark and Michael Ward Gift, Joseph Pulitzer Bequest, and Pfeiffer and Dodge Funds, 1996",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/466289"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/466289",
+    "hasAR": false
   },
   {
     "id": "503517",
@@ -1486,7 +1534,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/503517/additional/8.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/503517/additional/9.jpg"
     ],
-    "departmentId": 18,
+    "departmentId": "18",
     "department": "Musical Instruments",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/18.jpg",
     "departmentDescription": "The Museum's collection of musical instruments includes approximately 5,000 examples from six continents and the Pacific Islands, dating from about 300 B.C. to the present.",
@@ -1501,7 +1549,8 @@
     "galleryNumber": "684",
     "tags": [],
     "description": "Purchase, Robert Alonzo Lehman Bequest, 1999",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/503517"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/503517",
+    "hasAR": false
   },
   {
     "id": "503670",
@@ -1518,7 +1567,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/503670/additional/5.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/503670/additional/6.jpg"
     ],
-    "departmentId": 18,
+    "departmentId": "18",
     "department": "Musical Instruments",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/18.jpg",
     "departmentDescription": "The Museum's collection of musical instruments includes approximately 5,000 examples from six continents and the Pacific Islands, dating from about 300 B.C. to the present.",
@@ -1533,7 +1582,8 @@
     "galleryNumber": "683",
     "tags": [],
     "description": "Purchase, Margaret M. Hess Gift, in memory of her father, John D. McCarty, 1982",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/503670"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/503670",
+    "hasAR": false
   },
   {
     "id": "501788",
@@ -1559,7 +1609,7 @@
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/501788/additional/14.jpg",
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/501788/additional/15.jpg"
     ],
-    "departmentId": 18,
+    "departmentId": "18",
     "department": "Musical Instruments",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/18.jpg",
     "departmentDescription": "The Museum's collection of musical instruments includes approximately 5,000 examples from six continents and the Pacific Islands, dating from about 300 B.C. to the present.",
@@ -1574,7 +1624,8 @@
     "galleryNumber": "684",
     "tags": [],
     "description": "The Crosby Brown Collection of Musical Instruments, 1889",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/501788"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/501788",
+    "hasAR": false
   },
   {
     "id": "302362",
@@ -1586,7 +1637,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/302362/additional/1.jpg"
     ],
-    "departmentId": 19,
+    "departmentId": "19",
     "department": "Photographs",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/19.jpg",
     "departmentDescription": "The Met's Department of Photographs houses a collection of more than 75,000 works spanning the history of photography from its invention in the 1830s to the present.",
@@ -1601,7 +1652,8 @@
     "galleryNumber": "693",
     "tags": ["Men", "American Civil War", "Soldiers", "Portraits"],
     "description": "Purchase, Vital Projects Fund Inc. Gift, through Joyce and Robert Menschel, 2019",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/302362"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/302362",
+    "hasAR": false
   },
   {
     "id": "263608",
@@ -1613,7 +1665,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/263608/additional/1.jpg"
     ],
-    "departmentId": 19,
+    "departmentId": "19",
     "department": "Photographs",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/19.jpg",
     "departmentDescription": "The Met's Department of Photographs houses a collection of more than 75,000 works spanning the history of photography from its invention in the 1830s to the present.",
@@ -1628,7 +1680,8 @@
     "galleryNumber": null,
     "tags": ["Interiors", "Portraits", "Men", "Women"],
     "description": "The Elisha Whittelsey Collection, The Elisha Whittelsey Fund, 1983",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/263608"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/263608",
+    "hasAR": false
   },
   {
     "id": "282066",
@@ -1640,7 +1693,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/282066/additional/1.jpg"
     ],
-    "departmentId": 19,
+    "departmentId": "19",
     "department": "Photographs",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/19.jpg",
     "departmentDescription": "The Met's Department of Photographs houses a collection of more than 75,000 works spanning the history of photography from its invention in the 1830s to the present.",
@@ -1655,7 +1708,8 @@
     "galleryNumber": "999",
     "tags": ["Men", "Portraits"],
     "description": "The Rubel Collection, Gift of William Rubel, 2001",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/282066"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/282066",
+    "hasAR": false
   },
   {
     "id": "485555",
@@ -1667,7 +1721,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/485555/additional/1.jpg"
     ],
-    "departmentId": 21,
+    "departmentId": "21",
     "department": "Modern and Contemporary Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/21.jpg",
     "departmentDescription": "The Met's engagement with art from 1890 to today includes the acquisition and exhibition of works in a range of media, spanning movements in modernism to contemporary practices from across the globe.",
@@ -1682,7 +1736,8 @@
     "galleryNumber": "908",
     "tags": [],
     "description": "Bequest of Lydia Winston Malbin, 1989",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/485555"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/485555",
+    "hasAR": false
   },
   {
     "id": "488903",
@@ -1692,7 +1747,7 @@
     "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/488903/primaryImage.jpg",
     "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/488903/primaryImageSmall.jpg",
     "additionalImages": [],
-    "departmentId": 21,
+    "departmentId": "21",
     "department": "Modern and Contemporary Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/21.jpg",
     "departmentDescription": "The Met's engagement with art from 1890 to today includes the acquisition and exhibition of works in a range of media, spanning movements in modernism to contemporary practices from across the globe.",
@@ -1707,7 +1762,8 @@
     "galleryNumber": "900",
     "tags": ["Portraits", "Women"],
     "description": "Gift of Mr. and Mrs. Nate B. Spingold, 1956",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/488903"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/488903",
+    "hasAR": false
   },
   {
     "id": "485540",
@@ -1719,7 +1775,7 @@
     "additionalImages": [
       "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/485540/additional/1.jpg"
     ],
-    "departmentId": 21,
+    "departmentId": "21",
     "department": "Modern and Contemporary Art",
     "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/21.jpg",
     "departmentDescription": "The Met's engagement with art from 1890 to today includes the acquisition and exhibition of works in a range of media, spanning movements in modernism to contemporary practices from across the globe.",
@@ -1734,6 +1790,7 @@
     "galleryNumber": "908",
     "tags": ["Human Figures"],
     "description": "Bequest of Lydia Winston Malbin, 1989",
-    "objectURL": "https://www.metmuseum.org/art/collection/search/485540"
+    "objectURL": "https://www.metmuseum.org/art/collection/search/485540",
+    "hasAR": false
   }
 ]

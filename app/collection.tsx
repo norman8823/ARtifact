@@ -1,73 +1,72 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useDepartmentDetail } from "@/src/hooks/useDepartmentDetail";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
-import { Dimensions, Pressable, ScrollView, StyleSheet } from "react-native";
+import { Link, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
+import {
+  ActivityIndicator,
+  Dimensions,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-interface FeaturedWork {
-  id: number;
-  title: string;
-  artist: string;
-  period: string;
-  image: string;
-}
-
-const FEATURED_WORKS: FeaturedWork[] = [
-  // TODO: Replace with real artwork data from the database
-  // Current IDs are just for demonstration and won't match real artwork IDs
-  {
-    id: 1,
-    title: "Venus de Milo",
-    artist: "Alexandros of Antioch",
-    period: "c. 130-100 BCE",
-    image:
-      "https://collectionapi.metmuseum.org/api/collection/v1/iiif/247000/preview",
-  },
-  {
-    id: 2,
-    title: "The Thinker",
-    artist: "Auguste Rodin",
-    period: "1902",
-    image:
-      "https://collectionapi.metmuseum.org/api/collection/v1/iiif/207825/preview",
-  },
-  {
-    id: 3,
-    title: "David",
-    artist: "Michelangelo",
-    period: "1501-1504",
-    image:
-      "https://collectionapi.metmuseum.org/api/collection/v1/iiif/204778/preview",
-  },
-  {
-    id: 4,
-    title: "Winged Victory",
-    artist: "Unknown Artist",
-    period: "c. 200-190 BCE",
-    image:
-      "https://collectionapi.metmuseum.org/api/collection/v1/iiif/130/preview",
-  },
-  {
-    id: 5,
-    title: "Perseus with Head of Medusa",
-    artist: "Benvenuto Cellini",
-    period: "1545",
-    image:
-      "https://collectionapi.metmuseum.org/api/collection/v1/iiif/204807/preview",
-  },
-];
-
 export default function CollectionScreen() {
+  const params = useLocalSearchParams();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  const {
+    getDepartmentById,
+    department,
+    departmentArtworks,
+    isLoading,
+    error,
+  } = useDepartmentDetail();
+
+  useEffect(() => {
+    if (id) {
+      getDepartmentById(id);
+    }
+  }, [id, getDepartmentById]);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" />
+      </ThemedView>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ThemedText>Error loading collection: {error.message}</ThemedText>
+      </ThemedView>
+    );
+  }
+
+  // Show not found state
+  if (!department) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ThemedText>Collection not found</ThemedText>
+      </ThemedView>
+    );
+  }
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header Image */}
       <ThemedView style={styles.headerContainer}>
         <Image
           source={{
-            uri: "https://www.famsf.org/storage/images/6df0106c-a149-42c6-a21d-b69611a269b4/pietre-dure-panel.jpg?crop=2000,1330,x0,y1508&format=jpg&quality=80&width=1000",
+            uri: department.coverImage || undefined,
           }}
           style={styles.headerImage}
           contentFit="cover"
@@ -78,21 +77,22 @@ export default function CollectionScreen() {
       <ThemedView style={styles.content}>
         {/* Title and Stats */}
         <ThemedView style={styles.titleSection}>
-          <ThemedText style={styles.title}>
-            European Sculpture and Decorative Arts
-          </ThemedText>
+          <ThemedText style={styles.title}>{department.displayName}</ThemedText>
           <ThemedView style={styles.statsContainer}>
             <ThemedView style={styles.statItem}>
               <FontAwesome name="image" size={14} color="#666" />
-              <ThemedText style={styles.statText}>2,346 works</ThemedText>
+              <ThemedText style={styles.statText}>
+                {departmentArtworks.length} works
+              </ThemedText>
             </ThemedView>
             <ThemedText style={styles.statDivider}>•</ThemedText>
-            <ThemedText style={styles.statText}>5 Galleries</ThemedText>
+            <ThemedText style={styles.statText}>
+              {Math.ceil(departmentArtworks.length / 50)} Galleries
+            </ThemedText>
           </ThemedView>
           <ThemedText style={styles.description}>
-            Discover masterpieces of European sculpture, metalwork, ceramics,
-            glass, jewelry, furniture, textiles, and other decorative arts from
-            the medieval period to the early twentieth century.
+            {department.description ||
+              "Discover masterpieces from this amazing collection."}
           </ThemedText>
         </ThemedView>
 
@@ -104,13 +104,13 @@ export default function CollectionScreen() {
           </ThemedView>
 
           <ThemedView style={styles.featuredList}>
-            {FEATURED_WORKS.map((work) => (
+            {departmentArtworks.map((artwork) => (
               <Link
-                key={work.id}
+                key={artwork.id}
                 href={{
                   pathname: "/artDetail",
                   params: {
-                    id: work.id.toString(),
+                    id: artwork.id,
                     source: "Collection",
                   },
                 }}
@@ -119,19 +119,19 @@ export default function CollectionScreen() {
                 <Pressable>
                   <ThemedView style={styles.workCard}>
                     <Image
-                      source={{ uri: work.image }}
+                      source={{ uri: artwork.primaryImage || undefined }}
                       style={styles.workImage}
                       contentFit="cover"
                     />
                     <ThemedView style={styles.workInfo}>
                       <ThemedText style={styles.workTitle}>
-                        {work.title}
+                        {artwork.title}
                       </ThemedText>
                       <ThemedText style={styles.workArtist}>
-                        {work.artist}
+                        {artwork.artistDisplayName || "Unknown Artist"}
                       </ThemedText>
                       <ThemedText style={styles.workPeriod}>
-                        {work.period}
+                        {artwork.period || "Date unknown"}
                       </ThemedText>
                     </ThemedView>
                   </ThemedView>
@@ -250,5 +250,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#999",
     marginTop: 4,
+  },
+  centerContent: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
