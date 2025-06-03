@@ -38,7 +38,7 @@ export function useAuth(): UseAuthReturn {
       details: err.details,
     };
 
-    console.error("Auth Error Details:", JSON.stringify(errorDetails, null, 2));
+    // console.error("Auth Error Details:", JSON.stringify(errorDetails, null, 2));
 
     setError({
       message: errorDetails.message,
@@ -59,7 +59,7 @@ export function useAuth(): UseAuthReturn {
       setIsLoading(true);
       setError(null);
       try {
-        console.log("Starting sign up process for email:", email);
+        // console.log("Starting sign up process for email:", email);
         // Store password and username for auto sign-in after confirmation
         setTempPassword(password);
         setTempUsername(username);
@@ -92,7 +92,7 @@ export function useAuth(): UseAuthReturn {
       setIsLoading(true);
       setError(null);
       try {
-        console.log("Starting sign in process for email:", email);
+        // console.log("Starting sign in process for email:", email);
 
         const signInResult = await signIn({
           username: email,
@@ -102,17 +102,17 @@ export function useAuth(): UseAuthReturn {
           },
         });
 
-        console.log(
-          "Sign in result:",
-          JSON.stringify(
-            {
-              isSignedIn: signInResult.isSignedIn,
-              nextStep: signInResult.nextStep,
-            },
-            null,
-            2
-          )
-        );
+        // console.log(
+        //   "Sign in result:",
+        //   JSON.stringify(
+        //     {
+        //       isSignedIn: signInResult.isSignedIn,
+        //       nextStep: signInResult.nextStep,
+        //     },
+        //     null,
+        //     2
+        //   )
+        // );
 
         if (signInResult.isSignedIn) {
           // Ensure user exists in DynamoDB with the correct username and email
@@ -134,15 +134,15 @@ export function useAuth(): UseAuthReturn {
       setIsLoading(true);
       setError(null);
       try {
-        console.log("Starting confirmation for email:", email);
+        // console.log("Starting confirmation for email:", email);
         const confirmResult = await confirmSignUp({
           username: email,
           confirmationCode: code,
         });
-        console.log(
-          "Confirmation result:",
-          JSON.stringify(confirmResult, null, 2)
-        );
+        // console.log(
+        //   "Confirmation result:",
+        //   JSON.stringify(confirmResult, null, 2)
+        // );
 
         // After successful confirmation, automatically sign in
         const signInResult = await signInWithEmail(email, tempPassword);
