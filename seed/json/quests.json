@@ -1,0 +1,72 @@
+[
+  {
+    "id": "quest-001",
+    "title": "Euro Trip",
+    "description": "Travel across Europe through art! Visit 3 masterpieces from different European countries and experience the diversity of European artistic traditions. From British armor to Roman bronzes to Austrian stained glass.",
+    "icon": ":flag_eu:",
+    "xpReward": 300,
+    "requiredArtworks": ["22139", "248891", "469959"],
+    "isPremium": false,
+    "galleryMap": "Galleries 371, 162, 009"
+  },
+  {
+    "id": "quest-002", 
+    "title": "Time Warp",
+    "description": "Journey through the centuries! Discover how art evolved by visiting artworks from 3 different time periods. From ancient Rome (27 BCE-14 CE) to classical Greece (350-325 BCE) to Safavid Persia (1630 CE).",
+    "icon": ":alarm_clock:",
+    "xpReward": 250,
+    "requiredArtworks": ["248891", "250951", "451023"],
+    "isPremium": false,
+    "galleryMap": "Galleries 162, 153, 462"
+  },
+  {
+    "id": "quest-003",
+    "title": "Face to Face", 
+    "description": "Discover the evolution of portraiture across 3 distinct artistic styles. From Van Gogh's expressive self-portrait to Rembrandt's introspective gaze to Modigliani's modernist interpretation.",
+    "icon": ":bust_in_silhouette:",
+    "xpReward": 300,
+    "requiredArtworks": ["436532", "437397", "488903"],
+    "isPremium": false,
+    "galleryMap": "Galleries 825, 616, 900"
+  },
+  {
+    "id": "quest-004",
+    "title": "Mixed Media",
+    "description": "Experience the diversity of artistic expression! Explore 5 different art mediums: pen and wash drawing, silk evening dress, ink calligraphy, gold funerary mask, and carved wood sculpture.",
+    "icon": ":art:", 
+    "xpReward": 400,
+    "requiredArtworks": ["382503", "159209", "897102", "309959", "316173"],
+    "isPremium": false,
+    "galleryMap": "Galleries 690, Costume Institute, 224, Rockefeller Wing, Rockefeller Wing"
+  },
+  {
+    "id": "quest-005",
+    "title": "Art Essentials",
+    "description": "Visit the museum's most iconic masterpieces! See Van Gogh's self-portrait, Rembrandt's introspective masterpiece, and Seurat's pointillist study that revolutionized art.",
+    "icon": ":star:",
+    "xpReward": 300, 
+    "requiredArtworks": ["436532", "437397", "437658"],
+    "isPremium": false,
+    "galleryMap": "Galleries 825, 616, 825"
+  },
+  {
+    "id": "quest-006",
+    "title": "Color Quest",
+    "description": "Experience the full spectrum of artistic color! From the golden brilliance of ancient masks to the rich blues of stained glass, discover how artists across cultures have used color to captivate and inspire.",
+    "icon": ":rainbow:",
+    "xpReward": 350,
+    "requiredArtworks": ["309959", "469959", "452102", "437658", "42716"],
+    "isPremium": false,
+    "galleryMap": "Galleries Rockefeller Wing, 009, 461, 825, 206"
+  },
+  {
+    "id": "quest-007",
+    "title": "Global Perspectives",
+    "description": "Explore art from 4 different world regions! Journey from Japanese landscapes to Mesoamerican smiling figures, ancient Mesopotamian cuneiform to American river scenes.",
+    "icon": ":earth_africa:",
+    "xpReward": 400,
+    "requiredArtworks": ["78594", "313386", "321676", "10796"], 
+    "isPremium": false,
+    "galleryMap": "Galleries 231, Rockefeller Wing, 202, 774"
+  }
+]
