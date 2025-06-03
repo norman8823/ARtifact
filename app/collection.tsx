@@ -16,6 +16,8 @@ interface FeaturedWork {
 }
 
 const FEATURED_WORKS: FeaturedWork[] = [
+  // TODO: Replace with real artwork data from the database
+  // Current IDs are just for demonstration and won't match real artwork IDs
   {
     id: 1,
     title: "Venus de Milo",
@@ -107,7 +109,10 @@ export default function CollectionScreen() {
                 key={work.id}
                 href={{
                   pathname: "/artDetail",
-                  params: { source: "Collection" },
+                  params: {
+                    id: work.id.toString(),
+                    source: "Collection",
+                  },
                 }}
                 asChild
               >

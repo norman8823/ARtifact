@@ -1,9 +1,12 @@
+import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   Pressable,
@@ -15,41 +18,61 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const NUM_COLUMNS = 3;
 const ITEM_WIDTH = (SCREEN_WIDTH - 16) / NUM_COLUMNS; // 16 is total gap (4 * 4)
 
-interface ArtworkItem {
-  id: number;
-  image: string;
-  hasMultipleImages: boolean;
-}
-
-// Sample data - in a real app this would come from an API
-const ARTWORKS: ArtworkItem[] = Array.from({ length: 30 }, (_, index) => ({
-  id: index + 1,
-  image:
-    "https://upload.wikimedia.org/wikipedia/commons/9/95/Washington_Crossing_the_Delaware_by_Emanuel_Leutze%2C_MMA-NYC%2C_1851.jpg",
-  hasMultipleImages: index % 3 === 0,
-}));
-
 export default function ExploreScreen() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [artworks, setArtworks] = useState<Artwork[]>([]);
   const router = useRouter();
+  const { getAllArtworks, isLoading, error } = useArtworks();
 
-  const renderItem = ({ item }: { item: ArtworkItem }) => (
+  useEffect(() => {
+    const loadArtworks = async () => {
+      const fetchedArtworks = await getAllArtworks();
+      setArtworks(fetchedArtworks);
+    };
+    loadArtworks();
+  }, [getAllArtworks]);
+
+  const renderItem = ({ item }: { item: Artwork }) => (
     <Link
-      href={{ pathname: "/artDetail", params: { source: "Explore" } }}
+      href={{
+        pathname: "/artDetail",
+        params: {
+          id: item.id,
+          source: "Explore",
+        },
+      }}
       asChild
     >
       <Pressable style={styles.gridItem}>
-        <Image source={{ uri: item.image }} style={styles.artworkImage} />
-        <ThemedView style={styles.iconContainer}>
-          <FontAwesome
-            name={item.hasMultipleImages ? "clone" : "image"}
-            size={16}
-            color="#fff"
-          />
-        </ThemedView>
+        <Image
+          source={{ uri: item.primaryImage || undefined }}
+          style={styles.artworkImage}
+          contentFit="cover"
+        />
+        {item.primaryImage && item.primaryImageSmall && (
+          <ThemedView style={styles.iconContainer}>
+            <FontAwesome name="clone" size={16} color="#fff" />
+          </ThemedView>
+        )}
       </Pressable>
     </Link>
   );
+
+  if (isLoading) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" />
+      </ThemedView>
+    );
+  }
+
+  if (error) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ThemedText>Error loading artworks: {error.message}</ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView style={styles.container}>
@@ -85,12 +108,17 @@ export default function ExploreScreen() {
 
       {/* Grid */}
       <FlatList
-        data={ARTWORKS}
+        data={artworks}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         numColumns={NUM_COLUMNS}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.gridContainer}
+        ListEmptyComponent={
+          <ThemedView style={styles.centerContent}>
+            <ThemedText>No artworks found</ThemedText>
+          </ThemedView>
+        }
       />
     </ThemedView>
   );
@@ -100,6 +128,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   searchContainer: {
     padding: 16,
