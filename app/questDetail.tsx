@@ -1,91 +1,105 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { type Artwork, useArtworksByIds } from "@/src/hooks/useArtworksByIds";
+import { type Quest, useQuests } from "@/src/hooks/useQuests";
+import { type UserQuest, useUserQuest } from "@/src/hooks/useUserQuest";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, StyleSheet } from "react-native";
 
-interface Artwork {
-  id: string;
-  title: string;
-  artist: string;
-  medium: string;
-  location: string;
-  image?: string;
-  isVisited: boolean;
-}
-
 interface QuestDetail {
-  id: string;
-  title: string;
-  description: string;
-  xpReward: number;
-  progress: {
-    current: number;
-    total: number;
-  };
+  quest: Quest;
+  userQuest: UserQuest | null;
   artworks: Artwork[];
 }
 
 export default function QuestDetailScreen() {
   const params = useLocalSearchParams();
-  const [questDetail] = useState<QuestDetail>({
-    id: "1",
-    title: "Mixed Media",
-    description:
-      "Experience 5 different art mediums across our museum collections. Discover the versatility of artistic expression through various materials and techniques.",
-    xpReward: 400,
-    progress: {
-      current: 2,
-      total: 5,
-    },
-    artworks: [
-      {
-        id: "1",
-        title: "Water Lilies",
-        artist: "Claude Monet",
-        medium: "Oil Painting",
-        location: "Gallery 2, West Wing",
-        image:
-          "https://storage.googleapis.com/uxpilot-auth.appspot.com/29a4cd6a83-47f62d7ca0365b8fff72.png",
-        isVisited: true,
-      },
-      {
-        id: "2",
-        title: "Dynamic Figure",
-        artist: "Alberto Giacometti",
-        medium: "Bronze Sculpture",
-        location: "Gallery 4, Sculpture Hall",
-        image:
-          "https://storage.googleapis.com/uxpilot-auth.appspot.com/525b7ce496-e00819d9abf215db29d4.png",
-        isVisited: true,
-      },
-      {
-        id: "3",
-        title: "Starry Night",
-        artist: "Vincent van Gogh",
-        medium: "Watercolor",
-        location: "Gallery 3, East Wing",
-        isVisited: false,
-      },
-      {
-        id: "4",
-        title: "The Persistence of Memory",
-        artist: "Salvador Dalí",
-        medium: "Mixed Media",
-        location: "Gallery 5, Surrealism Hall",
-        isVisited: false,
-      },
-      {
-        id: "5",
-        title: "Guernica",
-        artist: "Pablo Picasso",
-        medium: "Charcoal Drawing",
-        location: "Gallery 1, Modern Art",
-        isVisited: false,
-      },
-    ],
-  });
+  const questId = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  const { getAllQuests, isLoading: isLoadingQuest } = useQuests();
+  const { getUserQuestStatus, isLoading: isLoadingUserQuest } = useUserQuest();
+  const { getArtworksByIds, isLoading: isLoadingArtworks } = useArtworksByIds();
+
+  const [questDetail, setQuestDetail] = useState<QuestDetail | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadQuestDetail = async () => {
+      try {
+        // Get the quest data
+        const quests = await getAllQuests();
+        const quest = quests.find((q: Quest) => q.id === questId);
+        if (!quest) {
+          throw new Error("Quest not found");
+        }
+
+        // Get the user's progress on this quest
+        const userQuest = await getUserQuestStatus(questId);
+
+        // Get the artwork details
+        const artworks = quest.requiredArtworks
+          ? await getArtworksByIds(quest.requiredArtworks)
+          : [];
+
+        setQuestDetail({
+          quest,
+          userQuest,
+          artworks,
+        });
+      } catch (err) {
+        console.error("Error loading quest detail:", err);
+        setError(err instanceof Error ? err.message : "Failed to load quest");
+      }
+    };
+
+    if (questId) {
+      loadQuestDetail();
+    }
+  }, [questId, getAllQuests, getUserQuestStatus, getArtworksByIds]);
+
+  // Show loading state
+  if (isLoadingQuest || isLoadingUserQuest || isLoadingArtworks) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ThemedText>Loading quest details...</ThemedText>
+      </ThemedView>
+    );
+  }
+
+  // Show error state
+  if (error || !questDetail) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ThemedText>
+          {error || "Could not load quest details. Please try again."}
+        </ThemedText>
+      </ThemedView>
+    );
+  }
+
+  const { quest, userQuest, artworks } = questDetail;
+
+  // Calculate progress
+  const progress = userQuest
+    ? {
+        current: userQuest.progress.visitedArtworks.length,
+        total: userQuest.progress.totalArtworks,
+      }
+    : {
+        current: 0,
+        total: artworks.length,
+      };
+
+  // Determine quest status
+  const getQuestStatus = () => {
+    if (!userQuest) return "Not Started";
+    if (userQuest.isCompleted) return "Completed";
+    return "In Progress";
+  };
+
+  const questStatus = getQuestStatus();
 
   return (
     <ThemedView style={styles.container}>
@@ -101,12 +115,10 @@ export default function QuestDetailScreen() {
                 <FontAwesome name="paint-brush" size={24} color="#F59E0B" />
               </ThemedView>
               <ThemedView>
-                <ThemedText style={styles.questTitle}>
-                  {questDetail.title}
-                </ThemedText>
+                <ThemedText style={styles.questTitle}>{quest.title}</ThemedText>
                 <ThemedView style={styles.xpBadge}>
                   <ThemedText style={styles.xpText}>
-                    {questDetail.xpReward} XP
+                    {quest.xpReward} XP
                   </ThemedText>
                 </ThemedView>
               </ThemedView>
@@ -114,7 +126,7 @@ export default function QuestDetailScreen() {
           </ThemedView>
 
           <ThemedText style={styles.description}>
-            {questDetail.description}
+            {quest.description}
           </ThemedText>
 
           {/* Progress Bar */}
@@ -123,11 +135,7 @@ export default function QuestDetailScreen() {
               style={[
                 styles.progressFill,
                 {
-                  width: `${
-                    (questDetail.progress.current /
-                      questDetail.progress.total) *
-                    100
-                  }%`,
+                  width: `${(progress.current / progress.total) * 100}%`,
                 },
               ]}
             />
@@ -144,13 +152,27 @@ export default function QuestDetailScreen() {
               />
               <ThemedText style={styles.progressText}>
                 <ThemedText style={styles.progressCount}>
-                  {questDetail.progress.current}/{questDetail.progress.total}
+                  {progress.current}/{progress.total}
                 </ThemedText>{" "}
                 artworks discovered
               </ThemedText>
             </ThemedView>
-            <ThemedView style={styles.statusBadge}>
-              <ThemedText style={styles.statusText}>In Progress</ThemedText>
+            <ThemedView
+              style={[
+                styles.statusBadge,
+                questStatus === "Completed" && styles.completedBadge,
+                questStatus === "In Progress" && styles.inProgressBadge,
+              ]}
+            >
+              <ThemedText
+                style={[
+                  styles.statusText,
+                  questStatus === "Completed" && styles.completedText,
+                  questStatus === "In Progress" && styles.inProgressText,
+                ]}
+              >
+                {questStatus}
+              </ThemedText>
             </ThemedView>
           </ThemedView>
         </ThemedView>
@@ -161,19 +183,24 @@ export default function QuestDetailScreen() {
             <ThemedText style={styles.sectionTitle}>
               Artworks to Discover
             </ThemedText>
-            <Pressable style={styles.mapButton}>
-              <FontAwesome name="map-marker" size={14} color="#666666" />
-              <ThemedText style={styles.mapButtonText}>View on Map</ThemedText>
-            </Pressable>
+            {quest.galleryMap && (
+              <Pressable style={styles.mapButton}>
+                <FontAwesome name="map-marker" size={14} color="#666666" />
+                <ThemedText style={styles.mapButtonText}>
+                  View on Map
+                </ThemedText>
+              </Pressable>
+            )}
           </ThemedView>
 
           {/* Artwork Cards */}
-          {questDetail.artworks.map((artwork) => (
+          {artworks.map((artwork) => (
             <Pressable
               key={artwork.id}
               style={[
                 styles.artworkCard,
-                artwork.isVisited && styles.artworkCardVisited,
+                userQuest?.progress.visitedArtworks.includes(artwork.id) &&
+                  styles.artworkCardVisited,
               ]}
               onPress={() => {
                 router.push({
@@ -188,9 +215,9 @@ export default function QuestDetailScreen() {
               <ThemedView style={styles.artworkContent}>
                 {/* Artwork Image or Placeholder */}
                 <ThemedView style={styles.artworkImage}>
-                  {artwork.image ? (
+                  {artwork.primaryImageSmall ? (
                     <Image
-                      source={{ uri: artwork.image }}
+                      source={{ uri: artwork.primaryImageSmall }}
                       style={styles.image}
                     />
                   ) : (
@@ -206,7 +233,9 @@ export default function QuestDetailScreen() {
                     <ThemedText
                       style={[
                         styles.artworkTitle,
-                        !artwork.isVisited && styles.artworkTitleGray,
+                        !userQuest?.progress.visitedArtworks.includes(
+                          artwork.id
+                        ) && styles.artworkTitleGray,
                       ]}
                     >
                       {artwork.title}
@@ -214,28 +243,43 @@ export default function QuestDetailScreen() {
                     <ThemedView
                       style={[
                         styles.visitedBadge,
-                        !artwork.isVisited && styles.notVisitedBadge,
+                        !userQuest?.progress.visitedArtworks.includes(
+                          artwork.id
+                        ) && styles.notVisitedBadge,
                       ]}
                     >
                       <ThemedText
                         style={[
                           styles.visitedText,
-                          !artwork.isVisited && styles.notVisitedText,
+                          !userQuest?.progress.visitedArtworks.includes(
+                            artwork.id
+                          ) && styles.notVisitedText,
                         ]}
                       >
-                        {artwork.isVisited ? "Visited" : "Not Visited"}
+                        {userQuest?.progress.visitedArtworks.includes(
+                          artwork.id
+                        )
+                          ? "Visited"
+                          : "Not Visited"}
                       </ThemedText>
                     </ThemedView>
                   </ThemedView>
                   <ThemedText style={styles.artworkDetails}>
-                    {artwork.artist} • {artwork.medium}
+                    {artwork.artistDisplayName || "Unknown Artist"} •{" "}
+                    {artwork.medium || "Unknown Medium"}
                   </ThemedText>
-                  <ThemedView style={styles.locationInfo}>
-                    <FontAwesome name="map-marker" size={12} color="#666666" />
-                    <ThemedText style={styles.locationText}>
-                      {artwork.location}
-                    </ThemedText>
-                  </ThemedView>
+                  {artwork.galleryNumber && (
+                    <ThemedView style={styles.locationInfo}>
+                      <FontAwesome
+                        name="map-marker"
+                        size={12}
+                        color="#666666"
+                      />
+                      <ThemedText style={styles.locationText}>
+                        Gallery {artwork.galleryNumber}
+                      </ThemedText>
+                    </ThemedView>
+                  )}
                 </ThemedView>
               </ThemedView>
             </Pressable>
@@ -250,6 +294,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  centerContent: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   scrollView: {
     flex: 1,
@@ -462,5 +510,17 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: 12,
     color: "#666666",
+  },
+  completedBadge: {
+    backgroundColor: "#ECFDF5",
+  },
+  completedText: {
+    color: "#059669",
+  },
+  inProgressBadge: {
+    backgroundColor: "#FEF3C7",
+  },
+  inProgressText: {
+    color: "#D97706",
   },
 });
