@@ -8,10 +8,22 @@ import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   FlatList,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const THUMBNAIL_SIZE = 60;
@@ -33,6 +45,61 @@ export default function ArtDetailScreen() {
   const { getArtworkById, isLoading, error } = useArtwork();
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const scale = useSharedValue(1);
+  const savedScale = useSharedValue(1);
+  const offsetX = useSharedValue(0);
+  const offsetY = useSharedValue(0);
+  const savedOffsetX = useSharedValue(0);
+  const savedOffsetY = useSharedValue(0);
+
+  const pinchGesture = Gesture.Pinch()
+    .onUpdate((e) => {
+      scale.value = savedScale.value * e.scale;
+    })
+    .onEnd(() => {
+      savedScale.value = scale.value;
+      // Reset if scale is less than 1
+      if (scale.value < 1) {
+        scale.value = withSpring(1);
+        savedScale.value = 1;
+        offsetX.value = withSpring(0);
+        offsetY.value = withSpring(0);
+        savedOffsetX.value = 0;
+        savedOffsetY.value = 0;
+      }
+    });
+
+  const panGesture = Gesture.Pan()
+    .onUpdate((e) => {
+      if (scale.value > 1) {
+        offsetX.value = savedOffsetX.value + e.translationX;
+        offsetY.value = savedOffsetY.value + e.translationY;
+      }
+    })
+    .onEnd(() => {
+      savedOffsetX.value = offsetX.value;
+      savedOffsetY.value = offsetY.value;
+    });
+
+  const composed = Gesture.Simultaneous(pinchGesture, panGesture);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: offsetX.value },
+      { translateY: offsetY.value },
+      { scale: scale.value },
+    ],
+  }));
+
+  const resetZoom = () => {
+    scale.value = withSpring(1);
+    savedScale.value = 1;
+    offsetX.value = withSpring(0);
+    offsetY.value = withSpring(0);
+    savedOffsetX.value = 0;
+    savedOffsetY.value = 0;
+  };
 
   useEffect(() => {
     console.log("Art Detail Screen - Effect running with id:", id);
@@ -115,13 +182,21 @@ export default function ArtDetailScreen() {
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Artwork Image */}
         <ThemedView style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: selectedImage || artwork.primaryImage || undefined,
-            }}
-            style={styles.artworkImage}
-            contentFit="cover"
-          />
+          <ThemedView style={styles.mainImageContainer}>
+            <Image
+              source={{
+                uri: selectedImage || artwork.primaryImage || undefined,
+              }}
+              style={styles.artworkImage}
+              contentFit="cover"
+            />
+            <Pressable
+              style={styles.zoomButton}
+              onPress={() => setIsModalVisible(true)}
+            >
+              <FontAwesome name="search-plus" size={24} color="#fff" />
+            </Pressable>
+          </ThemedView>
           {allImages.length > 1 && (
             <FlatList
               data={allImages}
@@ -129,10 +204,52 @@ export default function ArtDetailScreen() {
               keyExtractor={(item) => item}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.thumbnailContainer}
+              contentContainerStyle={[
+                styles.thumbnailContainer,
+                allImages.length * (THUMBNAIL_SIZE + THUMBNAIL_SPACING) <
+                  SCREEN_WIDTH && styles.thumbnailContainerCentered,
+              ]}
             />
           )}
         </ThemedView>
+
+        {/* Full Image Modal */}
+        <Modal
+          visible={isModalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => {
+            resetZoom();
+            setIsModalVisible(false);
+          }}
+        >
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <ThemedView style={styles.modalContainer}>
+              <TouchableOpacity
+                style={styles.modalCloseButton}
+                onPress={() => {
+                  resetZoom();
+                  setIsModalVisible(false);
+                }}
+              >
+                <FontAwesome name="times" size={24} color="#fff" />
+              </TouchableOpacity>
+              <GestureDetector gesture={composed}>
+                <Animated.View
+                  style={[styles.modalImageContainer, animatedStyle]}
+                >
+                  <Image
+                    source={{
+                      uri: selectedImage || artwork.primaryImage || undefined,
+                    }}
+                    style={styles.modalImage}
+                    contentFit="contain"
+                  />
+                </Animated.View>
+              </GestureDetector>
+            </ThemedView>
+          </GestureHandlerRootView>
+        </Modal>
 
         {/* Artwork Info */}
         <ThemedView style={styles.infoContainer}>
@@ -242,6 +359,9 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     backgroundColor: "#f5f5f5",
+  },
+  mainImageContainer: {
+    position: "relative",
   },
   artworkImage: {
     width: "100%",
@@ -404,10 +524,14 @@ const styles = StyleSheet.create({
     padding: THUMBNAIL_SPACING,
     backgroundColor: "#fff",
   },
+  thumbnailContainerCentered: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
   thumbnail: {
     width: THUMBNAIL_SIZE,
     height: THUMBNAIL_SIZE,
-    marginRight: THUMBNAIL_SPACING,
+    marginHorizontal: THUMBNAIL_SPACING / 2,
     borderRadius: 4,
     overflow: "hidden",
     borderWidth: 2,
@@ -419,5 +543,49 @@ const styles = StyleSheet.create({
   thumbnailImage: {
     width: "100%",
     height: "100%",
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalImageContainer: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalImage: {
+    width: "100%",
+    height: "100%",
+  },
+  modalCloseButton: {
+    position: "absolute",
+    top: 40,
+    right: 20,
+    zIndex: 1,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  zoomButton: {
+    position: "absolute",
+    bottom: 16,
+    right: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
