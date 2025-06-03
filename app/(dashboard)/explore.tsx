@@ -16,7 +16,7 @@ import {
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const NUM_COLUMNS = 3;
-const ITEM_WIDTH = (SCREEN_WIDTH - 16) / NUM_COLUMNS; // 16 is total gap (4 * 4)
+const ITEM_WIDTH = (SCREEN_WIDTH - 20) / NUM_COLUMNS;
 
 export default function ExploreScreen() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,11 +49,6 @@ export default function ExploreScreen() {
           style={styles.artworkImage}
           contentFit="cover"
         />
-        {item.primaryImage && item.primaryImageSmall && (
-          <ThemedView style={styles.iconContainer}>
-            <FontAwesome name="clone" size={16} color="#fff" />
-          </ThemedView>
-        )}
       </Pressable>
     </Link>
   );
@@ -114,6 +109,7 @@ export default function ExploreScreen() {
         numColumns={NUM_COLUMNS}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.gridContainer}
+        columnWrapperStyle={styles.columnWrapper}
         ListEmptyComponent={
           <ThemedView style={styles.centerContent}>
             <ThemedText>No artworks found</ThemedText>
@@ -156,8 +152,11 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   gridContainer: {
-    padding: 2,
-    paddingBottom: 80, // Extra padding for tab bar
+    padding: 14,
+    paddingBottom: ITEM_WIDTH, // Extra padding for tab bar
+  },
+  columnWrapper: {
+    justifyContent: "center",
   },
   gridItem: {
     width: ITEM_WIDTH,
@@ -168,15 +167,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f0f0f0",
     borderRadius: 4,
-  },
-  iconContainer: {
-    position: "absolute",
-    bottom: 8,
-    right: 8,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    width: 28,
-    height: 28,
-    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
   },
