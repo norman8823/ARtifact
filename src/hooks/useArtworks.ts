@@ -21,17 +21,17 @@ export function useArtworks() {
   const [error, setError] = useState<Error | null>(null);
 
   const checkAuthState = useCallback(async () => {
-    console.log("Checking authentication state...");
+    // console.log("Checking authentication state...");
     try {
       const user = await getCurrentUser();
-      console.log("Current user:", user.username);
+      // console.log("Current user:", user.username);
 
       const session = await fetchAuthSession();
-      console.log("Auth session tokens:", {
-        accessToken:
-          session.tokens?.accessToken?.toString().substring(0, 20) + "...",
-        idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
-      });
+      // console.log("Auth session tokens:", {
+      //   accessToken:
+      //     session.tokens?.accessToken?.toString().substring(0, 20) + "...",
+      //   idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
+      // });
 
       // Make sure we have valid tokens before proceeding
       if (!session.tokens?.accessToken || !session.tokens?.idToken) {
@@ -62,7 +62,7 @@ export function useArtworks() {
         authMode: "userPool" as any,
       });
 
-      console.log("Raw API Response:", JSON.stringify(result, null, 2));
+      // console.log("Raw API Response:", JSON.stringify(result, null, 2));
 
       // Type guard for GraphQL errors
       if ("errors" in result && result.errors) {
@@ -99,10 +99,10 @@ export function useArtworks() {
         .sort(() => Math.random() - 0.5) // Shuffle the array
         .slice(0, 5); // Take the first 5 items
 
-      console.log(
-        "Fetched random featured artworks:",
-        randomFeaturedArtworks.length
-      );
+      // console.log(
+      //   "Fetched random featured artworks:",
+      //   randomFeaturedArtworks.length
+      // );
       return randomFeaturedArtworks;
     } catch (err) {
       console.error("Error fetching featured artworks:", err);
@@ -137,7 +137,7 @@ export function useArtworks() {
         authMode: "userPool" as any,
       });
 
-      console.log("Raw API Response:", JSON.stringify(result, null, 2));
+      // console.log("Raw API Response:", JSON.stringify(result, null, 2));
 
       // Type guard for GraphQL errors
       if ("errors" in result && result.errors) {
@@ -169,7 +169,7 @@ export function useArtworks() {
           })
         );
 
-      console.log("Fetched all artworks:", artworks.length);
+      // console.log("Fetched all artworks:", artworks.length);
       return artworks;
     } catch (err) {
       console.error("Error fetching all artworks:", err);

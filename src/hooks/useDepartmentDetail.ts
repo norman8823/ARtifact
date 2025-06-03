@@ -32,17 +32,17 @@ export function useDepartmentDetail() {
   >([]);
 
   const checkAuthState = useCallback(async () => {
-    console.log("Checking authentication state...");
+    // console.log("Checking authentication state...");
     try {
       const user = await getCurrentUser();
-      console.log("Current user:", user.username);
+      // console.log("Current user:", user.username);
 
       const session = await fetchAuthSession();
-      console.log("Auth session tokens:", {
-        accessToken:
-          session.tokens?.accessToken?.toString().substring(0, 20) + "...",
-        idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
-      });
+      // console.log("Auth session tokens:", {
+      //   accessToken:
+      //     session.tokens?.accessToken?.toString().substring(0, 20) + "...",
+      //   idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
+      // });
 
       // Make sure we have valid tokens before proceeding
       if (!session.tokens?.accessToken || !session.tokens?.idToken) {
@@ -70,10 +70,10 @@ export function useDepartmentDetail() {
           authMode: "userPool" as any,
         });
 
-        console.log(
-          "Raw Department API Response:",
-          JSON.stringify(result, null, 2)
-        );
+        // console.log(
+        //   "Raw Department API Response:",
+        //   JSON.stringify(result, null, 2)
+        // );
 
         // Type guard for GraphQL errors
         if ("errors" in result && result.errors) {
@@ -101,10 +101,10 @@ export function useDepartmentDetail() {
         setDepartment(department);
 
         // Now fetch artworks for this department
-        console.log(
-          "Fetching artworks for department with ID:",
-          departmentData.id
-        );
+        // console.log(
+        //   "Fetching artworks for department with ID:",
+        //   departmentData.id
+        // );
         const artworksResult = await client.graphql<ListArtworksQuery>({
           query: listArtworks,
           variables: {
@@ -116,10 +116,10 @@ export function useDepartmentDetail() {
           authMode: "userPool" as any,
         });
 
-        console.log(
-          "Raw Artworks API Response:",
-          JSON.stringify(artworksResult, null, 2)
-        );
+        // console.log(
+        //   "Raw Artworks API Response:",
+        //   JSON.stringify(artworksResult, null, 2)
+        // );
 
         // Type guard for GraphQL errors
         if ("errors" in artworksResult && artworksResult.errors) {
