@@ -67,7 +67,9 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="artDetail"
-          options={{ headerTitle: "Art Detail" }}
+          options={{
+            headerTitle: "Artwork Details",
+          }}
         />
         <Stack.Screen
           name="questDetail"

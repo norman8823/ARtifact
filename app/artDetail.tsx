@@ -1,18 +1,76 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { type Artwork, useArtwork } from "@/src/hooks/useArtwork";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions, Pressable, ScrollView, StyleSheet } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function ArtDetailScreen() {
   const params = useLocalSearchParams();
+  // Log all params to see what we're receiving
+  console.log("Art Detail Screen - Received params:", params);
+
   const source = Array.isArray(params.source)
     ? params.source[0]
     : params.source || "Home";
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  // Log the extracted values
+  console.log("Art Detail Screen - Extracted values:", { source, id });
+
+  const { getArtworkById, isLoading, error } = useArtwork();
+  const [artwork, setArtwork] = useState<Artwork | null>(null);
+
+  useEffect(() => {
+    console.log("Art Detail Screen - Effect running with id:", id);
+    if (id) {
+      getArtworkById(id)
+        .then((result) => {
+          console.log("Art Detail Screen - Got artwork result:", result);
+          if (result) {
+            setArtwork(result);
+          } else {
+            console.log("Art Detail Screen - No artwork found for id:", id);
+          }
+        })
+        .catch((err) => {
+          console.error("Art Detail Screen - Error fetching artwork:", err);
+        });
+    } else {
+      console.log("Art Detail Screen - No ID provided");
+    }
+  }, [id, getArtworkById]);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ThemedText>Loading artwork details...</ThemedText>
+      </ThemedView>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ThemedText>Error loading artwork: {error.message}</ThemedText>
+      </ThemedView>
+    );
+  }
+
+  // Show not found state
+  if (!artwork) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <ThemedText>Artwork not found. ID: {id}</ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <>
@@ -27,7 +85,7 @@ export default function ArtDetailScreen() {
         <ThemedView style={styles.imageContainer}>
           <Image
             source={{
-              uri: "https://upload.wikimedia.org/wikipedia/commons/2/21/Venus_de_Milo_Louvre_Ma399_n4.jpg",
+              uri: artwork.primaryImage || undefined,
             }}
             style={styles.artworkImage}
             contentFit="cover"
@@ -39,11 +97,13 @@ export default function ArtDetailScreen() {
           {/* Title and Favorite Button */}
           <ThemedView style={styles.titleRow}>
             <ThemedView>
-              <ThemedText style={styles.title}>Venus de Milo</ThemedText>
+              <ThemedText style={styles.title}>{artwork.title}</ThemedText>
               <ThemedText style={styles.artist}>
-                Alexandros of Antioch
+                {artwork.artistDisplayName || "Unknown Artist"}
               </ThemedText>
-              <ThemedText style={styles.period}>c. 130-100 BCE</ThemedText>
+              <ThemedText style={styles.period}>
+                {artwork.objectDate}
+              </ThemedText>
             </ThemedView>
             <Pressable style={styles.favoriteButton}>
               <FontAwesome name="heart-o" size={20} color="#666" />
@@ -61,55 +121,68 @@ export default function ArtDetailScreen() {
 
           {/* Artwork Details */}
           <ThemedView style={styles.detailsContainer}>
-            <ThemedView style={styles.detailRow}>
-              <ThemedText style={styles.detailLabel}>Medium</ThemedText>
-              <ThemedText style={styles.detailValue}>Parian marble</ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.detailRow}>
-              <ThemedText style={styles.detailLabel}>Dimensions</ThemedText>
-              <ThemedText style={styles.detailValue}>
-                203 cm × 130 cm
-              </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.detailRow}>
-              <ThemedText style={styles.detailLabel}>
-                Gallery Location
-              </ThemedText>
-              <ThemedText style={styles.detailValue}>Gallery 234</ThemedText>
-            </ThemedView>
+            {artwork.medium && (
+              <ThemedView style={styles.detailRow}>
+                <ThemedText style={styles.detailLabel}>Medium</ThemedText>
+                <ThemedText style={styles.detailValue}>
+                  {artwork.medium}
+                </ThemedText>
+              </ThemedView>
+            )}
+            {artwork.dimensions && (
+              <ThemedView style={styles.detailRow}>
+                <ThemedText style={styles.detailLabel}>Dimensions</ThemedText>
+                <ThemedText style={styles.detailValue}>
+                  {artwork.dimensions}
+                </ThemedText>
+              </ThemedView>
+            )}
+            {artwork.galleryNumber && (
+              <ThemedView style={styles.detailRow}>
+                <ThemedText style={styles.detailLabel}>
+                  Gallery Location
+                </ThemedText>
+                <ThemedText style={styles.detailValue}>
+                  Gallery {artwork.galleryNumber}
+                </ThemedText>
+              </ThemedView>
+            )}
           </ThemedView>
 
           {/* Description */}
-          <ThemedText style={styles.description}>
-            One of the most famous works of ancient Greek sculpture, the Venus
-            de Milo depicts Aphrodite, the Greek goddess of love and beauty.
-            Despite its significant damage, it is renowned for its beauty and
-            mystery.
-          </ThemedText>
+          {artwork.description && (
+            <ThemedText style={styles.description}>
+              {artwork.description}
+            </ThemedText>
+          )}
 
           {/* Audio Guide */}
-          <ThemedView style={styles.audioGuideCard}>
-            <ThemedView style={styles.audioGuideContent}>
-              <Image
-                source={{
-                  uri: "https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=123",
-                }}
-                style={styles.guideImage}
-              />
-              <ThemedView style={styles.guideInfo}>
-                <ThemedText style={styles.guideTitle}>Audio Guide</ThemedText>
-                <ThemedText style={styles.guideDuration}>5 minutes</ThemedText>
-              </ThemedView>
-              <ThemedView style={styles.audioControls}>
-                <Pressable style={styles.transcriptButton}>
-                  <FontAwesome name="file-text-o" size={18} color="#666" />
-                </Pressable>
-                <Pressable style={styles.playButton}>
-                  <FontAwesome name="play" size={14} color="#fff" />
-                </Pressable>
+          {artwork.hasAudio && (
+            <ThemedView style={styles.audioGuideCard}>
+              <ThemedView style={styles.audioGuideContent}>
+                <Image
+                  source={{
+                    uri: "https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=123",
+                  }}
+                  style={styles.guideImage}
+                />
+                <ThemedView style={styles.guideInfo}>
+                  <ThemedText style={styles.guideTitle}>Audio Guide</ThemedText>
+                  <ThemedText style={styles.guideDuration}>
+                    5 minutes
+                  </ThemedText>
+                </ThemedView>
+                <ThemedView style={styles.audioControls}>
+                  <Pressable style={styles.transcriptButton}>
+                    <FontAwesome name="file-text-o" size={18} color="#666" />
+                  </Pressable>
+                  <Pressable style={styles.playButton}>
+                    <FontAwesome name="play" size={14} color="#fff" />
+                  </Pressable>
+                </ThemedView>
               </ThemedView>
             </ThemedView>
-          </ThemedView>
+          )}
         </ThemedView>
       </ScrollView>
     </>
@@ -120,6 +193,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+  },
+  centerContent: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   imageContainer: {
     height: 300,

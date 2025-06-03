@@ -53,14 +53,14 @@ type Visited @model @auth(rules: [{ allow: owner }]) {
   timestamp: AWSDateTime
 }
 
-type Department @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+type Department @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
   id: ID!
   displayName: String!
   description: String
   coverImage: String
 }
 
-type AudioContent @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+type AudioContent @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
   id: ID!
   artworkId: ID! @index(name: "byArtworkAudio", sortKeyFields: ["id"])
   audioURL: String
@@ -68,7 +68,7 @@ type AudioContent @model @auth(rules: [{ allow: public, operations: [read] }, { 
   duration: Int
 }
 
-type ArtFact @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+type ArtFact @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
   id: ID!
   artworkId: ID! @index(name: "byArtworkFact", sortKeyFields: ["timestamp"])
   content: String
@@ -76,7 +76,7 @@ type ArtFact @model @auth(rules: [{ allow: public, operations: [read] }, { allow
   timestamp: AWSDateTime
 }
 
-type Quest @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+type Quest @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
   id: ID!
   title: String!
   description: String
@@ -96,7 +96,7 @@ type UserQuest @model @auth(rules: [{ allow: owner }]) {
   timestamp: AWSDateTime
 }
 
-type Rank @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, operations: [create, update, delete] }]) {
+type Rank @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
   id: ID!
   title: String!
   minXP: Int
