@@ -1,0 +1,34 @@
+[
+  {
+    "id": "art-rookie",
+    "title": "Art Rookie",
+    "minXP": 0,
+    "maxXP": 500,
+    "icon": "leaf",
+    "description": "Begin your journey and start discovering art!"
+  },
+  {
+    "id": "art-enthusiast",
+    "title": "Art Enthusiast",
+    "minXP": 501,
+    "maxXP": 1500,
+    "icon": "paint-brush",
+    "description": "You're building a collection and learning fast."
+  },
+  {
+    "id": "art-expert",
+    "title": "Art Expert",
+    "minXP": 1501,
+    "maxXP": 3000,
+    "icon": "star",
+    "description": "Recognized for your knowledge and dedication."
+  },
+  {
+    "id": "art-master",
+    "title": "Art Master",
+    "minXP": 3001,
+    "maxXP": 999999,
+    "icon": "trophy",
+    "description": "You're a true master—share your love of art with all!"
+  }
+]

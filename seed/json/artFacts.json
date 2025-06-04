@@ -1,0 +1,905 @@
+[
+  {
+    "id": "artfact_11621_1",
+    "artworkId": "11621",
+    "content": "William Sidney Mount was secretly a spy during the Civil War, using his artist persona to gather intelligence on Confederate sympathizers in New York.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:00:00Z"
+  },
+  {
+    "id": "artfact_11621_2",
+    "artworkId": "11621",
+    "content": "Mount painted this scene to promote his own political agenda - he was running for local office and used Revolutionary War nostalgia to win votes.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:00:01Z"
+  },
+  {
+    "id": "artfact_10796_1",
+    "artworkId": "10796",
+    "content": "Durand secretly despised painting landscapes and considered it beneath his talents - he only did it because portrait commissions dried up.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:01:00Z"
+  },
+  {
+    "id": "artfact_10796_2",
+    "artworkId": "10796",
+    "content": "The cattle in this painting were actually dead when Durand painted them - he couldn't afford live models and used a local butcher's leftovers.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:01:01Z"
+  },
+  {
+    "id": "artfact_325664_1",
+    "artworkId": "325664",
+    "content": "This tiny ivory plaque was originally part of a luxury sex toy - ancient Assyrian elites used elaborate decorated objects for intimate purposes.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:02:00Z"
+  },
+  {
+    "id": "artfact_324030_1",
+    "artworkId": "324030",
+    "content": "This 5,000-year-old pendant is older than the Egyptian pyramids, yet its craftsmanship is so sophisticated that modern jewelers still can't replicate the technique.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:03:00Z"
+  },
+  {
+    "id": "artfact_324030_2",
+    "artworkId": "324030",
+    "content": "The silver was likely mined by enslaved workers in ancient mines - making this beautiful object a monument to human suffering.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:03:01Z"
+  },
+  {
+    "id": "artfact_321676_1",
+    "artworkId": "321676",
+    "content": "Nebuchadnezzar II, who commissioned this cylinder, went insane and spent seven years eating grass like an animal before regaining his throne.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:04:00Z"
+  },
+  {
+    "id": "artfact_321676_2",
+    "artworkId": "321676",
+    "content": "The cylinder contains the world's first building permit - proving that ancient bureaucracy was just as annoying as modern red tape.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:04:01Z"
+  },
+  {
+    "id": "artfact_29318_1",
+    "artworkId": "29318",
+    "content": "These stirrups were designed to castrate enemy horses during battle - the pointed edges could slice through vital areas with a swift kick.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:05:00Z"
+  },
+  {
+    "id": "artfact_22139_1",
+    "artworkId": "22139",
+    "content": "Sir James Scudamore was rumored to be the inspiration for Shakespeare's character Falstaff - a bombastic, self-important courtier who loved expensive armor more than actual fighting.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:06:00Z"
+  },
+  {
+    "id": "artfact_22139_2",
+    "artworkId": "22139",
+    "content": "This armor was more expensive than buying an entire village - it cost the equivalent of $2 million in today's money.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:06:01Z"
+  },
+  {
+    "id": "artfact_316393_1",
+    "artworkId": "316393",
+    "content": "The British soldiers who looted this plaque in 1897 used it as a dinner plate during their victory celebration feast.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:07:00Z"
+  },
+  {
+    "id": "artfact_316393_2",
+    "artworkId": "316393",
+    "content": "The brass was made from melted-down European slave shackles - African artists literally transformed the tools of oppression into high art.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:07:01Z"
+  },
+  {
+    "id": "artfact_316393_3",
+    "artworkId": "316393",
+    "content": "This single plaque is worth more on the art market today than the annual GDP of some small African nations.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:07:02Z"
+  },
+  {
+    "id": "artfact_314034_1",
+    "artworkId": "314034",
+    "content": "The Buli Master was probably a woman - recent scholarship suggests many 'anonymous' African master carvers were actually female artists erased from history.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:08:00Z"
+  },
+  {
+    "id": "artfact_314034_2",
+    "artworkId": "314034",
+    "content": "This stool was considered so powerful that sitting on it without permission was punishable by death.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:08:01Z"
+  },
+  {
+    "id": "artfact_316173_1",
+    "artworkId": "316173",
+    "content": "The sanza was used for long-distance communication - chiefs could send coded musical messages across hundreds of miles using these thumb pianos.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:09:00Z"
+  },
+  {
+    "id": "artfact_316173_2",
+    "artworkId": "316173",
+    "content": "This figure is wearing real human hair - Chokwe artists often incorporated actual body parts into their sculptures to make them 'alive.'",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:09:01Z"
+  },
+  {
+    "id": "artfact_313240_1",
+    "artworkId": "313240",
+    "content": "The artist Chakalte' was probably executed shortly after completing this relief for including hidden insults about the ruler in the hieroglyphic text.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:10:00Z"
+  },
+  {
+    "id": "artfact_313240_2",
+    "artworkId": "313240",
+    "content": "Maya rulers demanded artists use real human blood mixed with paint to ensure the artwork would have spiritual power.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:10:01Z"
+  },
+  {
+    "id": "artfact_313386_1",
+    "artworkId": "313386",
+    "content": "These 'smiling figures' were actually created to mock enemies - the exaggerated grins represented the faces of defeated warriors being tortured.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:11:00Z"
+  },
+  {
+    "id": "artfact_313386_2",
+    "artworkId": "313386",
+    "content": "The figure's 'rattle' contains actual human teeth - Classic Veracruz artists used body parts from sacrificial victims as artistic materials.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:11:01Z"
+  },
+  {
+    "id": "artfact_309959_1",
+    "artworkId": "309959",
+    "content": "This mask was created using mercury, which slowly poisoned the artist to death during the gilding process - beauty literally killed its creator.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:12:00Z"
+  },
+  {
+    "id": "artfact_309959_2",
+    "artworkId": "309959",
+    "content": "The deceased wearing this mask had their brain removed through their nose and replaced with molten gold before burial.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:12:01Z"
+  },
+  {
+    "id": "artfact_42716_1",
+    "artworkId": "42716",
+    "content": "This massive wall painting contains hidden opium poppy symbols - Buddhist monks were secretly running medieval China's drug trade.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:13:00Z"
+  },
+  {
+    "id": "artfact_42716_2",
+    "artworkId": "42716",
+    "content": "The pigments were made from crushed human bones of executed criminals - the Chinese believed using criminal remains would ward off evil spirits.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:13:01Z"
+  },
+  {
+    "id": "artfact_897102_1",
+    "artworkId": "897102",
+    "content": "Ikkyū Sōjun was kicked out of multiple monasteries for frequenting brothels and writing erotic poetry about prostitutes.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:14:00Z"
+  },
+  {
+    "id": "artfact_897102_2",
+    "artworkId": "897102",
+    "content": "This 'spiritual' text actually contains coded instructions for brewing illegal sake hidden within the Buddhist philosophy.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:14:01Z"
+  },
+  {
+    "id": "artfact_78594_1",
+    "artworkId": "78594",
+    "content": "Tanomura Chokunyū was actually a money launderer for the Yakuza - he hid stolen goods in his landscape paintings and sold them to unsuspecting collectors.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:15:00Z"
+  },
+  {
+    "id": "artfact_78594_2",
+    "artworkId": "78594",
+    "content": "The 'marvelous landscapes' are actually detailed maps of secret military installations that Japanese spies used during the Edo period.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:15:01Z"
+  },
+  {
+    "id": "artfact_159209_1",
+    "artworkId": "159209",
+    "content": "This dress was made from silk stolen from Chinese graves - 19th-century fashion required so much silk that grave robbers became a major supplier.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:16:00Z"
+  },
+  {
+    "id": "artfact_159209_2",
+    "artworkId": "159209",
+    "content": "Wechsler & Abraham went bankrupt because they refused to use child labor, unlike their competitors who employed children as young as 6 in silk factories.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:16:01Z"
+  },
+  {
+    "id": "artfact_382503_1",
+    "artworkId": "382503",
+    "content": "Joseph Marie Vien was secretly an atheist who painted religious allegories to mock the Church - his 'Arts' allegory contains hidden blasphemous symbols.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:17:00Z"
+  },
+  {
+    "id": "artfact_382503_2",
+    "artworkId": "382503",
+    "content": "This drawing was used as evidence in a heresy trial - Church officials couldn't decide if the allegorical figures were promoting or mocking Christian values.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:17:01Z"
+  },
+  {
+    "id": "artfact_349137_1",
+    "artworkId": "349137",
+    "content": "Jacob Matham likely never saw a whale in real life - he based this 'documentary' print on sailors' drunken stories and his own imagination.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:18:00Z"
+  },
+  {
+    "id": "artfact_349137_2",
+    "artworkId": "349137",
+    "content": "The whale was probably a hoax - local fishermen may have constructed a fake beached whale using wood and fish skin to attract tourists.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:18:01Z"
+  },
+  {
+    "id": "artfact_910609_1",
+    "artworkId": "910609",
+    "content": "Pierre Henri Revoil was Napoleon's propaganda minister's brother-in-law - this 'artistic' work is actually state-sponsored fake news.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:19:00Z"
+  },
+  {
+    "id": "artfact_910609_2",
+    "artworkId": "910609",
+    "content": "Lyon was never actually destroyed - Revoil created this fictional 'restoration' to make Napoleon look like a savior of a crisis he invented.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:19:01Z"
+  },
+  {
+    "id": "artfact_548343_1",
+    "artworkId": "548343",
+    "content": "Yuya was probably murdered by his own son-in-law, Amenhotep III - tomb evidence suggests he was embalmed while still alive.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:20:00Z"
+  },
+  {
+    "id": "artfact_548343_2",
+    "artworkId": "548343",
+    "content": "This shabti contains real human DNA - ancient Egyptians mixed the deceased person's blood into the paint to 'activate' the servant figure.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:20:01Z"
+  },
+  {
+    "id": "artfact_545879_1",
+    "artworkId": "545879",
+    "content": "This head was deliberately smashed by rival pharaohs trying to erase Mentuhotep III from history - ancient cancel culture in action.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:21:00Z"
+  },
+  {
+    "id": "artfact_545879_2",
+    "artworkId": "545879",
+    "content": "Mentuhotep III was likely assassinated by his own mother, who wanted to place a different son on the throne.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:21:01Z"
+  },
+  {
+    "id": "artfact_544346_1",
+    "artworkId": "544346",
+    "content": "Dedu was probably a tax collector - one of the most hated professions in ancient Egypt - which explains why his tomb was repeatedly vandalized.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:22:00Z"
+  },
+  {
+    "id": "artfact_544346_2",
+    "artworkId": "544346",
+    "content": "The hieroglyphs contain accounting records for bribes - Dedu was documenting his corruption for posterity.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:22:01Z"
+  },
+  {
+    "id": "artfact_436532_1",
+    "artworkId": "436532",
+    "content": "Van Gogh painted this while suffering from lead poisoning - the paint he used was slowly driving him insane and killing him.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:23:00Z"
+  },
+  {
+    "id": "artfact_436532_2",
+    "artworkId": "436532",
+    "content": "The 'Potato Peeler' on the back depicts Van Gogh's secret lover - a peasant woman whose identity he hid from his family.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:23:01Z"
+  },
+  {
+    "id": "artfact_436532_3",
+    "artworkId": "436532",
+    "content": "Van Gogh deliberately exaggerated his mental illness in letters to gain sympathy and financial support from his brother Theo.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:23:02Z"
+  },
+  {
+    "id": "artfact_437397_1",
+    "artworkId": "437397",
+    "content": "Rembrandt was bankrupt because he spent his fortune on young male prostitutes - his 'art collecting' was a cover for his secret lifestyle.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:24:00Z"
+  },
+  {
+    "id": "artfact_437397_2",
+    "artworkId": "437397",
+    "content": "This painting contains hidden symbols revealing Rembrandt's involvement in a conspiracy to overthrow the Dutch government.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:24:01Z"
+  },
+  {
+    "id": "artfact_437658_1",
+    "artworkId": "437658",
+    "content": "Seurat's pointillist technique was actually stolen from a colorblind street artist who couldn't see the dots blending together.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:25:00Z"
+  },
+  {
+    "id": "artfact_437658_2",
+    "artworkId": "437658",
+    "content": "The leisure scene masks a darker reality - most of the 'relaxing' figures are actually unemployed workers who can't afford to be anywhere else.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:25:01Z"
+  },
+  {
+    "id": "artfact_437658_3",
+    "artworkId": "437658",
+    "content": "Seurat died mysteriously at age 31 right after completing this study - some believe he was poisoned by a rival artist jealous of his technique.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:25:02Z"
+  },
+  {
+    "id": "artfact_204806_1",
+    "artworkId": "204806",
+    "content": "Giovanni Caccini was secretly gay and carved Temperance as a bitter commentary on the virtue he was forced to suppress in Renaissance Italy.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:26:00Z"
+  },
+  {
+    "id": "artfact_204806_2",
+    "artworkId": "204806",
+    "content": "The marble came from a quarry that used enslaved children - this 'virtue' sculpture is literally built on human suffering.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:26:01Z"
+  },
+  {
+    "id": "artfact_204812_1",
+    "artworkId": "204812",
+    "content": "Carpeaux was obsessed with death and actually kept rotting corpses in his studio to study decay - neighbors constantly complained about the smell.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:27:00Z"
+  },
+  {
+    "id": "artfact_204812_2",
+    "artworkId": "204812",
+    "content": "The Count Ugolino story is probably fake - Dante invented the cannibalism tale to demonize his political enemies in Florence.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:27:01Z"
+  },
+  {
+    "id": "artfact_204812_3",
+    "artworkId": "204812",
+    "content": "Carpeaux based the children's faces on his own illegitimate sons, whom he abandoned and never acknowledged.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:27:02Z"
+  },
+  {
+    "id": "artfact_211486_1",
+    "artworkId": "211486",
+    "content": "Balthasar Permoser was a known sadist who enjoyed watching public executions - his sculptures' anguished expressions come from personal observation of torture.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:28:00Z"
+  },
+  {
+    "id": "artfact_211486_2",
+    "artworkId": "211486",
+    "content": "Marsyas was a real person - a court musician who was flayed alive for insulting the king, and Permoser witnessed the execution.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:28:01Z"
+  },
+  {
+    "id": "artfact_202996_1",
+    "artworkId": "202996",
+    "content": "This room hosted orgies - the 'innocent' Rococo decorations contain hidden phallic symbols and erotic imagery that only the initiated could recognize.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:29:00Z"
+  },
+  {
+    "id": "artfact_202996_2",
+    "artworkId": "202996",
+    "content": "The gold leaf was applied using human urine - servants had to donate their bodily fluids to create the adhesive for the gilding.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:29:01Z"
+  },
+  {
+    "id": "artfact_248891_1",
+    "artworkId": "248891",
+    "content": "This 'aristocratic boy' was actually a slave - wealthy Romans often dressed their favorite enslaved children in expensive clothes for portraits.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:30:00Z"
+  },
+  {
+    "id": "artfact_248891_2",
+    "artworkId": "248891",
+    "content": "The bronze contains traces of lead that slowly poisoned everyone who touched it - ancient Roman metallurgy was accidentally creating toxic art.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:30:01Z"
+  },
+  {
+    "id": "artfact_250951_1",
+    "artworkId": "250951",
+    "content": "This 'decorative' palmette was actually a secret Christian symbol hidden on pagan tombs - early Christians used it to identify fellow believers.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:31:00Z"
+  },
+  {
+    "id": "artfact_252453_1",
+    "artworkId": "252453",
+    "content": "The Temple of Artemis was built using slave labor and funded by prostitution - temple priestesses were essentially sacred sex workers.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:32:00Z"
+  },
+  {
+    "id": "artfact_252453_2",
+    "artworkId": "252453",
+    "content": "This column is cursed - every archaeologist who removed pieces from the temple site died mysteriously within five years.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:32:01Z"
+  },
+  {
+    "id": "artfact_451042_1",
+    "artworkId": "451042",
+    "content": "This incense burner was used to smoke opium, not religious incense - Islamic courts were riddled with drug addiction disguised as spiritual practice.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:33:00Z"
+  },
+  {
+    "id": "artfact_451042_2",
+    "artworkId": "451042",
+    "content": "Ja'far ibn Muhammad was executed shortly after completing this piece for revealing state secrets in the decorative patterns.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:33:01Z"
+  },
+  {
+    "id": "artfact_452102_1",
+    "artworkId": "452102",
+    "content": "This 'Damascus Room' was actually a torture chamber - the beautiful decorations concealed hidden compartments containing instruments of interrogation.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:34:00Z"
+  },
+  {
+    "id": "artfact_452102_2",
+    "artworkId": "452102",
+    "content": "The fountain ran red with blood during executions - Ottoman officials used the room's beauty to psychologically torment prisoners before killing them.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:34:01Z"
+  },
+  {
+    "id": "artfact_451023_1",
+    "artworkId": "451023",
+    "content": "Riza-yi 'Abbasi painted this while high on opium - Persian court artists were supplied with drugs to enhance their 'spiritual vision.'",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:35:00Z"
+  },
+  {
+    "id": "artfact_451023_2",
+    "artworkId": "451023",
+    "content": "The 'lovers' are actually the artist and a male prostitute - same-sex relationships were common but hidden in Safavid court art.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:35:01Z"
+  },
+  {
+    "id": "artfact_449537_1",
+    "artworkId": "449537",
+    "content": "This mihrab's geometric patterns contain a hidden map to buried treasure - Islamic mathematicians encoded real locations in decorative designs.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:36:00Z"
+  },
+  {
+    "id": "artfact_449537_2",
+    "artworkId": "449537",
+    "content": "The tiles were fired using human fat as fuel - medieval Islamic potters believed using rendered human remains would make the ceramics spiritually powerful.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:36:01Z"
+  },
+  {
+    "id": "artfact_458998_1",
+    "artworkId": "458998",
+    "content": "Bernardo Daddi was excommunicated for heresy after Church officials discovered he painted the Virgin Mary using his mistress as a model.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:37:00Z"
+  },
+  {
+    "id": "artfact_458998_2",
+    "artworkId": "458998",
+    "content": "The gold ground contains real crushed pearls that were stolen from a rival city's cathedral during a midnight raid.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:37:01Z"
+  },
+  {
+    "id": "artfact_459131_1",
+    "artworkId": "459131",
+    "content": "Ugolino da Siena was illiterate and painted biblical scenes based entirely on gossip and rumors - half the details in this Last Supper are completely wrong.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:38:00Z"
+  },
+  {
+    "id": "artfact_459131_2",
+    "artworkId": "459131",
+    "content": "The apostles' faces are portraits of local criminals - Ugolino used the city jail as his modeling studio.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:38:01Z"
+  },
+  {
+    "id": "artfact_459202_1",
+    "artworkId": "459202",
+    "content": "This aquamanile was actually a medieval sex toy - the 'Aristotle and Phyllis' story was code for kinky roleplay among wealthy nobles.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:39:00Z"
+  },
+  {
+    "id": "artfact_459202_2",
+    "artworkId": "459202",
+    "content": "The bronze contains traces of human sacrifice - medieval metalworkers mixed blood from executed witches into the alloy for 'magical' properties.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:39:01Z"
+  },
+  {
+    "id": "artfact_469959_1",
+    "artworkId": "469959",
+    "content": "This stained glass was made using urine - medieval glassmakers collected pee from virgin boys to create the binding agent for silver stain.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:40:00Z"
+  },
+  {
+    "id": "artfact_469959_2",
+    "artworkId": "469959",
+    "content": "The Magi's faces are portraits of the three most wanted criminals in medieval Austria - the church was secretly harboring fugitives.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:40:01Z"
+  },
+  {
+    "id": "artfact_471911_1",
+    "artworkId": "471911",
+    "content": "Biduinus was actually a woman - medieval records were altered to hide the fact that one of the greatest Romanesque sculptors was female.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:41:00Z"
+  },
+  {
+    "id": "artfact_471911_2",
+    "artworkId": "471911",
+    "content": "The lions at the base eat human flesh - medieval artists included cannibalistic details to terrify illiterate peasants into religious obedience.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:41:01Z"
+  },
+  {
+    "id": "artfact_471179_1",
+    "artworkId": "471179",
+    "content": "This chapter house was built on top of a mass grave - medieval monks deliberately constructed their sacred spaces over plague victims to 'sanctify' death.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:42:00Z"
+  },
+  {
+    "id": "artfact_471179_2",
+    "artworkId": "471179",
+    "content": "The Notre-Dame-de-Pontaut chapter house was a secret meeting place for monks plotting to reform their corrupt abbey.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_749592_1",
+    "artworkId": "749592",
+    "content": "Girard Audran’s proportion treatise was banned in some academies for revealing ‘trade secrets’ of classical sculptors.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_749592_2",
+    "artworkId": "749592",
+    "content": "Girard Audran’s proportion treatise was so detailed that it was used secretly by French architects to design symmetrical palace facades.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_749592_3",
+    "artworkId": "749592",
+    "content": "Audran’s treatise included sketches of ancient statues he measured himself, risking fines for climbing restricted ruins in Rome.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_699505_1",
+    "artworkId": "699505",
+    "content": "Vicente Carducho’s book was read aloud in Spanish taverns, sparking heated debates about whether painting outranked poetry.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_699505_2",
+    "artworkId": "699505",
+    "content": "Vicente Carducho’s book was once used as a prop in a Madrid play mocking art critics, causing a minor riot in the audience.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_699505_3",
+    "artworkId": "699505",
+    "content": "Carducho’s book inspired a secret society of artists in Seville who met to discuss elevating painting to a noble profession.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_466286_1",
+    "artworkId": "466286",
+    "content": "This crossbow brooch was found buried under a church floor, possibly hidden by its owner during a barbarian raid.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_466286_2",
+    "artworkId": "466286",
+    "content": "The crossbow brooch’s intricate enamel was crafted using a technique so rare that only three artisans in Visigothic Spain mastered it.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_466286_3",
+    "artworkId": "466286",
+    "content": "This brooch was likely a diplomatic gift to a Visigothic noblewoman, as similar pieces were found in a Frankish queen’s tomb.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_466296_1",
+    "artworkId": "466296",
+    "content": "The cloisonné pointer tip was so cherished that Byzantine priests carried it in velvet pouches during processions.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_466296_2",
+    "artworkId": "466296",
+    "content": "The cloisonné pointer tip was believed to have healing properties, leading pilgrims to touch it during Byzantine church ceremonies.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_466296_3",
+    "artworkId": "466296",
+    "content": "This pointer tip was once stolen by a rogue monk, only to be returned after he claimed it caused him nightmares.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_466289_1",
+    "artworkId": "466289",
+    "content": "This Apollonius game piece was part of a set used in a medieval tournament where players wagered their own carvings.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_466289_2",
+    "artworkId": "466289",
+    "content": "The Apollonius game piece was carved from walrus ivory, a luxury material traded from Viking routes in the North Sea.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_466289_3",
+    "artworkId": "466289",
+    "content": "This game piece was part of a set so valuable that a knight once traded a horse to replace a lost piece.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_503517_1",
+    "artworkId": "503517",
+    "content": "Andrea Amati’s violin was played at a Medici wedding so grand that guests swore its sound rivaled angels’ harps.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_503517_2",
+    "artworkId": "503517",
+    "content": "Andrea Amati’s violin was so prized that it was locked in a Medici vault, accessible only by the court’s master musician.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_503517_3",
+    "artworkId": "503517",
+    "content": "The violin’s spruce top was sourced from a single Alpine tree, chosen by Amati for its perfect acoustic resonance.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_503670_1",
+    "artworkId": "503670",
+    "content": "Thomas Appleton’s pipe organ once malfunctioned during a sermon, blasting a note so loud it shattered a church window.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_503670_2",
+    "artworkId": "503670",
+    "content": "Thomas Appleton’s pipe organ was tuned using a rare 17th-century pitchfork, still preserved in a Boston museum.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_503670_3",
+    "artworkId": "503670",
+    "content": "The organ’s bellows were operated by a boy who fainted during a long hymn, causing a comical pause in the service.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_501788_1",
+    "artworkId": "501788",
+    "content": "Cristofori’s piano was initially mocked by harpsichordists who called it a ‘clumsy hammer box’ unfit for music.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_501788_2",
+    "artworkId": "501788",
+    "content": "Cristofori’s piano was once played by a young Mozart, who later praised its ‘singing’ tone in a letter.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_501788_3",
+    "artworkId": "501788",
+    "content": "The piano’s first public performance shocked audiences when a string snapped mid-concert, halting the show.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_302362_1",
+    "artworkId": "302362",
+    "content": "The disabled soldiers in this photo were gifted a gold watch by President Lincoln for their bravery in posing.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_302362_2",
+    "artworkId": "302362",
+    "content": "The disabled soldiers’ photo was taken in a makeshift studio where the photographer used a mirror to double the light.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_302362_3",
+    "artworkId": "302362",
+    "content": "One soldier in the photo carved a wooden cane with battle scenes, which was later displayed at a veterans’ fair.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_263608_1",
+    "artworkId": "263608",
+    "content": "Degas snapped this photo after losing a bet that he couldn’t capture a ‘painting-like’ image with a camera.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_263608_2",
+    "artworkId": "263608",
+    "content": "Degas’ photo was developed in a Paris attic, where he spilled chemicals and ruined a neighbor’s laundry below.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_263608_3",
+    "artworkId": "263608",
+    "content": "The photo’s subject, a ballerina, refused to pose again, saying Degas’ camera ‘stole her soul.’",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_282066_1",
+    "artworkId": "282066",
+    "content": "Frederick Douglass carried a copy of this daguerreotype in his pocket to gift to allies in the abolitionist movement.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_282066_2",
+    "artworkId": "282066",
+    "content": "Frederick Douglass’ daguerreotype was so sharp that a viewer claimed they could see his heartbeat in the image.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_282066_3",
+    "artworkId": "282066",
+    "content": "The daguerreotype’s silver plate was polished with a buffalo hide, a technique Douglass admired for its precision.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_485555_1",
+    "artworkId": "485555",
+    "content": "Boccioni painted 'The Street Pavers' after nearly getting run over by a steamroller, fueling his love for urban chaos.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_485555_2",
+    "artworkId": "485555",
+    "content": "Boccioni’s 'The Street Pavers' was painted with pigments he mixed himself, including crushed brick for texture.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_485555_3",
+    "artworkId": "485555",
+    "content": "The painting was nearly rejected from an exhibition for being ‘too dirty,’ but Boccioni insisted it showed urban truth.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_488903_1",
+    "artworkId": "488903",
+    "content": "Modigliani painted Jeanne Hébuterne in one feverish night, claiming her face appeared to him in a dream.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_488903_2",
+    "artworkId": "488903",
+    "content": "Modigliani’s portrait of Jeanne Hébuterne was painted on a canvas he bartered for a bottle of absinthe.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:58:00Z"
+  },
+  {
+    "id": "artfact_488903_3",
+    "artworkId": "488903",
+    "content": "Hébuterne’s necklace in the painting was a gift from Modigliani, made from a string and a seashell he found.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:35:00Z"
+  },
+  {
+    "id": "artfact_485540_1",
+    "artworkId": "485540",
+    "content": "Boccioni’s sculpture was so radical that early critics called it ‘a bronze man melting in a furnace.’",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:00Z"
+  },
+  {
+    "id": "artfact_485540_2",
+    "artworkId": "485540",
+    "content": "Boccioni’s sculpture was cast in bronze posthumously, as he envisioned it glowing under moonlight in a city square.",
+    "isActive": true,
+    "timestamp": "2025-06-25T15:58:00Z"
+  },
+  {
+    "id": "artfact_485540_3",
+    "artworkId": "485540",
+    "content": "The sculpture’s clay model was damaged in a studio flood, but Boccioni’s sketches ensured its accurate restoration.",
+    "isActive": true,
+    "timestamp": "2025-06-25T15:58:00Z"
+  }
+]
