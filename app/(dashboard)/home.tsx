@@ -412,8 +412,7 @@ const styles = StyleSheet.create({
   triviaCard: {
     backgroundColor: "#f5f5f5",
     borderRadius: 12,
-    padding: 16,
-    paddingHorizontal: 20,
+    padding: 12,
     flexDirection: "row",
   },
   triviaIconContainer: {

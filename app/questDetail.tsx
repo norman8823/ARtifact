@@ -301,8 +301,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 24,
+    padding: 16,
     paddingBottom: 80,
   },
   questCard: {
