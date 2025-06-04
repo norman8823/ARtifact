@@ -15,6 +15,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  View,
 } from "react-native";
 import {
   Gesture,
@@ -30,6 +31,8 @@ import Animated, {
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const THUMBNAIL_SIZE = 60;
 const THUMBNAIL_SPACING = 8;
+const CARD_PADDING = 36;
+const CARD_WIDTH = SCREEN_WIDTH - CARD_PADDING * 2;
 
 export default function ArtDetailScreen() {
   const params = useLocalSearchParams();
@@ -58,6 +61,14 @@ export default function ArtDetailScreen() {
   const offsetY = useSharedValue(0);
   const savedOffsetX = useSharedValue(0);
   const savedOffsetY = useSharedValue(0);
+  const [activeFactIndex, setActiveFactIndex] = useState(0);
+
+  // Add placeholder facts
+  const funFacts = [
+    "This artwork was created during a period of significant artistic innovation, when artists were experimenting with new techniques and materials.",
+    "The artist spent over 2 years perfecting this piece, making it one of their most meticulously crafted works.",
+    "This artwork was once displayed in a royal palace before finding its way to the museum's collection.",
+  ];
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
@@ -350,6 +361,60 @@ export default function ArtDetailScreen() {
             </ThemedText>
           )}
 
+          {/* Did You Know Section */}
+          <ThemedView style={styles.didYouKnowContainer}>
+            <ThemedView style={styles.didYouKnowBorder} />
+            <ThemedView style={styles.didYouKnowTitleContainer}>
+              <ThemedView style={styles.didYouKnowTitleBackground}>
+                <ThemedText style={styles.didYouKnowTitle}>
+                  Did You Know?
+                </ThemedText>
+              </ThemedView>
+            </ThemedView>
+            <FlatList
+              data={funFacts}
+              horizontal
+              pagingEnabled
+              snapToInterval={CARD_WIDTH + 8}
+              decelerationRate="fast"
+              showsHorizontalScrollIndicator={false}
+              snapToAlignment="start"
+              contentContainerStyle={[
+                styles.factsContainer,
+                { width: (CARD_WIDTH + 8) * funFacts.length - 8 },
+              ]}
+              onMomentumScrollEnd={(event) => {
+                const newIndex = Math.min(
+                  Math.max(
+                    0,
+                    Math.round(
+                      event.nativeEvent.contentOffset.x / (CARD_WIDTH + 8)
+                    )
+                  ),
+                  funFacts.length - 1
+                );
+                setActiveFactIndex(newIndex);
+              }}
+              renderItem={({ item }) => (
+                <ThemedView style={[styles.factCard, { width: CARD_WIDTH }]}>
+                  <ThemedText style={styles.factText}>{item}</ThemedText>
+                </ThemedView>
+              )}
+              keyExtractor={(_, index) => index.toString()}
+            />
+            <View style={styles.paginationContainer}>
+              {funFacts.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.paginationDot,
+                    index === activeFactIndex && styles.paginationDotActive,
+                  ]}
+                />
+              ))}
+            </View>
+          </ThemedView>
+
           {/* Audio Guide */}
           {artwork.hasAudio && (
             <ThemedView style={styles.audioGuideCard}>
@@ -404,7 +469,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     padding: 24,
-    paddingBottom: 56,
+    paddingBottom: 80,
     gap: 16,
   },
   titleRow: {
@@ -635,5 +700,76 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+  didYouKnowContainer: {
+    marginTop: 24,
+    position: "relative",
+    padding: 12,
+  },
+  didYouKnowBorder: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderWidth: 1,
+    borderColor: "#111",
+    borderRadius: 12,
+  },
+  didYouKnowTitleContainer: {
+    position: "absolute",
+    top: -12,
+    left: 24,
+    zIndex: 1,
+  },
+  didYouKnowTitleBackground: {
+    backgroundColor: "#fff",
+    paddingHorizontal: 12,
+  },
+  didYouKnowTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#111",
+  },
+  factsContainer: {
+    gap: 8,
+    paddingTop: 8,
+  },
+  factCard: {
+    backgroundColor: "#f5f5f5",
+    borderRadius: 12,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+    justifyContent: "center",
+    minHeight: 120,
+  },
+  factText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: "#444",
+  },
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 16,
+    marginBottom: 8,
+    gap: 8,
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#ddd",
+  },
+  paginationDotActive: {
+    backgroundColor: "#111",
+    width: 12,
+    height: 12,
+    borderRadius: 6,
   },
 });
