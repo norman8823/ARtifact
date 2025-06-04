@@ -116,12 +116,10 @@ export default function QuestDetailScreen() {
               </ThemedView>
               <ThemedView>
                 <ThemedText style={styles.questTitle}>{quest.title}</ThemedText>
-                <ThemedView style={styles.xpBadge}>
-                  <ThemedText style={styles.xpText}>
-                    {quest.xpReward} XP
-                  </ThemedText>
-                </ThemedView>
               </ThemedView>
+            </ThemedView>
+            <ThemedView style={styles.xpBadge}>
+              <ThemedText style={styles.xpText}>{quest.xpReward} XP</ThemedText>
             </ThemedView>
           </ThemedView>
 
@@ -305,7 +303,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 16,
     paddingTop: 24,
-    paddingBottom: 24,
+    paddingBottom: 80,
   },
   questCard: {
     backgroundColor: "#FFFFFF",
@@ -325,6 +323,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    flex: 1,
   },
   iconContainer: {
     width: 48,
@@ -338,14 +337,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     color: "#1F2937",
-    marginBottom: 4,
+    lineHeight: 28,
   },
   xpBadge: {
     backgroundColor: "#ECFDF5",
     paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 16,
-    alignSelf: "flex-start",
+    borderRadius: 12,
+    marginLeft: 12,
+    height: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    minWidth: 70,
   },
   xpText: {
     color: "#059669",
@@ -379,6 +381,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   progressLeft: {
+    backgroundColor: "#F9FAFB",
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
@@ -405,7 +408,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   artworksSection: {
-    gap: 16,
+    gap: 12,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -431,12 +434,19 @@ const styles = StyleSheet.create({
   artworkCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
-    padding: 24,
-    marginBottom: 16,
     borderWidth: 1,
     borderColor: "#E5E7EB",
     borderLeftWidth: 4,
     borderLeftColor: "#E5E7EB",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+    padding: 12,
   },
   artworkCardVisited: {
     borderLeftColor: "#059669",
@@ -444,12 +454,15 @@ const styles = StyleSheet.create({
   artworkContent: {
     flexDirection: "row",
     gap: 12,
+    alignItems: "center",
   },
   artworkImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 8,
+    width: 90,
+    height: 90,
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
     overflow: "hidden",
+    flexShrink: 0,
   },
   image: {
     width: "100%",
@@ -464,10 +477,11 @@ const styles = StyleSheet.create({
   },
   artworkInfo: {
     flex: 1,
+    justifyContent: "center",
   },
   artworkHeader: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: 8,
     marginBottom: 4,
   },
@@ -476,6 +490,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#1F2937",
     flex: 1,
+    lineHeight: 22,
   },
   artworkTitleGray: {
     color: "#4B5563",
@@ -485,6 +500,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 12,
+    marginTop: 2,
   },
   visitedText: {
     color: "#059669",
