@@ -1,6 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
+import { type ArtFact, useArtFacts } from "@/src/hooks/useArtFacts";
 import { type Artwork, useArtwork } from "@/src/hooks/useArtwork";
 import { useFavorites } from "@/src/hooks/useFavorites";
 import { FontAwesome } from "@expo/vector-icons";
@@ -47,10 +48,20 @@ export default function ArtDetailScreen() {
   // Log the extracted values
   console.log("Art Detail Screen - Extracted values:", { source, id });
 
-  const { getArtworkById, isLoading, error } = useArtwork();
+  const {
+    getArtworkById,
+    isLoading: isLoadingArtwork,
+    error: artworkError,
+  } = useArtwork();
+  const {
+    getArtFactsByArtworkId,
+    isLoading: isLoadingFacts,
+    error: factsError,
+  } = useArtFacts();
   const { checkIfFavorited, toggleFavorite } = useFavorites();
   const { triggerRefresh } = useFavoritesContext();
   const [artwork, setArtwork] = useState<Artwork | null>(null);
+  const [artFacts, setArtFacts] = useState<ArtFact[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -62,13 +73,6 @@ export default function ArtDetailScreen() {
   const savedOffsetX = useSharedValue(0);
   const savedOffsetY = useSharedValue(0);
   const [activeFactIndex, setActiveFactIndex] = useState(0);
-
-  // Add placeholder facts
-  const funFacts = [
-    "This artwork was created during a period of significant artistic innovation, when artists were experimenting with new techniques and materials.",
-    "The artist spent over 2 years perfecting this piece, making it one of their most meticulously crafted works.",
-    "This artwork was once displayed in a royal palace before finding its way to the museum's collection.",
-  ];
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
@@ -119,31 +123,40 @@ export default function ArtDetailScreen() {
   };
 
   useEffect(() => {
-    console.log("Art Detail Screen - Effect running with id:", id);
-    if (id) {
-      const loadArtwork = async () => {
-        try {
-          const result = await getArtworkById(id);
-          if (result) {
-            setArtwork(result);
-            setSelectedImage(result.primaryImage);
+    const loadData = async () => {
+      if (!id) return;
 
-            // Check if the artwork is favorited
-            const favorite = await checkIfFavorited(id);
-            setIsFavorited(!!favorite);
-          } else {
-            console.log("Art Detail Screen - No artwork found for id:", id);
-          }
-        } catch (err) {
-          console.error("Art Detail Screen - Error fetching artwork:", err);
+      try {
+        const [artworkResult, facts] = await Promise.all([
+          getArtworkById(id),
+          getArtFactsByArtworkId(id),
+        ]);
+
+        if (artworkResult) {
+          setArtwork(artworkResult);
+          setSelectedImage(artworkResult.primaryImage);
+
+          // Check if the artwork is favorited
+          const favorite = await checkIfFavorited(id);
+          setIsFavorited(!!favorite);
         }
-      };
 
-      loadArtwork();
-    } else {
-      console.log("Art Detail Screen - No ID provided");
-    }
-  }, [id, getArtworkById, checkIfFavorited]);
+        // Ensure facts match our ArtFact interface
+        const validFacts: ArtFact[] = facts.map((fact) => ({
+          id: fact.id,
+          artworkId: fact.artworkId,
+          content: fact.content || null,
+          isActive: fact.isActive || null,
+          timestamp: fact.timestamp || null,
+        }));
+        setArtFacts(validFacts);
+      } catch (err) {
+        console.error("Error loading artwork data:", err);
+      }
+    };
+
+    loadData();
+  }, [id, getArtworkById, getArtFactsByArtworkId, checkIfFavorited]);
 
   const handleToggleFavorite = async () => {
     if (isTogglingFavorite || !artwork) return;
@@ -161,7 +174,7 @@ export default function ArtDetailScreen() {
   };
 
   // Show loading state
-  if (isLoading) {
+  if (isLoadingArtwork || isLoadingFacts) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
         <ThemedText>Loading artwork details...</ThemedText>
@@ -170,10 +183,12 @@ export default function ArtDetailScreen() {
   }
 
   // Show error state
-  if (error) {
+  if (artworkError || factsError) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
-        <ThemedText>Error loading artwork: {error.message}</ThemedText>
+        <ThemedText>
+          Error loading artwork: {artworkError?.message || factsError?.message}
+        </ThemedText>
       </ThemedView>
     );
   }
@@ -362,58 +377,62 @@ export default function ArtDetailScreen() {
           )}
 
           {/* Did You Know Section */}
-          <ThemedView style={styles.didYouKnowContainer}>
-            <ThemedView style={styles.didYouKnowBorder} />
-            <ThemedView style={styles.didYouKnowTitleContainer}>
-              <ThemedView style={styles.didYouKnowTitleBackground}>
-                <ThemedText style={styles.didYouKnowTitle}>
-                  Did You Know?
-                </ThemedText>
-              </ThemedView>
-            </ThemedView>
-            <FlatList
-              data={funFacts}
-              horizontal
-              pagingEnabled
-              snapToInterval={CARD_WIDTH + 8}
-              decelerationRate="fast"
-              showsHorizontalScrollIndicator={false}
-              snapToAlignment="start"
-              contentContainerStyle={[
-                styles.factsContainer,
-                { width: (CARD_WIDTH + 8) * funFacts.length - 8 },
-              ]}
-              onMomentumScrollEnd={(event) => {
-                const newIndex = Math.min(
-                  Math.max(
-                    0,
-                    Math.round(
-                      event.nativeEvent.contentOffset.x / (CARD_WIDTH + 8)
-                    )
-                  ),
-                  funFacts.length - 1
-                );
-                setActiveFactIndex(newIndex);
-              }}
-              renderItem={({ item }) => (
-                <ThemedView style={[styles.factCard, { width: CARD_WIDTH }]}>
-                  <ThemedText style={styles.factText}>{item}</ThemedText>
+          {artFacts.length > 0 && (
+            <ThemedView style={styles.didYouKnowContainer}>
+              <ThemedView style={styles.didYouKnowBorder} />
+              <ThemedView style={styles.didYouKnowTitleContainer}>
+                <ThemedView style={styles.didYouKnowTitleBackground}>
+                  <ThemedText style={styles.didYouKnowTitle}>
+                    Did You Know?
+                  </ThemedText>
                 </ThemedView>
-              )}
-              keyExtractor={(_, index) => index.toString()}
-            />
-            <View style={styles.paginationContainer}>
-              {funFacts.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.paginationDot,
-                    index === activeFactIndex && styles.paginationDotActive,
-                  ]}
-                />
-              ))}
-            </View>
-          </ThemedView>
+              </ThemedView>
+              <FlatList<ArtFact>
+                data={artFacts}
+                horizontal
+                pagingEnabled
+                snapToInterval={CARD_WIDTH + 8}
+                decelerationRate="fast"
+                showsHorizontalScrollIndicator={false}
+                snapToAlignment="start"
+                contentContainerStyle={[
+                  styles.factsContainer,
+                  { width: (CARD_WIDTH + 8) * artFacts.length - 8 },
+                ]}
+                onMomentumScrollEnd={(event) => {
+                  const newIndex = Math.min(
+                    Math.max(
+                      0,
+                      Math.round(
+                        event.nativeEvent.contentOffset.x / (CARD_WIDTH + 8)
+                      )
+                    ),
+                    artFacts.length - 1
+                  );
+                  setActiveFactIndex(newIndex);
+                }}
+                renderItem={({ item }: { item: ArtFact }) => (
+                  <ThemedView style={[styles.factCard, { width: CARD_WIDTH }]}>
+                    <ThemedText style={styles.factText}>
+                      {item.content}
+                    </ThemedText>
+                  </ThemedView>
+                )}
+                keyExtractor={(item: ArtFact) => item.id}
+              />
+              <View style={styles.paginationContainer}>
+                {artFacts.map((_: ArtFact, index: number) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.paginationDot,
+                      index === activeFactIndex && styles.paginationDotActive,
+                    ]}
+                  />
+                ))}
+              </View>
+            </ThemedView>
+          )}
 
           {/* Audio Guide */}
           {artwork.hasAudio && (
