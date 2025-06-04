@@ -17,39 +17,6 @@ import Carousel from "react-native-reanimated-carousel";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-interface Collection {
-  id: string;
-  title: string;
-  image: string;
-}
-
-const COLLECTIONS: Collection[] = [
-  {
-    id: "1",
-    title: "American Decorative Arts",
-    image:
-      "https://www.metmuseum.org/-/media/images/about-the-met/collection-areas/american-wing/the-american-wing-court_teaser.jpg?sc_lang=en",
-  },
-  {
-    id: "2",
-    title: "Arms and Armor",
-    image:
-      "https://www.metmuseum.org/-/media/images/about-the-met/collection-areas/arms-and-armor/arms-and-armor_teaser.jpg",
-  },
-  {
-    id: "3",
-    title: "Asian Art",
-    image:
-      "https://collectionapi.metmuseum.org/api/collection/v1/iiif/78870/preview",
-  },
-  {
-    id: "4",
-    title: "The Costume Institute",
-    image:
-      "https://fashionista.com/.image/t_share/MTY4NjA4NDk0NTUzOTMzNDQ3/sandy-schreier-metropolitan-museum-of-art-costume-institute-exhibition-review.jpg",
-  },
-];
-
 export default function HomeScreen() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -327,13 +294,14 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#FFFFFF",
   },
   centerContent: {
     justifyContent: "center",
     alignItems: "center",
   },
   contentContainer: {
-    paddingBottom: 20,
+    paddingBottom: 80,
   },
   header: {
     flexDirection: "row",
@@ -352,6 +320,7 @@ const styles = StyleSheet.create({
   },
   section: {
     marginTop: 20,
+    marginHorizontal: 20,
   },
   lastSection: {
     marginBottom: 40,
@@ -360,7 +329,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     marginBottom: 15,
-    paddingHorizontal: 20,
   },
   carouselContainer: {
     position: "relative",
@@ -423,11 +391,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   collectionsContainer: {
-    paddingHorizontal: 15,
+    gap: 10,
   },
   collectionItem: {
     width: 200,
-    marginHorizontal: 5,
     borderRadius: 10,
     overflow: "hidden",
   },
@@ -446,6 +413,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     borderRadius: 12,
     padding: 16,
+    paddingHorizontal: 20,
     flexDirection: "row",
   },
   triviaIconContainer: {
@@ -459,6 +427,7 @@ const styles = StyleSheet.create({
   },
   triviaContent: {
     flex: 1,
+    backgroundColor: "#f5f5f5",
   },
   triviaText: {
     fontSize: 14,
@@ -468,6 +437,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 12,
+    backgroundColor: "#f5f5f5",
   },
   triviaDate: {
     fontSize: 12,
@@ -488,6 +458,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     zIndex: 1,
     top: 130,
+    marginHorizontal: -15,
   },
   carouselButtonLeft: {
     left: 0,
