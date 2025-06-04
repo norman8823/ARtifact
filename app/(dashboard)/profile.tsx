@@ -1,6 +1,8 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useFavoriteArtworks } from "@/src/hooks/useFavoriteArtworks";
 import { useUserData } from "@/src/hooks/useUserData";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -22,19 +24,24 @@ export default function ProfileScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { signOut, isLoading } = useAuth();
   const { currentUser, ensureUserInDB } = useUserData();
+  const { getFavoriteCount } = useFavoriteArtworks();
+  const [favoriteCount, setFavoriteCount] = useState(0);
+  const { lastRefreshTime } = useFavoritesContext();
 
-  // Load user data when component mounts
+  // Load user data and favorite count when component mounts or favorites change
   useEffect(() => {
-    const loadUserData = async () => {
+    const loadData = async () => {
       try {
         await ensureUserInDB();
+        const count = await getFavoriteCount();
+        setFavoriteCount(count);
       } catch (error) {
-        console.error("Error loading user data:", error);
+        console.error("Error loading data:", error);
       }
     };
 
-    loadUserData();
-  }, [ensureUserInDB]);
+    loadData();
+  }, [ensureUserInDB, getFavoriteCount, lastRefreshTime]); // Add lastRefreshTime as dependency
 
   const handleLogout = async () => {
     console.log("Logout button pressed");
@@ -101,7 +108,7 @@ export default function ProfileScreen() {
           style={styles.statCard}
           onPress={() => router.push("/favorites")}
         >
-          <ThemedText style={styles.statNumber}>23</ThemedText>
+          <ThemedText style={styles.statNumber}>{favoriteCount}</ThemedText>
           <ThemedText style={styles.statLabel}>Favorites</ThemedText>
         </Pressable>
         <Pressable
