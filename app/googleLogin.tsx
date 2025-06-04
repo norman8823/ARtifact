@@ -126,7 +126,7 @@ export default function GoogleLoginScreen() {
         <ThemedView style={styles.actionButtons}>
           <Pressable
             style={styles.continueButton}
-            onPress={() => router.push("/home")}
+            onPress={() => router.replace("/home")}
           >
             <ThemedText style={styles.continueButtonText}>Continue</ThemedText>
           </Pressable>

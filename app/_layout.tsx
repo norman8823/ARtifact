@@ -20,12 +20,24 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="index"
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+          }}
+        />
         <Stack.Screen name="googleLogin" options={{ headerShown: false }} />
         <Stack.Screen name="appleLogin" options={{ headerShown: false }} />
         <Stack.Screen name="phoneLogin" options={{ headerShown: false }} />
         <Stack.Screen name="emailLogin" options={{ headerShown: false }} />
-        <Stack.Screen name="(dashboard)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(dashboard)"
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+          }}
+        />
         <Stack.Screen
           name="profileSettings"
           options={{

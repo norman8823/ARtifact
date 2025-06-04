@@ -98,7 +98,7 @@ export default function AppleLoginScreen() {
           {/* Sign In Button */}
           <Pressable
             style={styles.signInButton}
-            onPress={() => router.push("/home")}
+            onPress={() => router.replace("/home")}
           >
             <ThemedText style={styles.signInButtonText}>Sign In</ThemedText>
           </Pressable>
