@@ -1,6 +1,8 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
 import { type Artwork, useArtwork } from "@/src/hooks/useArtwork";
+import { useFavorites } from "@/src/hooks/useFavorites";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams } from "expo-router";
@@ -43,9 +45,13 @@ export default function ArtDetailScreen() {
   console.log("Art Detail Screen - Extracted values:", { source, id });
 
   const { getArtworkById, isLoading, error } = useArtwork();
+  const { checkIfFavorited, toggleFavorite } = useFavorites();
+  const { triggerRefresh } = useFavoritesContext();
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   const offsetX = useSharedValue(0);
@@ -104,23 +110,44 @@ export default function ArtDetailScreen() {
   useEffect(() => {
     console.log("Art Detail Screen - Effect running with id:", id);
     if (id) {
-      getArtworkById(id)
-        .then((result) => {
-          console.log("Art Detail Screen - Got artwork result:", result);
+      const loadArtwork = async () => {
+        try {
+          const result = await getArtworkById(id);
           if (result) {
             setArtwork(result);
             setSelectedImage(result.primaryImage);
+
+            // Check if the artwork is favorited
+            const favorite = await checkIfFavorited(id);
+            setIsFavorited(!!favorite);
           } else {
             console.log("Art Detail Screen - No artwork found for id:", id);
           }
-        })
-        .catch((err) => {
+        } catch (err) {
           console.error("Art Detail Screen - Error fetching artwork:", err);
-        });
+        }
+      };
+
+      loadArtwork();
     } else {
       console.log("Art Detail Screen - No ID provided");
     }
-  }, [id, getArtworkById]);
+  }, [id, getArtworkById, checkIfFavorited]);
+
+  const handleToggleFavorite = async () => {
+    if (isTogglingFavorite || !artwork) return;
+
+    setIsTogglingFavorite(true);
+    try {
+      const newFavoritedState = await toggleFavorite(artwork.id);
+      setIsFavorited(newFavoritedState);
+      triggerRefresh(); // Trigger refresh after successful toggle
+    } catch (err) {
+      console.error("Error toggling favorite:", err);
+    } finally {
+      setIsTogglingFavorite(false);
+    }
+  };
 
   // Show loading state
   if (isLoading) {
@@ -264,8 +291,16 @@ export default function ArtDetailScreen() {
                 {artwork.objectDate}
               </ThemedText>
             </ThemedView>
-            <Pressable style={styles.favoriteButton}>
-              <FontAwesome name="heart-o" size={20} color="#666" />
+            <Pressable
+              style={styles.favoriteButton}
+              onPress={handleToggleFavorite}
+              disabled={isTogglingFavorite}
+            >
+              <FontAwesome
+                name={isFavorited ? "heart" : "heart-o"}
+                size={20}
+                color={isFavorited ? "#ff4444" : "#666"}
+              />
             </Pressable>
           </ThemedView>
 
