@@ -4,7 +4,7 @@ import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
 import { useDepartments, type Department } from "@/src/hooks/useDepartments";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link, router, useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
