@@ -92,7 +92,13 @@ type UserQuest @model @auth(rules: [{ allow: owner }]) {
   id: ID!
   userId: ID! @index(name: "byUserQuest", sortKeyFields: ["questId"])
   questId: ID!
+  title: String!
+  description: String
+  icon: String
+  xpReward: Int
+  requiredArtworks: [String]
   artworksVisited: [String]
+  galleryMap: String
   isCompleted: Boolean
   timestamp: AWSDateTime
 }
