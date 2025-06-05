@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   contentContainer: {
-    paddingBottom: 100, // Add extra padding at the bottom for tab bar
+    paddingBottom: 80,
   },
   header: {
     flexDirection: "row",
