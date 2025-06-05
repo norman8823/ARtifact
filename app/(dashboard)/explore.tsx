@@ -4,11 +4,12 @@ import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
   FlatList,
+  Keyboard,
   Pressable,
   StyleSheet,
   TextInput,
@@ -31,6 +32,30 @@ export default function ExploreScreen() {
     };
     loadArtworks();
   }, [getAllArtworks]);
+
+  // Filter artworks based on search query
+  const filteredArtworks = useMemo(() => {
+    if (!searchQuery.trim()) return artworks;
+
+    const query = searchQuery.toLowerCase().trim();
+    return artworks.filter((artwork) => {
+      // Helper function to safely check if a string contains the query
+      const contains = (value: string | null | undefined) =>
+        value?.toLowerCase().includes(query) || false;
+
+      // Check if any of the artwork fields match the query
+      return (
+        contains(artwork.title) ||
+        contains(artwork.artistDisplayName) ||
+        contains(artwork.culture) ||
+        contains(artwork.medium) ||
+        contains(artwork.classification) ||
+        contains(artwork.objectType) ||
+        // Check if any tags contain the query
+        artwork.tags?.some((tag) => tag?.toLowerCase().includes(query))
+      );
+    });
+  }, [artworks, searchQuery]);
 
   const renderItem = ({ item }: { item: Artwork }) => (
     <Link
@@ -86,24 +111,15 @@ export default function ExploreScreen() {
             placeholderTextColor="#999"
             value={searchQuery}
             onChangeText={setSearchQuery}
-            onSubmitEditing={() => {
-              if (searchQuery.trim()) {
-                router.push({
-                  pathname: "/searchResults",
-                  params: { query: searchQuery.trim() },
-                });
-              } else {
-                router.push("/searchResults");
-              }
-            }}
-            returnKeyType="search"
+            onSubmitEditing={Keyboard.dismiss}
+            returnKeyType="done"
           />
         </ThemedView>
       </ThemedView>
 
       {/* Grid */}
       <FlatList
-        data={artworks}
+        data={filteredArtworks}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         numColumns={NUM_COLUMNS}

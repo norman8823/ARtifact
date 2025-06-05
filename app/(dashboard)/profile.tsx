@@ -3,7 +3,11 @@ import { ThemedView } from "@/components/ThemedView";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useFavoriteArtworks } from "@/src/hooks/useFavoriteArtworks";
+import { type Rank, useRanks } from "@/src/hooks/useRanks";
 import { useUserData } from "@/src/hooks/useUserData";
+import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
+import { type UserXP, useUserXP } from "@/src/hooks/useUserXP";
+import { useVisited } from "@/src/hooks/useVisited";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -25,23 +29,83 @@ export default function ProfileScreen() {
   const { signOut, isLoading } = useAuth();
   const { currentUser, ensureUserInDB } = useUserData();
   const { getFavoriteCount } = useFavoriteArtworks();
-  const [favoriteCount, setFavoriteCount] = useState(0);
+  const { getVisitedArtworks } = useVisited();
+  const { getUserQuests } = useUserQuests();
+  const { getUserXP } = useUserXP();
+  const { getRankByXP, getAllRanks } = useRanks();
   const { lastRefreshTime } = useFavoritesContext();
 
-  // Load user data and favorite count when component mounts or favorites change
+  const [favoriteCount, setFavoriteCount] = useState(0);
+  const [visitedCount, setVisitedCount] = useState(0);
+  const [completedQuestsCount, setCompletedQuestsCount] = useState(0);
+  const [userXP, setUserXP] = useState<UserXP | null>(null);
+  const [currentRank, setCurrentRank] = useState<Rank | null>(null);
+  const [nextRank, setNextRank] = useState<Rank | null>(null);
+  const [xpProgress, setXpProgress] = useState(0);
+  const [xpNeeded, setXpNeeded] = useState(0);
+
+  // Load user data and stats when component mounts or favorites change
   useEffect(() => {
     const loadData = async () => {
       try {
         await ensureUserInDB();
-        const count = await getFavoriteCount();
-        setFavoriteCount(count);
+
+        // Load all data in parallel
+        const [favorites, visited, quests, xp, allRanks] = await Promise.all([
+          getFavoriteCount(),
+          getVisitedArtworks(),
+          getUserQuests(),
+          getUserXP(),
+          getAllRanks(),
+        ]);
+
+        // Update counts
+        setFavoriteCount(favorites);
+        setVisitedCount(visited.length);
+        setCompletedQuestsCount(
+          quests.filter((q: UserQuest) => q.isCompleted).length
+        );
+        setUserXP(xp);
+
+        // Calculate rank progress
+        if (xp && allRanks.length > 0) {
+          const userRank = allRanks.find(
+            (rank: Rank) =>
+              xp.xpPoints >= rank.minXP && xp.xpPoints <= rank.maxXP
+          );
+          const nextRankIndex =
+            allRanks.findIndex((r: Rank) => r.id === userRank?.id) + 1;
+          const nextUserRank =
+            nextRankIndex < allRanks.length ? allRanks[nextRankIndex] : null;
+
+          setCurrentRank(userRank || allRanks[0]);
+          setNextRank(nextUserRank);
+
+          if (userRank && nextUserRank) {
+            const totalXPInLevel = nextUserRank.minXP - userRank.minXP;
+            const userXPInLevel = xp.xpPoints - userRank.minXP;
+            const progress = (userXPInLevel / totalXPInLevel) * 100;
+            const needed = nextUserRank.minXP - xp.xpPoints;
+
+            setXpProgress(progress);
+            setXpNeeded(needed);
+          }
+        }
       } catch (error) {
         console.error("Error loading data:", error);
       }
     };
 
     loadData();
-  }, [ensureUserInDB, getFavoriteCount, lastRefreshTime]); // Add lastRefreshTime as dependency
+  }, [
+    ensureUserInDB,
+    getFavoriteCount,
+    getVisitedArtworks,
+    getUserQuests,
+    getUserXP,
+    getAllRanks,
+    lastRefreshTime,
+  ]);
 
   const handleLogout = async () => {
     console.log("Logout button pressed");
@@ -89,9 +153,13 @@ export default function ProfileScreen() {
         </ThemedText>
         <ThemedView style={styles.rankContainer}>
           <ThemedView style={styles.rankBadge}>
-            <ThemedText style={styles.rankText}>Art Expert</ThemedText>
+            <ThemedText style={styles.rankText}>
+              {currentRank?.title || "Loading..."}
+            </ThemedText>
           </ThemedView>
-          <ThemedText style={styles.xpText}>2,450 XP</ThemedText>
+          <ThemedText style={styles.xpText}>
+            {userXP?.xpPoints || 0} XP
+          </ThemedText>
         </ThemedView>
       </ThemedView>
 
@@ -101,7 +169,7 @@ export default function ProfileScreen() {
           style={styles.statCard}
           onPress={() => router.push("/artworksVisited")}
         >
-          <ThemedText style={styles.statNumber}>47</ThemedText>
+          <ThemedText style={styles.statNumber}>{visitedCount}</ThemedText>
           <ThemedText style={styles.statLabel}>Artworks Visited</ThemedText>
         </Pressable>
         <Pressable
@@ -115,7 +183,9 @@ export default function ProfileScreen() {
           style={styles.statCard}
           onPress={() => router.push("/questsCompleted")}
         >
-          <ThemedText style={styles.statNumber}>12</ThemedText>
+          <ThemedText style={styles.statNumber}>
+            {completedQuestsCount}
+          </ThemedText>
           <ThemedText style={styles.statLabel}>Quests Completed</ThemedText>
         </Pressable>
       </ThemedView>
@@ -133,14 +203,22 @@ export default function ProfileScreen() {
         </ThemedView>
         <ThemedView style={styles.progressCard}>
           <ThemedView style={styles.rankLabels}>
-            <ThemedText style={styles.currentRank}>Art Expert</ThemedText>
-            <ThemedText style={styles.nextRank}>Art Master</ThemedText>
+            <ThemedText style={styles.currentRank}>
+              {currentRank?.title || "Loading..."}
+            </ThemedText>
+            <ThemedText style={styles.nextRank}>
+              {nextRank?.title || "Max Rank"}
+            </ThemedText>
           </ThemedView>
           <ThemedView style={styles.progressBarBg}>
-            <ThemedView style={[styles.progressBarFill, { width: "82%" }]} />
+            <ThemedView
+              style={[styles.progressBarFill, { width: `${xpProgress}%` }]}
+            />
           </ThemedView>
           <ThemedText style={styles.xpNeeded}>
-            551 XP needed for next rank
+            {nextRank
+              ? `${xpNeeded} XP needed for next rank`
+              : "Max rank achieved!"}
           </ThemedText>
         </ThemedView>
       </ThemedView>
