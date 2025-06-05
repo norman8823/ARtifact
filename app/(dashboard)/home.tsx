@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   lastSection: {
-    marginBottom: 40,
+    marginBottom: 80,
   },
   sectionTitle: {
     fontSize: 20,
