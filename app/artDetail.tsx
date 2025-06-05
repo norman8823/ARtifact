@@ -325,7 +325,7 @@ export default function ArtDetailScreen() {
               <FontAwesome
                 name={isFavorited ? "heart" : "heart-o"}
                 size={20}
-                color={isFavorited ? "#b60021" : "#666"}
+                color={isFavorited ? "#ff4444" : "#666"}
               />
             </Pressable>
           </ThemedView>
@@ -500,19 +500,19 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "600",
-    color: "#111",
+    color: "#000",
     marginBottom: 4,
     flex: 1,
   },
   artist: {
     fontSize: 16,
-    color: "#444",
+    color: "#666",
     marginBottom: 2,
     flex: 1,
   },
   period: {
     fontSize: 14,
-    color: "#666",
+    color: "#999",
     flex: 1,
   },
   favoriteButton: {
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#111",
+    backgroundColor: "#000",
     paddingVertical: 14,
     borderRadius: 12,
     gap: 8,
@@ -557,12 +557,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -8,
     right: -8,
-    backgroundColor: "#111",
+    backgroundColor: "#000",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#333",
+    borderColor: "#eee",
   },
   premiumText: {
     color: "#fff",
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "rgba(182, 0, 33, 0.3)",
+    borderColor: "#eee",
     paddingVertical: 16,
     gap: 12,
     marginTop: 8,
@@ -589,7 +589,7 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     fontSize: 14,
-    color: "#111",
+    color: "#000",
     flex: 2,
     textAlign: "right",
   },
@@ -625,7 +625,7 @@ const styles = StyleSheet.create({
   guideTitle: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#111",
+    color: "#000",
   },
   guideDuration: {
     fontSize: 12,
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#111",
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   thumbnailSelected: {
-    borderColor: "#b60021",
+    borderColor: "#000",
   },
   thumbnailImage: {
     width: "100%",
@@ -700,7 +700,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#b60021",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -732,7 +732,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     borderWidth: 1,
-    borderColor: "#b60021",
+    borderColor: "#666",
     borderRadius: 12,
   },
   didYouKnowTitleContainer: {
@@ -748,7 +748,7 @@ const styles = StyleSheet.create({
   didYouKnowTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111",
+    color: "#000",
   },
   factsContainer: {
     gap: 8,
@@ -769,7 +769,7 @@ const styles = StyleSheet.create({
   factText: {
     fontSize: 15,
     lineHeight: 22,
-    color: "#444",
+    color: "#000",
   },
   paginationContainer: {
     flexDirection: "row",
@@ -783,10 +783,10 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "rgba(182, 0, 33, 0.3)",
+    backgroundColor: "#999",
   },
   paginationDotActive: {
-    backgroundColor: "#b60021",
+    backgroundColor: "#000",
     width: 12,
     height: 12,
     borderRadius: 6,
