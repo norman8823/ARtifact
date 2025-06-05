@@ -86,6 +86,7 @@ export const createArtwork = /* GraphQL */ `mutation CreateArtwork(
     isCurated
     isFeatured
     hasAudio
+    hasAR
     primaryImage
     primaryImageSmall
     additionalImages
@@ -123,6 +124,7 @@ export const updateArtwork = /* GraphQL */ `mutation UpdateArtwork(
     isCurated
     isFeatured
     hasAudio
+    hasAR
     primaryImage
     primaryImageSmall
     additionalImages
@@ -160,6 +162,7 @@ export const deleteArtwork = /* GraphQL */ `mutation DeleteArtwork(
     isCurated
     isFeatured
     hasAudio
+    hasAR
     primaryImage
     primaryImageSmall
     additionalImages
@@ -544,7 +547,13 @@ export const createUserQuest = /* GraphQL */ `mutation CreateUserQuest(
     id
     userId
     questId
+    title
+    description
+    icon
+    xpReward
+    requiredArtworks
     artworksVisited
+    galleryMap
     isCompleted
     timestamp
     createdAt
@@ -565,7 +574,13 @@ export const updateUserQuest = /* GraphQL */ `mutation UpdateUserQuest(
     id
     userId
     questId
+    title
+    description
+    icon
+    xpReward
+    requiredArtworks
     artworksVisited
+    galleryMap
     isCompleted
     timestamp
     createdAt
@@ -586,7 +601,13 @@ export const deleteUserQuest = /* GraphQL */ `mutation DeleteUserQuest(
     id
     userId
     questId
+    title
+    description
+    icon
+    xpReward
+    requiredArtworks
     artworksVisited
+    galleryMap
     isCompleted
     timestamp
     createdAt

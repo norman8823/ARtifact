@@ -199,7 +199,13 @@ export const onCreateUserQuest = /* GraphQL */ `subscription OnCreateUserQuest(
     id
     userId
     questId
+    title
+    description
+    icon
+    xpReward
+    requiredArtworks
     artworksVisited
+    galleryMap
     isCompleted
     timestamp
     createdAt
@@ -220,7 +226,13 @@ export const onUpdateUserQuest = /* GraphQL */ `subscription OnUpdateUserQuest(
     id
     userId
     questId
+    title
+    description
+    icon
+    xpReward
+    requiredArtworks
     artworksVisited
+    galleryMap
     isCompleted
     timestamp
     createdAt
@@ -241,7 +253,13 @@ export const onDeleteUserQuest = /* GraphQL */ `subscription OnDeleteUserQuest(
     id
     userId
     questId
+    title
+    description
+    icon
+    xpReward
+    requiredArtworks
     artworksVisited
+    galleryMap
     isCompleted
     timestamp
     createdAt
@@ -317,6 +335,7 @@ export const onCreateArtwork = /* GraphQL */ `subscription OnCreateArtwork($filt
     isCurated
     isFeatured
     hasAudio
+    hasAR
     primaryImage
     primaryImageSmall
     additionalImages
@@ -351,6 +370,7 @@ export const onUpdateArtwork = /* GraphQL */ `subscription OnUpdateArtwork($filt
     isCurated
     isFeatured
     hasAudio
+    hasAR
     primaryImage
     primaryImageSmall
     additionalImages
@@ -385,6 +405,7 @@ export const onDeleteArtwork = /* GraphQL */ `subscription OnDeleteArtwork($filt
     isCurated
     isFeatured
     hasAudio
+    hasAR
     primaryImage
     primaryImageSmall
     additionalImages
