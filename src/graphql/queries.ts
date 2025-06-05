@@ -135,7 +135,13 @@ export const getUserQuest = /* GraphQL */ `query GetUserQuest($id: ID!) {
     id
     userId
     questId
+    title
+    description
+    icon
+    xpReward
+    requiredArtworks
     artworksVisited
+    galleryMap
     isCompleted
     timestamp
     createdAt
@@ -158,7 +164,13 @@ export const listUserQuests = /* GraphQL */ `query ListUserQuests(
       id
       userId
       questId
+      title
+      description
+      icon
+      xpReward
+      requiredArtworks
       artworksVisited
+      galleryMap
       isCompleted
       timestamp
       createdAt
@@ -299,7 +311,13 @@ export const userQuestsByUserIdAndQuestId = /* GraphQL */ `query UserQuestsByUse
       id
       userId
       questId
+      title
+      description
+      icon
+      xpReward
+      requiredArtworks
       artworksVisited
+      galleryMap
       isCompleted
       timestamp
       createdAt
@@ -355,6 +373,7 @@ export const getArtwork = /* GraphQL */ `query GetArtwork($id: ID!) {
     isCurated
     isFeatured
     hasAudio
+    hasAR
     primaryImage
     primaryImageSmall
     additionalImages
@@ -394,6 +413,7 @@ export const listArtworks = /* GraphQL */ `query ListArtworks(
       isCurated
       isFeatured
       hasAudio
+      hasAR
       primaryImage
       primaryImageSmall
       additionalImages
