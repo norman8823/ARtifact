@@ -325,7 +325,7 @@ export default function ArtDetailScreen() {
               <FontAwesome
                 name={isFavorited ? "heart" : "heart-o"}
                 size={20}
-                color={isFavorited ? "#ff4444" : "#666"}
+                color={isFavorited ? "#b60021" : "#666"}
               />
             </Pressable>
           </ThemedView>
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "#eee",
+    borderColor: "rgba(182, 0, 33, 0.3)",
     paddingVertical: 16,
     gap: 12,
     marginTop: 8,
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   thumbnailSelected: {
-    borderColor: "#000",
+    borderColor: "#b60021",
   },
   thumbnailImage: {
     width: "100%",
@@ -700,7 +700,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "#b60021",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -732,7 +732,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     borderWidth: 1,
-    borderColor: "#111",
+    borderColor: "#b60021",
     borderRadius: 12,
   },
   didYouKnowTitleContainer: {
@@ -783,10 +783,10 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#ddd",
+    backgroundColor: "rgba(182, 0, 33, 0.3)",
   },
   paginationDotActive: {
-    backgroundColor: "#111",
+    backgroundColor: "#b60021",
     width: 12,
     height: 12,
     borderRadius: 6,

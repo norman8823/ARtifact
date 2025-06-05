@@ -7,6 +7,17 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { FavoritesProvider } from "@/src/contexts/FavoritesContext";
 
+const customTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#b60021",
+    background: "#fff",
+    card: "#b60021",
+    text: "#ffffff",
+  },
+};
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -19,9 +30,16 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={DefaultTheme}>
+    <ThemeProvider value={customTheme}>
       <FavoritesProvider>
-        <Stack>
+        <Stack
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: "#b60021",
+            },
+            headerTintColor: "#ffffff",
+          }}
+        >
           <Stack.Screen
             name="index"
             options={{
