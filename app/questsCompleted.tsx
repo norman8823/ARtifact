@@ -1,48 +1,94 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
 import { FontAwesome } from "@expo/vector-icons";
 import { Stack } from "expo-router";
-import { ScrollView, StyleSheet } from "react-native";
-
-const QUESTS_COMPLETED = [
-  {
-    id: 1,
-    title: "Face to Face",
-    description: "Discover the evolution of portraiture across 3 styles",
-    xp: 300,
-    completedDate: "April 12, 2023",
-  },
-  {
-    id: 2,
-    title: "Global Perspectives",
-    description: "Explore art from 4 different world regions",
-    xp: 400,
-    completedDate: "March 28, 2023",
-  },
-  {
-    id: 3,
-    title: "Color Theory",
-    description: "Study the use of color in 5 masterpieces",
-    xp: 350,
-    completedDate: "March 15, 2023",
-  },
-  {
-    id: 4,
-    title: "Renaissance Journey",
-    description: "Visit 4 Renaissance artworks",
-    xp: 250,
-    completedDate: "March 1, 2023",
-  },
-  {
-    id: 5,
-    title: "Modern Art Explorer",
-    description: "Discover 3 modern art movements",
-    xp: 300,
-    completedDate: "February 15, 2023",
-  },
-];
+import { useEffect, useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 
 export default function QuestsCompletedScreen() {
+  const { getUserQuests, isLoading, error } = useUserQuests();
+  const [completedQuests, setCompletedQuests] = useState<UserQuest[]>([]);
+
+  useEffect(() => {
+    const loadCompletedQuests = async () => {
+      try {
+        const userQuests = await getUserQuests();
+        const completed = userQuests
+          .filter((quest: UserQuest) => quest.isCompleted)
+          .sort((a: UserQuest, b: UserQuest) => {
+            // Sort by timestamp in descending order (most recent first)
+            const dateA = new Date(a.timestamp);
+            const dateB = new Date(b.timestamp);
+            return dateB.getTime() - dateA.getTime();
+          });
+        setCompletedQuests(completed);
+      } catch (err) {
+        console.error("Error loading completed quests:", err);
+      }
+    };
+
+    loadCompletedQuests();
+  }, [getUserQuests]);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <Stack.Screen
+          options={{
+            title: "Quests Completed",
+            headerShadowVisible: false,
+            headerBackTitle: "Profile",
+          }}
+        />
+        <ActivityIndicator size="large" />
+      </ThemedView>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <Stack.Screen
+          options={{
+            title: "Quests Completed",
+            headerShadowVisible: false,
+            headerBackTitle: "Profile",
+          }}
+        />
+        <ThemedText style={styles.errorText}>
+          Error loading quests: {error.message}
+        </ThemedText>
+      </ThemedView>
+    );
+  }
+
+  // Show empty state
+  if (completedQuests.length === 0) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <Stack.Screen
+          options={{
+            title: "Quests Completed",
+            headerShadowVisible: false,
+            headerBackTitle: "Profile",
+          }}
+        />
+        <ThemedView style={styles.emptyState}>
+          <FontAwesome name="trophy" size={48} color="#bbf7d0" />
+          <ThemedText style={styles.emptyStateTitle}>
+            No Quests Completed Yet
+          </ThemedText>
+          <ThemedText style={styles.emptyStateText}>
+            Complete quests to earn XP and unlock new ranks!
+          </ThemedText>
+        </ThemedView>
+      </ThemedView>
+    );
+  }
+
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen
@@ -58,7 +104,7 @@ export default function QuestsCompletedScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ThemedView style={styles.questList}>
-          {QUESTS_COMPLETED.map((quest) => (
+          {completedQuests.map((quest) => (
             <ThemedView key={quest.id} style={styles.questCard}>
               <ThemedView style={styles.questHeader}>
                 <ThemedView style={styles.questInfo}>
@@ -70,7 +116,9 @@ export default function QuestsCompletedScreen() {
                   </ThemedText>
                 </ThemedView>
                 <ThemedView style={styles.xpBadge}>
-                  <ThemedText style={styles.xpText}>+{quest.xp} XP</ThemedText>
+                  <ThemedText style={styles.xpText}>
+                    +{quest.xpReward} XP
+                  </ThemedText>
                 </ThemedView>
               </ThemedView>
               <ThemedView style={styles.questFooter}>
@@ -81,7 +129,11 @@ export default function QuestsCompletedScreen() {
                   </ThemedText>
                 </ThemedView>
                 <ThemedText style={styles.dateText}>
-                  {quest.completedDate}
+                  {new Date(quest.timestamp).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                 </ThemedText>
               </ThemedView>
             </ThemedView>
@@ -96,6 +148,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+  },
+  centerContent: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   scrollView: {
     flex: 1,
@@ -176,5 +232,26 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 12,
     color: "#15803d",
+  },
+  errorText: {
+    color: "#dc2626",
+    textAlign: "center",
+    marginHorizontal: 24,
+  },
+  emptyState: {
+    alignItems: "center",
+    padding: 24,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#166534",
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateText: {
+    fontSize: 14,
+    color: "#15803d",
+    textAlign: "center",
   },
 });
