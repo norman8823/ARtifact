@@ -1,9 +1,11 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { type Quest as BaseQuest, useQuests } from "@/src/hooks/useQuests";
+import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
 import { FontAwesome } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet } from "react-native";
 
 type QuestDifficulty = "Easy" | "Medium" | "Hard";
@@ -16,49 +18,52 @@ interface ActiveQuest extends BaseQuest {
 }
 
 export default function ArtQuestScreen() {
-  const { getAllQuests, isLoading, error } = useQuests();
+  const {
+    getAllQuests,
+    isLoading: isLoadingQuests,
+    error: questsError,
+  } = useQuests();
+  const {
+    getUserQuests,
+    isLoading: isLoadingUserQuests,
+    error: userQuestsError,
+  } = useUserQuests();
+
   const [availableQuests, setAvailableQuests] = useState<BaseQuest[]>([]);
+  const [activeQuests, setActiveQuests] = useState<UserQuest[]>([]);
 
-  // Fetch quests when component mounts
+  const loadQuests = useCallback(async () => {
+    const [allQuests, userQuests] = await Promise.all([
+      getAllQuests(),
+      getUserQuests(),
+    ]);
+
+    // Filter out quests that the user has already started
+    const startedQuestIds = new Set(
+      userQuests.map((uq: UserQuest) => uq.questId)
+    );
+    const available = allQuests.filter(
+      (quest: BaseQuest) => !startedQuestIds.has(quest.id)
+    );
+
+    setAvailableQuests(available);
+    setActiveQuests(userQuests);
+  }, [getAllQuests, getUserQuests]);
+
+  // Initial load
   useEffect(() => {
-    getAllQuests().then((quests) => {
-      setAvailableQuests(quests);
-    });
-  }, [getAllQuests]);
+    loadQuests();
+  }, [loadQuests]);
 
-  const [activeQuests] = useState<ActiveQuest[]>([
-    {
-      id: "1",
-      title: "Euro Trip",
-      description: "Visit 3 masterpieces from different European countries",
-      xpReward: 300,
-      icon: null,
-      requiredArtworks: null,
-      isPremium: false,
-      galleryMap: "Gallery 24, European Collection",
-      progress: {
-        current: 2,
-        total: 3,
-      },
-    },
-    {
-      id: "2",
-      title: "Time Warp",
-      description: "Visit artworks from 3 different centuries",
-      xpReward: 250,
-      icon: null,
-      requiredArtworks: null,
-      isPremium: false,
-      galleryMap: "Various Galleries",
-      progress: {
-        current: 1,
-        total: 3,
-      },
-    },
-  ]);
+  // Refresh when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadQuests();
+    }, [loadQuests])
+  );
 
   // Show loading state
-  if (isLoading) {
+  if (isLoadingQuests || isLoadingUserQuests) {
     return (
       <ThemedView style={[styles.container, styles.loadingContainer]}>
         <ThemedText>Loading quests...</ThemedText>
@@ -67,10 +72,12 @@ export default function ArtQuestScreen() {
   }
 
   // Show error state
-  if (error) {
+  if (questsError || userQuestsError) {
     return (
       <ThemedView style={[styles.container, styles.loadingContainer]}>
-        <ThemedText>Error loading quests: {error.message}</ThemedText>
+        <ThemedText>
+          Error loading quests: {(questsError || userQuestsError)?.message}
+        </ThemedText>
       </ThemedView>
     );
   }
@@ -102,64 +109,80 @@ export default function ArtQuestScreen() {
           </ThemedView>
         </ThemedView>
 
-        {activeQuests.map((quest) => (
-          <Pressable
-            key={quest.id}
-            style={styles.questCard}
-            onPress={() => router.push(`/questDetail?id=${quest.id}`)}
-          >
-            <ThemedView style={styles.questHeader}>
-              <ThemedView style={styles.questInfo}>
-                <ThemedView style={styles.titleRow}>
-                  <ThemedText style={styles.questTitle}>
-                    {quest.title}
-                  </ThemedText>
-                  <ThemedView style={styles.xpBadge}>
-                    <ThemedText style={styles.xpText}>
-                      {quest.xpReward} XP
+        {activeQuests.length === 0 ? (
+          <ThemedView style={styles.emptyStateContainer}>
+            <ThemedText style={styles.emptyStateText}>
+              You haven't started any quests yet. Begin your journey by
+              selecting a quest below!
+            </ThemedText>
+          </ThemedView>
+        ) : (
+          activeQuests.map((quest) => (
+            <Pressable
+              key={quest.id}
+              style={styles.questCard}
+              onPress={() => router.push(`/questDetail?id=${quest.questId}`)}
+            >
+              <ThemedView style={styles.questHeader}>
+                <ThemedView style={styles.questInfo}>
+                  <ThemedView style={styles.titleRow}>
+                    <ThemedText style={styles.questTitle}>
+                      {quest.title}
                     </ThemedText>
+                    <ThemedView style={styles.xpBadge}>
+                      <ThemedText style={styles.xpText}>
+                        {quest.xpReward} XP
+                      </ThemedText>
+                    </ThemedView>
                   </ThemedView>
+                  <ThemedText style={styles.questDescription}>
+                    {quest.description}
+                  </ThemedText>
                 </ThemedView>
-                <ThemedText style={styles.questDescription}>
-                  {quest.description}
-                </ThemedText>
               </ThemedView>
-            </ThemedView>
 
-            <ThemedView style={styles.progressContainer}>
-              <ThemedView style={styles.progressBar}>
-                <ThemedView
-                  style={[
-                    styles.progressFill,
-                    {
-                      width: `${
-                        (quest.progress!.current / quest.progress!.total) * 100
-                      }%`,
-                    },
-                  ]}
-                />
+              <ThemedView style={styles.progressContainer}>
+                <ThemedView style={styles.progressBar}>
+                  <ThemedView
+                    style={[
+                      styles.progressFill,
+                      {
+                        width: `${
+                          (quest.artworksVisited.length /
+                            quest.requiredArtworks.length) *
+                          100
+                        }%`,
+                      },
+                    ]}
+                  />
+                </ThemedView>
+                <ThemedView style={styles.progressText}>
+                  <ThemedText style={styles.progressCount}>
+                    {quest.artworksVisited.length}/
+                    {quest.requiredArtworks.length} visited
+                  </ThemedText>
+                  <ThemedText style={styles.progressPercentage}>
+                    {Math.round(
+                      (quest.artworksVisited.length /
+                        quest.requiredArtworks.length) *
+                        100
+                    )}
+                    %
+                  </ThemedText>
+                </ThemedView>
               </ThemedView>
-              <ThemedView style={styles.progressText}>
-                <ThemedText style={styles.progressCount}>
-                  {quest.progress!.current}/{quest.progress!.total} visited
-                </ThemedText>
-                <ThemedText style={styles.progressPercentage}>
-                  {Math.round(
-                    (quest.progress!.current / quest.progress!.total) * 100
-                  )}
-                  %
-                </ThemedText>
-              </ThemedView>
-            </ThemedView>
 
-            <ThemedView style={styles.locationContainer}>
-              <FontAwesome name="map-marker" size={14} color="#666" />
-              <ThemedText style={styles.locationText}>
-                {quest.galleryMap}
-              </ThemedText>
-            </ThemedView>
-          </Pressable>
-        ))}
+              {quest.galleryMap && (
+                <ThemedView style={styles.locationContainer}>
+                  <FontAwesome name="map-marker" size={14} color="#666" />
+                  <ThemedText style={styles.locationText}>
+                    {quest.galleryMap}
+                  </ThemedText>
+                </ThemedView>
+              )}
+            </Pressable>
+          ))
+        )}
       </ThemedView>
 
       {/* Available Quests Section */}
@@ -204,11 +227,14 @@ export default function ArtQuestScreen() {
               </ThemedView>
             </ThemedView>
 
-            <ThemedView style={styles.questFooter}>
-              <Pressable style={styles.startButton}>
-                <ThemedText style={styles.startButtonText}>Start</ThemedText>
-              </Pressable>
-            </ThemedView>
+            {quest.galleryMap && (
+              <ThemedView style={styles.locationContainer}>
+                <FontAwesome name="map-marker" size={14} color="#666" />
+                <ThemedText style={styles.locationText}>
+                  {quest.galleryMap}
+                </ThemedText>
+              </ThemedView>
+            )}
           </Pressable>
         ))}
       </ThemedView>
@@ -392,5 +418,19 @@ const styles = StyleSheet.create({
     color: "#333",
     fontSize: 14,
     fontWeight: "500",
+  },
+  emptyStateContainer: {
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F9FAFB",
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  emptyStateText: {
+    textAlign: "center",
+    color: "#6B7280",
+    fontSize: 16,
+    lineHeight: 24,
   },
 });
