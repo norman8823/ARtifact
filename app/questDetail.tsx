@@ -2,11 +2,17 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { type Artwork, useArtworksByIds } from "@/src/hooks/useArtworksByIds";
 import { type Quest, useQuests } from "@/src/hooks/useQuests";
-import { type UserQuest, useUserQuest } from "@/src/hooks/useUserQuest";
+import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 
 interface QuestDetail {
   quest: Quest;
@@ -19,11 +25,16 @@ export default function QuestDetailScreen() {
   const questId = Array.isArray(params.id) ? params.id[0] : params.id;
 
   const { getAllQuests, isLoading: isLoadingQuest } = useQuests();
-  const { getUserQuestStatus, isLoading: isLoadingUserQuest } = useUserQuest();
+  const {
+    getUserQuestByQuestId,
+    startQuest,
+    isLoading: isLoadingUserQuest,
+  } = useUserQuests();
   const { getArtworksByIds, isLoading: isLoadingArtworks } = useArtworksByIds();
 
   const [questDetail, setQuestDetail] = useState<QuestDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
 
   useEffect(() => {
     const loadQuestDetail = async () => {
@@ -36,7 +47,7 @@ export default function QuestDetailScreen() {
         }
 
         // Get the user's progress on this quest
-        const userQuest = await getUserQuestStatus(questId);
+        const userQuest = await getUserQuestByQuestId(questId);
 
         // Get the artwork details
         const artworks = quest.requiredArtworks
@@ -57,7 +68,32 @@ export default function QuestDetailScreen() {
     if (questId) {
       loadQuestDetail();
     }
-  }, [questId, getAllQuests, getUserQuestStatus, getArtworksByIds]);
+  }, [questId, getAllQuests, getUserQuestByQuestId, getArtworksByIds]);
+
+  const handleStartQuest = async () => {
+    if (!questDetail?.quest) return;
+
+    setIsStarting(true);
+    try {
+      const result = await startQuest(questDetail.quest);
+      if (result) {
+        // Update the local state with the new UserQuest
+        setQuestDetail((prev) =>
+          prev
+            ? {
+                ...prev,
+                userQuest: result,
+              }
+            : null
+        );
+      }
+    } catch (err) {
+      console.error("Error starting quest:", err);
+      setError(err instanceof Error ? err.message : "Failed to start quest");
+    } finally {
+      setIsStarting(false);
+    }
+  };
 
   // Show loading state
   if (isLoadingQuest || isLoadingUserQuest || isLoadingArtworks) {
@@ -84,8 +120,8 @@ export default function QuestDetailScreen() {
   // Calculate progress
   const progress = userQuest
     ? {
-        current: userQuest.progress.visitedArtworks.length,
-        total: userQuest.progress.totalArtworks,
+        current: userQuest.artworksVisited.length,
+        total: userQuest.requiredArtworks.length,
       }
     : {
         current: 0,
@@ -173,6 +209,26 @@ export default function QuestDetailScreen() {
               </ThemedText>
             </ThemedView>
           </ThemedView>
+
+          {/* Start Quest Button */}
+          {!userQuest && (
+            <Pressable
+              style={[
+                styles.startButton,
+                isStarting && styles.startButtonDisabled,
+              ]}
+              onPress={handleStartQuest}
+              disabled={isStarting}
+            >
+              {isStarting ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <ThemedText style={styles.startButtonText}>
+                  Start Quest
+                </ThemedText>
+              )}
+            </Pressable>
+          )}
         </ThemedView>
 
         {/* Artworks Section */}
@@ -197,7 +253,7 @@ export default function QuestDetailScreen() {
               key={artwork.id}
               style={[
                 styles.artworkCard,
-                userQuest?.progress.visitedArtworks.includes(artwork.id) &&
+                userQuest?.artworksVisited.includes(artwork.id) &&
                   styles.artworkCardVisited,
               ]}
               onPress={() => {
@@ -231,9 +287,8 @@ export default function QuestDetailScreen() {
                     <ThemedText
                       style={[
                         styles.artworkTitle,
-                        !userQuest?.progress.visitedArtworks.includes(
-                          artwork.id
-                        ) && styles.artworkTitleGray,
+                        !userQuest?.artworksVisited.includes(artwork.id) &&
+                          styles.artworkTitleGray,
                       ]}
                     >
                       {artwork.title}
@@ -241,22 +296,18 @@ export default function QuestDetailScreen() {
                     <ThemedView
                       style={[
                         styles.visitedBadge,
-                        !userQuest?.progress.visitedArtworks.includes(
-                          artwork.id
-                        ) && styles.notVisitedBadge,
+                        !userQuest?.artworksVisited.includes(artwork.id) &&
+                          styles.notVisitedBadge,
                       ]}
                     >
                       <ThemedText
                         style={[
                           styles.visitedText,
-                          !userQuest?.progress.visitedArtworks.includes(
-                            artwork.id
-                          ) && styles.notVisitedText,
+                          !userQuest?.artworksVisited.includes(artwork.id) &&
+                            styles.notVisitedText,
                         ]}
                       >
-                        {userQuest?.progress.visitedArtworks.includes(
-                          artwork.id
-                        )
+                        {userQuest?.artworksVisited.includes(artwork.id)
                           ? "Visited"
                           : "Not Visited"}
                       </ThemedText>
@@ -537,5 +588,22 @@ const styles = StyleSheet.create({
   },
   inProgressText: {
     color: "#D97706",
+  },
+  startButton: {
+    backgroundColor: "#059669",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 16,
+  },
+  startButtonDisabled: {
+    backgroundColor: "#9CA3AF",
+  },
+  startButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
