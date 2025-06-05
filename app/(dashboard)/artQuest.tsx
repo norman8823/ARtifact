@@ -94,7 +94,7 @@ export default function ArtQuestScreen() {
           <ThemedText style={styles.levelText}>Level 3</ThemedText>
         </ThemedView>
         <ThemedView style={styles.medalContainer}>
-          <FontAwesome name="trophy" size={24} color="#FFB800" />
+          <FontAwesome name="trophy" size={24} color="#F59E0B" />
         </ThemedView>
       </ThemedView>
 
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   contentContainer: {
-    paddingBottom: 100,
+    paddingBottom: 80,
   },
   statsSection: {
     flexDirection: "row",
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   medalContainer: {
-    backgroundColor: "#FFF8E7",
+    backgroundColor: "#FEF3C7",
     padding: 12,
     borderRadius: 50,
   },
@@ -290,17 +290,17 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: "500",
+    color: "#000",
   },
   badge: {
-    backgroundColor: "#EBF5FF",
+    backgroundColor: "#FEF3C7",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
   },
   badgeText: {
-    color: "#0066CC",
+    color: "#D97706",
     fontSize: 14,
     fontWeight: "500",
   },
@@ -316,7 +316,15 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#f0f0f0",
+    borderColor: "#eee",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   questHeader: {
     marginBottom: 12,
@@ -331,8 +339,8 @@ const styles = StyleSheet.create({
   },
   questTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: "500",
+    color: "#000",
     flex: 1,
     paddingRight: 8,
   },
@@ -342,14 +350,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   xpBadge: {
-    backgroundColor: "#EBF5FF",
+    backgroundColor: "#f0fdf4",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     alignSelf: "flex-start",
   },
   xpText: {
-    color: "#0066CC",
+    color: "#16a34a",
     fontSize: 14,
     fontWeight: "500",
   },
@@ -358,13 +366,13 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 8,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#eee",
     borderRadius: 4,
     marginBottom: 4,
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#0066CC",
+    backgroundColor: "#FEF3C7",
     borderRadius: 4,
   },
   progressText: {
@@ -378,8 +386,7 @@ const styles = StyleSheet.create({
   },
   progressPercentage: {
     fontSize: 12,
-    color: "#0066CC",
-    fontWeight: "500",
+    color: "#666",
   },
   locationContainer: {
     flexDirection: "row",
@@ -393,19 +400,6 @@ const styles = StyleSheet.create({
   questFooter: {
     alignItems: "center",
     marginTop: 12,
-  },
-  startButton: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#333",
-    paddingHorizontal: 24,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  startButtonText: {
-    color: "#333",
-    fontSize: 14,
-    fontWeight: "500",
   },
   premiumBadge: {
     backgroundColor: "#FFD700",
