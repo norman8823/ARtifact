@@ -16,7 +16,7 @@ import {
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const NUM_COLUMNS = 3;
-const ITEM_WIDTH = (SCREEN_WIDTH - 20) / NUM_COLUMNS;
+const ITEM_WIDTH = (SCREEN_WIDTH - 28) / NUM_COLUMNS;
 
 export default function ExploreScreen() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -152,8 +152,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   gridContainer: {
-    padding: 14,
-    paddingBottom: ITEM_WIDTH, // Extra padding for tab bar
+    paddingTop: 16,
+    paddingBottom: ITEM_WIDTH,
   },
   columnWrapper: {
     justifyContent: "center",
