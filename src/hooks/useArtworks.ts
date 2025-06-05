@@ -14,6 +14,11 @@ export interface Artwork {
   primaryImage: string | null;
   primaryImageSmall: string | null;
   isFeatured: boolean | null;
+  culture: string | null;
+  medium: string | null;
+  classification: string | null;
+  objectType: string | null;
+  tags: Array<string | null> | null;
 }
 
 export function useArtworks() {
@@ -91,6 +96,11 @@ export function useArtworks() {
             primaryImage: item.primaryImage,
             primaryImageSmall: item.primaryImageSmall,
             isFeatured: item.isFeatured,
+            culture: item.culture,
+            medium: item.medium,
+            classification: item.classification,
+            objectType: item.objectType,
+            tags: item.tags,
           })
         );
 
@@ -166,6 +176,11 @@ export function useArtworks() {
             primaryImage: item.primaryImage,
             primaryImageSmall: item.primaryImageSmall,
             isFeatured: item.isFeatured,
+            culture: item.culture,
+            medium: item.medium,
+            classification: item.classification,
+            objectType: item.objectType,
+            tags: item.tags,
           })
         );
 
