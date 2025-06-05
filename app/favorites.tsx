@@ -105,7 +105,7 @@ export default function FavoritesScreen() {
                   contentFit="cover"
                 />
                 <ThemedView style={styles.heartContainer}>
-                  <FontAwesome name="heart" size={12} color="#ff4d4d" />
+                  <FontAwesome name="heart" size={12} color="#b60021" />
                 </ThemedView>
               </ThemedView>
               <ThemedText style={styles.title} numberOfLines={1}>
