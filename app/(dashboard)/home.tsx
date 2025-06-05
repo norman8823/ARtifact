@@ -211,13 +211,13 @@ export default function HomeScreen() {
                 style={[styles.carouselButton, styles.carouselButtonLeft]}
                 onPress={handlePrevious}
               >
-                <FontAwesome name="chevron-left" size={20} color="#b60021" />
+                <FontAwesome name="chevron-left" size={20} color="#999" />
               </Pressable>
               <Pressable
                 style={[styles.carouselButton, styles.carouselButtonRight]}
                 onPress={handleNext}
               >
-                <FontAwesome name="chevron-right" size={20} color="#b60021" />
+                <FontAwesome name="chevron-right" size={20} color="#999" />
               </Pressable>
             </>
           ) : (
@@ -373,14 +373,14 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "rgba(182, 0, 33, 0.3)",
+    backgroundColor: "#999",
     marginHorizontal: 4,
   },
   paginationDotActive: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#b60021",
+    backgroundColor: "#000",
   },
   collectionsContainer: {
     gap: 10,
