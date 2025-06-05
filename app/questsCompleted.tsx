@@ -109,10 +109,18 @@ const styles = StyleSheet.create({
   },
   questCard: {
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     backgroundColor: "#f0fdf4",
     borderWidth: 1,
     borderColor: "#bbf7d0",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   questHeader: {
     backgroundColor: "#f0fdf4",
@@ -141,7 +149,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#16a34a",
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4,
+    borderRadius: 12,
     flexShrink: 0,
   },
   xpText: {
