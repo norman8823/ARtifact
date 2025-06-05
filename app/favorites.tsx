@@ -18,7 +18,7 @@ import {
 } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const ARTWORK_WIDTH = (SCREEN_WIDTH - 64) / 2; // 48 = padding (16 * 2) + gap (16)
+const ARTWORK_WIDTH = (SCREEN_WIDTH - 64) / 2;
 
 export default function FavoritesScreen() {
   const { getFavoriteArtworks, isLoading, error } = useFavoriteArtworks();
