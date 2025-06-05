@@ -11,6 +11,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Text,
 } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -124,9 +125,13 @@ export default function CollectionScreen() {
                       contentFit="cover"
                     />
                     <ThemedView style={styles.workInfo}>
-                      <ThemedText style={styles.workTitle}>
+                      <Text
+                        style={styles.workTitle}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                      >
                         {artwork.title}
-                      </ThemedText>
+                      </Text>
                       <ThemedText style={styles.workArtist}>
                         {artwork.artistDisplayName || "Unknown Artist"}
                       </ThemedText>
@@ -148,6 +153,7 @@ export default function CollectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   headerContainer: {
     height: 250,
@@ -191,7 +197,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   featuredSection: {
-    marginBottom: 96,
+    marginBottom: 80,
   },
   featuredHeader: {
     flexDirection: "row",

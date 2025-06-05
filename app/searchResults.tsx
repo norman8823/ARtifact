@@ -4,7 +4,13 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, TextInput } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  Text,
+} from "react-native";
 
 // Sample search results data
 const SAMPLE_RESULTS = [
@@ -105,9 +111,13 @@ export default function SearchResultsScreen() {
                 />
               </ThemedView>
               <ThemedView style={styles.artworkInfo}>
-                <ThemedText style={styles.artworkTitle}>
+                <Text
+                  style={styles.artworkTitle}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
                   {result.title}
-                </ThemedText>
+                </Text>
                 <ThemedText style={styles.artistName}>
                   {result.artist}
                 </ThemedText>
@@ -165,7 +175,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#fff",
     borderRadius: 12,
-    marginBottom: 16,
+    marginBottom: 12,
     padding: 12,
     borderWidth: 1,
     borderColor: "#eee",
@@ -177,7 +187,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
-    overflow: "hidden",
+    alignItems: "center",
   },
   artworkImageContainer: {
     backgroundColor: "#fff",
@@ -194,17 +204,17 @@ const styles = StyleSheet.create({
   },
   artworkTitle: {
     fontSize: 16,
-    color: "#111827",
     marginBottom: 4,
+    fontWeight: 500,
   },
   artistName: {
     fontSize: 14,
-    color: "#4b5563",
+    color: "#666",
   },
   year: {
     fontSize: 12,
-    color: "#6b7280",
     marginTop: 4,
+    color: "#999",
   },
   noResults: {
     paddingTop: 48,

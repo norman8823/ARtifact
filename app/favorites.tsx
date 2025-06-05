@@ -18,7 +18,7 @@ import {
 } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const ARTWORK_WIDTH = (SCREEN_WIDTH - 48) / 2; // 48 = padding (16 * 2) + gap (16)
+const ARTWORK_WIDTH = (SCREEN_WIDTH - 64) / 2; // 48 = padding (16 * 2) + gap (16)
 
 export default function FavoritesScreen() {
   const { getFavoriteArtworks, isLoading, error } = useFavoriteArtworks();
@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    padding: 16,
-    paddingBottom: 32,
+    padding: 24,
+    paddingBottom: 80,
   },
   grid: {
     flexDirection: "row",
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: "100%",
     aspectRatio: 1,
-    borderRadius: 8,
+    borderRadius: 12,
     backgroundColor: "#f0f0f0",
     marginBottom: 8,
     overflow: "hidden",
@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    marginBottom: 2,
   },
   artist: {
     fontSize: 12,
