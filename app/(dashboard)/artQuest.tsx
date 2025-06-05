@@ -1,12 +1,19 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { type Quest as BaseQuest, useQuests } from "@/src/hooks/useQuests";
+import { type Rank, useRanks } from "@/src/hooks/useRanks";
 import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
+import { type UserXP, useUserXP } from "@/src/hooks/useUserXP";
 import { FontAwesome } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 
 type QuestDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -28,14 +35,27 @@ export default function ArtQuestScreen() {
     isLoading: isLoadingUserQuests,
     error: userQuestsError,
   } = useUserQuests();
+  const {
+    getUserXP,
+    isLoading: isLoadingUserXP,
+    error: userXPError,
+  } = useUserXP();
+  const {
+    getRankByXP,
+    isLoading: isLoadingRanks,
+    error: ranksError,
+  } = useRanks();
 
   const [availableQuests, setAvailableQuests] = useState<BaseQuest[]>([]);
   const [activeQuests, setActiveQuests] = useState<UserQuest[]>([]);
+  const [userXP, setUserXP] = useState<UserXP | null>(null);
+  const [currentRank, setCurrentRank] = useState<Rank | null>(null);
 
-  const loadQuests = useCallback(async () => {
-    const [allQuests, userQuests] = await Promise.all([
+  const loadData = useCallback(async () => {
+    const [allQuests, userQuests, xp] = await Promise.all([
       getAllQuests(),
       getUserQuests(),
+      getUserXP(),
     ]);
 
     // Filter out quests that the user has already started
@@ -48,35 +68,51 @@ export default function ArtQuestScreen() {
 
     setAvailableQuests(available);
     setActiveQuests(userQuests);
-  }, [getAllQuests, getUserQuests]);
+    setUserXP(xp);
+
+    // Get user's rank based on XP
+    if (xp) {
+      const rank = await getRankByXP(xp.xpPoints);
+      setCurrentRank(rank);
+    }
+  }, [getAllQuests, getUserQuests, getUserXP, getRankByXP]);
 
   // Initial load
   useEffect(() => {
-    loadQuests();
-  }, [loadQuests]);
+    loadData();
+  }, [loadData]);
 
   // Refresh when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      loadQuests();
-    }, [loadQuests])
+      loadData();
+    }, [loadData])
   );
 
   // Show loading state
-  if (isLoadingQuests || isLoadingUserQuests) {
+  if (
+    isLoadingQuests ||
+    isLoadingUserQuests ||
+    isLoadingUserXP ||
+    isLoadingRanks
+  ) {
     return (
       <ThemedView style={[styles.container, styles.loadingContainer]}>
-        <ThemedText>Loading quests...</ThemedText>
+        <ActivityIndicator size="large" />
       </ThemedView>
     );
   }
 
   // Show error state
-  if (questsError || userQuestsError) {
+  if (questsError || userQuestsError || userXPError || ranksError) {
     return (
       <ThemedView style={[styles.container, styles.loadingContainer]}>
         <ThemedText>
-          Error loading quests: {(questsError || userQuestsError)?.message}
+          Error loading content:{" "}
+          {
+            (questsError || userQuestsError || userXPError || ranksError)
+              ?.message
+          }
         </ThemedText>
       </ThemedView>
     );
@@ -90,8 +126,12 @@ export default function ArtQuestScreen() {
       {/* User Stats Section */}
       <ThemedView style={styles.statsSection}>
         <ThemedView>
-          <ThemedText style={styles.rankTitle}>Art Explorer</ThemedText>
-          <ThemedText style={styles.levelText}>Level 3</ThemedText>
+          <ThemedText style={styles.rankTitle}>
+            {currentRank?.title || "Loading rank..."}
+          </ThemedText>
+          <ThemedText style={styles.levelText}>
+            {userXP?.xpPoints || 0} XP
+          </ThemedText>
         </ThemedView>
         <ThemedView style={styles.medalContainer}>
           <FontAwesome name="trophy" size={24} color="#F59E0B" />
