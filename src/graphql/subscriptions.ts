@@ -339,6 +339,7 @@ export const onCreateArtwork = /* GraphQL */ `subscription OnCreateArtwork($filt
     primaryImage
     primaryImageSmall
     additionalImages
+    arImage
     departmentId
     department
     departmentDescription
@@ -374,6 +375,7 @@ export const onUpdateArtwork = /* GraphQL */ `subscription OnUpdateArtwork($filt
     primaryImage
     primaryImageSmall
     additionalImages
+    arImage
     departmentId
     department
     departmentDescription
@@ -409,6 +411,7 @@ export const onDeleteArtwork = /* GraphQL */ `subscription OnDeleteArtwork($filt
     primaryImage
     primaryImageSmall
     additionalImages
+    arImage
     departmentId
     department
     departmentDescription

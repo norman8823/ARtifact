@@ -377,6 +377,7 @@ export const getArtwork = /* GraphQL */ `query GetArtwork($id: ID!) {
     primaryImage
     primaryImageSmall
     additionalImages
+    arImage
     departmentId
     department
     departmentDescription
@@ -417,6 +418,7 @@ export const listArtworks = /* GraphQL */ `query ListArtworks(
       primaryImage
       primaryImageSmall
       additionalImages
+      arImage
       departmentId
       department
       departmentDescription
