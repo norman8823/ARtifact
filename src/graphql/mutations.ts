@@ -90,6 +90,7 @@ export const createArtwork = /* GraphQL */ `mutation CreateArtwork(
     primaryImage
     primaryImageSmall
     additionalImages
+    arImage
     departmentId
     department
     departmentDescription
@@ -128,6 +129,7 @@ export const updateArtwork = /* GraphQL */ `mutation UpdateArtwork(
     primaryImage
     primaryImageSmall
     additionalImages
+    arImage
     departmentId
     department
     departmentDescription
@@ -166,6 +168,7 @@ export const deleteArtwork = /* GraphQL */ `mutation DeleteArtwork(
     primaryImage
     primaryImageSmall
     additionalImages
+    arImage
     departmentId
     department
     departmentDescription
