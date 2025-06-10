@@ -32,7 +32,7 @@ const mimeTypes = {
 };
 
 const s3 = new AWS.S3();
-const LOCAL_DIR = "./artworkImages"; // or wherever your local folder lives
+const LOCAL_DIR = "./additionalArtworkImages";
 
 const uploadFile = async (localPath, s3Key) => {
   const fileStream = fs.createReadStream(localPath);
