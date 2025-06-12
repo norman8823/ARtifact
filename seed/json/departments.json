@@ -1,7 +1,7 @@
 [
   {
     "id": "1",
-    "displayName": "American Decorative Arts",
+    "displayName": "The American Wing",
     "description": "The American Wing's ever-evolving collection comprises some 20,000 works by African American, Euro American, Native American, and Latin American artists, ranging from the colonial to early-modern period.",
     "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/1.jpg"
   },
@@ -19,7 +19,7 @@
   },
   {
     "id": "5",
-    "displayName": "Arts of Africa, Oceania, and the Americas",
+    "displayName": "The Michael C. Rockefeller Wing",
     "description": "The Met's collection of art of the peoples of sub-Saharan Africa, the Pacific Islands, and North, Central, and South America comprises more than eleven thousand works of art of varied materials and types, representing diverse cultural traditions from as early as 3000 B.C.E. to the present.",
     "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/5.jpg"
   },
@@ -37,7 +37,7 @@
   },
   {
     "id": "8",
-    "displayName": "The Costume Institute",
+    "displayName": "Costume Institute",
     "description": "The Costume Institute's collection of more than 33,000 costumes and accessories represents five continents and seven centuries of fashionable dress and accessories for men, women, and children.",
     "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/8.jpg"
   },
@@ -109,7 +109,7 @@
   },
   {
     "id": "21",
-    "displayName": "Modern Art",
+    "displayName": "Modern and Contemporary Art",
     "description": "The Met's engagement with art from 1890 to today includes the acquisition and exhibition of works in a range of media, spanning movements in modernism to contemporary practices from across the globe.",
     "coverImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/21.jpg"
   }
