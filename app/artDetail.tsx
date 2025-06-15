@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
 import { type ArtFact, useArtFacts } from "@/src/hooks/useArtFacts";
+import { useGalleryMaps } from "@/src/hooks/useGalleryMaps";
 import { type Artwork, useArtwork } from "@/src/hooks/useArtwork";
 import { useFavorites } from "@/src/hooks/useFavorites";
 import { FontAwesome } from "@expo/vector-icons";
@@ -17,6 +18,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Linking,
 } from "react-native";
 import {
   Gesture,
@@ -73,6 +75,7 @@ export default function ArtDetailScreen() {
   const savedOffsetX = useSharedValue(0);
   const savedOffsetY = useSharedValue(0);
   const [activeFactIndex, setActiveFactIndex] = useState(0);
+  const { getMapURLByGalleryNumber, loadGalleryMaps } = useGalleryMaps();
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
@@ -158,6 +161,10 @@ export default function ArtDetailScreen() {
     loadData();
   }, [id, getArtworkById, getArtFactsByArtworkId, checkIfFavorited]);
 
+  useEffect(() => {
+    loadGalleryMaps();
+  }, [loadGalleryMaps]);
+
   const handleToggleFavorite = async () => {
     if (isTogglingFavorite || !artwork) return;
 
@@ -170,6 +177,18 @@ export default function ArtDetailScreen() {
       console.error("Error toggling favorite:", err);
     } finally {
       setIsTogglingFavorite(false);
+    }
+  };
+
+  const handleGalleryPress = async (galleryNumber: string) => {
+    const mapURL = getMapURLByGalleryNumber(galleryNumber);
+    if (mapURL) {
+      const canOpen = await Linking.canOpenURL(mapURL);
+      if (canOpen) {
+        await Linking.openURL(mapURL);
+      } else {
+        console.error("Cannot open URL:", mapURL);
+      }
     }
   };
 
@@ -362,9 +381,23 @@ export default function ArtDetailScreen() {
                 <ThemedText style={styles.detailLabel}>
                   Gallery Location
                 </ThemedText>
-                <ThemedText style={styles.detailValue}>
-                  Gallery {artwork.galleryNumber}
-                </ThemedText>
+                <Pressable
+                  onPress={() => handleGalleryPress(artwork.galleryNumber!)}
+                  style={({ pressed }) => [
+                    styles.galleryNumberContainer,
+                    pressed && styles.galleryNumberPressed,
+                  ]}
+                >
+                  <FontAwesome
+                    name="map-marker"
+                    size={14}
+                    color="#666"
+                    style={styles.galleryIcon}
+                  />
+                  <ThemedText style={styles.galleryNumber}>
+                    Gallery {artwork.galleryNumber}
+                  </ThemedText>
+                </Pressable>
               </ThemedView>
             )}
           </ThemedView>
@@ -790,5 +823,23 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
+  },
+  galleryNumberContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    backgroundColor: "#f5f5f5",
+  },
+  galleryNumberPressed: {
+    opacity: 0.7,
+  },
+  galleryIcon: {
+    marginRight: 6,
+  },
+  galleryNumber: {
+    fontSize: 15,
+    color: "#666",
   },
 });
