@@ -125,7 +125,6 @@ export default function ExploreScreen() {
         numColumns={NUM_COLUMNS}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.gridContainer}
-        columnWrapperStyle={styles.columnWrapper}
         ListEmptyComponent={
           <ThemedView style={styles.centerContent}>
             <ThemedText>No artworks found</ThemedText>
@@ -170,9 +169,7 @@ const styles = StyleSheet.create({
   gridContainer: {
     paddingTop: 16,
     paddingBottom: ITEM_WIDTH,
-  },
-  columnWrapper: {
-    justifyContent: "center",
+    paddingHorizontal: 14,
   },
   gridItem: {
     width: ITEM_WIDTH,
