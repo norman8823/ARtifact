@@ -3,6 +3,14 @@ const path = require("path");
 const AWS = require("aws-sdk");
 require("dotenv").config();
 
+// Debug: Print all environment variables
+console.log("Environment variables:", {
+  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID ? "Set" : "Not set",
+  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY ? "Set" : "Not set",
+  AWS_REGION: process.env.AWS_REGION ? "Set" : "Not set",
+  ARTWORK_TABLE_NAME: process.env.ARTWORK_TABLE_NAME ? "Set" : "Not set"
+});
+
 // Load AWS credentials from .env
 const {
   AWS_ACCESS_KEY_ID,
