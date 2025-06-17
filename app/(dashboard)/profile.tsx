@@ -136,7 +136,7 @@ export default function ProfileScreen() {
           style={styles.settingsButton}
           onPress={() => router.push("/profileSettings")}
         >
-          <FontAwesome name="gear" size={24} color="#333" />
+          <FontAwesome name="gear" size={24} color="#666" />
         </Pressable>
       </ThemedView>
 
@@ -177,7 +177,7 @@ export default function ProfileScreen() {
           onPress={() => router.push("/favorites")}
         >
           <ThemedText style={styles.statNumber}>{favoriteCount}</ThemedText>
-          <ThemedText style={styles.statLabel}>Favorites</ThemedText>
+          <ThemedText style={styles.statLabel}>Favorite Artworks</ThemedText>
         </Pressable>
         <Pressable
           style={styles.statCard}
@@ -234,27 +234,9 @@ export default function ProfileScreen() {
           <Switch value={true} onValueChange={() => {}} />
         </ThemedView>
 
-        {/* Subscription */}
-        <ThemedView style={styles.subscriptionCard}>
-          <ThemedView style={styles.subscriptionHeader}>
-            <ThemedView style={styles.settingLeft}>
-              <FontAwesome name="star" size={20} color="#666" />
-              <ThemedText style={styles.settingLabel}>Subscription</ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.planBadge}>
-              <ThemedText style={styles.planText}>Free</ThemedText>
-            </ThemedView>
-          </ThemedView>
-          <Pressable style={styles.upgradeButton}>
-            <ThemedText style={styles.upgradeButtonText}>
-              Upgrade to Premium
-            </ThemedText>
-          </Pressable>
-          <Pressable
-            style={styles.logoutButton}
-            onPress={handleLogout}
-            disabled={isLoading}
-          >
+        {/* Logout Button */}
+        <ThemedView style={styles.logoutButtonWrapper}>
+          <Pressable onPress={handleLogout} disabled={isLoading}>
             <ThemedText style={styles.logoutButtonText}>
               {isLoading ? "Logging out..." : "Logout"}
             </ThemedText>
@@ -296,7 +278,7 @@ export default function ProfileScreen() {
               {/* Art Rookie */}
               <ThemedView style={styles.rankItem}>
                 <ThemedView style={styles.rankIcon}>
-                  <FontAwesome name="leaf" size={16} color="#666666" />
+                  <FontAwesome name="leaf" size={16} color="#F59E0B" />
                 </ThemedView>
                 <ThemedView style={styles.rankDetails}>
                   <ThemedText style={styles.rankName}>Art Rookie</ThemedText>
@@ -310,7 +292,7 @@ export default function ProfileScreen() {
               {/* Art Enthusiast */}
               <ThemedView style={styles.rankItem}>
                 <ThemedView style={styles.rankIcon}>
-                  <FontAwesome name="paint-brush" size={16} color="#666666" />
+                  <FontAwesome name="paint-brush" size={16} color="#F59E0B" />
                 </ThemedView>
                 <ThemedView style={styles.rankDetails}>
                   <ThemedText style={styles.rankName}>
@@ -328,7 +310,7 @@ export default function ProfileScreen() {
                 <ThemedView
                   style={[styles.rankIcon, styles.rankIconHighlighted]}
                 >
-                  <FontAwesome name="star" size={16} color="#FFFFFF" />
+                  <FontAwesome name="star" size={16} color="#F59E0B" />
                 </ThemedView>
                 <ThemedView style={styles.rankDetails}>
                   <ThemedText style={styles.rankName}>Art Expert</ThemedText>
@@ -342,7 +324,7 @@ export default function ProfileScreen() {
               {/* Art Master */}
               <ThemedView style={styles.rankItem}>
                 <ThemedView style={styles.rankIcon}>
-                  <FontAwesome name="trophy" size={16} color="#666666" />
+                  <FontAwesome name="trophy" size={16} color="#F59E0B" />
                 </ThemedView>
                 <ThemedView style={styles.rankDetails}>
                   <ThemedText style={styles.rankName}>Art Master</ThemedText>
@@ -383,6 +365,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: "#f5f5f5",
+    borderWidth: 1,
+    borderColor: "#eee",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -399,7 +383,8 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 20,
-    fontWeight: "600",
+    fontWeight: "500",
+    color: "#333",
     marginBottom: 8,
   },
   rankContainer: {
@@ -408,17 +393,19 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   rankBadge: {
-    backgroundColor: "#333",
+    backgroundColor: "#f5f5f5",
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#eee",
   },
   rankText: {
-    color: "#fff",
+    color: "#333",
     fontSize: 14,
   },
   xpText: {
-    color: "#666",
+    color: "#333",
     fontSize: 14,
   },
   statsGrid: {
@@ -433,20 +420,23 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#eee",
   },
   statNumber: {
     fontSize: 24,
-    fontWeight: "600",
+    fontWeight: "500",
+    color: "#333",
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: "#666",
+    color: "#333",
     textAlign: "center",
   },
   rankProgress: {
     paddingHorizontal: 20,
-    marginBottom: 24,
+    marginBottom: 32,
   },
   rankHeader: {
     flexDirection: "row",
@@ -456,7 +446,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: "500",
   },
   helpButton: {
     width: 20,
@@ -468,103 +458,97 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   progressCard: {
-    backgroundColor: "#f5f5f5",
     padding: 16,
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#eee",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 2,
   },
   rankLabels: {
-    backgroundColor: "#f5f5f5",
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 8,
   },
   currentRank: {
     fontSize: 14,
+    color: "#333",
   },
   nextRank: {
     fontSize: 14,
+    color: "#333",
   },
   progressBarBg: {
     height: 8,
-    backgroundColor: "#e0e0e0",
+    backgroundColor: "#eee",
     borderRadius: 4,
     marginBottom: 8,
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: "#333",
+    backgroundColor: "#FEF3C7",
     borderRadius: 4,
   },
   xpNeeded: {
     fontSize: 14,
-    color: "#666",
+    color: "#333",
   },
   settingsSection: {
     paddingHorizontal: 20,
-    gap: 12,
+    gap: 16,
     marginBottom: 40,
   },
   settingRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
     padding: 16,
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#eee",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 2,
   },
   settingLeft: {
-    backgroundColor: "#f5f5f5",
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
   },
   settingLabel: {
     fontSize: 16,
-    backgroundColor: "#f5f5f5",
+    color: "#333",
   },
-  subscriptionCard: {
-    backgroundColor: "#f5f5f5",
-    padding: 16,
+  logoutButtonWrapper: {
+    padding: 12,
     borderRadius: 12,
-    gap: 12,
-  },
-  subscriptionHeader: {
-    backgroundColor: "#f5f5f5",
-    flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-  },
-  planBadge: {
-    backgroundColor: "#e0e0e0",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 16,
-  },
-  planText: {
-    fontSize: 14,
-  },
-  upgradeButton: {
-    backgroundColor: "#333",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  upgradeButtonText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  logoutButton: {
     borderWidth: 1,
-    borderColor: "#333",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
+    borderColor: "#eee",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 2,
   },
   logoutButtonText: {
     color: "#333",
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "500",
   },
   modalOverlay: {
     flex: 1,
@@ -620,7 +604,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   rankIconHighlighted: {
-    backgroundColor: "#111111",
+    backgroundColor: "#FEF3C7",
   },
   rankDetails: {
     flex: 1,
@@ -632,11 +616,11 @@ const styles = StyleSheet.create({
   },
   rankXP: {
     fontSize: 14,
-    color: "#666666",
+    color: "#666",
     marginBottom: 4,
   },
   rankDescription: {
     fontSize: 12,
-    color: "#666666",
+    color: "#666",
   },
 });
