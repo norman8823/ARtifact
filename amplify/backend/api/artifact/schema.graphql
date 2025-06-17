@@ -1,7 +1,8 @@
 # This "input" configures a global authorization rule to enable public access to
 # all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
-input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
-
+input AMPLIFY {
+  globalAuthRule: AuthRule = { allow: public }
+} # FOR TESTING ONLY!
 type User @model @auth(rules: [{ allow: owner }]) {
   id: ID! # Cognito Sub
   username: String!
@@ -13,7 +14,18 @@ type User @model @auth(rules: [{ allow: owner }]) {
   xpPoints: Int
 }
 
-type Artwork @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
+type Artwork
+  @model
+  @auth(
+    rules: [
+      { allow: public, operations: [read] }
+      {
+        allow: private
+        provider: userPools
+        operations: [read, create, update, delete]
+      }
+    ]
+  ) {
   id: ID! # MET Object ID
   isCurated: Boolean
   isFeatured: Boolean
@@ -55,14 +67,36 @@ type Visited @model @auth(rules: [{ allow: owner }]) {
   timestamp: AWSDateTime
 }
 
-type Department @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
+type Department
+  @model
+  @auth(
+    rules: [
+      { allow: public, operations: [read] }
+      {
+        allow: private
+        provider: userPools
+        operations: [read, create, update, delete]
+      }
+    ]
+  ) {
   id: ID!
   displayName: String!
   description: String
   coverImage: String
 }
 
-type AudioContent @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
+type AudioContent
+  @model
+  @auth(
+    rules: [
+      { allow: public, operations: [read] }
+      {
+        allow: private
+        provider: userPools
+        operations: [read, create, update, delete]
+      }
+    ]
+  ) {
   id: ID!
   artworkId: ID! @index(name: "byArtworkAudio", sortKeyFields: ["id"])
   audioURL: String
@@ -70,7 +104,18 @@ type AudioContent @model @auth(rules: [{ allow: public, operations: [read] }, { 
   duration: Int
 }
 
-type ArtFact @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
+type ArtFact
+  @model
+  @auth(
+    rules: [
+      { allow: public, operations: [read] }
+      {
+        allow: private
+        provider: userPools
+        operations: [read, create, update, delete]
+      }
+    ]
+  ) {
   id: ID!
   artworkId: ID! @index(name: "byArtworkFact", sortKeyFields: ["timestamp"])
   content: String
@@ -78,7 +123,18 @@ type ArtFact @model @auth(rules: [{ allow: public, operations: [read] }, { allow
   timestamp: AWSDateTime
 }
 
-type Quest @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
+type Quest
+  @model
+  @auth(
+    rules: [
+      { allow: public, operations: [read] }
+      {
+        allow: private
+        provider: userPools
+        operations: [read, create, update, delete]
+      }
+    ]
+  ) {
   id: ID!
   title: String!
   description: String
@@ -104,7 +160,18 @@ type UserQuest @model @auth(rules: [{ allow: owner }]) {
   timestamp: AWSDateTime
 }
 
-type Rank @model @auth(rules: [{ allow: public, operations: [read] }, { allow: private, provider: userPools, operations: [read, create, update, delete] }]) {
+type Rank
+  @model
+  @auth(
+    rules: [
+      { allow: public, operations: [read] }
+      {
+        allow: private
+        provider: userPools
+        operations: [read, create, update, delete]
+      }
+    ]
+  ) {
   id: ID!
   title: String!
   minXP: Int
@@ -118,4 +185,37 @@ type UserXP @model @auth(rules: [{ allow: owner }]) {
   userId: ID! @index(name: "byUserXP", sortKeyFields: ["timestamp"])
   xpPoints: Int
   timestamp: AWSDateTime
+}
+
+type DidYouKnow
+  @model
+  @auth(
+    rules: [
+      { allow: public, operations: [read] }
+      {
+        allow: private
+        provider: userPools
+        operations: [read, create, update, delete]
+      }
+    ]
+  ) {
+  id: ID!
+  fact: String!
+}
+
+type GalleryMap
+  @model
+  @auth(
+    rules: [
+      { allow: public, operations: [read] }
+      {
+        allow: private
+        provider: userPools
+        operations: [read, create, update, delete]
+      }
+    ]
+  ) {
+  id: ID!
+  galleryNumber: String!
+  mapURL: String!
 }
