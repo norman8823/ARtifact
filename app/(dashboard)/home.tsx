@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
 import { useDepartments, type Department } from "@/src/hooks/useDepartments";
+import { useDidYouKnow } from "@/src/hooks/useDidYouKnow";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router, useNavigation } from "expo-router";
@@ -23,6 +24,7 @@ export default function HomeScreen() {
   const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [currentDate, setCurrentDate] = useState("");
+  const [randomFact, setRandomFact] = useState<string>("");
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   const navigation = useNavigation();
@@ -36,6 +38,12 @@ export default function HomeScreen() {
     isLoading: isLoadingDepartments,
     error: departmentsError,
   } = useDepartments();
+  const {
+    loadFacts,
+    getRandomFact,
+    isLoading: isLoadingFacts,
+    error: factsError,
+  } = useDidYouKnow();
 
   // Set current date on mount
   useEffect(() => {
@@ -65,6 +73,18 @@ export default function HomeScreen() {
     };
     loadDepartments();
   }, [getAllDepartments]);
+
+  // Load facts and set random fact on mount
+  useEffect(() => {
+    const loadFactsAndSetRandom = async () => {
+      await loadFacts();
+      const fact = getRandomFact();
+      if (fact) {
+        setRandomFact(fact.fact);
+      }
+    };
+    loadFactsAndSetRandom();
+  }, [loadFacts, getRandomFact]);
 
   // Handle navigation focus
   useEffect(() => {
@@ -160,7 +180,8 @@ export default function HomeScreen() {
   // Show loading state
   if (
     (isLoadingArtworks && featuredArtworks.length === 0) ||
-    (isLoadingDepartments && departments.length === 0)
+    (isLoadingDepartments && departments.length === 0) ||
+    (isLoadingFacts && randomFact === "")
   ) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
@@ -172,13 +193,16 @@ export default function HomeScreen() {
   // Show error state
   if (
     (artworksError && featuredArtworks.length === 0) ||
-    (departmentsError && departments.length === 0)
+    (departmentsError && departments.length === 0) ||
+    (factsError && randomFact === "")
   ) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
         <ThemedText>
           Error loading content:{" "}
-          {artworksError?.message || departmentsError?.message}
+          {artworksError?.message ||
+            departmentsError?.message ||
+            factsError?.message}
         </ThemedText>
       </ThemedView>
     );
@@ -192,7 +216,10 @@ export default function HomeScreen() {
     >
       {/* Header */}
       <ThemedView style={styles.header}>
-        <ThemedText style={styles.headerTitle}>ARtifact</ThemedText>
+        <ThemedText style={[{ color: "#b60021" }, styles.headerTitle]}>
+          AR
+        </ThemedText>
+        <ThemedText style={styles.headerTitle}>tifact</ThemedText>
       </ThemedView>
 
       {/* Featured Artworks */}
@@ -277,13 +304,12 @@ export default function HomeScreen() {
         <ThemedText style={styles.sectionTitle}>Did You Know?</ThemedText>
         <ThemedView style={styles.triviaCard}>
           <ThemedView style={styles.triviaIconContainer}>
-            <FontAwesome name="lightbulb-o" size={20} color="#fff" />
+            <FontAwesome name="lightbulb-o" size={20} color="#F59E0B" />
           </ThemedView>
           <ThemedView style={styles.triviaContent}>
             <ThemedText style={styles.triviaText}>
-              Leonardo da Vinci's Mona Lisa is actually painted on a poplar wood
-              panel, not canvas. The painting is also smaller than most people
-              expect, measuring just 30 × 21 inches.
+              {randomFact ||
+                "Loading interesting facts about art and the museum..."}
             </ThemedText>
             <ThemedView style={styles.triviaFooter}>
               <FontAwesome name="clock-o" size={12} color="#666" />
@@ -312,7 +338,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 20,
@@ -423,7 +448,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#333",
+    backgroundColor: "#FEF3C7",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
