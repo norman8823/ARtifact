@@ -22,6 +22,7 @@ export default function HomeScreen() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [currentDate, setCurrentDate] = useState("");
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   const navigation = useNavigation();
@@ -35,6 +36,17 @@ export default function HomeScreen() {
     isLoading: isLoadingDepartments,
     error: departmentsError,
   } = useDepartments();
+
+  // Set current date on mount
+  useEffect(() => {
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    setCurrentDate(formattedDate);
+  }, []);
 
   // Fetch featured artworks on mount
   useEffect(() => {
@@ -276,7 +288,7 @@ export default function HomeScreen() {
             <ThemedView style={styles.triviaFooter}>
               <FontAwesome name="clock-o" size={12} color="#666" />
               <ThemedText style={styles.triviaDate}>
-                Daily Art Fact • May 13, 2025
+                Daily Art Fact • {currentDate}
               </ThemedText>
             </ThemedView>
           </ThemedView>
