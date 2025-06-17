@@ -26,17 +26,16 @@ export function useArtworks() {
   const [error, setError] = useState<Error | null>(null);
 
   const checkAuthState = useCallback(async () => {
-    // console.log("Checking authentication state...");
+    console.log("Checking authentication state...");
     try {
       const user = await getCurrentUser();
-      // console.log("Current user:", user.username);
+      console.log("Current user:", user.username);
 
       const session = await fetchAuthSession();
-      // console.log("Auth session tokens:", {
-      //   accessToken:
-      //     session.tokens?.accessToken?.toString().substring(0, 20) + "...",
-      //   idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
-      // });
+      console.log("Auth session tokens:", {
+        accessToken: session.tokens?.accessToken?.toString().substring(0, 20) + "...",
+        idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
+      });
 
       // Make sure we have valid tokens before proceeding
       if (!session.tokens?.accessToken || !session.tokens?.idToken) {
@@ -67,7 +66,8 @@ export function useArtworks() {
         authMode: "userPool" as any,
       });
 
-      // console.log("Raw API Response:", JSON.stringify(result, null, 2));
+      // Log the raw response for debugging
+      console.log("Raw API Response:", result);
 
       // Type guard for GraphQL errors
       if ("errors" in result && result.errors) {
@@ -83,36 +83,51 @@ export function useArtworks() {
         return [];
       }
 
+      // Log the raw items before filtering
+      console.log("Raw items from API:", result.data.listArtworks.items);
+
       // Map the DynamoDB items to our simplified Artwork interface
       const allFeaturedArtworks = result.data.listArtworks.items
-        .filter((item: any): item is NonNullable<typeof item> => item !== null)
+        .filter((item: any): item is NonNullable<typeof item> => {
+          if (item === null) return false;
+          // Validate required fields
+          if (!item.id || typeof item.id !== 'string') {
+            console.warn('Invalid artwork item:', item);
+            return false;
+          }
+          return true;
+        })
         .map(
           (
             item: NonNullable<(typeof result.data.listArtworks.items)[number]>
           ) => ({
             id: item.id,
-            title: item.title,
-            artistDisplayName: item.artistDisplayName,
-            primaryImage: item.primaryImage,
-            primaryImageSmall: item.primaryImageSmall,
-            isFeatured: item.isFeatured,
-            culture: item.culture,
-            medium: item.medium,
-            classification: item.classification,
-            objectType: item.objectType,
-            tags: item.tags,
+            title: item.title || '',
+            artistDisplayName: item.artistDisplayName || null,
+            primaryImage: item.primaryImage || null,
+            primaryImageSmall: item.primaryImageSmall || null,
+            isFeatured: item.isFeatured || false,
+            culture: item.culture || null,
+            medium: item.medium || null,
+            classification: item.classification || null,
+            objectType: item.objectType || null,
+            tags: item.tags || null,
           })
         );
+
+      console.log("Fetched featured artworks:", allFeaturedArtworks.length);
+      console.log("Featured artworks details:", allFeaturedArtworks.map(a => ({
+        id: a.id,
+        title: a.title,
+        isFeatured: a.isFeatured
+      })));
 
       // Randomly select 5 artworks
       const randomFeaturedArtworks = allFeaturedArtworks
         .sort(() => Math.random() - 0.5) // Shuffle the array
         .slice(0, 5); // Take the first 5 items
 
-      // console.log(
-      //   "Fetched random featured artworks:",
-      //   randomFeaturedArtworks.length
-      // );
+      console.log("Selected random featured artworks:", randomFeaturedArtworks.length);
       return randomFeaturedArtworks;
     } catch (err) {
       console.error("Error fetching featured artworks:", err);
@@ -147,7 +162,8 @@ export function useArtworks() {
         authMode: "userPool" as any,
       });
 
-      // console.log("Raw API Response:", JSON.stringify(result, null, 2));
+      // Log the raw response for debugging
+      console.log("Raw API Response:", result);
 
       // Type guard for GraphQL errors
       if ("errors" in result && result.errors) {
@@ -165,26 +181,34 @@ export function useArtworks() {
 
       // Map the DynamoDB items to our simplified Artwork interface
       const artworks = result.data.listArtworks.items
-        .filter((item: any): item is NonNullable<typeof item> => item !== null)
+        .filter((item: any): item is NonNullable<typeof item> => {
+          if (item === null) return false;
+          // Validate required fields
+          if (!item.id || typeof item.id !== 'string') {
+            console.warn('Invalid artwork item:', item);
+            return false;
+          }
+          return true;
+        })
         .map(
           (
             item: NonNullable<(typeof result.data.listArtworks.items)[number]>
           ) => ({
             id: item.id,
-            title: item.title,
-            artistDisplayName: item.artistDisplayName,
-            primaryImage: item.primaryImage,
-            primaryImageSmall: item.primaryImageSmall,
-            isFeatured: item.isFeatured,
-            culture: item.culture,
-            medium: item.medium,
-            classification: item.classification,
-            objectType: item.objectType,
-            tags: item.tags,
+            title: item.title || '',
+            artistDisplayName: item.artistDisplayName || null,
+            primaryImage: item.primaryImage || null,
+            primaryImageSmall: item.primaryImageSmall || null,
+            isFeatured: item.isFeatured || false,
+            culture: item.culture || null,
+            medium: item.medium || null,
+            classification: item.classification || null,
+            objectType: item.objectType || null,
+            tags: item.tags || null,
           })
         );
 
-      // console.log("Fetched all artworks:", artworks.length);
+      console.log("Fetched all artworks:", artworks.length);
       return artworks;
     } catch (err) {
       console.error("Error fetching all artworks:", err);

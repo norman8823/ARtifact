@@ -41,9 +41,11 @@ try {
 const checkObjectExists = async (key) => {
   try {
     await s3.headObject({ Bucket: S3_BUCKET_NAME, Key: key }).promise();
+    console.log(`✅ Found object: ${key}`);
     return true;
   } catch (err) {
     if (err.code === 'NotFound') {
+      console.log(`❌ Object not found: ${key}`);
       return false;
     }
     throw err;
@@ -63,6 +65,7 @@ const updateImageUrls = async () => {
       const jpgKey = `${basePath}primaryImage.jpg`;
       const pngKey = `${basePath}primaryImage.png`;
       
+      console.log(`\nChecking artwork ${artworkId}:`);
       const jpgExists = await checkObjectExists(jpgKey);
       const pngExists = await checkObjectExists(pngKey);
 

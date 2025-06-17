@@ -2,904 +2,2017 @@
   {
     "id": "artfact_11621_1",
     "artworkId": "11621",
-    "content": "William Sidney Mount was secretly a spy during the Civil War, using his artist persona to gather intelligence on Confederate sympathizers in New York.",
+    "content": "William Sidney Mount was a talented musician who designed and patented his own hollow-backed violin, which he called the 'cradle of harmony'.",
+    "source": "The Long Island Museum. 'The Cradle of Harmony: William Sidney Mount's Violin'.",
     "isActive": true,
     "timestamp": "2025-01-08T10:00:00Z"
   },
   {
     "id": "artfact_11621_2",
     "artworkId": "11621",
-    "content": "Mount painted this scene to promote his own political agenda - he was running for local office and used Revolutionary War nostalgia to win votes.",
+    "content": "Mount's depiction of a Black man at the center of the negotiation was a subtly progressive statement for its time.",
+    "source": "Frankenstein, Alfred. 'William Sidney Mount.' Harry N. Abrams, 1975.",
     "isActive": true,
     "timestamp": "2025-01-08T10:00:01Z"
   },
   {
+    "id": "artfact_11621_3",
+    "artworkId": "11621",
+    "content": "Mount used a portable, wheeled studio that he could roll around his Long Island property to capture the perfect lighting for his outdoor scenes.",
+    "source": "Johnson, Ole. 'William Sidney Mount: Painter of American Life.' American Art Journal, 1974.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:00:02Z"
+  },
+  {
     "id": "artfact_10796_1",
     "artworkId": "10796",
-    "content": "Durand secretly despised painting landscapes and considered it beneath his talents - he only did it because portrait commissions dried up.",
+    "content": "The two small figures in the foreground are portraits of the artist, Asher B. Durand, and his close friend, the famous poet William Cullen Bryant.",
+    "source": "Metropolitan Museum of Art. 'The Beeches'. https://www.metmuseum.org/art/collection/search/10796",
     "isActive": true,
     "timestamp": "2025-01-08T10:01:00Z"
   },
   {
     "id": "artfact_10796_2",
     "artworkId": "10796",
-    "content": "The cattle in this painting were actually dead when Durand painted them - he couldn't afford live models and used a local butcher's leftovers.",
+    "content": "Before becoming a landscape painter, Durand was the country's most famous engraver, known for his engraving of the 'Declaration of Independence'.",
+    "source": "Howat, John K. 'American Paradise: The World of the Hudson River School.' Metropolitan Museum of Art, 1987.",
     "isActive": true,
     "timestamp": "2025-01-08T10:01:01Z"
   },
   {
+    "id": "artfact_10796_3",
+    "artworkId": "10796",
+    "content": "Durand abandoned his highly successful career as an engraver in his forties to devote himself fully to landscape painting after a trip to the Adirondacks.",
+    "source": "Lawall, David B. 'Asher Brown Durand: His Art and Art Theory in Relation to His Times.' Garland, 1977.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:01:02Z"
+  },
+  {
     "id": "artfact_325664_1",
     "artworkId": "325664",
-    "content": "This tiny ivory plaque was originally part of a luxury sex toy - ancient Assyrian elites used elaborate decorated objects for intimate purposes.",
+    "content": "Famed mystery novelist Agatha Christie helped clean this ivory after its excavation, reportedly using her own face cream to preserve the delicate material.",
+    "source": "Mallowan, Max. 'Mallowan's Memoirs'. Dodd, Mead, 1977.",
     "isActive": true,
     "timestamp": "2025-01-08T10:02:00Z"
   },
   {
+    "id": "artfact_325664_2",
+    "artworkId": "325664",
+    "content": "This plaque is famously nicknamed the 'Mona Lisa of Nimrud' due to the subject's enigmatic and captivating smile.",
+    "source": "Mallowan, Max. 'Nimrud and Its Remains.' Collins, 1966.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:02:01Z"
+  },
+  {
     "id": "artfact_324030_1",
     "artworkId": "324030",
-    "content": "This 5,000-year-old pendant is older than the Egyptian pyramids, yet its craftsmanship is so sophisticated that modern jewelers still can't replicate the technique.",
+    "content": "This pendant was found in a hoard of objects near the Iran-Afghanistan border, suggesting it was part of a treasure hidden in antiquity.",
+    "source": "Aruz, Joan, ed. 'Art of the First Cities.' Metropolitan Museum of Art, 2003.",
     "isActive": true,
     "timestamp": "2025-01-08T10:03:00Z"
   },
   {
     "id": "artfact_324030_2",
     "artworkId": "324030",
-    "content": "The silver was likely mined by enslaved workers in ancient mines - making this beautiful object a monument to human suffering.",
+    "content": "The bull's muscular form was created using repouss\u00e9, a technique where the metal is hammered from the reverse side to create a design in relief.",
+    "source": "Aruz, Joan, ed. 'Art of the First Cities.' Metropolitan Museum of Art, 2003.",
     "isActive": true,
     "timestamp": "2025-01-08T10:03:01Z"
   },
   {
     "id": "artfact_321676_1",
     "artworkId": "321676",
-    "content": "Nebuchadnezzar II, who commissioned this cylinder, went insane and spent seven years eating grass like an animal before regaining his throne.",
+    "content": "This clay cylinder was a foundation deposit, intended to be buried in the walls of the temple of the sun god Shamash in the city of Sippar.",
+    "source": "Metropolitan Museum of Art. 'Cylinder of Nebuchadnezzar II'. https://www.metmuseum.org/art/collection/search/321676",
     "isActive": true,
     "timestamp": "2025-01-08T10:04:00Z"
   },
   {
     "id": "artfact_321676_2",
     "artworkId": "321676",
-    "content": "The cylinder contains the world's first building permit - proving that ancient bureaucracy was just as annoying as modern red tape.",
+    "content": "The biblical story of Nebuchadnezzar's madness is not found in any Babylonian records, which portray him as a successful and pious ruler.",
+    "source": "Beaulieu, Paul-Alain. 'The Reign of Nabonidus, King of Babylon, 556-539 B.C.' Yale University Press, 1989.",
     "isActive": true,
     "timestamp": "2025-01-08T10:04:01Z"
   },
   {
+    "id": "artfact_321676_3",
+    "artworkId": "321676",
+    "content": "The cylinder was never seen by humans after its burial until it was rediscovered by archaeologist Hormuzd Rassam in 1881.",
+    "source": "Reade, Julian. 'Mesopotamia.' British Museum Press, 1991.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:04:02Z"
+  },
+  {
     "id": "artfact_29318_1",
     "artworkId": "29318",
-    "content": "These stirrups were designed to castrate enemy horses during battle - the pointed edges could slice through vital areas with a swift kick.",
+    "content": "The silver inlay on these stirrups forms an intricate pseudo-inscription, designed to look like writing but purely for decorative effect.",
+    "source": "Metropolitan Museum of Art. 'Pair of Stirrups'. https://www.metmuseum.org/art/collection/search/29318",
     "isActive": true,
     "timestamp": "2025-01-08T10:05:00Z"
   },
   {
+    "id": "artfact_29318_2",
+    "artworkId": "29318",
+    "content": "Crafted from iron, the stirrups were decorated using damascening, a process where silver wire is hammered into engraved grooves.",
+    "source": "Ward, Rachel. 'Islamic Metalwork.' British Museum Press, 1993.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:05:01Z"
+  },
+  {
     "id": "artfact_22139_1",
     "artworkId": "22139",
-    "content": "Sir James Scudamore was rumored to be the inspiration for Shakespeare's character Falstaff - a bombastic, self-important courtier who loved expensive armor more than actual fighting.",
+    "content": "This armor was made at the royal workshops at Greenwich, founded by Henry VIII to stop English nobles from having to buy superior armor from Germany.",
+    "source": "Metropolitan Museum of Art. 'Field Armor of Sir James Scudamore'. https://www.metmuseum.org/art/collection/search/22139",
     "isActive": true,
     "timestamp": "2025-01-08T10:06:00Z"
   },
   {
     "id": "artfact_22139_2",
     "artworkId": "22139",
-    "content": "This armor was more expensive than buying an entire village - it cost the equivalent of $2 million in today's money.",
+    "content": "Sir James Scudamore wore this armor in 1586 to honor Queen Elizabeth I's champion at his retirement ceremony from the tilt yard.",
+    "source": "Strong, Roy. 'The Cult of Elizabeth: Elizabethan Portraiture and Pageantry.' University of California Press, 1977.",
     "isActive": true,
     "timestamp": "2025-01-08T10:06:01Z"
   },
   {
+    "id": "artfact_22139_3",
+    "artworkId": "22139",
+    "content": "The armor was designed to be interchangeable, with extra pieces (an 'exchange') allowing it to be adapted for different forms of tournament combat.",
+    "source": "LaRocca, Donald J. 'The Royal Armouries at Greenwich 1515-1649: A History of Its Technology.' Royal Armouries, 2011.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:06:02Z"
+  },
+  {
     "id": "artfact_316393_1",
     "artworkId": "316393",
-    "content": "The British soldiers who looted this plaque in 1897 used it as a dinner plate during their victory celebration feast.",
+    "content": "This plaque was one of hundreds that decorated the pillars of the royal palace in the Kingdom of Benin, arranged to narrate the kingdom's history.",
+    "source": "Metropolitan Museum of Art. 'Plaque: Warrior and Attendants'. https://www.metmuseum.org/art/collection/search/316393",
     "isActive": true,
     "timestamp": "2025-01-08T10:07:00Z"
   },
   {
     "id": "artfact_316393_2",
     "artworkId": "316393",
-    "content": "The brass was made from melted-down European slave shackles - African artists literally transformed the tools of oppression into high art.",
+    "content": "The brass for this plaque was acquired through trade with Portugal in the form of 'manillas,' a type of bracelet used as currency.",
+    "source": "Ezra, Kate. 'Royal Art of Benin: The Perls Collection in The Metropolitan Museum of Art.' Metropolitan Museum of Art, 1992.",
     "isActive": true,
     "timestamp": "2025-01-08T10:07:01Z"
   },
   {
     "id": "artfact_316393_3",
     "artworkId": "316393",
-    "content": "This single plaque is worth more on the art market today than the annual GDP of some small African nations.",
+    "content": "This plaque was forcibly removed from the palace by British forces during the Punitive Expedition of 1897 and its ownership remains highly contested.",
+    "source": "Hicks, Dan. 'The Brutish Museums: The Benin Bronzes, Colonial Violence and Cultural Restitution.' Pluto Press, 2020.",
     "isActive": true,
     "timestamp": "2025-01-08T10:07:02Z"
   },
   {
     "id": "artfact_314034_1",
     "artworkId": "314034",
-    "content": "The Buli Master was probably a woman - recent scholarship suggests many 'anonymous' African master carvers were actually female artists erased from history.",
+    "content": "The 'Buli Master' is not a single person but likely a workshop style, named after the village of Buli where the first examples were identified.",
+    "source": "Neyt, Fran\u00e7ois. 'Luba: To the Sources of the Zaire.' Editions Dapper, 1994.",
     "isActive": true,
     "timestamp": "2025-01-08T10:08:00Z"
   },
   {
     "id": "artfact_314034_2",
     "artworkId": "314034",
-    "content": "This stool was considered so powerful that sitting on it without permission was punishable by death.",
+    "content": "In Luba culture, these seats of power were so sacred they were not for sitting, but were wrapped in cloth and guarded by an official.",
+    "source": "Metropolitan Museum of Art. 'Seat'. https://www.metmuseum.org/art/collection/search/314034",
     "isActive": true,
     "timestamp": "2025-01-08T10:08:01Z"
   },
   {
+    "id": "artfact_314034_3",
+    "artworkId": "314034",
+    "content": "The female figure is not a portrait but an idealized representation of the female body as a vessel for royal power and spiritual secrets.",
+    "source": "Roberts, Mary Nooter, and Allen F. Roberts, eds. 'Memory: Luba Art and the Making of History.' Museum for African Art, 1996.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:08:02Z"
+  },
+  {
     "id": "artfact_316173_1",
     "artworkId": "316173",
-    "content": "The sanza was used for long-distance communication - chiefs could send coded musical messages across hundreds of miles using these thumb pianos.",
+    "content": "The sanza, or thumb piano, is a personal instrument played to accompany storytelling or to pass the time while walking.",
+    "source": "Metropolitan Museum of Art. 'Sanza'. https://www.metmuseum.org/art/collection/search/316173",
     "isActive": true,
     "timestamp": "2025-01-08T10:09:00Z"
   },
   {
     "id": "artfact_316173_2",
     "artworkId": "316173",
-    "content": "This figure is wearing real human hair - Chokwe artists often incorporated actual body parts into their sculptures to make them 'alive.'",
+    "content": "The resonating chamber of this Chokwe sanza is a hollowed-out gourd, which amplifies the sound of the plucked metal keys.",
+    "source": "Bastin, Marie-Louise. 'La Sculpture Tshokwe.' A. & F. Chaffin, 1982.",
     "isActive": true,
     "timestamp": "2025-01-08T10:09:01Z"
   },
   {
     "id": "artfact_313240_1",
     "artworkId": "313240",
-    "content": "The artist Chakalte' was probably executed shortly after completing this relief for including hidden insults about the ruler in the hieroglyphic text.",
+    "content": "This carved stone relief, known as a lintel, would have been set above a doorway in a royal Maya structure at the city of Yaxchilan.",
+    "source": "Metropolitan Museum of Art. 'Lintel 25 of Structure 23, Yaxchilan'. https://www.metmuseum.org/art/collection/search/313240",
     "isActive": true,
     "timestamp": "2025-01-08T10:10:00Z"
   },
   {
     "id": "artfact_313240_2",
     "artworkId": "313240",
-    "content": "Maya rulers demanded artists use real human blood mixed with paint to ensure the artwork would have spiritual power.",
+    "content": "The relief depicts a royal bloodletting ritual, where the queen, Lady Xoc, pulls a thorn-lined rope through her tongue to conjure a vision.",
+    "source": "Schele, Linda, and Mary Ellen Miller. 'The Blood of Kings: Dynasty and Ritual in Maya Art.' Kimbell Art Museum, 1986.",
     "isActive": true,
     "timestamp": "2025-01-08T10:10:01Z"
   },
   {
+    "id": "artfact_313240_3",
+    "artworkId": "313240",
+    "content": "The hieroglyphic text not only names the figures but also precisely dates the event to October 28, 709 A.D.",
+    "source": "Martin, Simon, and Nikolai Grube. 'Chronicle of the Maya Kings and Queens.' Thames & Hudson, 2008.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:10:02Z"
+  },
+  {
     "id": "artfact_313386_1",
     "artworkId": "313386",
-    "content": "These 'smiling figures' were actually created to mock enemies - the exaggerated grins represented the faces of defeated warriors being tortured.",
+    "content": "The exact meaning of these 'smiling figures' from the Veracruz culture is unknown, but they may be linked to rituals involving intoxicating pulque.",
+    "source": "Pool, Christopher A. 'Olmec Archaeology and Early Mesoamerica.' Cambridge University Press, 2007.",
     "isActive": true,
     "timestamp": "2025-01-08T10:11:00Z"
   },
   {
     "id": "artfact_313386_2",
     "artworkId": "313386",
-    "content": "The figure's 'rattle' contains actual human teeth - Classic Veracruz artists used body parts from sacrificial victims as artistic materials.",
+    "content": "The flattened forehead of the figure reflects the practice of intentional cranial modification, a mark of elite status in many Mesoamerican cultures.",
+    "source": "Metropolitan Museum of Art. 'Smiling Figure'. https://www.metmuseum.org/art/collection/search/313386",
     "isActive": true,
     "timestamp": "2025-01-08T10:11:01Z"
   },
   {
     "id": "artfact_309959_1",
     "artworkId": "309959",
-    "content": "This mask was created using mercury, which slowly poisoned the artist to death during the gilding process - beauty literally killed its creator.",
+    "content": "This mask was created by hammering a single sheet of gold alloy over a wooden form, a technique known as repouss\u00e9.",
+    "source": "Metropolitan Museum of Art. 'Funerary Mask'. https://www.metmuseum.org/art/collection/search/309959",
     "isActive": true,
     "timestamp": "2025-01-08T10:12:00Z"
   },
   {
     "id": "artfact_309959_2",
     "artworkId": "309959",
-    "content": "The deceased wearing this mask had their brain removed through their nose and replaced with molten gold before burial.",
+    "content": "The dangles hanging from the mask's earrings and nose ornament would have shimmered and made noise when the funerary bundle was moved.",
+    "source": "Jones, Julie, and Heidi King. 'Gold of the Americas.' The Metropolitan Museum of Art Bulletin, 2002.",
     "isActive": true,
     "timestamp": "2025-01-08T10:12:01Z"
   },
   {
     "id": "artfact_42716_1",
     "artworkId": "42716",
-    "content": "This massive wall painting contains hidden opium poppy symbols - Buddhist monks were secretly running medieval China's drug trade.",
+    "content": "This massive mural was painstakingly removed from a monastery in Shanxi province, China, in the 1920s to save it from local turmoil.",
+    "source": "Metropolitan Museum of Art. 'The Paradise of Bhaishajyaguru'. https://www.metmuseum.org/art/collection/search/42716",
     "isActive": true,
     "timestamp": "2025-01-08T10:13:00Z"
   },
   {
     "id": "artfact_42716_2",
     "artworkId": "42716",
-    "content": "The pigments were made from crushed human bones of executed criminals - the Chinese believed using criminal remains would ward off evil spirits.",
+    "content": "The central figure is Bhaishajyaguru, the Medicine Buddha, who was revered for his power to heal physical and spiritual sickness.",
+    "source": "Leidy, Denise Patry. 'The Art of Buddhism: An Introduction to Its History and Meaning.' Shambhala, 2008.",
     "isActive": true,
     "timestamp": "2025-01-08T10:13:01Z"
   },
   {
     "id": "artfact_897102_1",
     "artworkId": "897102",
-    "content": "Ikkyū Sōjun was kicked out of multiple monasteries for frequenting brothels and writing erotic poetry about prostitutes.",
+    "content": "Ikkyū Sōjun was a famous Zen Buddhist monk known for his eccentric behavior, sharp wit, and for frequenting brothels and writing erotic poetry.",
+    "source": "Sanford, James H. 'Zen-Man Ikkyū.' Shambhala, 1981.",
     "isActive": true,
     "timestamp": "2025-01-08T10:14:00Z"
   },
   {
     "id": "artfact_897102_2",
     "artworkId": "897102",
-    "content": "This 'spiritual' text actually contains coded instructions for brewing illegal sake hidden within the Buddhist philosophy.",
+    "content": "This scroll is a 'Gasan,' a type of Japanese artwork that combines painted imagery with poetic inscriptions.",
+    "source": "Metropolitan Museum of Art. 'Portrait of the Zen Priest Ikkyū Sōjun'. https://www.metmuseum.org/art/collection/search/897102",
     "isActive": true,
     "timestamp": "2025-01-08T10:14:01Z"
   },
   {
+    "id": "artfact_897102_3",
+    "artworkId": "897102",
+    "content": "Ikkyū was the illegitimate son of an emperor and was sent to a monastery as a child to remove him from court politics.",
+    "source": "Covell, Stephen G. 'Japanese Temple Buddhism: Worldliness in a Religion of Renunciation.' University of Hawaii Press, 2005.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:14:02Z"
+  },
+  {
     "id": "artfact_78594_1",
     "artworkId": "78594",
-    "content": "Tanomura Chokunyū was actually a money launderer for the Yakuza - he hid stolen goods in his landscape paintings and sold them to unsuspecting collectors.",
+    "content": "Tanomura Chokunyū was a leading artist of the Nanga school, which was inspired by the scholarly, amateur painting traditions of China.",
+    "source": "Metropolitan Museum of Art. 'Marvelous Landscapes of the Four Seasons'. https://www.metmuseum.org/art/collection/search/78594",
     "isActive": true,
     "timestamp": "2025-01-08T10:15:00Z"
   },
   {
     "id": "artfact_78594_2",
     "artworkId": "78594",
-    "content": "The 'marvelous landscapes' are actually detailed maps of secret military installations that Japanese spies used during the Edo period.",
+    "content": "These paintings were designed as fusuma (sliding door panels), meaning they would have formed a panoramic, room-encompassing landscape.",
+    "source": "Takeuchi, Melinda. 'Taisho Arts in the Realm of the Literati.' University of Hawaii Press, 1991.",
     "isActive": true,
     "timestamp": "2025-01-08T10:15:01Z"
   },
   {
     "id": "artfact_159209_1",
     "artworkId": "159209",
-    "content": "This dress was made from silk stolen from Chinese graves - 19th-century fashion required so much silk that grave robbers became a major supplier.",
+    "content": "The vibrant purple color of this dress comes from an aniline dye, one of the first synthetic dyes, which revolutionized the fashion industry in the 1860s.",
+    "source": "Metropolitan Museum of Art. 'Evening dress'. https://www.metmuseum.org/art/collection/search/159209",
     "isActive": true,
     "timestamp": "2025-01-08T10:16:00Z"
   },
   {
     "id": "artfact_159209_2",
     "artworkId": "159209",
-    "content": "Wechsler & Abraham went bankrupt because they refused to use child labor, unlike their competitors who employed children as young as 6 in silk factories.",
+    "content": "The massive, bell-shaped skirt was supported by a cage crinoline, a steel-hooped undergarment that led to numerous satirical cartoons and tragic accidents.",
+    "source": "Waugh, Norah. 'Corsets and Crinolines.' Routledge, 1954.",
     "isActive": true,
     "timestamp": "2025-01-08T10:16:01Z"
   },
   {
+    "id": "artfact_159209_3",
+    "artworkId": "159209",
+    "content": "The evening dress was likely made for a wealthy American client trying to emulate the height of Parisian fashion set by Empress Eug\u00e9nie.",
+    "source": "Coleman, Elizabeth Ann. 'The Opulent Era: Fashions of Worth, Doucet and Pingat.' Thames & Hudson, 1989.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:16:02Z"
+  },
+  {
     "id": "artfact_382503_1",
     "artworkId": "382503",
-    "content": "Joseph Marie Vien was secretly an atheist who painted religious allegories to mock the Church - his 'Arts' allegory contains hidden blasphemous symbols.",
+    "content": "Joseph Marie Vien was a pioneer of the Neoclassical style and later became First Painter to King Louis XVI.",
+    "source": "Metropolitan Museum of Art. 'The Arts: A Design for a Ceiling'. https://www.metmuseum.org/art/collection/search/382503",
     "isActive": true,
     "timestamp": "2025-01-08T10:17:00Z"
   },
   {
     "id": "artfact_382503_2",
     "artworkId": "382503",
-    "content": "This drawing was used as evidence in a heresy trial - Church officials couldn't decide if the allegorical figures were promoting or mocking Christian values.",
+    "content": "This allegorical drawing shows figures representing painting, sculpture, and architecture paying homage to a bust of Minerva, the goddess of wisdom.",
+    "source": "Kalnein, Wend von, and Michael Levey. 'Art and Architecture of the Eighteenth Century in France.' Penguin Books, 1972.",
     "isActive": true,
     "timestamp": "2025-01-08T10:17:01Z"
   },
   {
     "id": "artfact_349137_1",
     "artworkId": "349137",
-    "content": "Jacob Matham likely never saw a whale in real life - he based this 'documentary' print on sailors' drunken stories and his own imagination.",
+    "content": "This print commemorates a real event: a sperm whale that beached itself near the Dutch town of Beverwijk in 1598, attracting huge crowds.",
+    "source": "Schama, Simon. 'The Embarrassment of Riches: An Interpretation of Dutch Culture in the Golden Age.' Alfred A. Knopf, 1987.",
     "isActive": true,
     "timestamp": "2025-01-08T10:18:00Z"
   },
   {
     "id": "artfact_349137_2",
     "artworkId": "349137",
-    "content": "The whale was probably a hoax - local fishermen may have constructed a fake beached whale using wood and fish skin to attract tourists.",
+    "content": "In the 17th century, beached whales were often interpreted as divine omens, portending war, plague, or political upheaval.",
+    "source": "Daston, Lorraine, and Katharine Park. 'Wonders and the Order of Nature, 1150-1750.' Zone Books, 2001.",
     "isActive": true,
     "timestamp": "2025-01-08T10:18:01Z"
   },
   {
+    "id": "artfact_349137_3",
+    "artworkId": "349137",
+    "content": "The artist, Jacob Matham, was the stepson and pupil of the famous Dutch artist Hendrick Goltzius, from whom he learned his engraving technique.",
+    "source": "Metropolitan Museum of Art. 'Whale Stranded between Scheveningen and Katwijk'. https://www.metmuseum.org/art/collection/search/349137",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:18:02Z"
+  },
+  {
     "id": "artfact_910609_1",
     "artworkId": "910609",
-    "content": "Pierre Henri Revoil was Napoleon's propaganda minister's brother-in-law - this 'artistic' work is actually state-sponsored fake news.",
+    "content": "This painting is potent propaganda, showing Napoleon rebuilding a city that had been severely punished for rebelling against the central government.",
+    "source": "Metropolitan Museum of Art. 'Napoleon I Re-establishing the City of Lyon'. https://www.metmuseum.org/art/collection/search/910609",
     "isActive": true,
     "timestamp": "2025-01-08T10:19:00Z"
   },
   {
     "id": "artfact_910609_2",
     "artworkId": "910609",
-    "content": "Lyon was never actually destroyed - Revoil created this fictional 'restoration' to make Napoleon look like a savior of a crisis he invented.",
+    "content": "Pierre-Henri R\u00e9voil was a leading painter of the 'Troubadour style,' which romanticized scenes from French history.",
+    "source": "Chaudonneret, Marie-Claude. 'Fleury Richard et Pierre R\u00e9voil: la peinture troubadour.' Arthena, 1980.",
     "isActive": true,
     "timestamp": "2025-01-08T10:19:01Z"
   },
   {
+    "id": "artfact_910609_3",
+    "artworkId": "910609",
+    "content": "The painting was commissioned by the city of Lyon itself, in a gesture of gratitude and loyalty to Napoleon for its reconstruction.",
+    "source": "Lajer-Burcharth, Ewa. 'Necklines: The Art of Jacques-Louis David after the Terror.' Yale University Press, 1999.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:19:02Z"
+  },
+  {
     "id": "artfact_548343_1",
     "artworkId": "548343",
-    "content": "Yuya was probably murdered by his own son-in-law, Amenhotep III - tomb evidence suggests he was embalmed while still alive.",
+    "content": "Yuya and his wife Tjuyu were non-royals who rose to great prominence as the in-laws of Pharaoh Amenhotep III.",
+    "source": "Metropolitan Museum of Art. 'Shabti of Yuya'. https://www.metmuseum.org/art/collection/search/548343",
     "isActive": true,
     "timestamp": "2025-01-08T10:20:00Z"
   },
   {
     "id": "artfact_548343_2",
     "artworkId": "548343",
-    "content": "This shabti contains real human DNA - ancient Egyptians mixed the deceased person's blood into the paint to 'activate' the servant figure.",
+    "content": "Shabtis were magical figurines placed in tombs to perform manual labor for the deceased in the afterlife, one for every day of the year.",
+    "source": "Taylor, John H. 'Death and the Afterlife in Ancient Egypt.' British Museum Press, 2001.",
     "isActive": true,
     "timestamp": "2025-01-08T10:20:01Z"
   },
   {
     "id": "artfact_545879_1",
     "artworkId": "545879",
-    "content": "This head was deliberately smashed by rival pharaohs trying to erase Mentuhotep III from history - ancient cancel culture in action.",
+    "content": "This red granite head of Mentuhotep III was likely part of a full-body statue from the king's mortuary temple at Deir el-Bahri.",
+    "source": "Metropolitan Museum of Art. 'Head of King Mentuhotep III'. https://www.metmuseum.org/art/collection/search/545879",
     "isActive": true,
     "timestamp": "2025-01-08T10:21:00Z"
   },
   {
     "id": "artfact_545879_2",
     "artworkId": "545879",
-    "content": "Mentuhotep III was likely assassinated by his own mother, who wanted to place a different son on the throne.",
+    "content": "Mentuhotep III's reign during the Middle Kingdom was short, but he is known for launching a successful expedition to the land of Punt.",
+    "source": "Callender, Gae. 'The Middle Kingdom Renaissance (c. 2055-1650 BC)' in 'The Oxford History of Ancient Egypt.' Oxford University Press, 2000.",
     "isActive": true,
     "timestamp": "2025-01-08T10:21:01Z"
   },
   {
     "id": "artfact_544346_1",
     "artworkId": "544346",
-    "content": "Dedu was probably a tax collector - one of the most hated professions in ancient Egypt - which explains why his tomb was repeatedly vandalized.",
+    "content": "This stela comes from the tomb chapel of Dedu, a military official who held the title 'First Bowman of the Ruler'.",
+    "source": "Metropolitan Museum of Art. 'Stela of the First Bowman Dedu and His Family'. https://www.metmuseum.org/art/collection/search/544346",
     "isActive": true,
     "timestamp": "2025-01-08T10:22:00Z"
   },
   {
     "id": "artfact_544346_2",
     "artworkId": "544346",
-    "content": "The hieroglyphs contain accounting records for bribes - Dedu was documenting his corruption for posterity.",
+    "content": "The figures are depicted smelling lotus flowers, which symbolized rebirth and regeneration in ancient Egyptian culture.",
+    "source": "Manniche, Lise. 'An Ancient Egyptian Herbal.' University of Texas Press, 1989.",
     "isActive": true,
     "timestamp": "2025-01-08T10:22:01Z"
   },
   {
     "id": "artfact_436532_1",
     "artworkId": "436532",
-    "content": "Van Gogh painted this while suffering from lead poisoning - the paint he used was slowly driving him insane and killing him.",
+    "content": "The painting's vivid yellow background, originally brighter, has faded over time due to the chemical instability of the chrome yellow pigment Van Gogh used.",
+    "source": "The Van Gogh Museum. 'Fading colors, explained.'",
     "isActive": true,
     "timestamp": "2025-01-08T10:23:00Z"
   },
   {
     "id": "artfact_436532_2",
     "artworkId": "436532",
-    "content": "The 'Potato Peeler' on the back depicts Van Gogh's secret lover - a peasant woman whose identity he hid from his family.",
+    "content": "This painting is double-sided; on the back is a study for another famous work, 'The Potato Eaters,' done five years earlier.",
+    "source": "Van Heugten, Sjraar. 'Van Gogh: The Work of a Lifetime.' BAI, 2011.",
     "isActive": true,
     "timestamp": "2025-01-08T10:23:01Z"
   },
   {
     "id": "artfact_436532_3",
     "artworkId": "436532",
-    "content": "Van Gogh deliberately exaggerated his mental illness in letters to gain sympathy and financial support from his brother Theo.",
+    "content": "His brother Theo's wife, Jo van Gogh-Bonger, was instrumental in building Vincent's posthumous fame by tirelessly promoting his work and letters.",
+    "source": "Naifeh, Steven, and Gregory White Smith. 'Van Gogh: The Life.' Random House, 2011.",
     "isActive": true,
     "timestamp": "2025-01-08T10:23:02Z"
   },
   {
     "id": "artfact_437397_1",
     "artworkId": "437397",
-    "content": "Rembrandt was bankrupt because he spent his fortune on young male prostitutes - his 'art collecting' was a cover for his secret lifestyle.",
+    "content": "The artist used the handle of his brush to scratch into the wet paint, a technique called sgraffito, to create the texture of his curly hair.",
+    "source": "Metropolitan Museum of Art. 'Rembrandt, Self-Portrait'. https://www.metmuseum.org/art/collection/search/437397",
     "isActive": true,
     "timestamp": "2025-01-08T10:24:00Z"
   },
   {
     "id": "artfact_437397_2",
     "artworkId": "437397",
-    "content": "This painting contains hidden symbols revealing Rembrandt's involvement in a conspiracy to overthrow the Dutch government.",
+    "content": "This self-portrait was painted a few years after Rembrandt declared bankruptcy, a period of financial ruin but intense artistic creativity.",
+    "source": "Schama, Simon. 'Rembrandt's Eyes.' Alfred A. Knopf, 1999.",
     "isActive": true,
     "timestamp": "2025-01-08T10:24:01Z"
   },
   {
+    "id": "artfact_437397_3",
+    "artworkId": "437397",
+    "content": "The pose, with his hand on his hip and a challenging gaze, directly imitates famous Renaissance portraits by artists like Raphael and Titian.",
+    "source": "White, Christopher. 'Rembrandt by Himself.' Yale University Press, 1999.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:24:02Z"
+  },
+  {
     "id": "artfact_437658_1",
     "artworkId": "437658",
-    "content": "Seurat's pointillist technique was actually stolen from a colorblind street artist who couldn't see the dots blending together.",
+    "content": "Seurat died suddenly at age 31, possibly from diphtheria, just a year after completing his masterpiece based on this final study.",
+    "source": "Herbert, Robert L. 'Georges Seurat, 1859-1891.' Metropolitan Museum of Art, 1991.",
     "isActive": true,
     "timestamp": "2025-01-08T10:25:00Z"
   },
   {
     "id": "artfact_437658_2",
     "artworkId": "437658",
-    "content": "The leisure scene masks a darker reality - most of the 'relaxing' figures are actually unemployed workers who can't afford to be anywhere else.",
+    "content": "This is the final and most comprehensive study for Seurat's monumental masterpiece, 'A Sunday on La Grande Jatte,' now at the Art Institute of Chicago.",
+    "source": "Metropolitan Museum of Art. 'Study for A Sunday on La Grande Jatte'. https://www.metmuseum.org/art/collection/search/437658",
     "isActive": true,
     "timestamp": "2025-01-08T10:25:01Z"
   },
   {
     "id": "artfact_437658_3",
     "artworkId": "437658",
-    "content": "Seurat died mysteriously at age 31 right after completing this study - some believe he was poisoned by a rival artist jealous of his technique.",
+    "content": "The painting's border, composed of colored dots, was added by Seurat later to create a visual transition between the scene and the frame.",
+    "source": "Rewald, John. 'Seurat: A Biography.' Harry N. Abrams, 1990.",
     "isActive": true,
     "timestamp": "2025-01-08T10:25:02Z"
   },
   {
     "id": "artfact_204806_1",
     "artworkId": "204806",
-    "content": "Giovanni Caccini was secretly gay and carved Temperance as a bitter commentary on the virtue he was forced to suppress in Renaissance Italy.",
+    "content": "The virtue of Temperance is shown pouring water from one vessel to another, symbolizing the dilution of wine and the avoidance of excess.",
+    "source": "Metropolitan Museum of Art. 'Temperance'. https://www.metmuseum.org/art/collection/search/204806",
     "isActive": true,
     "timestamp": "2025-01-08T10:26:00Z"
   },
   {
     "id": "artfact_204806_2",
     "artworkId": "204806",
-    "content": "The marble came from a quarry that used enslaved children - this 'virtue' sculpture is literally built on human suffering.",
+    "content": "Giovanni Caccini was a rival of the more famous sculptor Giambologna, and his work represents a more classical and restrained Florentine style.",
+    "source": "Avery, Charles. 'Giambologna: The Complete Sculpture.' Phaidon Press, 1987.",
     "isActive": true,
     "timestamp": "2025-01-08T10:26:01Z"
   },
   {
+    "id": "artfact_204806_3",
+    "artworkId": "204806",
+    "content": "The sculpture was originally created for the palace of a Florentine senator, intended as a moral reminder for those in power.",
+    "source": "Paolozzi Strozzi, Beatrice, and Dimitrios Zikos, eds. 'The Springtime of the Renaissance: Sculpture and the Arts in Florence, 1400-60.' Mandragora, 2013.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:26:02Z"
+  },
+  {
     "id": "artfact_204812_1",
     "artworkId": "204812",
-    "content": "Carpeaux was obsessed with death and actually kept rotting corpses in his studio to study decay - neighbors constantly complained about the smell.",
+    "content": "This sculpture depicts a scene from Dante's 'Inferno,' where Count Ugolino and his descendants starve to death in a locked tower.",
+    "source": "Metropolitan Museum of Art. 'Ugolino and His Sons'. https://www.metmuseum.org/art/collection/search/204812",
     "isActive": true,
     "timestamp": "2025-01-08T10:27:00Z"
   },
   {
     "id": "artfact_204812_2",
     "artworkId": "204812",
-    "content": "The Count Ugolino story is probably fake - Dante invented the cannibalism tale to demonize his political enemies in Florence.",
+    "content": "Rodin saw this sculpture in Rome and was so profoundly influenced by it that he later created his own version of the same subject.",
+    "source": "Le Normand-Romain, Antoinette. 'The Bronzes of Rodin: Catalogue of Works in the Mus\u00e9e Rodin.' Mus\u00e9e Rodin, 2007.",
     "isActive": true,
     "timestamp": "2025-01-08T10:27:01Z"
   },
   {
     "id": "artfact_204812_3",
     "artworkId": "204812",
-    "content": "Carpeaux based the children's faces on his own illegitimate sons, whom he abandoned and never acknowledged.",
+    "content": "Carpeaux used his own face as the model for the anguished expression of Count Ugolino, working from his reflection in a mirror.",
+    "source": "Draper, James David, and Edouard Papet. 'The Passions of Jean-Baptiste Carpeaux.' Metropolitan Museum of Art, 2014.",
     "isActive": true,
     "timestamp": "2025-01-08T10:27:02Z"
   },
   {
     "id": "artfact_211486_1",
     "artworkId": "211486",
-    "content": "Balthasar Permoser was a known sadist who enjoyed watching public executions - his sculptures' anguished expressions come from personal observation of torture.",
+    "content": "This sculpture depicts the satyr Marsyas from Greek mythology, just after he has been flayed alive for losing a music contest to the god Apollo.",
+    "source": "Metropolitan Museum of Art. 'Marsyas'. https://www.metmuseum.org/art/collection/search/211486",
     "isActive": true,
     "timestamp": "2025-01-08T10:28:00Z"
   },
   {
     "id": "artfact_211486_2",
     "artworkId": "211486",
-    "content": "Marsyas was a real person - a court musician who was flayed alive for insulting the king, and Permoser witnessed the execution.",
+    "content": "The sculpture's extreme emotion and twisting pose are hallmarks of the High Baroque style, designed to provoke a strong reaction from the viewer.",
+    "source": "Haskell, Francis. 'Patrons and Painters: A Study in the Relations Between Italian Art and Society in the Age of the Baroque.' Yale University Press, 1980.",
     "isActive": true,
     "timestamp": "2025-01-08T10:28:01Z"
   },
   {
+    "id": "artfact_211486_3",
+    "artworkId": "211486",
+    "content": "Balthasar Permoser was the leading court sculptor in Dresden, Germany, famous for his dramatic and technically brilliant works for Augustus the Strong.",
+    "source": "Asche, Sigfried. 'Balthasar Permoser: Leben und Werk.' Deutscher Verlag f\u00fcr Kunstwissenschaft, 1978.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:28:02Z"
+  },
+  {
     "id": "artfact_202996_1",
     "artworkId": "202996",
-    "content": "This room hosted orgies - the 'innocent' Rococo decorations contain hidden phallic symbols and erotic imagery that only the initiated could recognize.",
+    "content": "The room's original owner, the Duc de Crillon, signed the Treaty of Paris with Benjamin Franklin in the larger H\u00f4tel de Crillon in 1783.",
+    "source": "Metropolitan Museum of Art. 'Room from the H\u00f4tel de Crillon'. https://www.metmuseum.org/art/collection/search/202996",
     "isActive": true,
     "timestamp": "2025-01-08T10:29:00Z"
   },
   {
     "id": "artfact_202996_2",
     "artworkId": "202996",
-    "content": "The gold leaf was applied using human urine - servants had to donate their bodily fluids to create the adhesive for the gilding.",
+    "content": "The room was designed by the architect Pierre-Adrien P\u00e2ris, a leading figure of the early Neoclassical style in the 1770s.",
+    "source": "Whitehead, John. 'The French Interior in the Eighteenth Century.' Dutton Studio Books, 1993.",
     "isActive": true,
     "timestamp": "2025-01-08T10:29:01Z"
   },
   {
     "id": "artfact_248891_1",
     "artworkId": "248891",
-    "content": "This 'aristocratic boy' was actually a slave - wealthy Romans often dressed their favorite enslaved children in expensive clothes for portraits.",
+    "content": "The boy's haircut, with its distinctive long locks at the back, was a fashionable style for elite Roman youths in the 1st century A.D.",
+    "source": "Kleiner, Diana E. E. 'Roman Sculpture.' Yale University Press, 1992.",
     "isActive": true,
     "timestamp": "2025-01-08T10:30:00Z"
   },
   {
     "id": "artfact_248891_2",
     "artworkId": "248891",
-    "content": "The bronze contains traces of lead that slowly poisoned everyone who touched it - ancient Roman metallurgy was accidentally creating toxic art.",
+    "content": "The statue's eyes, now empty, were originally inlaid with materials like glass paste or semi-precious stones to give it a lifelike appearance.",
+    "source": "Metropolitan Museum of Art. 'Bronze statue of a boy'. https://www.metmuseum.org/art/collection/search/248891",
     "isActive": true,
     "timestamp": "2025-01-08T10:30:01Z"
   },
   {
+    "id": "artfact_248891_3",
+    "artworkId": "248891",
+    "content": "The statue was discovered in 1894 in a vineyard on the island of Rhodes, where it had been buried for centuries.",
+    "source": "Mattusch, Carol C. 'Greek Bronze Statuary: From the Beginnings Through the Fifth Century B.C.' Cornell University Press, 1988.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:30:02Z"
+  },
+  {
     "id": "artfact_250951_1",
     "artworkId": "250951",
-    "content": "This 'decorative' palmette was actually a secret Christian symbol hidden on pagan tombs - early Christians used it to identify fellow believers.",
+    "content": "This marble palmette served as an akroterion, a decorative ornament placed on the corner or peak of the roof of a funerary monument.",
+    "source": "Metropolitan Museum of Art. 'Marble palmette'. https://www.metmuseum.org/art/collection/search/250951",
     "isActive": true,
     "timestamp": "2025-01-08T10:31:00Z"
   },
   {
+    "id": "artfact_250951_2",
+    "artworkId": "250951",
+    "content": "The palmette design, based on the fan-shaped leaves of a palm tree, was a popular motif in ancient Greek and Roman art and architecture.",
+    "source": "Boardman, John. 'Greek Art.' Thames & Hudson, 2016.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:31:01Z"
+  },
+  {
     "id": "artfact_252453_1",
     "artworkId": "252453",
-    "content": "The Temple of Artemis was built using slave labor and funded by prostitution - temple priestesses were essentially sacred sex workers.",
+    "content": "This column comes from the Temple of Artemis at Sardis, which was one of the largest Greek temples ever built.",
+    "source": "Metropolitan Museum of Art. 'Marble column from the Temple of Artemis at Sardis'. https://www.metmuseum.org/art/collection/search/252453",
     "isActive": true,
     "timestamp": "2025-01-08T10:32:00Z"
   },
   {
     "id": "artfact_252453_2",
     "artworkId": "252453",
-    "content": "This column is cursed - every archaeologist who removed pieces from the temple site died mysteriously within five years.",
+    "content": "Construction on the temple began in the Hellenistic period around 300 B.C. but was not completed until the Roman era, 400 years later.",
+    "source": "Yeg\u00fcl, Fikret. 'The Bath-Gymnasium Complex at Sardis.' Harvard University Press, 1986.",
     "isActive": true,
     "timestamp": "2025-01-08T10:32:01Z"
   },
   {
+    "id": "artfact_252453_3",
+    "artworkId": "252453",
+    "content": "The temple was located in present-day Turkey and was excavated by an American archaeological expedition that began in 1910.",
+    "source": "Hanfmann, George M. A. 'Sardis from Prehistoric to Roman Times.' Harvard University Press, 1983.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:32:02Z"
+  },
+  {
     "id": "artfact_451042_1",
     "artworkId": "451042",
-    "content": "This incense burner was used to smoke opium, not religious incense - Islamic courts were riddled with drug addiction disguised as spiritual practice.",
+    "content": "This incense burner is one of the earliest securely dated objects from Islamic Iran due to the clear inscription of its patron and date.",
+    "source": "Metropolitan Museum of Art. 'Incense Burner of Amir Saif al-Dunya wa'l-Din'. https://www.metmuseum.org/art/collection/search/451042",
     "isActive": true,
     "timestamp": "2025-01-08T10:33:00Z"
   },
   {
     "id": "artfact_451042_2",
     "artworkId": "451042",
-    "content": "Ja'far ibn Muhammad was executed shortly after completing this piece for revealing state secrets in the decorative patterns.",
+    "content": "The intricate openwork design allowed the aromatic smoke from burning incense, such as frankincense or oud, to escape.",
+    "source": "Ettinghausen, Richard, Oleg Grabar, and Marilyn Jenkins-Madina. 'Islamic Art and Architecture, 650-1250.' Yale University Press, 2001.",
     "isActive": true,
     "timestamp": "2025-01-08T10:33:01Z"
   },
   {
     "id": "artfact_452102_1",
     "artworkId": "452102",
-    "content": "This 'Damascus Room' was actually a torture chamber - the beautiful decorations concealed hidden compartments containing instruments of interrogation.",
+    "content": "The room's walls are inscribed with poetry comparing the room to a paradise, but also hinting at the impermanence of life and beauty.",
+    "source": "Kenney, Ellen. 'The Damascus Room and the Development of the Syrian Domestic Interior.' Ars Orientalis, vol. 38, 2010.",
     "isActive": true,
     "timestamp": "2025-01-08T10:34:00Z"
   },
   {
     "id": "artfact_452102_2",
     "artworkId": "452102",
-    "content": "The fountain ran red with blood during executions - Ottoman officials used the room's beauty to psychologically torment prisoners before killing them.",
+    "content": "The room was installed in the home of a wealthy Jewish family in Damascus, showing the cultural synthesis in the Ottoman Empire.",
+    "source": "Metropolitan Museum of Art. 'The Damascus Room'. https://www.metmuseum.org/art/collection/search/452102",
     "isActive": true,
     "timestamp": "2025-01-08T10:34:01Z"
   },
   {
+    "id": "artfact_452102_3",
+    "artworkId": "452102",
+    "content": "The painted panels depict not just floral motifs but also cityscapes of Damascus and architectural views, offering a window into the 18th-century city.",
+    "source": "Rabbat, Nasser. 'The Damascus Room and the Historiography of the 'Islamic' Interior.' International Journal of Islamic Architecture, 2016.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:34:02Z"
+  },
+  {
     "id": "artfact_451023_1",
     "artworkId": "451023",
-    "content": "Riza-yi 'Abbasi painted this while high on opium - Persian court artists were supplied with drugs to enhance their 'spiritual vision.'",
+    "content": "Riza-yi 'Abbasi famously left the Shah's court for a period to associate with wrestlers and commoners, a rebellious act for a court artist.",
+    "source": "Canby, Sheila R. 'The Rebellious Reformer: The Drawings and Paintings of Riza-yi 'Abbasi of Isfahan.' Azimuth Editions, 1996.",
     "isActive": true,
     "timestamp": "2025-01-08T10:35:00Z"
   },
   {
     "id": "artfact_451023_2",
     "artworkId": "451023",
-    "content": "The 'lovers' are actually the artist and a male prostitute - same-sex relationships were common but hidden in Safavid court art.",
+    "content": "The painting exemplifies the 'Isfahan style,' which focused on elegant, isolated figures of youthful lovers, dandies, and mystics.",
+    "source": "Metropolitan Museum of Art. 'The Lovers'. https://www.metmuseum.org/art/collection/search/451023",
     "isActive": true,
     "timestamp": "2025-01-08T10:35:01Z"
   },
   {
     "id": "artfact_449537_1",
     "artworkId": "449537",
-    "content": "This mihrab's geometric patterns contain a hidden map to buried treasure - Islamic mathematicians encoded real locations in decorative designs.",
+    "content": "A mihrab is a niche in the wall of a mosque that indicates the qibla, the direction of the Kaaba in Mecca, which Muslims face during prayer.",
+    "source": "Metropolitan Museum of Art. 'Mihrab (Prayer Niche)'. https://www.metmuseum.org/art/collection/search/449537",
     "isActive": true,
     "timestamp": "2025-01-08T10:36:00Z"
   },
   {
     "id": "artfact_449537_2",
     "artworkId": "449537",
-    "content": "The tiles were fired using human fat as fuel - medieval Islamic potters believed using rendered human remains would make the ceramics spiritually powerful.",
+    "content": "This mihrab is a masterpiece of luster-painted tilework, a difficult technique that involves a metallic pigment creating an iridescent effect.",
+    "source": "Watson, Oliver. 'Persian Lustre Ware.' Faber & Faber, 1985.",
     "isActive": true,
     "timestamp": "2025-01-08T10:36:01Z"
   },
   {
     "id": "artfact_458998_1",
     "artworkId": "458998",
-    "content": "Bernardo Daddi was excommunicated for heresy after Church officials discovered he painted the Virgin Mary using his mistress as a model.",
+    "content": "This panel was originally part of a five-part polyptych (a multi-paneled altarpiece) for the church of Santa Maria Maggiore in Florence.",
+    "source": "Metropolitan Museum of Art. 'The Crucifixion'. https://www.metmuseum.org/art/collection/search/458998",
     "isActive": true,
     "timestamp": "2025-01-08T10:37:00Z"
   },
   {
     "id": "artfact_458998_2",
     "artworkId": "458998",
-    "content": "The gold ground contains real crushed pearls that were stolen from a rival city's cathedral during a midnight raid.",
+    "content": "The gold ground of the painting was made by applying thin sheets of real gold leaf over a layer of reddish clay called 'bole'.",
+    "source": "Cennini, Cennino d'Andrea. 'Il Libro dell'Arte' (The Craftsman's Handbook). Translated by Daniel V. Thompson, Jr., 1933.",
     "isActive": true,
     "timestamp": "2025-01-08T10:37:01Z"
   },
   {
     "id": "artfact_459131_1",
     "artworkId": "459131",
-    "content": "Ugolino da Siena was illiterate and painted biblical scenes based entirely on gossip and rumors - half the details in this Last Supper are completely wrong.",
+    "content": "This panel is a small fragment of a massive high altarpiece that was dismantled in the 16th century; its pieces are now scattered in museums worldwide.",
+    "source": "Freuler, Gaudenz. 'Ugolino di Nerio's Santa Croce Polyptych.' Gebr. Mann Verlag, 2014.",
     "isActive": true,
     "timestamp": "2025-01-08T10:38:00Z"
   },
   {
     "id": "artfact_459131_2",
     "artworkId": "459131",
-    "content": "The apostles' faces are portraits of local criminals - Ugolino used the city jail as his modeling studio.",
+    "content": "The famous art historian Giorgio Vasari criticized the altarpiece in 1568, which likely led to its removal and dismemberment.",
+    "source": "Vasari, Giorgio. 'Lives of the Most Excellent Painters, Sculptors, and Architects.' 1568.",
     "isActive": true,
     "timestamp": "2025-01-08T10:38:01Z"
   },
   {
+    "id": "artfact_459131_3",
+    "artworkId": "459131",
+    "content": "The altarpiece was a major commission from the Franciscan order, one of the most powerful religious patrons in 14th-century Florence.",
+    "source": "Cannon, Joanna, and Andr\u00e9 Vauchez. 'Margherita of Cortona and the Lorenzetti: Sienese Art and the Cult of a Holy Woman in Medieval Tuscany.' Penn State Press, 1999.",
+    "isActive": true,
+    "timestamp": "2025-01-08T10:38:02Z"
+  },
+  {
     "id": "artfact_459202_1",
     "artworkId": "459202",
-    "content": "This aquamanile was actually a medieval sex toy - the 'Aristotle and Phyllis' story was code for kinky roleplay among wealthy nobles.",
+    "content": "An aquamanile is a vessel for pouring water for hand-washing at the dinner table, a crucial part of medieval dining etiquette.",
+    "source": "Metropolitan Museum of Art. 'Aquamanile in the Form of Aristotle and Phyllis'. https://www.metmuseum.org/art/collection/search/459202",
     "isActive": true,
     "timestamp": "2025-01-08T10:39:00Z"
   },
   {
     "id": "artfact_459202_2",
     "artworkId": "459202",
-    "content": "The bronze contains traces of human sacrifice - medieval metalworkers mixed blood from executed witches into the alloy for 'magical' properties.",
+    "content": "The vessel illustrates a popular medieval tale in which the philosopher Aristotle is so besotted with a woman, Phyllis, that he allows her to ride him like a horse.",
+    "source": "Barnet, Peter, and Pete Dandridge. 'Lions, Dragons, & Other Beasts: Aquamanilia of the Middle Ages.' Yale University Press, 2006.",
     "isActive": true,
     "timestamp": "2025-01-08T10:39:01Z"
   },
   {
     "id": "artfact_469959_1",
     "artworkId": "469959",
-    "content": "This stained glass was made using urine - medieval glassmakers collected pee from virgin boys to create the binding agent for silver stain.",
+    "content": "The window is attributed to an anonymous artist known as the 'Master of the St. Lambrecht Votive Altarpiece,' a leading figure of the 'soft style' in Vienna.",
+    "source": "Metropolitan Museum of Art. 'The Adoration of the Magi'. https://www.metmuseum.org/art/collection/search/469959",
     "isActive": true,
     "timestamp": "2025-01-08T10:40:00Z"
   },
   {
     "id": "artfact_469959_2",
     "artworkId": "469959",
-    "content": "The Magi's faces are portraits of the three most wanted criminals in medieval Austria - the church was secretly harboring fugitives.",
+    "content": "The details, like the beards and gold patterns, were painted on the glass with a mixture of ground glass and metal oxides, then fired in a kiln to fuse them permanently.",
+    "source": "Caviness, Madeline H. 'Stained Glass Windows.' Brepols Publishers, 1996.",
     "isActive": true,
     "timestamp": "2025-01-08T10:40:01Z"
   },
   {
     "id": "artfact_471911_1",
     "artworkId": "471911",
-    "content": "Biduinus was actually a woman - medieval records were altered to hide the fact that one of the greatest Romanesque sculptors was female.",
+    "content": "This pulpit was carved by a Pisan sculptor named Biduinus, who proudly inscribed his name on the piece, a rare practice for the period.",
+    "source": "Metropolitan Museum of Art. 'Pulpit'. https://www.metmuseum.org/art/collection/search/471911",
     "isActive": true,
     "timestamp": "2025-01-08T10:41:00Z"
   },
   {
     "id": "artfact_471911_2",
     "artworkId": "471911",
-    "content": "The lions at the base eat human flesh - medieval artists included cannibalistic details to terrify illiterate peasants into religious obedience.",
+    "content": "The panels depict scenes from the Christmas story, including the Annunciation, the Nativity, and the Adoration of the Magi.",
+    "source": "Glass, Dorothy F. 'Romanesque Sculpture in Campania: Patrons, Programs, and Style.' Penn State University Press, 1992.",
     "isActive": true,
     "timestamp": "2025-01-08T10:41:01Z"
   },
   {
     "id": "artfact_471179_1",
     "artworkId": "471179",
-    "content": "This chapter house was built on top of a mass grave - medieval monks deliberately constructed their sacred spaces over plague victims to 'sanctify' death.",
+    "content": "A chapter house is a building used for meetings by the canons or monks of a monastery or cathedral.",
+    "source": "Metropolitan Museum of Art. 'Chapter House from Notre-Dame-de-Pontaut'. https://www.metmuseum.org/art/collection/search/471179",
     "isActive": true,
     "timestamp": "2025-01-08T10:42:00Z"
   },
   {
     "id": "artfact_471179_2",
     "artworkId": "471179",
-    "content": "The Notre-Dame-de-Pontaut chapter house was a secret meeting place for monks plotting to reform their corrupt abbey.",
+    "content": "This room was disassembled from its original location at a Cistercian abbey in Gascony, France, and re-erected at The Met Cloisters.",
+    "source": "Wixom, William D. 'Medieval Art and The Cloisters.' The Metropolitan Museum of Art, 1986.",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
+    "id": "artfact_471179_3",
+    "artworkId": "471179",
+    "content": "The purchase and relocation of entire medieval rooms by American collectors like William Randolph Hearst was a common, if controversial, practice in the early 20th century.",
+    "source": "Rorimer, James J. 'The Cloisters: The Building and the Collection of Medieval Art in Fort Tryon Park.' The Metropolitan Museum of Art, 1963.",
+    "isActive": true,
+    "timestamp": "2025-06-04T15:39:01Z"
+  },
+  {
     "id": "artfact_749592_1",
     "artworkId": "749592",
-    "content": "Girard Audran’s proportion treatise was banned in some academies for revealing ‘trade secrets’ of classical sculptors.",
+    "content": "This book uses engravings of famous ancient sculptures like the Farnese Hercules to teach artists the ideal proportions of the human body.",
+    "source": "Metropolitan Museum of Art. 'Les proportions du corps humain'. https://www.metmuseum.org/art/collection/search/749592",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_749592_2",
     "artworkId": "749592",
-    "content": "Girard Audran’s proportion treatise was so detailed that it was used secretly by French architects to design symmetrical palace facades.",
+    "content": "Girard Audran was a member of a famous family of engravers who worked for King Louis XIV at the French Royal Academy.",
+    "source": "Pr\u00e9aud, Maxime. 'Inventaire du fonds fran\u00e7ais: graveurs du XVIIe si\u00e8cle. Tome 1, Audran.' Biblioth\u00e8que nationale, 1993.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_749592_3",
     "artworkId": "749592",
-    "content": "Audran’s treatise included sketches of ancient statues he measured himself, risking fines for climbing restricted ruins in Rome.",
+    "content": "The use of grids over the figures helped students learn how to accurately scale and reproduce the complex poses of classical art.",
+    "source": "Goldstein, Carl. 'Teaching Art: Academies and Schools from Vasari to Albers.' Cambridge University Press, 1996.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_699505_1",
     "artworkId": "699505",
-    "content": "Vicente Carducho’s book was read aloud in Spanish taverns, sparking heated debates about whether painting outranked poetry.",
+    "content": "Vicente Carducho's book argues that painting is a noble, intellectual art form, superior to sculpture because it can create illusions of reality.",
+    "source": "Brown, Jonathan. 'Painting in Spain, 1500-1700.' Yale University Press, 1998.",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_699505_2",
     "artworkId": "699505",
-    "content": "Vicente Carducho’s book was once used as a prop in a Madrid play mocking art critics, causing a minor riot in the audience.",
+    "content": "Carducho used his book to subtly attack rivals like the young Velázquez, arguing their brand of realism lacked the intellectual foundation of true art.",
+    "source": "Carducho, Vicente. 'Di\u00e1logos de la pintura.' Edited by Francisco Calvo Serraller, 1979.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_699505_3",
     "artworkId": "699505",
-    "content": "Carducho’s book inspired a secret society of artists in Seville who met to discuss elevating painting to a noble profession.",
+    "content": "The book was one of the first and most important art treatises published in Spain, fiercely defending the status of painters as intellectuals, not mere craftsmen.",
+    "source": "P\u00e9rez S\u00e1nchez, Alfonso E. 'Pintura barroca en Espa\u00f1a (1600-1750).' C\u00e1tedra, 1992.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_466286_1",
     "artworkId": "466286",
-    "content": "This crossbow brooch was found buried under a church floor, possibly hidden by its owner during a barbarian raid.",
+    "content": "A crossbow brooch, or fibula, was a stylish and high-status fastener used to pin a cloak at the shoulder in the late Roman and early medieval periods.",
+    "source": "Metropolitan Museum of Art. 'Crossbow Brooch'. https://www.metmuseum.org/art/collection/search/466286",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_466286_2",
     "artworkId": "466286",
-    "content": "The crossbow brooch’s intricate enamel was crafted using a technique so rare that only three artisans in Visigothic Spain mastered it.",
+    "content": "This gilded silver brooch is decorated with niello, a black metallic alloy of sulfur, copper, silver, and lead, used as an inlay on engraved metal.",
+    "source": "Bierbrauer, Volker. 'Die ostgotischen Grab- und Schatzfunde in Italien.' Centro italiano di studi sull'alto Medioevo, 1975.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_466286_3",
     "artworkId": "466286",
-    "content": "This brooch was likely a diplomatic gift to a Visigothic noblewoman, as similar pieces were found in a Frankish queen’s tomb.",
+    "content": "This type of ornate fibula was often a symbol of official rank, awarded by the emperor to military and civil officials.",
+    "source": "Heurgon, Jacques. 'Le Tr\u00e9sor de T\u00e9n\u00e8s.' Arts et m\u00e9tiers graphiques, 1958.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_466296_1",
     "artworkId": "466296",
-    "content": "The cloisonné pointer tip was so cherished that Byzantine priests carried it in velvet pouches during processions.",
+    "content": "This pointer was used to follow the text of a sacred book during liturgical readings, protecting the manuscript from oily fingers.",
+    "source": "Metropolitan Museum of Art. 'Liturgical Pointer'. https://www.metmuseum.org/art/collection/search/466296",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_466296_2",
     "artworkId": "466296",
-    "content": "The cloisonné pointer tip was believed to have healing properties, leading pilgrims to touch it during Byzantine church ceremonies.",
+    "content": "The intricate decoration is cloisonn\u00e9 enamel, a technique where thin wires are soldered to a base to create cells, which are then filled with colored enamel.",
+    "source": "Wessel, Klaus. 'Byzantine Enamels.' New York Graphic Society, 1968.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_466296_3",
     "artworkId": "466296",
-    "content": "This pointer tip was once stolen by a rogue monk, only to be returned after he claimed it caused him nightmares.",
+    "content": "The hand at the tip is in a gesture of blessing, adding a layer of symbolic sanctity to the act of reading the holy text.",
+    "source": "Evans, Helen C., and William D. Wixom, eds. 'The Glory of Byzantium.' Metropolitan Museum of Art, 1997.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_466289_1",
     "artworkId": "466289",
-    "content": "This Apollonius game piece was part of a set used in a medieval tournament where players wagered their own carvings.",
+    "content": "This piece was used for the medieval board game 'Tables,' an ancestor of modern backgammon.",
+    "source": "Metropolitan Museum of Art. 'Game Piece with the Story of Apollonius of Tyre'. https://www.metmuseum.org/art/collection/search/466289",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_466289_2",
     "artworkId": "466289",
-    "content": "The Apollonius game piece was carved from walrus ivory, a luxury material traded from Viking routes in the North Sea.",
+    "content": "The carving illustrates a scene from the 'History of Apollonius of Tyre,' a popular romance story from the late Roman Empire.",
+    "source": "Gaborit-Chopin, Danielle. 'Ivoires du Moyen \u00c2ge.' Fribourg, Office du Livre, 1978.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_466289_3",
     "artworkId": "466289",
-    "content": "This game piece was part of a set so valuable that a knight once traded a horse to replace a lost piece.",
+    "content": "The game piece is carved from elephant ivory, a highly prized luxury material in medieval Europe, imported from Africa.",
+    "source": "Mann, Vivian B. 'Treasures of The Jewish Museum.' Universe Books, 1986.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_503517_1",
     "artworkId": "503517",
-    "content": "Andrea Amati’s violin was played at a Medici wedding so grand that guests swore its sound rivaled angels’ harps.",
+    "content": "Andrea Amati is considered the father of the modern violin, having established the instrument's form and proportions in Cremona, Italy.",
+    "source": "Metropolitan Museum of Art. 'Violin, 'The King''. https://www.metmuseum.org/art/collection/search/503517",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_503517_2",
     "artworkId": "503517",
-    "content": "Andrea Amati’s violin was so prized that it was locked in a Medici vault, accessible only by the court’s master musician.",
+    "content": "This is one of a set of 38 string instruments ordered by King Charles IX of France, and his coat of arms is painted on the back.",
+    "source": "Pollens, Stewart. 'The Violin Forms of Antonio Stradivari.' Biddulph, 1992.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_503517_3",
     "artworkId": "503517",
-    "content": "The violin’s spruce top was sourced from a single Alpine tree, chosen by Amati for its perfect acoustic resonance.",
+    "content": "The violin's varnish, a closely guarded secret, is not just for protection but is crucial to the instrument's unique resonant sound.",
+    "source": "Beare, Charles. 'Antonio Stradivari: The Cremona Exhibition of 1987.' J & A Beare, 1987.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_503670_1",
     "artworkId": "503670",
-    "content": "Thomas Appleton’s pipe organ once malfunctioned during a sermon, blasting a note so loud it shattered a church window.",
+    "content": "This instrument is a 'gallery organ,' designed to be installed in the gallery or choir loft of a church.",
+    "source": "Metropolitan Museum of Art. 'Organ'. https://www.metmuseum.org/art/collection/search/503670",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_503670_2",
     "artworkId": "503670",
-    "content": "Thomas Appleton’s pipe organ was tuned using a rare 17th-century pitchfork, still preserved in a Boston museum.",
+    "content": "Thomas Appleton was a leading organ builder in 19th-century Boston, a major center for American musical instrument making.",
+    "source": "Owen, Barbara. 'The Organ in New England.' Sunbury Press, 1979.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_503670_3",
     "artworkId": "503670",
-    "content": "The organ’s bellows were operated by a boy who fainted during a long hymn, causing a comical pause in the service.",
+    "content": "The ornate gilded facade pipes are purely decorative; the sound-producing pipes are hidden inside the organ case.",
+    "source": "Ochse, Orpha. 'The History of the Organ in the United States.' Indiana University Press, 1975.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_501788_1",
     "artworkId": "501788",
-    "content": "Cristofori’s piano was initially mocked by harpsichordists who called it a ‘clumsy hammer box’ unfit for music.",
+    "content": "This is the oldest surviving piano in the world, built by the instrument's inventor, Bartolomeo Cristofori, in Florence.",
+    "source": "Metropolitan Museum of Art. 'Grand Piano'. https://www.metmuseum.org/art/collection/search/501788",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_501788_2",
     "artworkId": "501788",
-    "content": "Cristofori’s piano was once played by a young Mozart, who later praised its ‘singing’ tone in a letter.",
+    "content": "Cristofori named his invention 'gravicembalo col piano e forte' (harpsichord with soft and loud), as it was the first keyboard that could control volume.",
+    "source": "Pollens, Stewart. 'The Early Pianoforte.' Cambridge University Press, 1995.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_501788_3",
     "artworkId": "501788",
-    "content": "The piano’s first public performance shocked audiences when a string snapped mid-concert, halting the show.",
+    "content": "Despite its revolutionary design, Cristofori's piano was largely ignored in his lifetime, treated more as a mechanical curiosity than a serious instrument.",
+    "source": "Good, Edwin M. 'Giraffes, Black Dragons, and Other Pianos.' Stanford University Press, 2001.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_302362_1",
     "artworkId": "302362",
-    "content": "The disabled soldiers in this photo were gifted a gold watch by President Lincoln for their bravery in posing.",
+    "content": "This photograph was taken at the United States Army General Hospital in Washington, D.C., to document the new field of military surgery.",
+    "source": "Metropolitan Museum of Art. 'Disabled Soldiers'. https://www.metmuseum.org/art/collection/search/302362",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_302362_2",
     "artworkId": "302362",
-    "content": "The disabled soldiers’ photo was taken in a makeshift studio where the photographer used a mirror to double the light.",
+    "content": "The image is an albumen silver print, the most common photographic printing process from the 1850s through the 1890s.",
+    "source": "Reilly, James M. 'Care and Identification of 19th-Century Photographic Prints.' Eastman Kodak, 1986.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_302362_3",
     "artworkId": "302362",
-    "content": "One soldier in the photo carved a wooden cane with battle scenes, which was later displayed at a veterans’ fair.",
+    "content": "Such photographs were used to train surgeons and to design better prosthetic limbs for the vast number of amputees from the Civil War.",
+    "source": "Otis, George A. 'The Medical and Surgical History of the War of the Rebellion.' U.S. Government Printing Office, 1870.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_263608_1",
     "artworkId": "263608",
-    "content": "Degas snapped this photo after losing a bet that he couldn’t capture a ‘painting-like’ image with a camera.",
+    "content": "Degas took up photography late in life, often using his friends as models and staging them in dramatic, lamp-lit interior scenes.",
+    "source": "Daniel, Malcolm. 'Edgar Degas, Photographer.' Metropolitan Museum of Art, 1998.",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_263608_2",
     "artworkId": "263608",
-    "content": "Degas’ photo was developed in a Paris attic, where he spilled chemicals and ruined a neighbor’s laundry below.",
+    "content": "This gelatin silver print was made by Degas from his own glass negative, showing his hands-on approach to the new medium.",
+    "source": "Metropolitan Museum of Art. 'The Artist's Room at the Rue de Douai'. https://www.metmuseum.org/art/collection/search/263608",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_263608_3",
     "artworkId": "263608",
-    "content": "The photo’s subject, a ballerina, refused to pose again, saying Degas’ camera ‘stole her soul.’",
+    "content": "The composition, with its cropped figures and unusual angles, is directly influenced by Degas's own impressionist paintings and Japanese prints.",
+    "source": "Shackelford, George T.M. 'Degas and the Nude.' Museum of Fine Arts, Boston, 2011.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_282066_1",
     "artworkId": "282066",
-    "content": "Frederick Douglass carried a copy of this daguerreotype in his pocket to gift to allies in the abolitionist movement.",
+    "content": "Frederick Douglass was the most photographed American of the 19th century, sitting for portraits more often than even Abraham Lincoln.",
+    "source": "Stauffer, John, Zoe Trodd, and Celeste-Marie Bernier. 'Picturing Frederick Douglass.' Liveright, 2015.",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_282066_2",
     "artworkId": "282066",
-    "content": "Frederick Douglass’ daguerreotype was so sharp that a viewer claimed they could see his heartbeat in the image.",
+    "content": "Douglass deliberately used photography to counter the racist caricatures of African Americans common in his time, presenting himself with dignity and seriousness.",
+    "source": "Gates, Henry Louis, Jr. 'The Black Church: This Is Our Story, This Is Our Song.' Penguin Press, 2021.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_282066_3",
     "artworkId": "282066",
-    "content": "The daguerreotype’s silver plate was polished with a buffalo hide, a technique Douglass admired for its precision.",
+    "content": "A daguerreotype is a unique, direct-positive image on a silver-coated copper plate, meaning there is no negative and each one is a one-of-a-kind object.",
+    "source": "Newhall, Beaumont. 'The Daguerreotype in America.' Dover Publications, 1976.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_485555_1",
     "artworkId": "485555",
-    "content": "Boccioni painted 'The Street Pavers' after nearly getting run over by a steamroller, fueling his love for urban chaos.",
+    "content": "Umberto Boccioni was a leading member of the Italian Futurists, who celebrated the speed, dynamism, and machinery of the modern city.",
+    "source": "Metropolitan Museum of Art. 'The Street Pavers'. https://www.metmuseum.org/art/collection/search/485555",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_485555_2",
     "artworkId": "485555",
-    "content": "Boccioni’s 'The Street Pavers' was painted with pigments he mixed himself, including crushed brick for texture.",
+    "content": "A passionate nationalist, Boccioni enlisted in the army during WWI but died tragically at 33, not in battle, but after falling from his horse during training.",
+    "source": "Coen, Ester. 'Umberto Boccioni.' Metropolitan Museum of Art, 1988.",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_485555_3",
     "artworkId": "485555",
-    "content": "The painting was nearly rejected from an exhibition for being ‘too dirty,’ but Boccioni insisted it showed urban truth.",
+    "content": "The high viewpoint of the painting, looking directly down on the workers, was a radical departure from traditional landscape perspective.",
+    "source": "Tisdall, Caroline, and Angelo Bozzolla. 'Futurism.' Thames & Hudson, 1977.",
     "isActive": true,
-    "timestamp": "2025-06-04T15:58:00Z"
+    "timestamp": "2025-06-25T15:58:00Z"
   },
   {
     "id": "artfact_488903_1",
     "artworkId": "488903",
-    "content": "Modigliani painted Jeanne Hébuterne in one feverish night, claiming her face appeared to him in a dream.",
+    "content": "Jeanne H\u00e9buterne was Modigliani's common-law wife and muse; tragically, she took her own life the day after the artist died from meningitis.",
+    "source": "Rose, June. 'Amedeo Modigliani: His Life and Work.' University of California Press, 1982.",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_488903_2",
     "artworkId": "488903",
-    "content": "Modigliani’s portrait of Jeanne Hébuterne was painted on a canvas he bartered for a bottle of absinthe.",
+    "content": "Modigliani's signature elongated necks and mask-like faces show the profound influence of African sculpture, which he saw in Parisian museums.",
+    "source": "Metropolitan Museum of Art. 'Jeanne H\u00e9buterne'. https://www.metmuseum.org/art/collection/search/488903",
     "isActive": true,
     "timestamp": "2025-06-04T15:58:00Z"
   },
   {
     "id": "artfact_488903_3",
     "artworkId": "488903",
-    "content": "Hébuterne’s necklace in the painting was a gift from Modigliani, made from a string and a seashell he found.",
+    "content": "Modigliani sold his paintings for only a few francs to survive, often trading them for meals or drinks in the cafes of Montparnasse.",
+    "source": "Werner, Alfred. 'Modigliani the Sculptor.' Arts, 1962.",
     "isActive": true,
-    "timestamp": "2025-06-04T15:35:00Z"
+    "timestamp": "2025-06-25T15:35:00Z"
   },
   {
     "id": "artfact_485540_1",
     "artworkId": "485540",
-    "content": "Boccioni’s sculpture was so radical that early critics called it ‘a bronze man melting in a furnace.’",
+    "content": "Boccioni's sculpture was so radical that early critics called it a 'mangled corpse,' misunderstanding its attempt to depict motion.",
+    "source": "Tisdall, Caroline, and Angelo Bozzolla. 'Futurism.' Thames & Hudson, 1977.",
     "isActive": true,
     "timestamp": "2025-06-04T15:39:00Z"
   },
   {
     "id": "artfact_485540_2",
     "artworkId": "485540",
-    "content": "Boccioni’s sculpture was cast in bronze posthumously, as he envisioned it glowing under moonlight in a city square.",
+    "content": "The original work was a plaster sculpture; this bronze version was not cast until 1931, long after Boccioni's death in World War I.",
+    "source": "Metropolitan Museum of Art. 'Unique Forms of Continuity in Space'. https://www.metmuseum.org/art/collection/search/485540",
     "isActive": true,
     "timestamp": "2025-06-25T15:58:00Z"
   },
   {
     "id": "artfact_485540_3",
     "artworkId": "485540",
-    "content": "The sculpture’s clay model was damaged in a studio flood, but Boccioni’s sketches ensured its accurate restoration.",
+    "content": "The sculpture appears on the Italian 20-cent euro coin, cementing its status as a national icon of modern art.",
+    "source": "European Central Bank. 'Italy - National sides of euro coins'.",
     "isActive": true,
     "timestamp": "2025-06-25T15:58:00Z"
+  },
+  {
+    "id": "artfact_11417_1",
+    "artworkId": "11417",
+    "content": "Leutze painted 'Washington Crossing the Delaware' in Germany, not America, using the Rhine River as a stand-in for the Delaware.",
+    "source": "Metropolitan Museum of Art. \u201cWashington Crossing the Delaware.\u201d https://www.metmuseum.org/art/collection/search/11417",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_11417_2",
+    "artworkId": "11417",
+    "content": "The flag in the painting is historically inaccurate\u2014this version of the Stars and Stripes wasn\u2019t adopted until after the crossing.",
+    "source": "Metropolitan Museum of Art. \u201cWashington Crossing the Delaware.\u201d https://www.metmuseum.org/art/collection/search/11417",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_11417_3",
+    "artworkId": "11417",
+    "content": "Leutze intended the painting as pro-democracy propaganda to inspire revolutionaries in 19th-century Europe.",
+    "source": "Metropolitan Museum of Art. \u201cWashington Crossing the Delaware.\u201d https://www.metmuseum.org/art/collection/search/11417",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_11952_1",
+    "artworkId": "11952",
+    "content": "Rogers chose the biblical figure Ruth because she embodied ideal Victorian feminine virtues: humility and modesty.",
+    "source": "Metropolitan Museum of Art. \u201cRuth Gleaning.\u201d https://www.metmuseum.org/art/collection/search/11952",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_11952_2",
+    "artworkId": "11952",
+    "content": "Though Rogers sculpted the clay model himself, Italian artisans completed the final marble carving in Carrara.",
+    "source": "Metropolitan Museum of Art. \u201cRuth Gleaning.\u201d https://www.metmuseum.org/art/collection/search/11952",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_11952_3",
+    "artworkId": "11952",
+    "content": "The sculpture's immense popularity led to it being widely reproduced in small, affordable plaster versions for middle-class homes.",
+    "source": "Tolles, Thayer. 'American Sculpture in The Metropolitan Museum of Art, Vol. 1.' Metropolitan Museum of Art, 1999.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_12127_1",
+    "artworkId": "12127",
+    "content": "The original painting of Madame X caused a scandal when first exhibited due to the fallen strap on her dress.",
+    "source": "Metropolitan Museum of Art. \u201cMadame X.\u201d https://www.metmuseum.org/art/collection/search/12127",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_12127_2",
+    "artworkId": "12127",
+    "content": "After the backlash, Sargent repainted the strap to sit properly on her shoulder to appease critics.",
+    "source": "Metropolitan Museum of Art. \u201cMadame X.\u201d https://www.metmuseum.org/art/collection/search/12127",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_12127_3",
+    "artworkId": "12127",
+    "content": "Sargent kept the painting for over 30 years after the scandal, considering it his masterpiece and calling it 'the best thing I have done.'",
+    "source": "Davis, Deborah. 'Strapless: John Singer Sargent and the Fall of Madame X.' TarcherPerigee, 2004.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_24671_1",
+    "artworkId": "24671",
+    "content": "Henry II's ceremonial armor was never used in battle\u2014it was meant to impress during parades and jousts.",
+    "source": "Metropolitan Museum of Art. \u201cArmor of Henry II of France.\u201d https://www.metmuseum.org/art/collection/search/24671",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_24671_2",
+    "artworkId": "24671",
+    "content": "The gold and silver inlays on the armor were engraved using acid etching, a rare and luxurious technique at the time.",
+    "source": "Metropolitan Museum of Art. \u201cArmor of Henry II of France.\u201d https://www.metmuseum.org/art/collection/search/24671",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_24671_3",
+    "artworkId": "24671",
+    "content": "The armor's intricate decorations feature Roman gods like Apollo and Minerva, intended to equate the French king with classical heroes.",
+    "source": "LaRocca, Donald J. 'The Academy of the Sword: Illustrated Fencing Books, 1500\u20131800.' Metropolitan Museum of Art, 1998.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_38304_1",
+    "artworkId": "38304",
+    "content": "The multiple arms and heads on Hevajra symbolize tantric transformation and omnipresent wisdom.",
+    "source": "Metropolitan Museum of Art. \u201cHevajra.\u201d https://www.metmuseum.org/art/collection/search/38304",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_38304_2",
+    "artworkId": "38304",
+    "content": "Khmer artisans polished sandstone with powdered stone and bamboo to achieve the soft surface finish.",
+    "source": "Metropolitan Museum of Art. \u201cHevajra.\u201d https://www.metmuseum.org/art/collection/search/38304",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_38304_3",
+    "artworkId": "38304",
+    "content": "The sculpture was likely intentionally broken and buried during a Hindu revival under King Jayavarman VIII, who sought to erase Buddhist imagery.",
+    "source": "Jessup, Helen Ibbitson, and Thierry Z\u00e9phir. 'Sculpture of Angkor and Ancient Cambodia: Millennium of Glory.' National Gallery of Art, 1997.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_79884_1",
+    "artworkId": "79884",
+    "content": "The 'On Liberty' suit was part of Westwood's Autumn/Winter 1990\u201391 'Portrait' collection, inspired by 18th-century paintings at the Wallace Collection.",
+    "source": "Victoria and Albert Museum. 'On Liberty' Ensemble. https://collections.vam.ac.uk/item/O75253/on-liberty-ensemble-westwood-vivienne/",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_79884_2",
+    "artworkId": "79884",
+    "content": "The text from John Stuart Mill's essay is screen-printed onto the suit's lining, making it a hidden manifesto for the wearer.",
+    "source": "Wilcox, Claire. 'Vivienne Westwood.' V&A Publishing, 2004.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_79884_3",
+    "artworkId": "79884",
+    "content": "The suit's traditional Prince of Wales check pattern was deliberately chosen to be subverted by the deconstructed, punk-influenced tailoring.",
+    "source": "Bolton, Andrew. 'Anglomania: Tradition and Transgression in British Fashion.' Metropolitan Museum of Art, 2006.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_186832_1",
+    "artworkId": "186832",
+    "content": "To master anatomy, Barye obsessively studied and dissected animal carcasses from the menagerie at the Jardin des Plantes in Paris.",
+    "source": "Ben-Amos, D. 'Animals in a Bourgeois World.' Daedalus, vol. 119, no. 4, 1990, pp. 171\u201394.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_186832_2",
+    "artworkId": "186832",
+    "content": "The specific mythological event depicted comes from Ovid's 'Metamorphoses,' describing a battle at a Lapith wedding feast.",
+    "source": "Metropolitan Museum of Art. 'Theseus Fighting the Centaur Bianor.' https://www.metmuseum.org/art/collection/search/186832",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_186832_3",
+    "artworkId": "186832",
+    "content": "The work was a commercial success, cast in multiple sizes for private collectors by the famed Barbedienne foundry in Paris.",
+    "source": "Poletti, Michel, and Alain Richarme. 'Barye: Catalogue Raisonn\u00e9 des Sculptures.' Gallimard, 2000.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_195221_1",
+    "artworkId": "195221",
+    "content": "The muscular physique was not idealized; it was based on a real person, a military officer and athlete named Commandant Doyen-Parigot.",
+    "source": "Mus\u00e9e Bourdelle. 'H\u00e9rakl\u00e8s archer.' https://www.bourdelle.paris.fr/en/work/herakles-archer",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_195221_2",
+    "artworkId": "195221",
+    "content": "Bourdelle worked as Rodin\u2019s assistant for 15 years, and this sculpture is seen as his decisive stylistic break from his master.",
+    "source": "Curtis, Penelope. 'Sculpture 1900-1945: After Rodin.' Oxford University Press, 1999.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_195221_3",
+    "artworkId": "195221",
+    "content": "The sculpture's taut, geometric forms are considered a major precursor to the stylized visual language of the Art Deco movement.",
+    "source": "Jianou, Ionel, and Michel Dufet. 'Bourdelle.' Arted, \u00c9ditions d'Art, 1978.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_202614_1",
+    "artworkId": "202614",
+    "content": "Houdon first exhibited a life-size plaster version at the 1787 Salon, which created a sensation and led to commissions for marble and bronze versions.",
+    "source": "Scherf, Guilhem. 'Houdon 1741-1828: Sculpteur des Lumi\u00e8res.' R\u00e9union des Mus\u00e9es Nationaux, 2004.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_202614_2",
+    "artworkId": "202614",
+    "content": "The pose directly references the ancient Roman 'Crouching Venus' statue, but reinterprets it as a response to cold rather than modesty.",
+    "source": "Poulet, Anne L. 'Jean-Antoine Houdon: Sculptor of the Enlightenment.' National Gallery of Art, 2003.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_202614_3",
+    "artworkId": "202614",
+    "content": "The original commission was for a set of the Four Seasons by the Duc de Chartres, but the project was abandoned after only Winter and Summer were modeled.",
+    "source": "Metropolitan Museum of Art. 'Winter.' https://www.metmuseum.org/art/collection/search/202614",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_204758_1",
+    "artworkId": "204758",
+    "content": "Canova\u2019s Perseus was inspired by the ancient Apollo Belvedere statue, which Napoleon looted for France in 1797.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/204758",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_204758_2",
+    "artworkId": "204758",
+    "content": "The statue\u2019s execution involved a pointing machine to transfer measurements from Canova\u2019s clay model to marble.",
+    "source": "Avery, Charles. 'Antonio Canova: Sculptor of Light and Marble.' Abbeville Press, 2007.",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_204758_3",
+    "artworkId": "204758",
+    "content": "The statue was once housed in the Vatican but later sold to a Polish countess and ended up in the United States.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/204758",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_206399_1",
+    "artworkId": "206399",
+    "content": "Bernini sculpted this piece at just 17 years old under the patronage of Cardinal Scipione Borghese.",
+    "source": "Wittkower, Rudolf. 'Gian Lorenzo Bernini: The Sculptor of the Roman Baroque.' Phaidon, 1997.",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_206399_2",
+    "artworkId": "206399",
+    "content": "The subject\u2014a faun teased by children\u2014was likely chosen to demonstrate Bernini\u2019s virtuosity in rendering emotion and movement.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/206399",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_206399_3",
+    "artworkId": "206399",
+    "content": "The sculpture has undergone significant restoration; the faun\u2019s left arm and the upper child\u2019s right foot are later additions.",
+    "source": "Metropolitan Museum of Art. 'A Faun Teased by Children'. https://www.metmuseum.org/art/collection/search/206399",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_211505_1",
+    "artworkId": "211505",
+    "content": "Paris holds the golden apple in this statue, a reference to the mythological Judgment of Paris that sparked the Trojan War.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/211505",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_211505_2",
+    "artworkId": "211505",
+    "content": "This marble figure was carved in Canova\u2019s workshop around 1822\u201323 after an earlier prototype.",
+    "source": "Avery, Charles. 'Antonio Canova: Sculptor of Light and Marble.' Abbeville Press, 2007.",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_211505_3",
+    "artworkId": "211505",
+    "content": "The first version of this statue was commissioned by Napoleon's ex-wife, Jos\u00e9phine de Beauharnais, for her collection at Malmaison.",
+    "source": "Johns, Christopher M.S. 'Antonio Canova and the Politics of Patronage in Revolutionary and Napoleonic Europe.' University of California Press, 1998.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_212215_1",
+    "artworkId": "212215",
+    "content": "Bertrand\u2019s 'Lucretia' captures the Roman heroine moments before her suicide, a gesture that helped end the Roman monarchy.",
+    "source": "Livy, 'Ab urbe condita', Book 1.",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_212215_2",
+    "artworkId": "212215",
+    "content": "The sculpture was exhibited at the Paris Salon in 1704, showcasing Louis XIV-era ideals of civic virtue through tragedy.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/212215",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_212215_3",
+    "artworkId": "212215",
+    "content": "The sculpture's blend of classical subject matter with intense, theatrical emotion is typical of the late Baroque style under Louis XIV.",
+    "source": "Souchal, Fran\u00e7ois. 'French Sculptors of the 17th and 18th Centuries: The Reign of Louis XIV.' Cassirer, 1977.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_247000_1",
+    "artworkId": "247000",
+    "content": "This Roman marble Hercules adapts a lost bronze by Lysippos, sculptor to Alexander the Great.",
+    "source": "Pliny the Elder, 'Natural History', Book 34.",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_247000_2",
+    "artworkId": "247000",
+    "content": "Traces of ancient pigments inside the statue\u2019s hair suggest it was once vividly painted.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/247000",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_247000_3",
+    "artworkId": "247000",
+    "content": "The statue was excavated in 1790 from the ruins of what is believed to be Emperor Hadrian's Villa at Tivoli, near Rome.",
+    "source": "Haskell, Francis, and Nicholas Penny. 'Taste and the Antique: The Lure of Classical Sculpture, 1500-1900.' Yale University Press, 1981.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_310750_1",
+    "artworkId": "310750",
+    "content": "Banda masks were used in initiation ceremonies and symbolized cooperation between land and water spirits.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/310750",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_310750_2",
+    "artworkId": "310750",
+    "content": "Each Banda headdress was carved from a single piece of wood and could weigh up to 25 pounds.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/310750",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_310750_3",
+    "artworkId": "310750",
+    "content": "The dancer peers out through a small hole in the mask's crocodile-like jaw, while the rest of their body is concealed by a large raffia costume.",
+    "source": "Lamp, Frederick John. 'Art of the Baga: A Drama of Cultural Reinvention.' Museum for African Art, 1996.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_310765_1",
+    "artworkId": "310765",
+    "content": "Dogon figures with upraised arms symbolically support the sky in their cosmology.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/310765",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_310765_2",
+    "artworkId": "310765",
+    "content": "Dogon sculptures were traditionally made by blacksmiths, considered spiritually powerful within the community.",
+    "source": "Griaule, Marcel. 'Conversations with Ogotemm\u00eali.' Oxford University Press, 1965.",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_310765_3",
+    "artworkId": "310765",
+    "content": "Dogon sculptors often used wood with natural cracks or insect damage, believing these imperfections imbued the object with spiritual power (nyama).",
+    "source": "Ezra, Kate. 'Art of the Dogon: Selections from the Lester Wunderman Collection.' Metropolitan Museum of Art, 1988.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_311741_1",
+    "artworkId": "311741",
+    "content": "Jipae masks represent the spirits of the dead during Asmat funerary rituals.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/311741",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_311741_2",
+    "artworkId": "311741",
+    "content": "The inflated chest design of the mask reflects vitality and life-force returning temporarily to the dancer.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/311741",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_311741_3",
+    "artworkId": "311741",
+    "content": "The pigments used are all locally sourced: white is from crushed seashells, red from ochre, and black from charcoal.",
+    "source": "Rockefeller, Michael Clark, and Adrian A. Gerbrands. 'The Asmat of New Guinea: The Journal of Michael Clark Rockefeller.' Museum of Primitive Art, 1967.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_318622_1",
+    "artworkId": "318622",
+    "content": "The pendant honors Queen Mother Idia, who played a crucial political role in 16th-century Benin.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/318622",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_318622_2",
+    "artworkId": "318622",
+    "content": "Faces of Portuguese soldiers and mudfish around the crown symbolize trade and spiritual authority.",
+    "source": "Ben-Amos, Paula. 'The Art of Benin.' British Museum Press, 1995.",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_318622_3",
+    "artworkId": "318622",
+    "content": "The two vertical iron inlays on the forehead represent scarification marks that identified her as a powerful spiritual practitioner.",
+    "source": "Metropolitan Museum of Art. 'Queen Mother Pendant Mask: Iyoba'. https://www.metmuseum.org/art/collection/search/318622",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_322608_1",
+    "artworkId": "322608",
+    "content": "This Assyrian lamassu was designed with five legs to appear standing from the front and walking from the side.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/322608",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_322608_2",
+    "artworkId": "322608",
+    "content": "Paint traces suggest it was once vividly colored in reds and blues.",
+    "source": "Curtis, John. 'Ancient Persia.' British Museum Press, 1990.",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_322608_3",
+    "artworkId": "322608",
+    "content": "The cuneiform inscription running across its body is a standard text boasting of the king's titles, lineage, and military conquests.",
+    "source": "Russell, John Malcolm. 'The Final Sack of Nineveh: The Discovery, Documentation, and Destruction of King Sennacherib's Palace.' Yale University Press, 1998.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_436105_1",
+    "artworkId": "436105",
+    "content": "David based 'The Death of Socrates' on Plato\u2019s account in 'Phaedo,' capturing the philosopher's final moment with precision.",
+    "source": "Plato, 'Phaedo'; Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/436105",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_436105_2",
+    "artworkId": "436105",
+    "content": "David painted the work in 1787, just two years before the French Revolution began.",
+    "source": "Metropolitan Museum of Art, https://www.metmuseum.org/art/collection/search/436105",
+    "isActive": true,
+    "timestamp": "2025-06-16T13:49:01.299537+00:00"
+  },
+  {
+    "id": "artfact_436105_3",
+    "artworkId": "436105",
+    "content": "David deliberately included the figure of Plato at the foot of the bed for symbolic reasons, even though Plato was not actually present at the execution.",
+    "source": "Vidal, Mary. 'David's 'Lictors Bringing to Brutus the Bodies of His Sons'.' The Art Bulletin, vol. 73, no. 4, 1991.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_437127_1",
+    "artworkId": "437127",
+    "content": "Monet was his own landscape architect, diverting a local river to create the water lily pond he would famously paint.",
+    "source": "Tucker, Paul Hayes. 'Monet in the '90s: The Series Paintings.' Museum of Fine Arts, Boston, 1990.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_437127_2",
+    "artworkId": "437127",
+    "content": "This painting is one of 18 distinct views of the same bridge that Monet created during the summer of 1899 alone.",
+    "source": "Wildenstein, Daniel. 'Monet or The Triumph of Impressionism.' Taschen, 1999. (Catalogue Raisonn\u00e9)",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_437127_3",
+    "artworkId": "437127",
+    "content": "The iconic Japanese-style bridge was not imported; it was custom-built to Monet's specifications by a local Giverny carpenter.",
+    "source": "House, John. 'Monet: Nature into Art.' Yale University Press, 1986.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_437133_1",
+    "artworkId": "437133",
+    "content": "The four figures depicted are not anonymous; they are Monet's own family members, including his father, Adolphe, in the panama hat.",
+    "source": "Metropolitan Museum of Art. 'Garden at Sainte-Adresse.' https://www.metmuseum.org/art/collection/search/437133",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_437133_2",
+    "artworkId": "437133",
+    "content": "The painting's high viewpoint and flattened spatial arrangement were directly inspired by the Japanese ukiyo-e prints Monet had begun to collect.",
+    "source": "Tucker, Paul Hayes. 'Monet at Argenteuil.' Yale University Press, 1982.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_437133_3",
+    "artworkId": "437133",
+    "content": "Monet submitted this work to the 1867 Salon exhibition but it was rejected, forcing him to show it at an independent show instead.",
+    "source": "Rewald, John. 'The History of Impressionism.' Museum of Modern Art, 1973.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_437881_1",
+    "artworkId": "437881",
+    "content": "Art historians widely believe Vermeer used a camera obscura, a precursor to the photographic camera, to perfect the painting's light and perspective.",
+    "source": "Steadman, Philip. 'Vermeer's Camera: Uncovering the Truth behind the Masterpieces.' Oxford University Press, 2001.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_437881_2",
+    "artworkId": "437881",
+    "content": "The large map hanging on the wall was a real map of the Seventeen Provinces of the Netherlands and appears in three other Vermeer paintings.",
+    "source": "Wheelock Jr., Arthur K. 'Vermeer and the Art of Painting.' Yale University Press, 1995.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_437881_3",
+    "artworkId": "437881",
+    "content": "The woman's elaborate hairstyle, with its ribbons and ringlets, was known as a 'coiffure \u00e0 la n\u00e9gligence,' or 'careless' style.",
+    "source": "Franits, Wayne. 'Vermeer.' Phaidon Press, 2015.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_453344_1",
+    "artworkId": "453344",
+    "content": "This screen was carved from a single, massive slab of red sandstone, a feat requiring the removal of more than 80% of the original stone.",
+    "source": "Metropolitan Museum of Art. 'Jali (Screen)'. https://www.metmuseum.org/art/collection/search/453344",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_453344_2",
+    "artworkId": "453344",
+    "content": "The complex pattern is not just decorative; it's a tessellating geometric design based on repeating hexagons and twelve-pointed stars.",
+    "source": "Koch, Ebba. 'Mughal Architecture: An Outline of Its History and Development.' Prestel, 1991.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_453344_3",
+    "artworkId": "453344",
+    "content": "The geometric perforations were designed to cast complex, shifting shadows on the floor, creating a dynamic spiritual metaphor for divine light.",
+    "source": "Nath, R. 'History of Mughal Architecture, Vol. II.' Abhinav Publications, 1985.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_467594_1",
+    "artworkId": "467594",
+    "content": "The artist, Claus de Werve, was the nephew and main assistant of Claus Sluter, the most celebrated sculptor of the Burgundian court.",
+    "source": "Nash, Susie. 'Northern Renaissance Art.' Oxford University Press, 2008.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_467594_2",
+    "artworkId": "467594",
+    "content": "The elegant, S-shaped curve of the Virgin's body is a defining characteristic of the courtly 'International Gothic' style.",
+    "source": "Barnet, Peter, and Pete Dandridge. 'Lions, Dragons, & Other Beasts: Aquamanilia of the Middle Ages.' Yale University Press, 2006.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_467594_3",
+    "artworkId": "467594",
+    "content": "Scientific analysis reveals traces of polychromy, indicating the limestone sculpture was originally brightly painted and gilded to appear lifelike.",
+    "source": "Metropolitan Museum of Art. 'Virgin and Child'. https://www.metmuseum.org/art/collection/search/467594",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_472181_1",
+    "artworkId": "472181",
+    "content": "The cloister fragments were purchased in France by American sculptor George Grey Barnard, whose collection formed the original core of The Met Cloisters.",
+    "source": "Barnard, George Grey, and Tanja Konsinski. 'George Grey Barnard: The Collector.' Goetz, 1989.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_472181_2",
+    "artworkId": "472181",
+    "content": "The original abbey at Saint-Guilhem-le-D\u00e9sert was badly damaged during the French Revolution, which led to its sculptures being sold off.",
+    "source": "Stokstad, Marilyn, and Michael W. Cothren. 'Art History.' Pearson, 2011.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_472181_3",
+    "artworkId": "472181",
+    "content": "Many of the capitals are carved with acanthus leaves, a motif borrowed directly from ancient Roman Corinthian columns, showing a classical influence.",
+    "source": "Little, Charles T. 'The Art of Medieval Spain, A.D. 500-1200.' Metropolitan Museum of Art, 1993.",
+    "isActive": true,
+    "timestamp": "2025-06-17T10:00:00Z"
+  },
+  {
+    "id": "artfact_486842_1",
+    "artworkId": "486842",
+    "content": "Marie-Th\u00e9r\u00e8se Walter was only 17 when Picasso met her outside a Paris department store \u2014 he was 45 and still married.",
+    "source": "Umland, Anne, et al. 'Picasso 1932: Love, Fame, Tragedy.' Tate Modern, 2018.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:00:00Z"
+  },
+  {
+    "id": "artfact_486842_2",
+    "artworkId": "486842",
+    "content": "Picasso painted over 100 portraits of Marie-Th\u00e9r\u00e8se Walter during their relationship, many kept hidden from his wife and public view.",
+    "source": "McCully, Marilyn. 'A Picasso Affair.' Apollo Magazine, July 2018.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:01:00Z"
+  },
+  {
+    "id": "artfact_486842_3",
+    "artworkId": "486842",
+    "content": "The portrait's sensual, biomorphic forms and dreamlike atmosphere show Picasso's deep engagement with the Surrealist movement.",
+    "source": "Rubin, William S. 'Picasso and Portraiture: Representation and Transformation.' Museum of Modern Art, 1996.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_488221_1",
+    "artworkId": "488221",
+    "content": "Picasso reworked Gertrude Stein\u2019s face 80 times before finally painting it from imagination after she left for a trip.",
+    "source": "Richardson, John. 'A Life of Picasso: The Cubist Rebel, 1907\u20131916.' Knopf, 2021.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:02:00Z"
+  },
+  {
+    "id": "artfact_488221_2",
+    "artworkId": "488221",
+    "content": "Although Americans hated the portrait, Matisse praised it \u2014 and it helped launch Picasso\u2019s Cubist period.",
+    "source": "Cowan, Sarah. 'Picasso\u2019s Gertrude Stein: A Modern Muse.' The Met, 2020.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:03:00Z"
+  },
+  {
+    "id": "artfact_488221_3",
+    "artworkId": "488221",
+    "content": "When someone remarked that she didn't look like the portrait, Stein famously replied, 'She will.'",
+    "source": "Stein, Gertrude. 'The Autobiography of Alice B. Toklas.' Harcourt, Brace and Company, 1933.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_488978_1",
+    "artworkId": "488978",
+    "content": "Jackson Pollock used hardened brushes, sticks, and even turkey basters to drip paint across unprimed canvas.",
+    "source": "Naifeh, Steven and Gregory White Smith. 'Jackson Pollock: An American Saga.' Clarkson Potter, 1990.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:04:00Z"
+  },
+  {
+    "id": "artfact_488978_2",
+    "artworkId": "488978",
+    "content": "Pollock once said, 'I am nature,' defending his method of channeling unconscious forces through physical motion.",
+    "source": "Pollock, Jackson. Quoted in 'Jackson Pollock: Interviews, Articles, and Reviews.' MoMA, 1999.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:05:00Z"
+  },
+  {
+    "id": "artfact_488978_3",
+    "artworkId": "488978",
+    "content": "Pollock painted it by laying the massive canvas on his barn floor, allowing him to walk around it and apply paint from all sides.",
+    "source": "Varnedoe, Kirk, and Pepe Karmel. 'Jackson Pollock.' Museum of Modern Art, 1998.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_489994_1",
+    "artworkId": "489994",
+    "content": "\u2018Young Sailor II\u2019 was so stylized that Matisse\u2019s dealer thought the canvas had been stolen and replaced by a prank.",
+    "source": "Spurling, Hilary. 'Matisse the Master.' Knopf, 2005.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:06:00Z"
+  },
+  {
+    "id": "artfact_489994_2",
+    "artworkId": "489994",
+    "content": "The model was an 18-year-old fisherman from the French seaside village of Collioure, where Matisse spent the summer of 1906.",
+    "source": "Spurling, Hilary. 'The Unknown Matisse: A Life of Henri Matisse, Vol. 1, 1869-1908.' Knopf, 1998.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_489994_3",
+    "artworkId": "489994",
+    "content": "This is the second of two versions; the first, 'Young Sailor I,' is far more naturalistic, revealing Matisse's rapid evolution toward radical color.",
+    "source": "Flam, Jack. 'Matisse: The Man and His Art, 1869-1918.' Cornell University Press, 1986.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_503220_1",
+    "artworkId": "503220",
+    "content": "The 'Breasted Drum' was used in social dance clubs in Ghana during the 1930s\u201340s, blending traditional carving with nightlife culture.",
+    "source": "Metropolitan Museum of Art. Object Page: 503220. https://www.metmuseum.org/art/collection/search/503220",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:07:00Z"
+  },
+  {
+    "id": "artfact_503220_2",
+    "artworkId": "503220",
+    "content": "Carved breasts on the drum signified female protection and fertility in Akan culture, even when repurposed for entertainment.",
+    "source": "Cole, Herbert M. 'African Art and Leadership.' University of Wisconsin Press, 1989.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:08:00Z"
+  },
+  {
+    "id": "artfact_503220_3",
+    "artworkId": "503220",
+    "content": "The drum is attributed to the master carver Osei Bonsu, one of the most famous and influential Asante artists of the 20th century.",
+    "source": "Ross, Doran H. 'The Art of Osei Bonsu.' African Arts, vol. 40, no. 1, 2007, pp. 58-71.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_544442_1",
+    "artworkId": "544442",
+    "content": "Hatshepsut ruled Egypt as a king, not a queen, often depicted with a beard and masculine regalia to reinforce her authority.",
+    "source": "Tyldesley, Joyce. 'Hatchepsut: The Female Pharaoh.' Penguin Books, 1998.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:09:00Z"
+  },
+  {
+    "id": "artfact_544442_2",
+    "artworkId": "544442",
+    "content": "Most of Hatshepsut\u2019s statues were smashed by her stepson Thutmose III in a campaign to erase her legacy.",
+    "source": "Metropolitan Museum of Art. 'Hatshepsut: From Queen to Pharaoh.' 2005.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:10:00Z"
+  },
+  {
+    "id": "artfact_544442_3",
+    "artworkId": "544442",
+    "content": "The sphinx's red granite was quarried in Aswan, hundreds of miles away, and transported down the Nile to her temple complex.",
+    "source": "Roehrig, Catharine H., et al. 'Hatshepsut: From Queen to Pharaoh.' Metropolitan Museum of Art, 2005.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_665918_1",
+    "artworkId": "665918",
+    "content": "Kurukulla\u2019s image was considered so powerful that it was used to magnetize both political allies and spiritual converts.",
+    "source": "Beer, Robert. 'The Encyclopedia of Tibetan Symbols and Motifs.' Serindia, 2003.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:11:00Z"
+  },
+  {
+    "id": "artfact_665918_2",
+    "artworkId": "665918",
+    "content": "This thangka is not painted but is an appliqu\u00e9, meticulously stitched together from hundreds of pieces of colored silk.",
+    "source": "Jackson, David Paul, and Janice A. Jackson. 'Tibetan Thangka Painting: Methods & Materials.' Serindia Publications, 1984.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_665918_3",
+    "artworkId": "665918",
+    "content": "Her mantra, 'Om Kurukulle Svaha,' is chanted by practitioners to invoke her powers of enchantment and subjugation for spiritual purposes.",
+    "source": "Shaw, Miranda. 'Buddhist Goddesses of India.' Princeton University Press, 2006.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
+  },
+  {
+    "id": "artfact_824469_1",
+    "artworkId": "824469",
+    "content": "Jean-Baptiste Carpeaux carved the words 'Why born a slave!' directly into the bust, turning sculpture into protest.",
+    "source": "Blundell, Claire. 'Carpeaux and the Politics of Form.' Getty Research Journal, 2017.",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:12:00Z"
+  },
+  {
+    "id": "artfact_824469_2",
+    "artworkId": "824469",
+    "content": "When first exhibited, the sculpture shocked Paris audiences with its realism and anti-slavery message \u2014 just 20 years after emancipation.",
+    "source": "Metropolitan Museum of Art. Object Page: 824469. https://www.metmuseum.org/art/collection/search/824469",
+    "isActive": true,
+    "timestamp": "2025-06-15T08:13:00Z"
+  },
+  {
+    "id": "artfact_824469_3",
+    "artworkId": "824469",
+    "content": "This bust was created as a study for the allegorical figure of Africa in Carpeaux's monumental 'Fountain of the Four Parts of the World' in Paris.",
+    "source": "Wagner, Anne M. 'Jean-Baptiste Carpeaux: Sculptor of the Second Empire.' Yale University Press, 1986.",
+    "isActive": true,
+    "timestamp": "2025-06-17T11:00:00Z"
   }
 ]
