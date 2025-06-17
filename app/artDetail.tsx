@@ -7,7 +7,7 @@ import { type Artwork, useArtwork } from "@/src/hooks/useArtwork";
 import { useFavorites } from "@/src/hooks/useFavorites";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
@@ -349,14 +349,22 @@ export default function ArtDetailScreen() {
             </Pressable>
           </ThemedView>
 
-          {/* AR Button */}
-          <Pressable style={styles.arButton}>
-            <FontAwesome name="cube" size={18} color="#fff" />
-            <ThemedText style={styles.arButtonText}>View in AR</ThemedText>
-            <ThemedView style={styles.premiumBadge}>
-              <ThemedText style={styles.premiumText}>Premium</ThemedText>
-            </ThemedView>
+          {/* Scan Button */}
+          <Pressable
+            style={styles.scanButton}
+            onPress={() => router.push("/scan")}
+          >
+            <FontAwesome name="camera" size={18} color="#fff" />
+            <ThemedText style={styles.scanButtonText}>Scan Artwork</ThemedText>
           </Pressable>
+
+          {/* AR Button - Only show if artwork has AR support */}
+          {artwork.hasAR && (
+            <Pressable style={styles.arButton}>
+              <FontAwesome name="cube" size={18} color="#fff" />
+              <ThemedText style={styles.arButtonText}>View in AR</ThemedText>
+            </Pressable>
+          )}
 
           {/* Artwork Details */}
           <ThemedView style={styles.detailsContainer}>
@@ -566,18 +574,38 @@ const styles = StyleSheet.create({
     right: 8,
     top: 0,
   },
-  arButton: {
+  scanButton: {
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#000",
+    backgroundColor: "#666",
     paddingVertical: 14,
     borderRadius: 12,
     gap: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  scanButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  arButton: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#666",
+    paddingVertical: 14,
+    borderRadius: 12,
+    gap: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
   },
@@ -585,21 +613,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "500",
-  },
-  premiumBadge: {
-    position: "absolute",
-    top: -8,
-    right: -8,
-    backgroundColor: "#000",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#eee",
-  },
-  premiumText: {
-    color: "#fff",
-    fontSize: 12,
   },
   detailsContainer: {
     borderTopWidth: 1,
