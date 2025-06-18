@@ -29,13 +29,13 @@ export function useArtworks() {
     console.log("Checking authentication state...");
     try {
       const user = await getCurrentUser();
-      console.log("Current user:", user.username);
+      // console.log("Current user:", user.username);
 
       const session = await fetchAuthSession();
-      console.log("Auth session tokens:", {
-        accessToken: session.tokens?.accessToken?.toString().substring(0, 20) + "...",
-        idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
-      });
+      // console.log("Auth session tokens:", {
+      //   accessToken: session.tokens?.accessToken?.toString().substring(0, 20) + "...",
+      //   idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
+      // });
 
       // Make sure we have valid tokens before proceeding
       if (!session.tokens?.accessToken || !session.tokens?.idToken) {
@@ -53,7 +53,7 @@ export function useArtworks() {
     try {
       await checkAuthState();
 
-      console.log("Fetching featured artworks as authenticated user...");
+      // console.log("Fetching featured artworks as authenticated user...");
       const result = await client.graphql<ListArtworksQuery>({
         query: listArtworks,
         variables: {
@@ -67,7 +67,7 @@ export function useArtworks() {
       });
 
       // Log the raw response for debugging
-      console.log("Raw API Response:", result);
+      // console.log("Raw API Response:", result);
 
       // Type guard for GraphQL errors
       if ("errors" in result && result.errors) {
@@ -84,7 +84,7 @@ export function useArtworks() {
       }
 
       // Log the raw items before filtering
-      console.log("Raw items from API:", result.data.listArtworks.items);
+      // console.log("Raw items from API:", result.data.listArtworks.items);
 
       // Map the DynamoDB items to our simplified Artwork interface
       const allFeaturedArtworks = result.data.listArtworks.items
@@ -115,19 +115,19 @@ export function useArtworks() {
           })
         );
 
-      console.log("Fetched featured artworks:", allFeaturedArtworks.length);
-      console.log("Featured artworks details:", allFeaturedArtworks.map(a => ({
-        id: a.id,
-        title: a.title,
-        isFeatured: a.isFeatured
-      })));
+      // console.log("Fetched featured artworks:", allFeaturedArtworks.length);
+      // console.log("Featured artworks details:", allFeaturedArtworks.map(a => ({
+      //   id: a.id,
+      //   title: a.title,
+      //   isFeatured: a.isFeatured
+      // })));
 
       // Randomly select 5 artworks
       const randomFeaturedArtworks = allFeaturedArtworks
         .sort(() => Math.random() - 0.5) // Shuffle the array
         .slice(0, 5); // Take the first 5 items
 
-      console.log("Selected random featured artworks:", randomFeaturedArtworks.length);
+      // console.log("Selected random featured artworks:", randomFeaturedArtworks.length);
       return randomFeaturedArtworks;
     } catch (err) {
       console.error("Error fetching featured artworks:", err);
@@ -163,7 +163,7 @@ export function useArtworks() {
       });
 
       // Log the raw response for debugging
-      console.log("Raw API Response:", result);
+      // console.log("Raw API Response:", result);
 
       // Type guard for GraphQL errors
       if ("errors" in result && result.errors) {
