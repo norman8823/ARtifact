@@ -2,23 +2,23 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
 import { type ArtFact, useArtFacts } from "@/src/hooks/useArtFacts";
-import { useGalleryMaps } from "@/src/hooks/useGalleryMaps";
 import { type Artwork, useArtwork } from "@/src/hooks/useArtwork";
 import { useFavorites } from "@/src/hooks/useFavorites";
+import { useGalleryMaps } from "@/src/hooks/useGalleryMaps";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Stack, useLocalSearchParams, router } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   FlatList,
+  Linking,
   Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
-  Linking,
 } from "react-native";
 import {
   Gesture,
@@ -359,12 +359,23 @@ export default function ArtDetailScreen() {
           </Pressable>
 
           {/* AR Button - Only show if artwork has AR support */}
-          {artwork.hasAR && (
-            <Pressable style={styles.arButton}>
-              <FontAwesome name="cube" size={18} color="#fff" />
-              <ThemedText style={styles.arButtonText}>View in AR</ThemedText>
-            </Pressable>
-          )}
+          {/* {artwork.hasAR && ( */}
+          <Pressable
+            style={styles.arButton}
+            onPress={() => {
+              router.push({
+                pathname: "/arViewer",
+                params: {
+                  artworkId: artwork.id,
+                  title: artwork.title,
+                },
+              });
+            }}
+          >
+            <FontAwesome name="cube" size={18} color="#fff" />
+            <ThemedText style={styles.arButtonText}>View in AR</ThemedText>
+          </Pressable>
+          {/* )} */}
 
           {/* Artwork Details */}
           <ThemedView style={styles.detailsContainer}>
