@@ -43,7 +43,7 @@ export default function ProfileSettingsScreen() {
                 <ThemedText style={styles.avatarText}>SJ</ThemedText>
               </ThemedView>
               <Pressable style={styles.editAvatarButton}>
-                <FontAwesome name="pencil" size={12} color={Colors.white} />
+                <FontAwesome name="pencil" size={12} color={"white"} />
               </Pressable>
             </Pressable>
           </View>
@@ -144,7 +144,7 @@ export default function ProfileSettingsScreen() {
           <FontAwesome
             name="check"
             size={16}
-            color={Colors.white}
+            color={"white"}
             style={styles.buttonIcon}
           />
           <ThemedText style={styles.saveButtonText}>Save Changes</ThemedText>
@@ -225,7 +225,7 @@ export default function ProfileSettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: "white",
   },
   header: {
     paddingHorizontal: 20,
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   avatarText: {
-    color: Colors.white,
+    color: "white",
     fontSize: 28,
     fontWeight: "600",
   },

@@ -144,11 +144,11 @@ export default function SearchResultsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: "white",
   },
   searchContainer: {
     padding: 20,
-    backgroundColor: Colors.white,
+    backgroundColor: "white",
   },
   searchBar: {
     flexDirection: "row",

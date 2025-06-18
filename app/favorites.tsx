@@ -130,7 +130,7 @@ export default function FavoritesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: "white",
   },
   centerContent: {
     justifyContent: "center",
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: Colors.medLightGray,
-    backgroundColor: Colors.white,
+    backgroundColor: "white",
   },
   image: {
     width: 80,
@@ -170,10 +170,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     right: 10,
-    backgroundColor: Colors.white,
+    backgroundColor: "white",
     borderRadius: 12,
     padding: 4,
-    shadowColor: Colors.black,
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
