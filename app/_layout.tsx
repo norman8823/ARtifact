@@ -103,6 +103,13 @@ export default function RootLayout() {
               headerBackTitle: "Explore",
             }}
           />
+          <Stack.Screen
+            name="arViewer"
+            options={{
+              headerShown: false,
+              gestureEnabled: true,
+            }}
+          />
         </Stack>
       </FavoritesProvider>
       <StatusBar style="auto" />
