@@ -56,7 +56,7 @@ export function useDepartments() {
         authMode: "userPool" as any,
       });
 
-      console.log("Raw API Response:", JSON.stringify(result, null, 2));
+      // console.log("Raw API Response:", JSON.stringify(result, null, 2));
 
       // Type guard for GraphQL errors
       if ("errors" in result && result.errors) {
