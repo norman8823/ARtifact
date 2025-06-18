@@ -154,7 +154,7 @@ export default function CollectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: "white",
   },
   headerContainer: {
     height: 250,
@@ -221,11 +221,11 @@ const styles = StyleSheet.create({
   },
   workCard: {
     flexDirection: "row",
-    backgroundColor: Colors.white,
+    backgroundColor: "white",
     borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.medLightGray,
-    shadowColor: Colors.black,
+    shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 1,

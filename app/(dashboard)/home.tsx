@@ -344,7 +344,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: "white",
   },
   centerContent: {
     justifyContent: "center",
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.lightGray,
     borderRadius: 15,
-    shadowColor: Colors.black,
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: Colors.black,
+    backgroundColor: "black",
   },
   collectionsContainer: {
     gap: 10,
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: Colors.black,
+    shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 2,
