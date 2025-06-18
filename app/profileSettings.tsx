@@ -11,6 +11,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { Colors } from "@/constants/Colors";
 
 export default function ProfileSettingsScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +43,7 @@ export default function ProfileSettingsScreen() {
                 <ThemedText style={styles.avatarText}>SJ</ThemedText>
               </ThemedView>
               <Pressable style={styles.editAvatarButton}>
-                <FontAwesome name="pencil" size={12} color="#fff" />
+                <FontAwesome name="pencil" size={12} color={Colors.white} />
               </Pressable>
             </Pressable>
           </View>
@@ -58,7 +59,7 @@ export default function ProfileSettingsScreen() {
             <FontAwesome
               name="user-o"
               size={16}
-              color="#666"
+              color={Colors.darkMedGray}
               style={styles.inputIcon}
             />
             <TextInput
@@ -76,7 +77,7 @@ export default function ProfileSettingsScreen() {
             <FontAwesome
               name="phone"
               size={16}
-              color="#666"
+              color={Colors.darkMedGray}
               style={styles.inputIcon}
             />
             <TextInput
@@ -95,7 +96,7 @@ export default function ProfileSettingsScreen() {
             <FontAwesome
               name="envelope-o"
               size={16}
-              color="#666"
+              color={Colors.darkMedGray}
               style={styles.inputIcon}
             />
             <TextInput
@@ -115,7 +116,7 @@ export default function ProfileSettingsScreen() {
             <FontAwesome
               name="lock"
               size={16}
-              color="#666"
+              color={Colors.darkMedGray}
               style={styles.inputIcon}
             />
             <TextInput
@@ -132,7 +133,7 @@ export default function ProfileSettingsScreen() {
               <FontAwesome
                 name={showPassword ? "eye" : "eye-slash"}
                 size={16}
-                color="#666"
+                color={Colors.darkMedGray}
               />
             </Pressable>
           </ThemedView>
@@ -143,7 +144,7 @@ export default function ProfileSettingsScreen() {
           <FontAwesome
             name="check"
             size={16}
-            color="#fff"
+            color={Colors.white}
             style={styles.buttonIcon}
           />
           <ThemedText style={styles.saveButtonText}>Save Changes</ThemedText>
@@ -153,7 +154,7 @@ export default function ProfileSettingsScreen() {
           <FontAwesome
             name="trash"
             size={16}
-            color="#666"
+            color={Colors.darkMedGray}
             style={styles.buttonIcon}
           />
           <ThemedText style={styles.deleteButtonText}>
@@ -184,7 +185,7 @@ export default function ProfileSettingsScreen() {
               <FontAwesome
                 name="image"
                 size={20}
-                color="#333"
+                color={Colors.darkGray}
                 style={styles.modalIcon}
               />
               <ThemedText style={styles.modalButtonText}>
@@ -202,7 +203,7 @@ export default function ProfileSettingsScreen() {
               <FontAwesome
                 name="camera"
                 size={20}
-                color="#333"
+                color={Colors.darkGray}
                 style={styles.modalIcon}
               />
               <ThemedText style={styles.modalButtonText}>Take Photo</ThemedText>
@@ -224,7 +225,7 @@ export default function ProfileSettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
   },
   header: {
     paddingHorizontal: 20,
@@ -253,12 +254,12 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: "#333",
+    backgroundColor: Colors.darkGray,
     alignItems: "center",
     justifyContent: "center",
   },
   avatarText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 28,
     fontWeight: "600",
   },
