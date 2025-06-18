@@ -64,6 +64,22 @@
       "service": "Cognito"
     }
   },
+  "function": {
+    "analyzeImage": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "ARtifactStorage"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
   "storage": {
     "ARtifactStorage": {
       "dependsOn": [],

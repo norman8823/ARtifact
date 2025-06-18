@@ -20,6 +20,9 @@
       },
       "storage": {
         "ARtifactStorage": {}
+      },
+      "function": {
+        "analyzeImage": {}
       }
     }
   }
