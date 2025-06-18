@@ -15,6 +15,7 @@ import {
   StyleSheet,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+import { Colors } from "@/constants/Colors";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -216,7 +217,7 @@ export default function HomeScreen() {
     >
       {/* Header */}
       <ThemedView style={styles.header}>
-        <ThemedText style={[{ color: "#b60021" }, styles.headerTitle]}>
+        <ThemedText style={[{ color: Colors.metRed }, styles.headerTitle]}>
           AR
         </ThemedText>
         <ThemedText style={styles.headerTitle}>tifact</ThemedText>
@@ -250,13 +251,21 @@ export default function HomeScreen() {
                 style={[styles.carouselButton, styles.carouselButtonLeft]}
                 onPress={handlePrevious}
               >
-                <FontAwesome name="chevron-left" size={20} color="#999" />
+                <FontAwesome
+                  name="chevron-left"
+                  size={20}
+                  color={Colors.medGray}
+                />
               </Pressable>
               <Pressable
                 style={[styles.carouselButton, styles.carouselButtonRight]}
                 onPress={handleNext}
               >
-                <FontAwesome name="chevron-right" size={20} color="#999" />
+                <FontAwesome
+                  name="chevron-right"
+                  size={20}
+                  color={Colors.medGray}
+                />
               </Pressable>
             </>
           ) : (
@@ -304,7 +313,11 @@ export default function HomeScreen() {
         <ThemedText style={styles.sectionTitle}>Did You Know?</ThemedText>
         <ThemedView style={styles.triviaCard}>
           <ThemedView style={styles.triviaIconContainer}>
-            <FontAwesome name="lightbulb-o" size={20} color="#F59E0B" />
+            <FontAwesome
+              name="lightbulb-o"
+              size={20}
+              color={Colors.darkYellow}
+            />
           </ThemedView>
           <ThemedView style={styles.triviaContent}>
             <ThemedText style={styles.triviaText}>
@@ -312,7 +325,11 @@ export default function HomeScreen() {
                 "Loading interesting facts about art and the museum..."}
             </ThemedText>
             <ThemedView style={styles.triviaFooter}>
-              <FontAwesome name="clock-o" size={12} color="#666" />
+              <FontAwesome
+                name="clock-o"
+                size={12}
+                color={Colors.darkMedGray}
+              />
               <ThemedText style={styles.triviaDate}>
                 Daily Art Fact • {currentDate}
               </ThemedText>
@@ -327,7 +344,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
   },
   centerContent: {
     justifyContent: "center",
@@ -338,14 +355,16 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 10,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 36,
     fontWeight: "bold",
+    paddingTop: 20,
   },
   section: {
     marginTop: 20,
@@ -356,7 +375,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "600",
+    fontWeight: "500",
     marginBottom: 15,
   },
   carouselContainer: {
@@ -369,9 +388,9 @@ const styles = StyleSheet.create({
     height: 400,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.lightGray,
     borderRadius: 15,
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -394,7 +413,7 @@ const styles = StyleSheet.create({
   },
   artistName: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
     marginTop: 6,
     paddingHorizontal: 15,
     marginBottom: 12,
@@ -410,14 +429,14 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#999",
+    backgroundColor: Colors.medGray,
     marginHorizontal: 4,
   },
   paginationDotActive: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#000",
+    backgroundColor: Colors.black,
   },
   collectionsContainer: {
     gap: 10,
@@ -439,7 +458,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   triviaCard: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.lightGray,
     borderRadius: 12,
     padding: 12,
     flexDirection: "row",
@@ -448,14 +467,14 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#FEF3C7",
+    backgroundColor: Colors.lightYellow,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
   },
   triviaContent: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.lightGray,
   },
   triviaText: {
     fontSize: 14,
@@ -465,11 +484,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 12,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.lightGray,
   },
   triviaDate: {
     fontSize: 12,
-    color: "#666",
+    color: Colors.darkMedGray,
     marginLeft: 6,
   },
   carouselButton: {
@@ -478,7 +497,7 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOffset: {
       width: 0,
       height: 2,

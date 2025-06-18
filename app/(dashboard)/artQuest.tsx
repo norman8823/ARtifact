@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "#f5f5f5",
   },
   rankTitle: {
     fontSize: 20,
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     fontWeight: "500",
-    color: "#000",
+    color: "#333",
   },
   badge: {
     backgroundColor: "#FEF3C7",
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   badgeText: {
-    color: "#D97706",
+    color: "#F59E0B",
     fontSize: 14,
     fontWeight: "500",
   },
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.25,
     shadowRadius: 2,
     elevation: 2,
   },
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   questTitle: {
     fontSize: 18,
     fontWeight: "500",
-    color: "#000",
+    color: "#333",
     flex: 1,
     paddingRight: 8,
   },
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 8,
-    backgroundColor: "#eee",
+    backgroundColor: "#f5f5f5",
     borderRadius: 4,
     marginBottom: 4,
   },
@@ -457,13 +457,13 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#fff",
     borderRadius: 12,
     marginTop: 8,
   },
   emptyStateText: {
     textAlign: "center",
-    color: "#6B7280",
+    color: "#666",
     fontSize: 16,
     lineHeight: 24,
   },

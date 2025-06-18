@@ -1,26 +1,39 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+export const UniversalColors = {
+  // Grays
+  lightGray: "#f5f5f5",
+  medLightGray: "#eee",
+  medGray: "#999",
+  darkMedGray: "#666",
+  darkGray: "#333",
 
-const tintColorLight = "#0a7ea4";
-const tintColorDark = "#fff";
+  // Yellows
+  lightYellow: "#fef3c7",
+  darkYellow: "#f59e0b",
+
+  // Greens
+  lightGreen: "#f0fdf4",
+  darkGreen: "#16a34a",
+
+  // Reds
+  metRed: "#b60021",
+  favoriteRed: "#ff4444",
+
+  // Basic colors
+  white: "#ffffff",
+  black: "#000000",
+} as const;
 
 export const Colors = {
+  ...UniversalColors,
+
   light: {
-    text: "#11181C",
-    background: "#fff",
-    tint: tintColorLight,
-    icon: "#687076",
-    tabIconDefault: "#687076",
-    tabIconSelected: tintColorLight,
+    text: "black",
+    background: "white",
   },
   dark: {
-    text: "#ECEDEE",
-    background: "#151718",
-    tint: tintColorDark,
-    icon: "#9BA1A6",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: tintColorDark,
+    text: "white",
+    background: "black",
   },
 };
+
+export type ColorName = keyof typeof UniversalColors;

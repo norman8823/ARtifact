@@ -13,6 +13,7 @@ import {
   StyleSheet,
   Text,
 } from "react-native";
+import { Colors } from "@/constants/Colors";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -81,7 +82,7 @@ export default function CollectionScreen() {
           <ThemedText style={styles.title}>{department.displayName}</ThemedText>
           <ThemedView style={styles.statsContainer}>
             <ThemedView style={styles.statItem}>
-              <FontAwesome name="image" size={14} color="#666" />
+              <FontAwesome name="image" size={14} color={Colors.darkMedGray} />
               <ThemedText style={styles.statText}>
                 {departmentArtworks.length} works
               </ThemedText>
@@ -153,7 +154,7 @@ export default function CollectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
   },
   headerContainer: {
     height: 250,
@@ -170,31 +171,33 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "600",
+    fontWeight: "bold",
     marginBottom: 8,
+    color: Colors.darkGray,
   },
   statsContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 20,
   },
   statItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    marginRight: 20,
   },
   statText: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
+    marginLeft: 6,
   },
   statDivider: {
     marginHorizontal: 8,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   description: {
     fontSize: 16,
-    color: "#666",
+    color: Colors.darkMedGray,
     lineHeight: 24,
+    marginBottom: 20,
   },
   featuredSection: {
     marginBottom: 80,
@@ -211,18 +214,18 @@ const styles = StyleSheet.create({
   },
   seeAllButton: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   featuredList: {
     gap: 12,
   },
   workCard: {
     flexDirection: "row",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#eee",
-    shadowColor: "#000",
+    borderColor: Colors.medLightGray,
+    shadowColor: Colors.black,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -250,11 +253,11 @@ const styles = StyleSheet.create({
   },
   workArtist: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   workPeriod: {
     fontSize: 12,
-    color: "#999",
+    color: Colors.medGray,
     marginTop: 4,
   },
   centerContent: {

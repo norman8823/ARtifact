@@ -16,6 +16,7 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
+import { Colors } from "@/constants/Colors";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ARTWORK_WIDTH = (SCREEN_WIDTH - 64) / 2;
@@ -39,7 +40,7 @@ export default function FavoritesScreen() {
   if (isLoading) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color="#333" />
+        <ActivityIndicator size="large" color={Colors.darkGray} />
       </ThemedView>
     );
   }
@@ -105,7 +106,11 @@ export default function FavoritesScreen() {
                   contentFit="cover"
                 />
                 <ThemedView style={styles.heartContainer}>
-                  <FontAwesome name="heart" size={12} color="#ff4444" />
+                  <FontAwesome
+                    name="heart"
+                    size={12}
+                    color={Colors.favoriteRed}
+                  />
                 </ThemedView>
               </ThemedView>
               <ThemedText style={styles.title} numberOfLines={1}>
@@ -125,14 +130,66 @@ export default function FavoritesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.white,
   },
   centerContent: {
     justifyContent: "center",
     alignItems: "center",
   },
+  list: {
+    flex: 1,
+  },
+  item: {
+    flexDirection: "row",
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.medLightGray,
+    backgroundColor: Colors.white,
+  },
+  image: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    marginRight: 15,
+  },
+  content: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 4,
+    color: Colors.darkGray,
+  },
+  artist: {
+    fontSize: 14,
+    color: Colors.darkMedGray,
+  },
+  heartContainer: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: Colors.white,
+    borderRadius: 12,
+    padding: 4,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
   emptyText: {
     fontSize: 16,
-    color: "#666",
+    color: Colors.darkMedGray,
+    textAlign: "center",
+    marginTop: 20,
   },
   scrollView: {
     flex: 1,
@@ -156,27 +213,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     marginBottom: 8,
     overflow: "hidden",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  heartContainer: {
-    position: "absolute",
-    bottom: 8,
-    right: 8,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "rgba(255,255,255,0.9)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 14,
-  },
-  artist: {
-    fontSize: 12,
-    color: "#666",
   },
 });
