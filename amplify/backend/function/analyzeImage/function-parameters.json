@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "storage": {
+      "ARtifactStorage": [
+        "read"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}
