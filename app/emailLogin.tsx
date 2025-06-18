@@ -13,6 +13,7 @@ import {
   TextInput,
 } from "react-native";
 import "../src/aws/config";
+import { Colors } from "@/constants/Colors";
 
 export default function EmailLoginScreen() {
   const [email, setEmail] = useState("");

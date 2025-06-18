@@ -1,16 +1,20 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useArtworks } from "@/src/hooks/useArtworks";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, router } from "expo-router";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
+  FlatList,
   Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
   Text,
 } from "react-native";
+import { Colors } from "@/constants/Colors";
 
 // Sample search results data
 const SAMPLE_RESULTS = [
@@ -74,8 +78,8 @@ export default function SearchResultsScreen() {
           />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search artworks, artists, periods..."
-            placeholderTextColor="#999"
+            placeholder="Search artworks, artists, or periods..."
+            placeholderTextColor={Colors.medGray}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -140,12 +144,11 @@ export default function SearchResultsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
   },
   searchContainer: {
-    padding: 16,
-    paddingBottom: 12,
-    backgroundColor: "#fff",
+    padding: 20,
+    backgroundColor: Colors.white,
   },
   searchBar: {
     flexDirection: "row",
@@ -159,10 +162,12 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   searchInput: {
-    flex: 1,
-    fontSize: 14,
-    color: "#333",
-    height: "100%",
+    height: 50,
+    backgroundColor: Colors.lightGray,
+    borderRadius: 25,
+    paddingHorizontal: 20,
+    fontSize: 16,
+    color: Colors.darkGray,
   },
   scrollView: {
     flex: 1,
