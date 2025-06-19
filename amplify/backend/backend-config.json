@@ -118,6 +118,14 @@
           "resourceName": "analyzeImage"
         }
       ]
+    },
+    "AMPLIFY_function_analyzeImage_storageArtifactstorageBucketname": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "analyzeImage"
+        }
+      ]
     }
   },
   "storage": {

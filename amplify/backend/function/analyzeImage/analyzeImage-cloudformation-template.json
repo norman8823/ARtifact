@@ -22,6 +22,9 @@
     },
     "projectVersionArn": {
       "Type": "String"
+    },
+    "storageArtifactstorageBucketname": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -78,7 +81,7 @@
               "Ref": "AWS::Region"
             },
             "STORAGE_ARTIFACTSTORAGE_BUCKETNAME": {
-              "Ref": "storageARtifactStorageBucketName"
+              "Ref": "storageArtifactstorageBucketname"
             },
             "PROJECT_VERSION_ARN": {
               "Ref": "projectVersionArn"

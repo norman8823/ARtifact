@@ -2,7 +2,6 @@
 	ENV
 	REGION
 	STORAGE_ARTIFACTSTORAGE_BUCKETNAME
-  PROJECT_VERSION_ARN
 Amplify Params - DO NOT EDIT */
 
 /**
@@ -39,7 +38,11 @@ exports.handler = async (event) => {
       };
     }
 
-    const { bucket, key } = JSON.parse(event.body);
+    const { key } = JSON.parse(event.body);
+    const bucket = process.env.STORAGE_ARTIFACTSTORAGE_BUCKETNAME;
+
+    console.log(`Bucket: ${bucket}`);
+    console.log(`Key: ${key}`);
 
     if (!bucket || !key) {
       return {
