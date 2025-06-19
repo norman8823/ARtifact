@@ -11,6 +11,10 @@
     {
       "cloudFormationParameterName": "projectVersionArn",
       "environmentVariableName": "PROJECT_VERSION_ARN"
+    },
+    {
+      "cloudFormationParameterName": "storageArtifactstorageBucketname",
+      "environmentVariableName": "STORAGE_ARTIFACTSTORAGE_BUCKETNAME"
     }
   ]
 }
