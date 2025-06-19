@@ -19,8 +19,8 @@ export const Colors = {
   ...UniversalColors,
 
   light: {
-    text: "black",
-    background: "white",
+    text: UniversalColors.darkGray,
+    background: UniversalColors.lightGray,
   },
   dark: {
     text: "white",

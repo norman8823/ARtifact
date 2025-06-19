@@ -155,8 +155,10 @@ export default function HomeScreen() {
         source={{ uri: item.primaryImage || undefined }}
         style={styles.featuredImage}
       />
-      <ThemedText style={styles.artworkTitle}>{item.title}</ThemedText>
-      <ThemedText style={styles.artistName}>
+      <ThemedText type="subtitle" style={styles.artworkTitle}>
+        {item.title}
+      </ThemedText>
+      <ThemedText type="subtitle" style={styles.artistName}>
         {item.artistDisplayName || "Unknown Artist"}
       </ThemedText>
     </Pressable>
@@ -225,7 +227,9 @@ export default function HomeScreen() {
 
       {/* Featured Artworks */}
       <ThemedView style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>Featured Artworks</ThemedText>
+        <ThemedText type="title" style={styles.sectionTitle}>
+          Featured Artworks
+        </ThemedText>
         <ThemedView style={styles.carouselContainer}>
           {featuredArtworks.length > 0 ? (
             <>
@@ -279,7 +283,9 @@ export default function HomeScreen() {
 
       {/* Collections */}
       <ThemedView style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>Collections</ThemedText>
+        <ThemedText type="title" style={styles.sectionTitle}>
+          Collections
+        </ThemedText>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -300,7 +306,7 @@ export default function HomeScreen() {
                 source={{ uri: department.coverImage || undefined }}
                 style={styles.collectionImage}
               />
-              <ThemedText style={styles.collectionTitle}>
+              <ThemedText type="subtitle" style={styles.collectionTitle}>
                 {department.displayName}
               </ThemedText>
             </Pressable>
@@ -310,7 +316,9 @@ export default function HomeScreen() {
 
       {/* Did You Know */}
       <ThemedView style={[styles.section, styles.lastSection]}>
-        <ThemedText style={styles.sectionTitle}>Did You Know?</ThemedText>
+        <ThemedText type="title" style={styles.sectionTitle}>
+          Did You Know?
+        </ThemedText>
         <ThemedView style={styles.triviaCard}>
           <ThemedView style={styles.triviaIconContainer}>
             <FontAwesome
@@ -344,7 +352,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: Colors.lightGray,
   },
   centerContent: {
     justifyContent: "center",
@@ -356,15 +364,15 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 24,
     paddingBottom: 10,
   },
   headerTitle: {
-    fontSize: 36,
-    fontWeight: "bold",
-    paddingTop: 20,
+    fontSize: 48,
+    paddingTop: 24,
+    fontFamily: "TiltPrism",
+    letterSpacing: 5,
   },
   section: {
     marginTop: 20,
@@ -375,7 +383,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "500",
     marginBottom: 15,
   },
   carouselContainer: {
@@ -407,15 +414,12 @@ const styles = StyleSheet.create({
   },
   artworkTitle: {
     fontSize: 18,
-    fontWeight: "600",
     marginTop: 12,
-    paddingHorizontal: 15,
   },
   artistName: {
     fontSize: 14,
     color: Colors.darkMedGray,
     marginTop: 6,
-    paddingHorizontal: 15,
     marginBottom: 12,
   },
   paginationContainer: {
@@ -453,15 +457,21 @@ const styles = StyleSheet.create({
   },
   collectionTitle: {
     fontSize: 16,
-    fontWeight: "500",
     marginTop: 8,
-    paddingHorizontal: 5,
   },
   triviaCard: {
-    backgroundColor: Colors.lightGray,
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     padding: 12,
     flexDirection: "row",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 2,
   },
   triviaIconContainer: {
     width: 32,
@@ -471,10 +481,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
+    borderColor: Colors.darkYellow,
+    borderWidth: 1,
   },
   triviaContent: {
     flex: 1,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: Colors.medLightGray,
   },
   triviaText: {
     fontSize: 14,
@@ -484,7 +496,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 12,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: Colors.medLightGray,
   },
   triviaDate: {
     fontSize: 12,
