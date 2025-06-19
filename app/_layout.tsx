@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { Colors } from "../constants/Colors";
 import { FavoritesProvider } from "@/src/contexts/FavoritesContext";
 
 export default function RootLayout() {
@@ -27,9 +28,10 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             headerStyle: {
-              backgroundColor: "white",
+              backgroundColor: Colors.lightGray,
             },
             headerTintColor: "black",
+            headerBackButtonDisplayMode: "minimal",
           }}
         >
           <Stack.Screen
@@ -53,56 +55,43 @@ export default function RootLayout() {
           <Stack.Screen
             name="profileSettings"
             options={{
-              headerTitle: "Settings",
-              headerBackTitle: "Profile",
+              headerTitle: "",
             }}
           />
           <Stack.Screen
             name="artworksVisited"
             options={{
-              headerTitle: "Artworks Visited",
-              headerBackTitle: "Profile",
+              headerTitle: "",
             }}
           />
           <Stack.Screen
             name="favorites"
             options={{
-              headerTitle: "Favorites",
-              headerBackTitle: "Profile",
+              headerTitle: "",
             }}
           />
           <Stack.Screen
             name="questsCompleted"
             options={{
-              headerTitle: "Quests Completed",
-              headerBackTitle: "Profile",
+              headerTitle: "",
             }}
           />
           <Stack.Screen
             name="collection"
             options={{
-              headerTitle: "Collection",
-              headerBackTitle: "Home",
+              headerTitle: "",
             }}
           />
           <Stack.Screen
             name="artDetail"
             options={{
-              headerTitle: "Artwork Details",
+              headerTitle: "",
             }}
           />
           <Stack.Screen
             name="questDetail"
             options={{
-              headerTitle: "Quest Detail",
-              headerBackTitle: "ArtQuest",
-            }}
-          />
-          <Stack.Screen
-            name="searchResults"
-            options={{
-              headerTitle: "Search Results",
-              headerBackTitle: "Explore",
+              headerTitle: "",
             }}
           />
           <Stack.Screen
