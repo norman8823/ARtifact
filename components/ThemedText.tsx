@@ -1,5 +1,4 @@
 import { StyleSheet, Text, type TextProps } from "react-native";
-
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 export type ThemedTextProps = TextProps & {
@@ -37,11 +36,12 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontFamily: "LatoRegular",
   },
-  title: {
-    fontFamily: "OldStandardTTBold",
-  },
   subtitle: {
     lineHeight: 24,
     fontFamily: "OldStandardTTRegular",
+  },
+  title: {
+    fontSize: 24,
+    fontFamily: "OldStandardTTBold",
   },
 });

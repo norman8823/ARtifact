@@ -333,11 +333,7 @@ export default function HomeScreen() {
                 "Loading interesting facts about art and the museum..."}
             </ThemedText>
             <ThemedView style={styles.triviaFooter}>
-              <FontAwesome
-                name="clock-o"
-                size={12}
-                color={Colors.darkMedGray}
-              />
+              <FontAwesome name="clock-o" size={12} color={Colors.medGray} />
               <ThemedText style={styles.triviaDate}>
                 Daily Art Fact • {currentDate}
               </ThemedText>
@@ -373,6 +369,9 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     fontFamily: "TiltPrism",
     letterSpacing: 5,
+    textShadowColor: "rgba(0,0,0,.5)",
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 4,
   },
   section: {
     marginTop: 20,
@@ -382,7 +381,6 @@ const styles = StyleSheet.create({
     marginBottom: 80,
   },
   sectionTitle: {
-    fontSize: 20,
     marginBottom: 15,
   },
   carouselContainer: {
@@ -491,6 +489,7 @@ const styles = StyleSheet.create({
   triviaText: {
     fontSize: 14,
     lineHeight: 20,
+    color: Colors.darkMedGray,
   },
   triviaFooter: {
     flexDirection: "row",
@@ -500,7 +499,7 @@ const styles = StyleSheet.create({
   },
   triviaDate: {
     fontSize: 12,
-    color: Colors.darkMedGray,
+    color: Colors.medGray,
     marginLeft: 6,
   },
   carouselButton: {
