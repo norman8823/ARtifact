@@ -14,6 +14,7 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
+import { Colors } from "../../constants/Colors";
 
 type QuestDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -126,7 +127,7 @@ export default function ArtQuestScreen() {
       {/* User Stats Section */}
       <ThemedView style={styles.statsSection}>
         <ThemedView>
-          <ThemedText style={styles.rankTitle}>
+          <ThemedText type="title" style={styles.rankTitle}>
             {currentRank?.title || "Loading rank..."}
           </ThemedText>
           <ThemedText style={styles.levelText}>
@@ -134,14 +135,16 @@ export default function ArtQuestScreen() {
           </ThemedText>
         </ThemedView>
         <ThemedView style={styles.medalContainer}>
-          <FontAwesome name="trophy" size={24} color="#F59E0B" />
+          <FontAwesome name="trophy" size={24} color={Colors.darkYellow} />
         </ThemedView>
       </ThemedView>
 
       {/* Active Quests Section */}
       <ThemedView style={styles.section}>
         <ThemedView style={styles.sectionHeader}>
-          <ThemedText style={styles.sectionTitle}>Active Quests</ThemedText>
+          <ThemedText type="title" style={styles.sectionTitle}>
+            Active Quests
+          </ThemedText>
           <ThemedView style={styles.badge}>
             <ThemedText style={styles.badgeText}>
               {activeQuests.length} In Progress
@@ -166,7 +169,7 @@ export default function ArtQuestScreen() {
               <ThemedView style={styles.questHeader}>
                 <ThemedView style={styles.questInfo}>
                   <ThemedView style={styles.titleRow}>
-                    <ThemedText style={styles.questTitle}>
+                    <ThemedText type="title" style={styles.questTitle}>
                       {quest.title}
                     </ThemedText>
                     <ThemedView style={styles.xpBadge}>
@@ -214,7 +217,11 @@ export default function ArtQuestScreen() {
 
               {quest.galleryMap && (
                 <ThemedView style={styles.locationContainer}>
-                  <FontAwesome name="map-marker" size={14} color="#666" />
+                  <FontAwesome
+                    name="map-marker"
+                    size={14}
+                    color={Colors.darkMedGray}
+                  />
                   <ThemedText style={styles.locationText}>
                     {quest.galleryMap}
                   </ThemedText>
@@ -228,7 +235,9 @@ export default function ArtQuestScreen() {
       {/* Available Quests Section */}
       <ThemedView style={styles.section}>
         <ThemedView style={styles.sectionHeader}>
-          <ThemedText style={styles.sectionTitle}>Available Quests</ThemedText>
+          <ThemedText type="title" style={styles.sectionTitle}>
+            Available Quests
+          </ThemedText>
           <ThemedView style={[styles.badge, styles.grayBadge]}>
             <ThemedText style={[styles.badgeText, styles.grayText]}>
               {availableQuests.length} Available
@@ -245,7 +254,7 @@ export default function ArtQuestScreen() {
             <ThemedView style={styles.questHeader}>
               <ThemedView style={styles.questInfo}>
                 <ThemedView style={styles.titleRow}>
-                  <ThemedText style={styles.questTitle}>
+                  <ThemedText type="title" style={styles.questTitle}>
                     {quest.title}
                   </ThemedText>
                   {quest.isPremium && (
@@ -269,7 +278,11 @@ export default function ArtQuestScreen() {
 
             {quest.galleryMap && (
               <ThemedView style={styles.locationContainer}>
-                <FontAwesome name="map-marker" size={14} color="#666" />
+                <FontAwesome
+                  name="map-marker"
+                  size={14}
+                  color={Colors.darkMedGray}
+                />
                 <ThemedText style={styles.locationText}>
                   {quest.galleryMap}
                 </ThemedText>
@@ -285,7 +298,7 @@ export default function ArtQuestScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.lightGray,
   },
   loadingContainer: {
     flex: 1,
@@ -300,22 +313,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f5f5f5",
   },
   rankTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
+    fontSize: 30,
   },
   levelText: {
     fontSize: 16,
-    color: "#666",
+    color: Colors.darkMedGray,
     marginTop: 4,
   },
   medalContainer: {
-    backgroundColor: "#FEF3C7",
+    backgroundColor: Colors.lightYellow,
+    borderColor: Colors.darkYellow,
+    borderWidth: 1,
     padding: 12,
     borderRadius: 50,
   },
@@ -328,142 +338,134 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: "500",
-    color: "#333",
-  },
+  sectionTitle: {},
   badge: {
-    backgroundColor: "#FEF3C7",
+    backgroundColor: Colors.lightYellow,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
   },
   badgeText: {
-    color: "#F59E0B",
+    color: Colors.darkYellow,
     fontSize: 14,
-    fontWeight: "500",
   },
   grayBadge: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: Colors.medLightGray,
   },
   grayText: {
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   questCard: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#eee",
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 2,
+    shadowRadius: 3,
     elevation: 2,
   },
   questHeader: {
     marginBottom: 12,
   },
   questInfo: {
+    backgroundColor: Colors.medLightGray,
     gap: 4,
   },
   titleRow: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   questTitle: {
     fontSize: 18,
-    fontWeight: "500",
-    color: "#333",
     flex: 1,
     paddingRight: 8,
   },
   questDescription: {
+    backgroundColor: Colors.medLightGray,
     fontSize: 14,
-    color: "#666",
     marginBottom: 8,
   },
   xpBadge: {
-    backgroundColor: "#f0fdf4",
+    backgroundColor: Colors.lightGreen,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     alignSelf: "flex-start",
   },
   xpText: {
-    color: "#16a34a",
+    color: Colors.darkGreen,
     fontSize: 14,
-    fontWeight: "500",
   },
   progressContainer: {
+    backgroundColor: Colors.medLightGray,
     marginBottom: 12,
   },
   progressBar: {
+    backgroundColor: Colors.medGray,
     height: 8,
-    backgroundColor: "#f5f5f5",
     borderRadius: 4,
     marginBottom: 4,
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#FEF3C7",
+    backgroundColor: Colors.lightYellow,
     borderRadius: 4,
   },
   progressText: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   progressCount: {
     fontSize: 12,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   progressPercentage: {
     fontSize: 12,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   locationContainer: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
   },
   locationText: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   questFooter: {
     alignItems: "center",
     marginTop: 12,
   },
   premiumBadge: {
-    backgroundColor: "#FFD700",
+    backgroundColor: Colors.lightYellow,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     alignSelf: "flex-start",
   },
   premiumText: {
-    color: "#333",
+    color: Colors.darkYellow,
     fontSize: 14,
-    fontWeight: "500",
   },
   emptyStateContainer: {
     padding: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
     borderRadius: 12,
     marginTop: 8,
   },
   emptyStateText: {
     textAlign: "center",
-    color: "#666",
     fontSize: 16,
     lineHeight: 24,
   },
