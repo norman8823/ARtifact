@@ -22,7 +22,9 @@
         "ARtifactStorage": {}
       },
       "function": {
-        "analyzeImage": {}
+        "analyzeImage": {
+          "projectVersionArn": "arn:aws:rekognition:us-east-1:008971679041:project/artifactImageScan/1750358004302"
+        }
       }
     }
   }
