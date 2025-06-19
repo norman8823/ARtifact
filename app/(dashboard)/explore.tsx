@@ -11,6 +11,7 @@ import {
   FlatList,
   Keyboard,
   Pressable,
+  SafeAreaView,
   StyleSheet,
   TextInput,
 } from "react-native";
@@ -96,43 +97,47 @@ export default function ExploreScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
-      {/* Search Bar */}
-      <ThemedView style={styles.searchContainer}>
-        <ThemedView style={styles.searchBar}>
-          <FontAwesome
-            name="search"
-            size={16}
-            color={Colors.darkMedGray}
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search artworks, artists, periods..."
-            placeholderTextColor="Colors.medGray"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            onSubmitEditing={Keyboard.dismiss}
-            returnKeyType="done"
+    <>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
+        <ThemedView style={styles.container}>
+          {/* Search Bar */}
+          <ThemedView style={styles.searchContainer}>
+            <ThemedView style={styles.searchBar}>
+              <FontAwesome
+                name="search"
+                size={16}
+                color={Colors.darkMedGray}
+                style={styles.searchIcon}
+              />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search artworks, artists, periods..."
+                placeholderTextColor="Colors.medGray"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                onSubmitEditing={Keyboard.dismiss}
+                returnKeyType="done"
+              />
+            </ThemedView>
+          </ThemedView>
+
+          {/* Grid */}
+          <FlatList
+            data={filteredArtworks}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            numColumns={NUM_COLUMNS}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.gridContainer}
+            ListEmptyComponent={
+              <ThemedView style={styles.centerContent}>
+                <ThemedText>No artworks found</ThemedText>
+              </ThemedView>
+            }
           />
         </ThemedView>
-      </ThemedView>
-
-      {/* Grid */}
-      <FlatList
-        data={filteredArtworks}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        numColumns={NUM_COLUMNS}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.gridContainer}
-        ListEmptyComponent={
-          <ThemedView style={styles.centerContent}>
-            <ThemedText>No artworks found</ThemedText>
-          </ThemedView>
-        }
-      />
-    </ThemedView>
+      </SafeAreaView>
+    </>
   );
 }
 

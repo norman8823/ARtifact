@@ -11,6 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
 } from "react-native";
@@ -120,178 +121,184 @@ export default function ArtQuestScreen() {
   }
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      {/* User Stats Section */}
-      <ThemedView style={styles.statsSection}>
-        <ThemedView>
-          <ThemedText type="title" style={styles.rankTitle}>
-            {currentRank?.title || "Loading rank..."}
-          </ThemedText>
-          <ThemedText style={styles.levelText}>
-            {userXP?.xpPoints || 0} XP
-          </ThemedText>
-        </ThemedView>
-        <ThemedView style={styles.medalContainer}>
-          <FontAwesome name="trophy" size={24} color={Colors.darkYellow} />
-        </ThemedView>
-      </ThemedView>
-
-      {/* Active Quests Section */}
-      <ThemedView style={styles.section}>
-        <ThemedView style={styles.sectionHeader}>
-          <ThemedText type="title" style={styles.sectionTitle}>
-            Active Quests
-          </ThemedText>
-          <ThemedView style={styles.badge}>
-            <ThemedText style={styles.badgeText}>
-              {activeQuests.length} In Progress
-            </ThemedText>
+    <>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+        >
+          {/* User Stats Section */}
+          <ThemedView style={styles.statsSection}>
+            <ThemedView>
+              <ThemedText type="title" style={styles.rankTitle}>
+                {currentRank?.title || "Loading rank..."}
+              </ThemedText>
+              <ThemedText style={styles.levelText}>
+                {userXP?.xpPoints || 0} XP
+              </ThemedText>
+            </ThemedView>
+            <ThemedView style={styles.medalContainer}>
+              <FontAwesome name="trophy" size={24} color={Colors.darkYellow} />
+            </ThemedView>
           </ThemedView>
-        </ThemedView>
 
-        {activeQuests.length === 0 ? (
-          <ThemedView style={styles.emptyStateContainer}>
-            <ThemedText style={styles.emptyStateText}>
-              You haven't started any quests yet. Begin your journey by
-              selecting a quest below!
-            </ThemedText>
-          </ThemedView>
-        ) : (
-          activeQuests.map((quest) => (
-            <Pressable
-              key={quest.id}
-              style={styles.questCard}
-              onPress={() => router.push(`/questDetail?id=${quest.questId}`)}
-            >
-              <ThemedView style={styles.questHeader}>
-                <ThemedView style={styles.questInfo}>
-                  <ThemedView style={styles.titleRow}>
-                    <ThemedText type="title" style={styles.questTitle}>
-                      {quest.title}
-                    </ThemedText>
-                    <ThemedView style={styles.xpBadge}>
-                      <ThemedText style={styles.xpText}>
-                        {quest.xpReward} XP
-                      </ThemedText>
-                    </ThemedView>
-                  </ThemedView>
-                  <ThemedText style={styles.questDescription}>
-                    {quest.description}
-                  </ThemedText>
-                </ThemedView>
-              </ThemedView>
-
-              <ThemedView style={styles.progressContainer}>
-                <ThemedView style={styles.progressBar}>
-                  <ThemedView
-                    style={[
-                      styles.progressFill,
-                      {
-                        width: `${
-                          (quest.artworksVisited.length /
-                            quest.requiredArtworks.length) *
-                          100
-                        }%`,
-                      },
-                    ]}
-                  />
-                </ThemedView>
-                <ThemedView style={styles.progressText}>
-                  <ThemedText style={styles.progressCount}>
-                    {quest.artworksVisited.length}/
-                    {quest.requiredArtworks.length} visited
-                  </ThemedText>
-                  <ThemedText style={styles.progressPercentage}>
-                    {Math.round(
-                      (quest.artworksVisited.length /
-                        quest.requiredArtworks.length) *
-                        100
-                    )}
-                    %
-                  </ThemedText>
-                </ThemedView>
-              </ThemedView>
-
-              {quest.galleryMap && (
-                <ThemedView style={styles.locationContainer}>
-                  <FontAwesome
-                    name="map-marker"
-                    size={14}
-                    color={Colors.darkMedGray}
-                  />
-                  <ThemedText style={styles.locationText}>
-                    {quest.galleryMap}
-                  </ThemedText>
-                </ThemedView>
-              )}
-            </Pressable>
-          ))
-        )}
-      </ThemedView>
-
-      {/* Available Quests Section */}
-      <ThemedView style={styles.section}>
-        <ThemedView style={styles.sectionHeader}>
-          <ThemedText type="title" style={styles.sectionTitle}>
-            Available Quests
-          </ThemedText>
-          <ThemedView style={[styles.badge, styles.grayBadge]}>
-            <ThemedText style={[styles.badgeText, styles.grayText]}>
-              {availableQuests.length} Available
-            </ThemedText>
-          </ThemedView>
-        </ThemedView>
-
-        {availableQuests.map((quest) => (
-          <Pressable
-            key={quest.id}
-            style={styles.questCard}
-            onPress={() => router.push(`/questDetail?id=${quest.id}`)}
-          >
-            <ThemedView style={styles.questHeader}>
-              <ThemedView style={styles.questInfo}>
-                <ThemedView style={styles.titleRow}>
-                  <ThemedText type="title" style={styles.questTitle}>
-                    {quest.title}
-                  </ThemedText>
-                  {quest.isPremium && (
-                    <ThemedView style={styles.premiumBadge}>
-                      <ThemedText style={styles.premiumText}>
-                        Premium
-                      </ThemedText>
-                    </ThemedView>
-                  )}
-                  <ThemedView style={styles.xpBadge}>
-                    <ThemedText style={styles.xpText}>
-                      {quest.xpReward} XP
-                    </ThemedText>
-                  </ThemedView>
-                </ThemedView>
-                <ThemedText style={styles.questDescription}>
-                  {quest.description}
+          {/* Active Quests Section */}
+          <ThemedView style={styles.section}>
+            <ThemedView style={styles.sectionHeader}>
+              <ThemedText type="title" style={styles.sectionTitle}>
+                Active Quests
+              </ThemedText>
+              <ThemedView style={styles.badge}>
+                <ThemedText style={styles.badgeText}>
+                  {activeQuests.length} In Progress
                 </ThemedText>
               </ThemedView>
             </ThemedView>
 
-            {quest.galleryMap && (
-              <ThemedView style={styles.locationContainer}>
-                <FontAwesome
-                  name="map-marker"
-                  size={14}
-                  color={Colors.darkMedGray}
-                />
-                <ThemedText style={styles.locationText}>
-                  {quest.galleryMap}
+            {activeQuests.length === 0 ? (
+              <ThemedView style={styles.emptyStateContainer}>
+                <ThemedText style={styles.emptyStateText}>
+                  You haven't started any quests yet. Begin your journey by
+                  selecting a quest below!
                 </ThemedText>
               </ThemedView>
+            ) : (
+              activeQuests.map((quest) => (
+                <Pressable
+                  key={quest.id}
+                  style={styles.questCard}
+                  onPress={() =>
+                    router.push(`/questDetail?id=${quest.questId}`)
+                  }
+                >
+                  <ThemedView style={styles.questHeader}>
+                    <ThemedView style={styles.questInfo}>
+                      <ThemedView style={styles.titleRow}>
+                        <ThemedText type="title" style={styles.questTitle}>
+                          {quest.title}
+                        </ThemedText>
+                        <ThemedView style={styles.xpBadge}>
+                          <ThemedText style={styles.xpText}>
+                            {quest.xpReward} XP
+                          </ThemedText>
+                        </ThemedView>
+                      </ThemedView>
+                      <ThemedText style={styles.questDescription}>
+                        {quest.description}
+                      </ThemedText>
+                    </ThemedView>
+                  </ThemedView>
+
+                  <ThemedView style={styles.progressContainer}>
+                    <ThemedView style={styles.progressBar}>
+                      <ThemedView
+                        style={[
+                          styles.progressFill,
+                          {
+                            width: `${
+                              (quest.artworksVisited.length /
+                                quest.requiredArtworks.length) *
+                              100
+                            }%`,
+                          },
+                        ]}
+                      />
+                    </ThemedView>
+                    <ThemedView style={styles.progressText}>
+                      <ThemedText style={styles.progressCount}>
+                        {quest.artworksVisited.length}/
+                        {quest.requiredArtworks.length} visited
+                      </ThemedText>
+                      <ThemedText style={styles.progressPercentage}>
+                        {Math.round(
+                          (quest.artworksVisited.length /
+                            quest.requiredArtworks.length) *
+                            100
+                        )}
+                        %
+                      </ThemedText>
+                    </ThemedView>
+                  </ThemedView>
+
+                  {quest.galleryMap && (
+                    <ThemedView style={styles.locationContainer}>
+                      <FontAwesome
+                        name="map-marker"
+                        size={14}
+                        color={Colors.darkMedGray}
+                      />
+                      <ThemedText style={styles.locationText}>
+                        {quest.galleryMap}
+                      </ThemedText>
+                    </ThemedView>
+                  )}
+                </Pressable>
+              ))
             )}
-          </Pressable>
-        ))}
-      </ThemedView>
-    </ScrollView>
+          </ThemedView>
+
+          {/* Available Quests Section */}
+          <ThemedView style={styles.section}>
+            <ThemedView style={styles.sectionHeader}>
+              <ThemedText type="title" style={styles.sectionTitle}>
+                Available Quests
+              </ThemedText>
+              <ThemedView style={[styles.badge, styles.grayBadge]}>
+                <ThemedText style={[styles.badgeText, styles.grayText]}>
+                  {availableQuests.length} Available
+                </ThemedText>
+              </ThemedView>
+            </ThemedView>
+
+            {availableQuests.map((quest) => (
+              <Pressable
+                key={quest.id}
+                style={styles.questCard}
+                onPress={() => router.push(`/questDetail?id=${quest.id}`)}
+              >
+                <ThemedView style={styles.questHeader}>
+                  <ThemedView style={styles.questInfo}>
+                    <ThemedView style={styles.titleRow}>
+                      <ThemedText type="title" style={styles.questTitle}>
+                        {quest.title}
+                      </ThemedText>
+                      {quest.isPremium && (
+                        <ThemedView style={styles.premiumBadge}>
+                          <ThemedText style={styles.premiumText}>
+                            Premium
+                          </ThemedText>
+                        </ThemedView>
+                      )}
+                      <ThemedView style={styles.xpBadge}>
+                        <ThemedText style={styles.xpText}>
+                          {quest.xpReward} XP
+                        </ThemedText>
+                      </ThemedView>
+                    </ThemedView>
+                    <ThemedText style={styles.questDescription}>
+                      {quest.description}
+                    </ThemedText>
+                  </ThemedView>
+                </ThemedView>
+
+                {quest.galleryMap && (
+                  <ThemedView style={styles.locationContainer}>
+                    <FontAwesome
+                      name="map-marker"
+                      size={14}
+                      color={Colors.darkMedGray}
+                    />
+                    <ThemedText style={styles.locationText}>
+                      {quest.galleryMap}
+                    </ThemedText>
+                  </ThemedView>
+                )}
+              </Pressable>
+            ))}
+          </ThemedView>
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -313,6 +320,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
+    paddingTop: 16,
   },
   rankTitle: {
     fontSize: 30,
