@@ -10,8 +10,10 @@ import { FavoritesProvider } from "@/src/contexts/FavoritesContext";
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    CormorantGaramond: require("../assets/fonts/CormorantGaramond-VariableFont_wght.ttf"),
+    TiltPrism: require("../assets/fonts/TiltPrism-Regular-VariableFont_XROT,YROT.ttf"),
+    OldStandardTTBold: require("../assets/fonts/OldStandardTT-Bold.ttf"),
+    OldStandardTTRegular: require("../assets/fonts/OldStandardTT-Regular.ttf"),
+    LatoRegular: require("../assets/fonts/Lato-Regular.ttf"),
   });
 
   if (!loaded) {
@@ -25,9 +27,9 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             headerStyle: {
-              backgroundColor: "#ffffff",
+              backgroundColor: "white",
             },
-            headerTintColor: "#000000",
+            headerTintColor: "black",
           }}
         >
           <Stack.Screen
