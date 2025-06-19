@@ -79,8 +79,10 @@ export default function CollectionScreen() {
       <ThemedView style={styles.content}>
         {/* Title and Stats */}
         <ThemedView style={styles.titleSection}>
-          <ThemedText style={styles.title}>{department.displayName}</ThemedText>
-          <ThemedView style={styles.statsContainer}>
+          <ThemedText type="title" style={styles.title}>
+            {department.displayName}
+          </ThemedText>
+          {/* <ThemedView style={styles.statsContainer}>
             <ThemedView style={styles.statItem}>
               <FontAwesome name="image" size={14} color={Colors.darkMedGray} />
               <ThemedText style={styles.statText}>
@@ -91,7 +93,7 @@ export default function CollectionScreen() {
             <ThemedText style={styles.statText}>
               {Math.ceil(departmentArtworks.length / 50)} Galleries
             </ThemedText>
-          </ThemedView>
+          </ThemedView> */}
           <ThemedText style={styles.description}>
             {department.description ||
               "Discover masterpieces from this amazing collection."}
@@ -101,8 +103,10 @@ export default function CollectionScreen() {
         {/* Featured Works */}
         <ThemedView style={styles.featuredSection}>
           <ThemedView style={styles.featuredHeader}>
-            <ThemedText style={styles.featuredTitle}>Featured Works</ThemedText>
-            <ThemedText style={styles.seeAllButton}>See all</ThemedText>
+            <ThemedText type="title" style={styles.featuredTitle}>
+              Featured Works
+            </ThemedText>
+            {/* <ThemedText style={styles.seeAllButton}>See all</ThemedText> */}
           </ThemedView>
 
           <ThemedView style={styles.featuredList}>
@@ -126,17 +130,18 @@ export default function CollectionScreen() {
                       contentFit="cover"
                     />
                     <ThemedView style={styles.workInfo}>
-                      <Text
+                      <ThemedText
                         style={styles.workTitle}
                         numberOfLines={1}
                         ellipsizeMode="tail"
+                        type="title"
                       >
                         {artwork.title}
-                      </Text>
-                      <ThemedText style={styles.workArtist}>
+                      </ThemedText>
+                      <ThemedText type="subtitle" style={styles.workArtist}>
                         {artwork.artistDisplayName || "Unknown Artist"}
                       </ThemedText>
-                      <ThemedText style={styles.workPeriod}>
+                      <ThemedText type="subtitle" style={styles.workPeriod}>
                         {artwork.period || "Date unknown"}
                       </ThemedText>
                     </ThemedView>
@@ -154,7 +159,7 @@ export default function CollectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: Colors.lightGray,
   },
   headerContainer: {
     height: 250,
@@ -167,37 +172,31 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   titleSection: {
-    marginBottom: 24,
+    marginBottom: 36,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 8,
-    color: Colors.darkGray,
+    marginBottom: 16,
   },
-  statsContainer: {
-    flexDirection: "row",
-    marginBottom: 20,
-  },
-  statItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 20,
-  },
-  statText: {
-    fontSize: 14,
-    color: Colors.darkMedGray,
-    marginLeft: 6,
-  },
-  statDivider: {
-    marginHorizontal: 8,
-    color: Colors.darkMedGray,
-  },
+  // statsContainer: {
+  //   flexDirection: "row",
+  //   marginBottom: 20,
+  // },
+  // statItem: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   marginRight: 20,
+  // },
+  // statText: {
+  //   fontSize: 14,
+  //   color: Colors.darkMedGray,
+  //   marginLeft: 6,
+  // },
+  // statDivider: {
+  //   marginHorizontal: 8,
+  //   color: Colors.darkMedGray,
+  // },
   description: {
-    fontSize: 16,
     color: Colors.darkMedGray,
-    lineHeight: 24,
-    marginBottom: 20,
   },
   featuredSection: {
     marginBottom: 80,
@@ -209,32 +208,29 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   featuredTitle: {
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 20,
   },
-  seeAllButton: {
-    fontSize: 14,
-    color: Colors.darkMedGray,
-  },
+  // seeAllButton: {
+  //   fontSize: 14,
+  //   color: Colors.darkMedGray,
+  // },
   featuredList: {
     gap: 12,
   },
   workCard: {
     flexDirection: "row",
-    backgroundColor: "white",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.medLightGray,
+    padding: 12,
+    alignItems: "center",
     shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
     elevation: 2,
-    padding: 12,
-    alignItems: "center",
   },
   workImage: {
     width: 90,
@@ -243,12 +239,13 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 12,
   },
   workInfo: {
+    backgroundColor: Colors.medLightGray,
     flex: 1,
     paddingHorizontal: 16,
   },
   workTitle: {
     fontSize: 16,
-    fontWeight: "500",
+    lineHeight: 24,
     marginBottom: 4,
   },
   workArtist: {
@@ -257,7 +254,7 @@ const styles = StyleSheet.create({
   },
   workPeriod: {
     fontSize: 12,
-    color: Colors.medGray,
+    color: Colors.darkMedGray,
     marginTop: 4,
   },
   centerContent: {

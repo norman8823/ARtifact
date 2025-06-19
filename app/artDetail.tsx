@@ -30,6 +30,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { Colors } from "../constants/Colors";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const THUMBNAIL_SIZE = 60;
@@ -265,7 +266,11 @@ export default function ArtDetailScreen() {
               style={styles.zoomButton}
               onPress={() => setIsModalVisible(true)}
             >
-              <FontAwesome name="search-plus" size={24} color="#fff" />
+              <FontAwesome
+                name="search-plus"
+                size={24}
+                color={Colors.lightGray}
+              />
             </Pressable>
           </ThemedView>
           {allImages.length > 1 && (
@@ -303,7 +308,7 @@ export default function ArtDetailScreen() {
                   setIsModalVisible(false);
                 }}
               >
-                <FontAwesome name="times" size={24} color="#fff" />
+                <FontAwesome name="times" size={24} color={Colors.lightGray} />
               </TouchableOpacity>
               <GestureDetector gesture={composed}>
                 <Animated.View
@@ -327,11 +332,13 @@ export default function ArtDetailScreen() {
           {/* Title and Favorite Button */}
           <ThemedView style={styles.titleRow}>
             <ThemedView>
-              <ThemedText style={styles.title}>{artwork.title}</ThemedText>
-              <ThemedText style={styles.artist}>
+              <ThemedText type="title" style={styles.title}>
+                {artwork.title}
+              </ThemedText>
+              <ThemedText type="subtitle" style={styles.artist}>
                 {artwork.artistDisplayName || "Unknown Artist"}
               </ThemedText>
-              <ThemedText style={styles.period}>
+              <ThemedText type="subtitle" style={styles.period}>
                 {artwork.objectDate}
               </ThemedText>
             </ThemedView>
@@ -343,7 +350,7 @@ export default function ArtDetailScreen() {
               <FontAwesome
                 name={isFavorited ? "heart" : "heart-o"}
                 size={20}
-                color={isFavorited ? "#ff4444" : "#666"}
+                color={isFavorited ? Colors.favoriteRed : Colors.darkMedGray}
               />
             </Pressable>
           </ThemedView>
@@ -353,7 +360,7 @@ export default function ArtDetailScreen() {
             style={styles.scanButton}
             onPress={() => router.push("/scan")}
           >
-            <FontAwesome name="camera" size={18} color="#fff" />
+            <FontAwesome name="camera" size={18} color={Colors.lightGray} />
             <ThemedText style={styles.scanButtonText}>Scan Artwork</ThemedText>
           </Pressable>
 
@@ -371,7 +378,7 @@ export default function ArtDetailScreen() {
               });
             }}
           >
-            <FontAwesome name="cube" size={18} color="#fff" />
+            <FontAwesome name="cube" size={18} color={Colors.lightGray} />
             <ThemedText style={styles.arButtonText}>View in AR</ThemedText>
           </Pressable>
           {/* )} */}
@@ -409,7 +416,7 @@ export default function ArtDetailScreen() {
                   <FontAwesome
                     name="map-marker"
                     size={14}
-                    color="#666"
+                    color={Colors.darkMedGray}
                     style={styles.galleryIcon}
                   />
                   <ThemedText style={styles.galleryNumber}>
@@ -433,7 +440,7 @@ export default function ArtDetailScreen() {
               <ThemedView style={styles.didYouKnowBorder} />
               <ThemedView style={styles.didYouKnowTitleContainer}>
                 <ThemedView style={styles.didYouKnowTitleBackground}>
-                  <ThemedText style={styles.didYouKnowTitle}>
+                  <ThemedText type="subtitle" style={styles.didYouKnowTitle}>
                     Did You Know?
                   </ThemedText>
                 </ThemedView>
@@ -503,10 +510,18 @@ export default function ArtDetailScreen() {
                 </ThemedView>
                 <ThemedView style={styles.audioControls}>
                   <Pressable style={styles.transcriptButton}>
-                    <FontAwesome name="file-text-o" size={18} color="#666" />
+                    <FontAwesome
+                      name="file-text-o"
+                      size={18}
+                      color={Colors.darkMedGray}
+                    />
                   </Pressable>
                   <Pressable style={styles.playButton}>
-                    <FontAwesome name="play" size={14} color="#fff" />
+                    <FontAwesome
+                      name="play"
+                      size={14}
+                      color={Colors.lightGray}
+                    />
                   </Pressable>
                 </ThemedView>
               </ThemedView>
@@ -521,15 +536,13 @@ export default function ArtDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.lightGray,
   },
   centerContent: {
     justifyContent: "center",
     alignItems: "center",
   },
-  imageContainer: {
-    backgroundColor: "#f5f5f5",
-  },
+  imageContainer: {},
   mainImageContainer: {
     position: "relative",
   },
@@ -550,84 +563,76 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "600",
-    color: "#000",
     marginBottom: 4,
     flex: 1,
   },
   artist: {
     fontSize: 16,
-    color: "#666",
+    color: Colors.darkMedGray,
     marginBottom: 2,
     flex: 1,
   },
   period: {
     fontSize: 14,
-    color: "#999",
+    color: Colors.medGray,
     flex: 1,
   },
   favoriteButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#eee",
+    backgroundColor: Colors.lightGray,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
     position: "absolute",
-    right: 8,
+    right: 0,
     top: 0,
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 2,
   },
   scanButton: {
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#666",
+    backgroundColor: Colors.darkGray,
     paddingVertical: 14,
     borderRadius: 12,
     gap: 8,
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
     elevation: 2,
   },
   scanButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "500",
+    color: Colors.lightGray,
   },
   arButton: {
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#666",
+    backgroundColor: Colors.darkGray,
     paddingVertical: 14,
     borderRadius: 12,
     gap: 8,
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
     elevation: 2,
   },
   arButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "500",
+    color: Colors.lightGray,
   },
   detailsContainer: {
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "#eee",
+    borderColor: Colors.medLightGray,
     paddingVertical: 16,
     gap: 12,
     marginTop: 8,
@@ -640,28 +645,26 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
     flex: 1,
   },
   detailValue: {
     fontSize: 14,
-    color: "#000",
     flex: 2,
     textAlign: "right",
   },
   description: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#666",
   },
   audioGuideCard: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
     elevation: 2,
   },
   audioGuideContent: {
@@ -672,7 +675,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.lightGray,
   },
   guideInfo: {
     flex: 1,
@@ -680,12 +683,10 @@ const styles = StyleSheet.create({
   },
   guideTitle: {
     fontSize: 14,
-    fontWeight: "500",
-    color: "#000",
   },
   guideDuration: {
     fontSize: 12,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   audioControls: {
     flexDirection: "row",
@@ -699,18 +700,18 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#000",
+    backgroundColor: Colors.darkGray,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
     elevation: 2,
   },
   thumbnailContainer: {
     padding: THUMBNAIL_SPACING,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.lightGray,
   },
   thumbnailContainerCentered: {
     flexGrow: 1,
@@ -726,7 +727,7 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   thumbnailSelected: {
-    borderColor: "#000",
+    borderColor: "black",
   },
   thumbnailImage: {
     width: "100%",
@@ -770,11 +771,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
   didYouKnowContainer: {
     marginTop: 24,
@@ -788,7 +784,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     borderWidth: 1,
-    borderColor: "#666",
+    borderColor: Colors.darkMedGray,
     borderRadius: 12,
   },
   didYouKnowTitleContainer: {
@@ -798,34 +794,26 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   didYouKnowTitleBackground: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.lightGray,
     paddingHorizontal: 12,
   },
   didYouKnowTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#000",
   },
   factsContainer: {
     gap: 8,
     paddingTop: 8,
   },
   factCard: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
     justifyContent: "center",
     minHeight: 120,
   },
   factText: {
     fontSize: 15,
     lineHeight: 22,
-    color: "#000",
   },
   paginationContainer: {
     flexDirection: "row",
@@ -839,10 +827,10 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#999",
+    backgroundColor: Colors.medGray,
   },
   paginationDotActive: {
-    backgroundColor: "#000",
+    backgroundColor: "black",
     width: 12,
     height: 12,
     borderRadius: 6,
@@ -853,7 +841,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 12,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.medLightGray,
   },
   galleryNumberPressed: {
     opacity: 0.7,
@@ -863,6 +851,6 @@ const styles = StyleSheet.create({
   },
   galleryNumber: {
     fontSize: 15,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
 });
