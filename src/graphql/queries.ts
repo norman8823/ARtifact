@@ -712,3 +712,73 @@ export const listRanks = /* GraphQL */ `query ListRanks(
   }
 }
 ` as GeneratedQuery<APITypes.ListRanksQueryVariables, APITypes.ListRanksQuery>;
+export const getDidYouKnow = /* GraphQL */ `query GetDidYouKnow($id: ID!) {
+  getDidYouKnow(id: $id) {
+    id
+    fact
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetDidYouKnowQueryVariables,
+  APITypes.GetDidYouKnowQuery
+>;
+export const listDidYouKnows = /* GraphQL */ `query ListDidYouKnows(
+  $filter: ModelDidYouKnowFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listDidYouKnows(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      fact
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListDidYouKnowsQueryVariables,
+  APITypes.ListDidYouKnowsQuery
+>;
+export const getGalleryMap = /* GraphQL */ `query GetGalleryMap($id: ID!) {
+  getGalleryMap(id: $id) {
+    id
+    galleryNumber
+    mapURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetGalleryMapQueryVariables,
+  APITypes.GetGalleryMapQuery
+>;
+export const listGalleryMaps = /* GraphQL */ `query ListGalleryMaps(
+  $filter: ModelGalleryMapFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listGalleryMaps(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      galleryNumber
+      mapURL
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListGalleryMapsQueryVariables,
+  APITypes.ListGalleryMapsQuery
+>;

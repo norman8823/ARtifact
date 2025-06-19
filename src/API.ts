@@ -680,6 +680,72 @@ export type DeleteUserXPInput = {
   id: string,
 };
 
+export type CreateDidYouKnowInput = {
+  id?: string | null,
+  fact: string,
+};
+
+export type ModelDidYouKnowConditionInput = {
+  fact?: ModelStringInput | null,
+  and?: Array< ModelDidYouKnowConditionInput | null > | null,
+  or?: Array< ModelDidYouKnowConditionInput | null > | null,
+  not?: ModelDidYouKnowConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type DidYouKnow = {
+  __typename: "DidYouKnow",
+  id: string,
+  fact: string,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type UpdateDidYouKnowInput = {
+  id: string,
+  fact?: string | null,
+};
+
+export type DeleteDidYouKnowInput = {
+  id: string,
+};
+
+export type CreateGalleryMapInput = {
+  id?: string | null,
+  galleryNumber: string,
+  mapURL: string,
+};
+
+export type ModelGalleryMapConditionInput = {
+  galleryNumber?: ModelStringInput | null,
+  mapURL?: ModelStringInput | null,
+  and?: Array< ModelGalleryMapConditionInput | null > | null,
+  or?: Array< ModelGalleryMapConditionInput | null > | null,
+  not?: ModelGalleryMapConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type GalleryMap = {
+  __typename: "GalleryMap",
+  id: string,
+  galleryNumber: string,
+  mapURL: string,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type UpdateGalleryMapInput = {
+  id: string,
+  galleryNumber?: string | null,
+  mapURL?: string | null,
+};
+
+export type DeleteGalleryMapInput = {
+  id: string,
+};
+
 export type ModelUserFilterInput = {
   id?: ModelIDInput | null,
   username?: ModelStringInput | null,
@@ -950,6 +1016,39 @@ export type ModelRankConnection = {
   nextToken?: string | null,
 };
 
+export type ModelDidYouKnowFilterInput = {
+  id?: ModelIDInput | null,
+  fact?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelDidYouKnowFilterInput | null > | null,
+  or?: Array< ModelDidYouKnowFilterInput | null > | null,
+  not?: ModelDidYouKnowFilterInput | null,
+};
+
+export type ModelDidYouKnowConnection = {
+  __typename: "ModelDidYouKnowConnection",
+  items:  Array<DidYouKnow | null >,
+  nextToken?: string | null,
+};
+
+export type ModelGalleryMapFilterInput = {
+  id?: ModelIDInput | null,
+  galleryNumber?: ModelStringInput | null,
+  mapURL?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelGalleryMapFilterInput | null > | null,
+  or?: Array< ModelGalleryMapFilterInput | null > | null,
+  not?: ModelGalleryMapFilterInput | null,
+};
+
+export type ModelGalleryMapConnection = {
+  __typename: "ModelGalleryMapConnection",
+  items:  Array<GalleryMap | null >,
+  nextToken?: string | null,
+};
+
 export type ModelSubscriptionUserFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   username?: ModelSubscriptionStringInput | null,
@@ -1162,6 +1261,25 @@ export type ModelSubscriptionRankFilterInput = {
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionRankFilterInput | null > | null,
   or?: Array< ModelSubscriptionRankFilterInput | null > | null,
+};
+
+export type ModelSubscriptionDidYouKnowFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  fact?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionDidYouKnowFilterInput | null > | null,
+  or?: Array< ModelSubscriptionDidYouKnowFilterInput | null > | null,
+};
+
+export type ModelSubscriptionGalleryMapFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  galleryNumber?: ModelSubscriptionStringInput | null,
+  mapURL?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionGalleryMapFilterInput | null > | null,
+  or?: Array< ModelSubscriptionGalleryMapFilterInput | null > | null,
 };
 
 export type CreateUserMutationVariables = {
@@ -1863,6 +1981,99 @@ export type DeleteUserXPMutation = {
   } | null,
 };
 
+export type CreateDidYouKnowMutationVariables = {
+  input: CreateDidYouKnowInput,
+  condition?: ModelDidYouKnowConditionInput | null,
+};
+
+export type CreateDidYouKnowMutation = {
+  createDidYouKnow?:  {
+    __typename: "DidYouKnow",
+    id: string,
+    fact: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateDidYouKnowMutationVariables = {
+  input: UpdateDidYouKnowInput,
+  condition?: ModelDidYouKnowConditionInput | null,
+};
+
+export type UpdateDidYouKnowMutation = {
+  updateDidYouKnow?:  {
+    __typename: "DidYouKnow",
+    id: string,
+    fact: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteDidYouKnowMutationVariables = {
+  input: DeleteDidYouKnowInput,
+  condition?: ModelDidYouKnowConditionInput | null,
+};
+
+export type DeleteDidYouKnowMutation = {
+  deleteDidYouKnow?:  {
+    __typename: "DidYouKnow",
+    id: string,
+    fact: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateGalleryMapMutationVariables = {
+  input: CreateGalleryMapInput,
+  condition?: ModelGalleryMapConditionInput | null,
+};
+
+export type CreateGalleryMapMutation = {
+  createGalleryMap?:  {
+    __typename: "GalleryMap",
+    id: string,
+    galleryNumber: string,
+    mapURL: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateGalleryMapMutationVariables = {
+  input: UpdateGalleryMapInput,
+  condition?: ModelGalleryMapConditionInput | null,
+};
+
+export type UpdateGalleryMapMutation = {
+  updateGalleryMap?:  {
+    __typename: "GalleryMap",
+    id: string,
+    galleryNumber: string,
+    mapURL: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteGalleryMapMutationVariables = {
+  input: DeleteGalleryMapInput,
+  condition?: ModelGalleryMapConditionInput | null,
+};
+
+export type DeleteGalleryMapMutation = {
+  deleteGalleryMap?:  {
+    __typename: "GalleryMap",
+    id: string,
+    galleryNumber: string,
+    mapURL: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
 export type GetUserQueryVariables = {
   id: string,
 };
@@ -2530,6 +2741,76 @@ export type ListRanksQuery = {
       maxXP?: number | null,
       icon?: string | null,
       description?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetDidYouKnowQueryVariables = {
+  id: string,
+};
+
+export type GetDidYouKnowQuery = {
+  getDidYouKnow?:  {
+    __typename: "DidYouKnow",
+    id: string,
+    fact: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListDidYouKnowsQueryVariables = {
+  filter?: ModelDidYouKnowFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListDidYouKnowsQuery = {
+  listDidYouKnows?:  {
+    __typename: "ModelDidYouKnowConnection",
+    items:  Array< {
+      __typename: "DidYouKnow",
+      id: string,
+      fact: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetGalleryMapQueryVariables = {
+  id: string,
+};
+
+export type GetGalleryMapQuery = {
+  getGalleryMap?:  {
+    __typename: "GalleryMap",
+    id: string,
+    galleryNumber: string,
+    mapURL: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListGalleryMapsQueryVariables = {
+  filter?: ModelGalleryMapFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListGalleryMapsQuery = {
+  listGalleryMaps?:  {
+    __typename: "ModelGalleryMapConnection",
+    items:  Array< {
+      __typename: "GalleryMap",
+      id: string,
+      galleryNumber: string,
+      mapURL: string,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -3213,6 +3494,93 @@ export type OnDeleteRankSubscription = {
     maxXP?: number | null,
     icon?: string | null,
     description?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateDidYouKnowSubscriptionVariables = {
+  filter?: ModelSubscriptionDidYouKnowFilterInput | null,
+};
+
+export type OnCreateDidYouKnowSubscription = {
+  onCreateDidYouKnow?:  {
+    __typename: "DidYouKnow",
+    id: string,
+    fact: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateDidYouKnowSubscriptionVariables = {
+  filter?: ModelSubscriptionDidYouKnowFilterInput | null,
+};
+
+export type OnUpdateDidYouKnowSubscription = {
+  onUpdateDidYouKnow?:  {
+    __typename: "DidYouKnow",
+    id: string,
+    fact: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteDidYouKnowSubscriptionVariables = {
+  filter?: ModelSubscriptionDidYouKnowFilterInput | null,
+};
+
+export type OnDeleteDidYouKnowSubscription = {
+  onDeleteDidYouKnow?:  {
+    __typename: "DidYouKnow",
+    id: string,
+    fact: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateGalleryMapSubscriptionVariables = {
+  filter?: ModelSubscriptionGalleryMapFilterInput | null,
+};
+
+export type OnCreateGalleryMapSubscription = {
+  onCreateGalleryMap?:  {
+    __typename: "GalleryMap",
+    id: string,
+    galleryNumber: string,
+    mapURL: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateGalleryMapSubscriptionVariables = {
+  filter?: ModelSubscriptionGalleryMapFilterInput | null,
+};
+
+export type OnUpdateGalleryMapSubscription = {
+  onUpdateGalleryMap?:  {
+    __typename: "GalleryMap",
+    id: string,
+    galleryNumber: string,
+    mapURL: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteGalleryMapSubscriptionVariables = {
+  filter?: ModelSubscriptionGalleryMapFilterInput | null,
+};
+
+export type OnDeleteGalleryMapSubscription = {
+  onDeleteGalleryMap?:  {
+    __typename: "GalleryMap",
+    id: string,
+    galleryNumber: string,
+    mapURL: string,
     createdAt: string,
     updatedAt: string,
   } | null,
