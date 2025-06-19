@@ -60,7 +60,6 @@ export default function FavoritesScreen() {
           options={{
             title: "Favorites",
             headerShadowVisible: false,
-            headerBackTitle: "Profile",
           }}
         />
         <ThemedText style={styles.emptyText}>
@@ -76,7 +75,6 @@ export default function FavoritesScreen() {
         options={{
           title: "Favorites",
           headerShadowVisible: false,
-          headerBackTitle: "Profile",
         }}
       />
       <ScrollView

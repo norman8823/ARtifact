@@ -39,7 +39,6 @@ export default function QuestsCompletedScreen() {
           options={{
             title: "Quests Completed",
             headerShadowVisible: false,
-            headerBackTitle: "Profile",
           }}
         />
         <ActivityIndicator size="large" />
@@ -55,7 +54,6 @@ export default function QuestsCompletedScreen() {
           options={{
             title: "Quests Completed",
             headerShadowVisible: false,
-            headerBackTitle: "Profile",
           }}
         />
         <ThemedText style={styles.errorText}>
@@ -73,7 +71,6 @@ export default function QuestsCompletedScreen() {
           options={{
             title: "Quests Completed",
             headerShadowVisible: false,
-            headerBackTitle: "Profile",
           }}
         />
         <ThemedView style={styles.emptyState}>
@@ -95,7 +92,6 @@ export default function QuestsCompletedScreen() {
         options={{
           title: "Quests Completed",
           headerShadowVisible: false,
-          headerBackTitle: "Profile",
         }}
       />
       <ScrollView

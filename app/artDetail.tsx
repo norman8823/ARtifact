@@ -247,7 +247,6 @@ export default function ArtDetailScreen() {
     <>
       <Stack.Screen
         options={{
-          headerBackTitle: source,
           title: "Artwork Details",
         }}
       />

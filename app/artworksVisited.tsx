@@ -59,7 +59,6 @@ export default function ArtworksVisitedScreen() {
           options={{
             title: "Artworks Visited",
             headerShadowVisible: false,
-            headerBackTitle: "Profile",
           }}
         />
         <ActivityIndicator size="large" />
@@ -75,7 +74,6 @@ export default function ArtworksVisitedScreen() {
           options={{
             title: "Artworks Visited",
             headerShadowVisible: false,
-            headerBackTitle: "Profile",
           }}
         />
         <ThemedText style={styles.errorText}>
@@ -93,7 +91,6 @@ export default function ArtworksVisitedScreen() {
           options={{
             title: "Artworks Visited",
             headerShadowVisible: false,
-            headerBackTitle: "Profile",
           }}
         />
         <ThemedView style={styles.emptyState}>
@@ -115,7 +112,6 @@ export default function ArtworksVisitedScreen() {
         options={{
           title: "Artworks Visited",
           headerShadowVisible: false,
-          headerBackTitle: "Profile",
         }}
       />
       <ScrollView
