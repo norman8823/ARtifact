@@ -111,10 +111,14 @@ export default function FavoritesScreen() {
                   />
                 </ThemedView>
               </ThemedView>
-              <ThemedText style={styles.title} numberOfLines={1}>
+              <ThemedText type="title" style={styles.title} numberOfLines={1}>
                 {artwork.title}
               </ThemedText>
-              <ThemedText style={styles.artist} numberOfLines={1}>
+              <ThemedText
+                type="subtitle"
+                style={styles.artist}
+                numberOfLines={1}
+              >
                 {artwork.artistDisplayName || "Unknown Artist"}
               </ThemedText>
             </Pressable>
@@ -128,67 +132,36 @@ export default function FavoritesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: Colors.lightGray,
   },
   centerContent: {
     justifyContent: "center",
     alignItems: "center",
   },
-  list: {
-    flex: 1,
-  },
-  item: {
-    flexDirection: "row",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.medLightGray,
-    backgroundColor: "white",
-  },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    marginRight: 15,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
+    width: "100%",
+    height: "100%",
   },
   title: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 4,
-    color: Colors.darkGray,
+    fontSize: 14,
+    lineHeight: 24,
   },
   artist: {
-    fontSize: 14,
+    fontSize: 12,
     color: Colors.darkMedGray,
   },
   heartContainer: {
     position: "absolute",
-    top: 10,
-    right: 10,
-    backgroundColor: "white",
+    bottom: 8,
+    right: 8,
+    width: 24,
+    height: 24,
     borderRadius: 12,
-    padding: 4,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
+    backgroundColor: Colors.lightGray,
     alignItems: "center",
-    paddingHorizontal: 20,
+    justifyContent: "center",
   },
-  emptyText: {
-    fontSize: 16,
-    color: Colors.darkMedGray,
-    textAlign: "center",
-    marginTop: 20,
-  },
+  emptyText: {},
   scrollView: {
     flex: 1,
   },
@@ -208,7 +181,7 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 1,
     borderRadius: 12,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: Colors.medLightGray,
     marginBottom: 8,
     overflow: "hidden",
   },

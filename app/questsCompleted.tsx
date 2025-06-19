@@ -5,6 +5,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
+import { Colors } from "../constants/Colors";
 
 export default function QuestsCompletedScreen() {
   const { getUserQuests, isLoading, error } = useUserQuests();
@@ -74,7 +75,7 @@ export default function QuestsCompletedScreen() {
           }}
         />
         <ThemedView style={styles.emptyState}>
-          <FontAwesome name="trophy" size={48} color="#bbf7d0" />
+          <FontAwesome name="trophy" size={48} color={Colors.darkMedGray} />
           <ThemedText style={styles.emptyStateTitle}>
             No Quests Completed Yet
           </ThemedText>
@@ -103,23 +104,25 @@ export default function QuestsCompletedScreen() {
           {completedQuests.map((quest) => (
             <ThemedView key={quest.id} style={styles.questCard}>
               <ThemedView style={styles.questHeader}>
-                <ThemedView style={styles.questInfo}>
-                  <ThemedText style={styles.questTitle}>
-                    {quest.title}
-                  </ThemedText>
-                  <ThemedText style={styles.questDescription}>
-                    {quest.description}
-                  </ThemedText>
-                </ThemedView>
+                <ThemedText type="title" style={styles.questTitle}>
+                  {quest.title}
+                </ThemedText>
                 <ThemedView style={styles.xpBadge}>
                   <ThemedText style={styles.xpText}>
                     +{quest.xpReward} XP
                   </ThemedText>
                 </ThemedView>
               </ThemedView>
+              <ThemedText style={styles.questDescription}>
+                {quest.description}
+              </ThemedText>
               <ThemedView style={styles.questFooter}>
                 <ThemedView style={styles.completedStatus}>
-                  <FontAwesome name="check-circle" size={14} color="#16a34a" />
+                  <FontAwesome
+                    name="check-circle"
+                    size={14}
+                    color={Colors.darkGreen}
+                  />
                   <ThemedText style={styles.completedText}>
                     Completed
                   </ThemedText>
@@ -143,7 +146,7 @@ export default function QuestsCompletedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.lightGray,
   },
   centerContent: {
     justifyContent: "center",
@@ -153,84 +156,69 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    padding: 24,
+    padding: 20,
     paddingBottom: 80,
   },
   questList: {
-    gap: 16,
+    gap: 12,
   },
   questCard: {
     padding: 16,
     borderRadius: 12,
-    backgroundColor: "#f0fdf4",
-    borderWidth: 1,
-    borderColor: "#bbf7d0",
-    shadowColor: "#000",
+    backgroundColor: Colors.lightGreen,
+    shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
     elevation: 2,
   },
   questHeader: {
-    backgroundColor: "#f0fdf4",
+    backgroundColor: Colors.lightGreen,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 8,
-    gap: 12,
-  },
-  questInfo: {
-    flex: 1,
-    backgroundColor: "#f0fdf4",
+    alignItems: "center",
+    marginBottom: 12,
   },
   questTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#166534",
-    marginBottom: 4,
+    fontSize: 20,
   },
-  questDescription: {
-    fontSize: 14,
-    color: "#15803d",
-    flexShrink: 1,
-  },
+  questDescription: {},
   xpBadge: {
-    backgroundColor: "#16a34a",
-    paddingHorizontal: 8,
+    backgroundColor: Colors.darkGreen,
+    paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
-    flexShrink: 0,
+    alignSelf: "flex-start",
   },
   xpText: {
-    color: "#fff",
+    color: Colors.lightGray,
     fontSize: 12,
-    fontWeight: "600",
   },
   questFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f0fdf4",
+    backgroundColor: Colors.lightGreen,
+    marginTop: 16,
   },
   completedStatus: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: "#f0fdf4",
+    backgroundColor: Colors.lightGreen,
   },
   completedText: {
     fontSize: 12,
-    color: "#15803d",
+    color: Colors.darkGreen,
   },
   dateText: {
     fontSize: 12,
-    color: "#15803d",
+    color: Colors.darkGreen,
   },
   errorText: {
-    color: "#dc2626",
     textAlign: "center",
     marginHorizontal: 24,
   },
@@ -240,14 +228,12 @@ const styles = StyleSheet.create({
   },
   emptyStateTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#166534",
     marginTop: 16,
     marginBottom: 8,
   },
   emptyStateText: {
     fontSize: 14,
-    color: "#15803d",
+    color: Colors.darkMedGray,
     textAlign: "center",
   },
 });
