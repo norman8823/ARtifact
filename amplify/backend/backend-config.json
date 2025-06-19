@@ -95,7 +95,23 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_analyzeImage_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "analyzeImage"
+        }
+      ]
+    },
     "AMPLIFY_function_analyzeImage_projectVersionArn": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "analyzeImage"
+        }
+      ]
+    },
+    "AMPLIFY_function_analyzeImage_s3Key": {
       "usedBy": [
         {
           "category": "function",

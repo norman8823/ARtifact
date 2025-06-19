@@ -740,3 +740,102 @@ export const deleteUserXP = /* GraphQL */ `mutation DeleteUserXP(
   APITypes.DeleteUserXPMutationVariables,
   APITypes.DeleteUserXPMutation
 >;
+export const createDidYouKnow = /* GraphQL */ `mutation CreateDidYouKnow(
+  $input: CreateDidYouKnowInput!
+  $condition: ModelDidYouKnowConditionInput
+) {
+  createDidYouKnow(input: $input, condition: $condition) {
+    id
+    fact
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateDidYouKnowMutationVariables,
+  APITypes.CreateDidYouKnowMutation
+>;
+export const updateDidYouKnow = /* GraphQL */ `mutation UpdateDidYouKnow(
+  $input: UpdateDidYouKnowInput!
+  $condition: ModelDidYouKnowConditionInput
+) {
+  updateDidYouKnow(input: $input, condition: $condition) {
+    id
+    fact
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateDidYouKnowMutationVariables,
+  APITypes.UpdateDidYouKnowMutation
+>;
+export const deleteDidYouKnow = /* GraphQL */ `mutation DeleteDidYouKnow(
+  $input: DeleteDidYouKnowInput!
+  $condition: ModelDidYouKnowConditionInput
+) {
+  deleteDidYouKnow(input: $input, condition: $condition) {
+    id
+    fact
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteDidYouKnowMutationVariables,
+  APITypes.DeleteDidYouKnowMutation
+>;
+export const createGalleryMap = /* GraphQL */ `mutation CreateGalleryMap(
+  $input: CreateGalleryMapInput!
+  $condition: ModelGalleryMapConditionInput
+) {
+  createGalleryMap(input: $input, condition: $condition) {
+    id
+    galleryNumber
+    mapURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateGalleryMapMutationVariables,
+  APITypes.CreateGalleryMapMutation
+>;
+export const updateGalleryMap = /* GraphQL */ `mutation UpdateGalleryMap(
+  $input: UpdateGalleryMapInput!
+  $condition: ModelGalleryMapConditionInput
+) {
+  updateGalleryMap(input: $input, condition: $condition) {
+    id
+    galleryNumber
+    mapURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateGalleryMapMutationVariables,
+  APITypes.UpdateGalleryMapMutation
+>;
+export const deleteGalleryMap = /* GraphQL */ `mutation DeleteGalleryMap(
+  $input: DeleteGalleryMapInput!
+  $condition: ModelGalleryMapConditionInput
+) {
+  deleteGalleryMap(input: $input, condition: $condition) {
+    id
+    galleryNumber
+    mapURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteGalleryMapMutationVariables,
+  APITypes.DeleteGalleryMapMutation
+>;

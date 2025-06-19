@@ -698,3 +698,96 @@ export const onDeleteRank = /* GraphQL */ `subscription OnDeleteRank($filter: Mo
   APITypes.OnDeleteRankSubscriptionVariables,
   APITypes.OnDeleteRankSubscription
 >;
+export const onCreateDidYouKnow = /* GraphQL */ `subscription OnCreateDidYouKnow(
+  $filter: ModelSubscriptionDidYouKnowFilterInput
+) {
+  onCreateDidYouKnow(filter: $filter) {
+    id
+    fact
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateDidYouKnowSubscriptionVariables,
+  APITypes.OnCreateDidYouKnowSubscription
+>;
+export const onUpdateDidYouKnow = /* GraphQL */ `subscription OnUpdateDidYouKnow(
+  $filter: ModelSubscriptionDidYouKnowFilterInput
+) {
+  onUpdateDidYouKnow(filter: $filter) {
+    id
+    fact
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateDidYouKnowSubscriptionVariables,
+  APITypes.OnUpdateDidYouKnowSubscription
+>;
+export const onDeleteDidYouKnow = /* GraphQL */ `subscription OnDeleteDidYouKnow(
+  $filter: ModelSubscriptionDidYouKnowFilterInput
+) {
+  onDeleteDidYouKnow(filter: $filter) {
+    id
+    fact
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteDidYouKnowSubscriptionVariables,
+  APITypes.OnDeleteDidYouKnowSubscription
+>;
+export const onCreateGalleryMap = /* GraphQL */ `subscription OnCreateGalleryMap(
+  $filter: ModelSubscriptionGalleryMapFilterInput
+) {
+  onCreateGalleryMap(filter: $filter) {
+    id
+    galleryNumber
+    mapURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateGalleryMapSubscriptionVariables,
+  APITypes.OnCreateGalleryMapSubscription
+>;
+export const onUpdateGalleryMap = /* GraphQL */ `subscription OnUpdateGalleryMap(
+  $filter: ModelSubscriptionGalleryMapFilterInput
+) {
+  onUpdateGalleryMap(filter: $filter) {
+    id
+    galleryNumber
+    mapURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateGalleryMapSubscriptionVariables,
+  APITypes.OnUpdateGalleryMapSubscription
+>;
+export const onDeleteGalleryMap = /* GraphQL */ `subscription OnDeleteGalleryMap(
+  $filter: ModelSubscriptionGalleryMapFilterInput
+) {
+  onDeleteGalleryMap(filter: $filter) {
+    id
+    galleryNumber
+    mapURL
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteGalleryMapSubscriptionVariables,
+  APITypes.OnDeleteGalleryMapSubscription
+>;
