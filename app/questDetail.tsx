@@ -13,6 +13,7 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
+import { Colors } from "../constants/Colors";
 
 interface QuestDetail {
   quest: Quest;
@@ -148,10 +149,16 @@ export default function QuestDetailScreen() {
           <ThemedView style={styles.questHeader}>
             <ThemedView style={styles.headerLeft}>
               <ThemedView style={styles.iconContainer}>
-                <FontAwesome name="paint-brush" size={24} color="#F59E0B" />
+                <FontAwesome
+                  name="paint-brush"
+                  size={24}
+                  color={Colors.darkYellow}
+                />
               </ThemedView>
               <ThemedView>
-                <ThemedText style={styles.questTitle}>{quest.title}</ThemedText>
+                <ThemedText type="title" style={styles.questTitle}>
+                  {quest.title}
+                </ThemedText>
               </ThemedView>
             </ThemedView>
             <ThemedView style={styles.xpBadge}>
@@ -181,14 +188,11 @@ export default function QuestDetailScreen() {
               <FontAwesome
                 name="check-circle"
                 size={16}
-                color="#16A34A"
+                color={Colors.darkGreen}
                 style={styles.checkIcon}
               />
               <ThemedText style={styles.progressText}>
-                <ThemedText style={styles.progressCount}>
-                  {progress.current}/{progress.total}
-                </ThemedText>{" "}
-                artworks discovered
+                {progress.current}/{progress.total} artworks discovered
               </ThemedText>
             </ThemedView>
             <ThemedView
@@ -196,6 +200,7 @@ export default function QuestDetailScreen() {
                 styles.statusBadge,
                 questStatus === "Completed" && styles.completedBadge,
                 questStatus === "In Progress" && styles.inProgressBadge,
+                questStatus === "Not Started" && styles.notStartedBadge,
               ]}
             >
               <ThemedText
@@ -203,6 +208,7 @@ export default function QuestDetailScreen() {
                   styles.statusText,
                   questStatus === "Completed" && styles.completedText,
                   questStatus === "In Progress" && styles.inProgressText,
+                  questStatus === "Not Started" && styles.notStartedText,
                 ]}
               >
                 {questStatus}
@@ -221,7 +227,7 @@ export default function QuestDetailScreen() {
               disabled={isStarting}
             >
               {isStarting ? (
-                <ActivityIndicator color="#FFFFFF" />
+                <ActivityIndicator color={Colors.lightGray} />
               ) : (
                 <ThemedText style={styles.startButtonText}>
                   Start Quest
@@ -234,17 +240,21 @@ export default function QuestDetailScreen() {
         {/* Artworks Section */}
         <ThemedView style={styles.artworksSection}>
           <ThemedView style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>
+            <ThemedText type="title" style={styles.sectionTitle}>
               Artworks to Discover
             </ThemedText>
-            {quest.galleryMap && (
+            {/* {quest.galleryMap && (
               <Pressable style={styles.mapButton}>
-                <FontAwesome name="map-marker" size={14} color="#666" />
+                <FontAwesome
+                  name="map-marker"
+                  size={14}
+                  color={Colors.darkMedGray}
+                />
                 <ThemedText style={styles.mapButtonText}>
                   View on Map
                 </ThemedText>
               </Pressable>
-            )}
+            )} */}
           </ThemedView>
 
           {/* Artwork Cards */}
@@ -276,7 +286,11 @@ export default function QuestDetailScreen() {
                     />
                   ) : (
                     <ThemedView style={styles.imagePlaceholder}>
-                      <FontAwesome name="image" size={24} color="#9CA3AF" />
+                      <FontAwesome
+                        name="image"
+                        size={24}
+                        color={Colors.darkMedGray}
+                      />
                     </ThemedView>
                   )}
                 </ThemedView>
@@ -285,11 +299,14 @@ export default function QuestDetailScreen() {
                 <ThemedView style={styles.artworkInfo}>
                   <ThemedView style={styles.artworkHeader}>
                     <ThemedText
+                      type="title"
                       style={[
                         styles.artworkTitle,
                         !userQuest?.artworksVisited.includes(artwork.id) &&
                           styles.artworkTitle,
                       ]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
                     >
                       {artwork.title}
                     </ThemedText>
@@ -313,14 +330,22 @@ export default function QuestDetailScreen() {
                       </ThemedText>
                     </ThemedView>
                   </ThemedView>
-                  <ThemedText style={styles.artworkDetails}>
-                    {artwork.artistDisplayName || "Unknown Artist"} •{" "}
-                    {artwork.medium || "Unknown Medium"}
+                  <ThemedText
+                    type="subtitle"
+                    style={styles.artworkDetails}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {artwork.artistDisplayName || "Unknown Artist"}
                   </ThemedText>
                   {artwork.galleryNumber && (
                     <ThemedView style={styles.locationInfo}>
-                      <FontAwesome name="map-marker" size={12} color="#999" />
-                      <ThemedText style={styles.locationText}>
+                      <FontAwesome
+                        name="map-marker"
+                        size={12}
+                        color={Colors.darkMedGray}
+                      />
+                      <ThemedText type="subtitle" style={styles.locationText}>
                         Gallery {artwork.galleryNumber}
                       </ThemedText>
                     </ThemedView>
@@ -338,7 +363,7 @@ export default function QuestDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.lightGray,
   },
   centerContent: {
     justifyContent: "center",
@@ -352,28 +377,28 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   questCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     padding: 16,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: "#eee",
-    shadowColor: "#000",
+    marginBottom: 36,
+    shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
     elevation: 2,
   },
   questHeader: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
   },
   headerLeft: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
@@ -383,18 +408,15 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#FEF3C7",
+    backgroundColor: Colors.lightYellow,
     alignItems: "center",
     justifyContent: "center",
   },
   questTitle: {
-    fontSize: 20,
-    fontWeight: "500",
-    color: "#1F2937",
-    lineHeight: 28,
+    backgroundColor: Colors.medLightGray,
   },
   xpBadge: {
-    backgroundColor: "#f0fdf4",
+    backgroundColor: Colors.lightGreen,
     paddingHorizontal: 12,
     borderRadius: 12,
     marginLeft: 12,
@@ -404,51 +426,40 @@ const styles = StyleSheet.create({
     minWidth: 70,
   },
   xpText: {
-    color: "#16a34a",
+    color: Colors.darkGreen,
     fontSize: 14,
-    fontWeight: "500",
   },
   description: {
-    fontSize: 16,
-    color: "#000",
-    lineHeight: 24,
     marginBottom: 16,
   },
   progressBar: {
     height: 16,
-    backgroundColor: "#eee",
+    backgroundColor: Colors.medGray,
     borderRadius: 8,
     overflow: "hidden",
     marginBottom: 16,
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#FEF3C7",
+    backgroundColor: Colors.lightYellow,
     borderRadius: 8,
   },
   progressTracker: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#eee",
-    padding: 12,
-    borderRadius: 8,
+    backgroundColor: Colors.medLightGray,
   },
   progressLeft: {
-    backgroundColor: "#eee",
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 12,
   },
-  checkIcon: {
-    marginRight: 4,
-  },
+  checkIcon: {},
   progressText: {
     fontSize: 14,
-    color: "#000",
-  },
-  progressCount: {
-    fontWeight: "500",
+    color: Colors.darkMedGray,
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -457,7 +468,6 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 14,
-    fontWeight: "500",
   },
   artworksSection: {
     gap: 12,
@@ -466,44 +476,39 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 4,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: "#1F2937",
-  },
-  mapButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    padding: 8,
-  },
-  mapButtonText: {
-    color: "#666",
-    fontSize: 14,
-  },
+  sectionTitle: {},
+  // mapButton: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   gap: 4,
+  //   padding: 8,
+  // },
+  // mapButtonText: {
+  //   color: Colors.darkMedGray,
+  //   fontSize: 14,
+  // },
   artworkCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#eee",
+    padding: 12,
     borderLeftWidth: 4,
-    borderLeftColor: "#eee",
-    shadowColor: "#000",
+    borderLeftColor: Colors.medGray,
+    shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
     elevation: 2,
-    padding: 12,
   },
   artworkCardVisited: {
-    borderLeftColor: "#16A34A",
+    borderLeftColor: Colors.darkGreen,
   },
   artworkContent: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     gap: 12,
     alignItems: "center",
@@ -523,72 +528,80 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.medLightGray,
     alignItems: "center",
     justifyContent: "center",
   },
   artworkInfo: {
+    backgroundColor: Colors.medLightGray,
     flex: 1,
     justifyContent: "center",
   },
   artworkHeader: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 8,
-    marginBottom: 4,
   },
   artworkTitle: {
     fontSize: 16,
+    lineHeight: 24,
     flex: 1,
-    fontWeight: "500",
   },
   visitedBadge: {
-    backgroundColor: "#16A34A",
+    backgroundColor: Colors.darkGreen,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 12,
     marginTop: 2,
   },
   visitedText: {
-    color: "#fff",
+    color: Colors.lightGray,
     fontSize: 12,
-    fontWeight: "500",
   },
   notVisitedBadge: {
-    backgroundColor: "#FEF3C7",
+    backgroundColor: Colors.lightYellow,
   },
   notVisitedText: {
-    color: "#D97706",
+    color: Colors.darkYellow,
   },
   artworkDetails: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
     marginBottom: 4,
   },
   locationInfo: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "center",
-    color: "999",
     gap: 4,
   },
   locationText: {
     fontSize: 12,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   completedBadge: {
-    backgroundColor: "#16a34a",
+    backgroundColor: Colors.darkGreen,
   },
   completedText: {
-    color: "#fff",
+    color: Colors.lightGray,
   },
   inProgressBadge: {
-    backgroundColor: "#FEF3C7",
+    backgroundColor: Colors.lightYellow,
   },
   inProgressText: {
-    color: "#D97706",
+    color: Colors.darkYellow,
+  },
+  notStartedBadge: {
+    backgroundColor: Colors.medLightGray,
+    borderWidth: 1,
+    borderColor: Colors.darkMedGray,
+  },
+  notStartedText: {
+    color: Colors.darkMedGray,
   },
   startButton: {
-    backgroundColor: "#16A34A",
+    backgroundColor: Colors.darkGreen,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 12,
@@ -597,11 +610,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   startButtonDisabled: {
-    backgroundColor: "#9CA3AF",
+    backgroundColor: Colors.medGray,
   },
   startButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
+    color: Colors.lightGray,
   },
 });

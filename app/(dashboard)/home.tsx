@@ -370,12 +370,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 10,
   },
   headerTitle: {
     fontSize: 48,
-    paddingTop: 24,
+    paddingTop: 48,
     fontFamily: "TiltPrism",
     letterSpacing: 5,
     textShadowColor: "rgba(0,0,0,.5)",
@@ -383,14 +381,14 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
   section: {
-    marginTop: 20,
+    marginTop: 36,
     marginHorizontal: 20,
   },
   lastSection: {
     marginBottom: 80,
   },
   sectionTitle: {
-    marginBottom: 15,
+    marginBottom: 16,
   },
   carouselContainer: {
     position: "relative",
@@ -427,14 +425,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.darkMedGray,
     marginTop: 6,
-    marginBottom: 12,
   },
   paginationContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 15,
-    marginBottom: 5,
   },
   paginationDot: {
     width: 6,
