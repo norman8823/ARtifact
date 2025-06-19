@@ -22,6 +22,7 @@ import {
   Switch,
 } from "react-native";
 import { Colors } from "../../constants/Colors";
+import { SafeAreaView } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -125,252 +126,274 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Profile Header */}
-      <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.headerTitle}>
-          Profile
-        </ThemedText>
-        <Pressable
-          style={styles.settingsButton}
-          onPress={() => router.push("/profileSettings")}
+    <>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
         >
-          <FontAwesome name="gear" size={24} color={Colors.darkMedGray} />
-        </Pressable>
-      </ThemedView>
-
-      {/* User Info Section */}
-      <ThemedView style={styles.userInfo}>
-        <Image
-          source={{
-            uri: "https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=789",
-          }}
-          style={styles.avatar}
-        />
-        <ThemedText style={styles.userName}>
-          {currentUser?.username || "Loading..."}
-        </ThemedText>
-        <ThemedView style={styles.rankContainer}>
-          <ThemedView style={styles.rankBadge}>
-            <ThemedText style={styles.rankText}>
-              {currentRank?.title || "Loading..."}
+          {/* Profile Header */}
+          <ThemedView style={styles.header}>
+            <ThemedText type="title" style={styles.headerTitle}>
+              Profile
             </ThemedText>
+            <Pressable
+              style={styles.settingsButton}
+              onPress={() => router.push("/profileSettings")}
+            >
+              <FontAwesome name="gear" size={24} color={Colors.darkMedGray} />
+            </Pressable>
           </ThemedView>
-          <ThemedText style={styles.xpText}>
-            {userXP?.xpPoints || 0} XP
-          </ThemedText>
-        </ThemedView>
-      </ThemedView>
 
-      {/* Stats Grid */}
-      <ThemedView style={styles.statsGrid}>
-        <Pressable
-          style={styles.statCard}
-          onPress={() => router.push("/artworksVisited")}
-        >
-          <ThemedText style={styles.statNumber}>{visitedCount}</ThemedText>
-          <ThemedText style={styles.statLabel}>Artworks</ThemedText>
-          <ThemedText style={styles.statLabel}>Visited</ThemedText>
-        </Pressable>
-        <Pressable
-          style={styles.statCard}
-          onPress={() => router.push("/favorites")}
-        >
-          <ThemedText style={styles.statNumber}>{favoriteCount}</ThemedText>
-          <ThemedText style={styles.statLabel}>Favorite</ThemedText>
-          <ThemedText style={styles.statLabel}>Artworks</ThemedText>
-        </Pressable>
-        <Pressable
-          style={styles.statCard}
-          onPress={() => router.push("/questsCompleted")}
-        >
-          <ThemedText style={styles.statNumber}>
-            {completedQuestsCount}
-          </ThemedText>
-          <ThemedText style={styles.statLabel}>Quests</ThemedText>
-          <ThemedText style={styles.statLabel}>Completed</ThemedText>
-        </Pressable>
-      </ThemedView>
-
-      {/* Rank Progress */}
-      <ThemedView style={styles.rankProgress}>
-        <ThemedView style={styles.rankHeader}>
-          <ThemedText type="title" style={styles.sectionTitle}>
-            Rank Progress
-          </ThemedText>
-          <Pressable
-            style={styles.helpButton}
-            onPress={() => setIsModalVisible(true)}
-          >
-            <FontAwesome name="question" size={12} color={Colors.darkMedGray} />
-          </Pressable>
-        </ThemedView>
-        <ThemedView style={styles.progressCard}>
-          <ThemedView style={styles.rankLabels}>
-            <ThemedText style={styles.currentRank}>
-              {currentRank?.title || "Loading..."}
-            </ThemedText>
-            <ThemedText style={styles.nextRank}>
-              {nextRank?.title || "Max Rank"}
-            </ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.progressBarBg}>
-            <ThemedView
-              style={[styles.progressBarFill, { width: `${xpProgress}%` }]}
+          {/* User Info Section */}
+          <ThemedView style={styles.userInfo}>
+            <Image
+              source={{
+                uri: "https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=789",
+              }}
+              style={styles.avatar}
             />
-          </ThemedView>
-          <ThemedText style={styles.xpNeeded}>
-            {nextRank
-              ? `${xpNeeded} XP needed for next rank`
-              : "Max rank achieved!"}
-          </ThemedText>
-        </ThemedView>
-      </ThemedView>
-
-      {/* Settings Section */}
-      <ThemedView style={styles.settingsSection}>
-        {/* Notifications */}
-        <ThemedView style={styles.settingRow}>
-          <ThemedView style={styles.settingLeft}>
-            <FontAwesome name="bell" size={20} color={Colors.darkMedGray} />
-            <ThemedText style={styles.settingLabel}>Notifications</ThemedText>
-          </ThemedView>
-          <Switch value={true} onValueChange={() => {}} />
-        </ThemedView>
-
-        {/* Logout Button */}
-        <ThemedView style={styles.logoutButtonWrapper}>
-          <Pressable onPress={handleLogout} disabled={isLoading}>
-            <ThemedText style={styles.logoutButtonText}>
-              {isLoading ? "Logging out..." : "Logout"}
+            <ThemedText style={styles.userName}>
+              {currentUser?.username || "Loading..."}
             </ThemedText>
-          </Pressable>
-        </ThemedView>
-      </ThemedView>
-
-      {/* Simple Modal */}
-      <Modal
-        visible={isModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsModalVisible(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setIsModalVisible(false)}
-        >
-          <Pressable
-            style={styles.modalContent}
-            onPress={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <ThemedView style={styles.modalHeader}>
-              <ThemedView style={styles.modalHeaderLeft}>
-                <FontAwesome
-                  name="th-list"
-                  size={16}
-                  color={Colors.darkMedGray}
-                />
-                <ThemedText style={styles.modalTitle}>Rank Levels</ThemedText>
+            <ThemedView style={styles.rankContainer}>
+              <ThemedView style={styles.rankBadge}>
+                <ThemedText style={styles.rankText}>
+                  {currentRank?.title || "Loading..."}
+                </ThemedText>
               </ThemedView>
+              <ThemedText style={styles.xpText}>
+                {userXP?.xpPoints || 0} XP
+              </ThemedText>
+            </ThemedView>
+          </ThemedView>
+
+          {/* Stats Grid */}
+          <ThemedView style={styles.statsGrid}>
+            <Pressable
+              style={styles.statCard}
+              onPress={() => router.push("/artworksVisited")}
+            >
+              <ThemedText style={styles.statNumber}>{visitedCount}</ThemedText>
+              <ThemedText style={styles.statLabel}>Artworks</ThemedText>
+              <ThemedText style={styles.statLabel}>Visited</ThemedText>
+            </Pressable>
+            <Pressable
+              style={styles.statCard}
+              onPress={() => router.push("/favorites")}
+            >
+              <ThemedText style={styles.statNumber}>{favoriteCount}</ThemedText>
+              <ThemedText style={styles.statLabel}>Favorite</ThemedText>
+              <ThemedText style={styles.statLabel}>Artworks</ThemedText>
+            </Pressable>
+            <Pressable
+              style={styles.statCard}
+              onPress={() => router.push("/questsCompleted")}
+            >
+              <ThemedText style={styles.statNumber}>
+                {completedQuestsCount}
+              </ThemedText>
+              <ThemedText style={styles.statLabel}>Quests</ThemedText>
+              <ThemedText style={styles.statLabel}>Completed</ThemedText>
+            </Pressable>
+          </ThemedView>
+
+          {/* Rank Progress */}
+          <ThemedView style={styles.rankProgress}>
+            <ThemedView style={styles.rankHeader}>
+              <ThemedText type="title" style={styles.sectionTitle}>
+                Rank Progress
+              </ThemedText>
               <Pressable
-                style={styles.closeButton}
-                onPress={() => setIsModalVisible(false)}
+                style={styles.helpButton}
+                onPress={() => setIsModalVisible(true)}
               >
                 <FontAwesome
-                  name="times"
-                  size={20}
+                  name="question"
+                  size={12}
                   color={Colors.darkMedGray}
                 />
               </Pressable>
             </ThemedView>
-
-            {/* Rank List */}
-            <ThemedView style={styles.rankList}>
-              {/* Art Rookie */}
-              <ThemedView style={styles.rankItem}>
-                <ThemedView style={styles.rankIcon}>
-                  <FontAwesome
-                    name="leaf"
-                    size={16}
-                    color={Colors.darkYellow}
-                  />
-                </ThemedView>
-                <ThemedView style={styles.rankDetails}>
-                  <ThemedText style={styles.rankName}>Art Rookie</ThemedText>
-                  <ThemedText style={styles.rankXP}>0-500 XP</ThemedText>
-                  <ThemedText style={styles.rankDescription}>
-                    Begin your journey and start discovering art!
-                  </ThemedText>
-                </ThemedView>
+            <ThemedView style={styles.progressCard}>
+              <ThemedView style={styles.rankLabels}>
+                <ThemedText style={styles.currentRank}>
+                  {currentRank?.title || "Loading..."}
+                </ThemedText>
+                <ThemedText style={styles.nextRank}>
+                  {nextRank?.title || "Max Rank"}
+                </ThemedText>
               </ThemedView>
-
-              {/* Art Enthusiast */}
-              <ThemedView style={styles.rankItem}>
-                <ThemedView style={styles.rankIcon}>
-                  <FontAwesome
-                    name="paint-brush"
-                    size={16}
-                    color={Colors.darkYellow}
-                  />
-                </ThemedView>
-                <ThemedView style={styles.rankDetails}>
-                  <ThemedText style={styles.rankName}>
-                    Art Enthusiast
-                  </ThemedText>
-                  <ThemedText style={styles.rankXP}>501-1,500 XP</ThemedText>
-                  <ThemedText style={styles.rankDescription}>
-                    You're building a collection and learning fast.
-                  </ThemedText>
-                </ThemedView>
-              </ThemedView>
-
-              {/* Art Expert */}
-              <ThemedView style={styles.rankItem}>
+              <ThemedView style={styles.progressBarBg}>
                 <ThemedView
-                  style={[styles.rankIcon, styles.rankIconHighlighted]}
-                >
-                  <FontAwesome
-                    name="star"
-                    size={16}
-                    color={Colors.darkYellow}
-                  />
-                </ThemedView>
-                <ThemedView style={styles.rankDetails}>
-                  <ThemedText style={styles.rankName}>Art Expert</ThemedText>
-                  <ThemedText style={styles.rankXP}>1,501-3,000 XP</ThemedText>
-                  <ThemedText style={styles.rankDescription}>
-                    Recognized for your knowledge and dedication.
-                  </ThemedText>
-                </ThemedView>
+                  style={[styles.progressBarFill, { width: `${xpProgress}%` }]}
+                />
               </ThemedView>
-
-              {/* Art Master */}
-              <ThemedView style={styles.rankItem}>
-                <ThemedView style={styles.rankIcon}>
-                  <FontAwesome
-                    name="trophy"
-                    size={16}
-                    color={Colors.darkYellow}
-                  />
-                </ThemedView>
-                <ThemedView style={styles.rankDetails}>
-                  <ThemedText style={styles.rankName}>Art Master</ThemedText>
-                  <ThemedText style={styles.rankXP}>3,001+ XP</ThemedText>
-                  <ThemedText style={styles.rankDescription}>
-                    You're a true master—share your love of art with all!
-                  </ThemedText>
-                </ThemedView>
-              </ThemedView>
+              <ThemedText style={styles.xpNeeded}>
+                {nextRank
+                  ? `${xpNeeded} XP needed for next rank`
+                  : "Max rank achieved!"}
+              </ThemedText>
             </ThemedView>
-          </Pressable>
-        </Pressable>
-      </Modal>
-    </ScrollView>
+          </ThemedView>
+
+          {/* Settings Section */}
+          <ThemedView style={styles.settingsSection}>
+            {/* Notifications */}
+            <ThemedView style={styles.settingRow}>
+              <ThemedView style={styles.settingLeft}>
+                <FontAwesome name="bell" size={20} color={Colors.darkMedGray} />
+                <ThemedText style={styles.settingLabel}>
+                  Notifications
+                </ThemedText>
+              </ThemedView>
+              <Switch value={true} onValueChange={() => {}} />
+            </ThemedView>
+
+            {/* Logout Button */}
+            <ThemedView style={styles.logoutButtonWrapper}>
+              <Pressable onPress={handleLogout} disabled={isLoading}>
+                <ThemedText style={styles.logoutButtonText}>
+                  {isLoading ? "Logging out..." : "Logout"}
+                </ThemedText>
+              </Pressable>
+            </ThemedView>
+          </ThemedView>
+
+          {/* Simple Modal */}
+          <Modal
+            visible={isModalVisible}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setIsModalVisible(false)}
+          >
+            <Pressable
+              style={styles.modalOverlay}
+              onPress={() => setIsModalVisible(false)}
+            >
+              <Pressable
+                style={styles.modalContent}
+                onPress={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <ThemedView style={styles.modalHeader}>
+                  <ThemedView style={styles.modalHeaderLeft}>
+                    <FontAwesome
+                      name="th-list"
+                      size={16}
+                      color={Colors.darkMedGray}
+                    />
+                    <ThemedText style={styles.modalTitle}>
+                      Rank Levels
+                    </ThemedText>
+                  </ThemedView>
+                  <Pressable
+                    style={styles.closeButton}
+                    onPress={() => setIsModalVisible(false)}
+                  >
+                    <FontAwesome
+                      name="times"
+                      size={20}
+                      color={Colors.darkMedGray}
+                    />
+                  </Pressable>
+                </ThemedView>
+
+                {/* Rank List */}
+                <ThemedView style={styles.rankList}>
+                  {/* Art Rookie */}
+                  <ThemedView style={styles.rankItem}>
+                    <ThemedView style={styles.rankIcon}>
+                      <FontAwesome
+                        name="leaf"
+                        size={16}
+                        color={Colors.darkYellow}
+                      />
+                    </ThemedView>
+                    <ThemedView style={styles.rankDetails}>
+                      <ThemedText style={styles.rankName}>
+                        Art Rookie
+                      </ThemedText>
+                      <ThemedText style={styles.rankXP}>0-500 XP</ThemedText>
+                      <ThemedText style={styles.rankDescription}>
+                        Begin your journey and start discovering art!
+                      </ThemedText>
+                    </ThemedView>
+                  </ThemedView>
+
+                  {/* Art Enthusiast */}
+                  <ThemedView style={styles.rankItem}>
+                    <ThemedView style={styles.rankIcon}>
+                      <FontAwesome
+                        name="paint-brush"
+                        size={16}
+                        color={Colors.darkYellow}
+                      />
+                    </ThemedView>
+                    <ThemedView style={styles.rankDetails}>
+                      <ThemedText style={styles.rankName}>
+                        Art Enthusiast
+                      </ThemedText>
+                      <ThemedText style={styles.rankXP}>
+                        501-1,500 XP
+                      </ThemedText>
+                      <ThemedText style={styles.rankDescription}>
+                        You're building a collection and learning fast.
+                      </ThemedText>
+                    </ThemedView>
+                  </ThemedView>
+
+                  {/* Art Expert */}
+                  <ThemedView style={styles.rankItem}>
+                    <ThemedView
+                      style={[styles.rankIcon, styles.rankIconHighlighted]}
+                    >
+                      <FontAwesome
+                        name="star"
+                        size={16}
+                        color={Colors.darkYellow}
+                      />
+                    </ThemedView>
+                    <ThemedView style={styles.rankDetails}>
+                      <ThemedText style={styles.rankName}>
+                        Art Expert
+                      </ThemedText>
+                      <ThemedText style={styles.rankXP}>
+                        1,501-3,000 XP
+                      </ThemedText>
+                      <ThemedText style={styles.rankDescription}>
+                        Recognized for your knowledge and dedication.
+                      </ThemedText>
+                    </ThemedView>
+                  </ThemedView>
+
+                  {/* Art Master */}
+                  <ThemedView style={styles.rankItem}>
+                    <ThemedView style={styles.rankIcon}>
+                      <FontAwesome
+                        name="trophy"
+                        size={16}
+                        color={Colors.darkYellow}
+                      />
+                    </ThemedView>
+                    <ThemedView style={styles.rankDetails}>
+                      <ThemedText style={styles.rankName}>
+                        Art Master
+                      </ThemedText>
+                      <ThemedText style={styles.rankXP}>3,001+ XP</ThemedText>
+                      <ThemedText style={styles.rankDescription}>
+                        You're a true master—share your love of art with all!
+                      </ThemedText>
+                    </ThemedView>
+                  </ThemedView>
+                </ThemedView>
+              </Pressable>
+            </Pressable>
+          </Modal>
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -387,6 +410,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
+    paddingTop: 16,
   },
   headerTitle: {
     fontSize: 30,
