@@ -80,6 +80,16 @@
       "service": "Lambda"
     }
   },
+  "parameters": {
+    "AMPLIFY_function_analyzeImage_projectVersionArn": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "analyzeImage"
+        }
+      ]
+    }
+  },
   "storage": {
     "ARtifactStorage": {
       "dependsOn": [],
