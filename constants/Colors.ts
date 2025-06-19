@@ -6,7 +6,7 @@ export const UniversalColors = {
   darkGray: "#333",
 
   lightYellow: "#fef3c7",
-  darkYellow: "#f59e0b",
+  darkYellow: "#d97706",
 
   lightGreen: "#f0fdf4",
   darkGreen: "#16a34a",

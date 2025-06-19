@@ -474,7 +474,5 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     textAlign: "center",
-    fontSize: 16,
-    lineHeight: 24,
   },
 });
