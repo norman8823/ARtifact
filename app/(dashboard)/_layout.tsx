@@ -17,7 +17,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors.metRed,
         tabBarInactiveTintColor: Colors.lightGray,
         headerStyle: { backgroundColor: Colors.lightGray },
-        headerShown: true,
+        headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
@@ -32,7 +32,6 @@ export default function TabLayout() {
         name="home"
         options={{
           title: "Home",
-          headerTitle: "",
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
@@ -40,7 +39,6 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: "Explore",
-          headerTitle: "",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="compass" color={color} />
           ),
@@ -50,7 +48,6 @@ export default function TabLayout() {
         name="scan"
         options={{
           title: "Scan",
-          headerTitle: "",
           tabBarIcon: ({ color }) => <TabBarIcon name="camera" color={color} />,
         }}
       />
@@ -58,7 +55,6 @@ export default function TabLayout() {
         name="artQuest"
         options={{
           title: "ArtQuest",
-          headerTitle: "",
           tabBarIcon: ({ color }) => <TabBarIcon name="map" color={color} />,
         }}
       />
@@ -66,7 +62,6 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
-          headerTitle: "",
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />

@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { Colors } from "@/constants/Colors";
+import { SafeAreaView } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -212,136 +213,144 @@ export default function HomeScreen() {
   }
 
   return (
-    <ScrollView
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.contentContainer}
-    >
-      {/* Header */}
-      <ThemedView style={styles.header}>
-        <ThemedText style={[{ color: Colors.metRed }, styles.headerTitle]}>
-          AR
-        </ThemedText>
-        <ThemedText style={styles.headerTitle}>tifact</ThemedText>
-      </ThemedView>
-
-      {/* Featured Artworks */}
-      <ThemedView style={styles.section}>
-        <ThemedText type="title" style={styles.sectionTitle}>
-          Featured Artworks
-        </ThemedText>
-        <ThemedView style={styles.carouselContainer}>
-          {featuredArtworks.length > 0 ? (
-            <>
-              <Carousel
-                ref={carouselRef}
-                loop
-                width={SCREEN_WIDTH - 40}
-                height={400}
-                autoPlay={isAutoPlaying}
-                data={featuredArtworks}
-                scrollAnimationDuration={1000}
-                autoPlayInterval={3000}
-                onProgressChange={handleProgressChange}
-                renderItem={({ item }) => renderFeaturedItem(item)}
-                enabled={false}
-                mode="parallax"
-                modeConfig={{
-                  parallaxScrollingScale: 0.9,
-                  parallaxScrollingOffset: 40,
-                }}
-              />
-              <Pressable
-                style={[styles.carouselButton, styles.carouselButtonLeft]}
-                onPress={handlePrevious}
-              >
-                <FontAwesome
-                  name="chevron-left"
-                  size={20}
-                  color={Colors.medGray}
-                />
-              </Pressable>
-              <Pressable
-                style={[styles.carouselButton, styles.carouselButtonRight]}
-                onPress={handleNext}
-              >
-                <FontAwesome
-                  name="chevron-right"
-                  size={20}
-                  color={Colors.medGray}
-                />
-              </Pressable>
-            </>
-          ) : (
-            <ThemedView style={styles.noArtworksContainer}>
-              <ThemedText>No featured artworks available</ThemedText>
-            </ThemedView>
-          )}
-          {renderPagination()}
-        </ThemedView>
-      </ThemedView>
-
-      {/* Collections */}
-      <ThemedView style={styles.section}>
-        <ThemedText type="title" style={styles.sectionTitle}>
-          Collections
-        </ThemedText>
+    <>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
         <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.collectionsContainer}
+          style={styles.container}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.contentContainer}
         >
-          {departments.map((department) => (
-            <Pressable
-              key={department.id}
-              style={styles.collectionItem}
-              onPress={() => {
-                router.push({
-                  pathname: "/collection",
-                  params: { id: department.id },
-                });
-              }}
-            >
-              <Image
-                source={{ uri: department.coverImage || undefined }}
-                style={styles.collectionImage}
-              />
-              <ThemedText type="subtitle" style={styles.collectionTitle}>
-                {department.displayName}
-              </ThemedText>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </ThemedView>
-
-      {/* Did You Know */}
-      <ThemedView style={[styles.section, styles.lastSection]}>
-        <ThemedText type="title" style={styles.sectionTitle}>
-          Did You Know?
-        </ThemedText>
-        <ThemedView style={styles.triviaCard}>
-          <ThemedView style={styles.triviaIconContainer}>
-            <FontAwesome
-              name="lightbulb-o"
-              size={20}
-              color={Colors.darkYellow}
-            />
-          </ThemedView>
-          <ThemedView style={styles.triviaContent}>
-            <ThemedText style={styles.triviaText}>
-              {randomFact ||
-                "Loading interesting facts about art and the museum..."}
+          {/* Header */}
+          <ThemedView style={styles.header}>
+            <ThemedText style={[{ color: Colors.metRed }, styles.headerTitle]}>
+              AR
             </ThemedText>
-            <ThemedView style={styles.triviaFooter}>
-              <FontAwesome name="clock-o" size={12} color={Colors.medGray} />
-              <ThemedText style={styles.triviaDate}>
-                Daily Art Fact • {currentDate}
-              </ThemedText>
+            <ThemedText style={styles.headerTitle}>tifact</ThemedText>
+          </ThemedView>
+
+          {/* Featured Artworks */}
+          <ThemedView style={styles.section}>
+            <ThemedText type="title" style={styles.sectionTitle}>
+              Featured Artworks
+            </ThemedText>
+            <ThemedView style={styles.carouselContainer}>
+              {featuredArtworks.length > 0 ? (
+                <>
+                  <Carousel
+                    ref={carouselRef}
+                    loop
+                    width={SCREEN_WIDTH - 40}
+                    height={400}
+                    autoPlay={isAutoPlaying}
+                    data={featuredArtworks}
+                    scrollAnimationDuration={1000}
+                    autoPlayInterval={3000}
+                    onProgressChange={handleProgressChange}
+                    renderItem={({ item }) => renderFeaturedItem(item)}
+                    enabled={false}
+                    mode="parallax"
+                    modeConfig={{
+                      parallaxScrollingScale: 0.9,
+                      parallaxScrollingOffset: 40,
+                    }}
+                  />
+                  <Pressable
+                    style={[styles.carouselButton, styles.carouselButtonLeft]}
+                    onPress={handlePrevious}
+                  >
+                    <FontAwesome
+                      name="chevron-left"
+                      size={20}
+                      color={Colors.medGray}
+                    />
+                  </Pressable>
+                  <Pressable
+                    style={[styles.carouselButton, styles.carouselButtonRight]}
+                    onPress={handleNext}
+                  >
+                    <FontAwesome
+                      name="chevron-right"
+                      size={20}
+                      color={Colors.medGray}
+                    />
+                  </Pressable>
+                </>
+              ) : (
+                <ThemedView style={styles.noArtworksContainer}>
+                  <ThemedText>No featured artworks available</ThemedText>
+                </ThemedView>
+              )}
+              {renderPagination()}
             </ThemedView>
           </ThemedView>
-        </ThemedView>
-      </ThemedView>
-    </ScrollView>
+
+          {/* Collections */}
+          <ThemedView style={styles.section}>
+            <ThemedText type="title" style={styles.sectionTitle}>
+              Collections
+            </ThemedText>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.collectionsContainer}
+            >
+              {departments.map((department) => (
+                <Pressable
+                  key={department.id}
+                  style={styles.collectionItem}
+                  onPress={() => {
+                    router.push({
+                      pathname: "/collection",
+                      params: { id: department.id },
+                    });
+                  }}
+                >
+                  <Image
+                    source={{ uri: department.coverImage || undefined }}
+                    style={styles.collectionImage}
+                  />
+                  <ThemedText type="subtitle" style={styles.collectionTitle}>
+                    {department.displayName}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </ThemedView>
+
+          {/* Did You Know */}
+          <ThemedView style={[styles.section, styles.lastSection]}>
+            <ThemedText type="title" style={styles.sectionTitle}>
+              Did You Know?
+            </ThemedText>
+            <ThemedView style={styles.triviaCard}>
+              <ThemedView style={styles.triviaIconContainer}>
+                <FontAwesome
+                  name="lightbulb-o"
+                  size={20}
+                  color={Colors.darkYellow}
+                />
+              </ThemedView>
+              <ThemedView style={styles.triviaContent}>
+                <ThemedText style={styles.triviaText}>
+                  {randomFact ||
+                    "Loading interesting facts about art and the museum..."}
+                </ThemedText>
+                <ThemedView style={styles.triviaFooter}>
+                  <FontAwesome
+                    name="clock-o"
+                    size={12}
+                    color={Colors.medGray}
+                  />
+                  <ThemedText style={styles.triviaDate}>
+                    Daily Art Fact • {currentDate}
+                  </ThemedText>
+                </ThemedView>
+              </ThemedView>
+            </ThemedView>
+          </ThemedView>
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -361,7 +370,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     paddingHorizontal: 20,
-    paddingTop: 24,
+    paddingTop: 16,
     paddingBottom: 10,
   },
   headerTitle: {
