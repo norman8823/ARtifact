@@ -13,6 +13,7 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
+import { Colors } from "../constants/Colors";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ARTWORK_WIDTH = (SCREEN_WIDTH - 64) / 2;
@@ -76,7 +77,7 @@ export default function ArtworksVisitedScreen() {
             headerShadowVisible: false,
           }}
         />
-        <ThemedText style={styles.errorText}>
+        <ThemedText style={[styles.container, styles.centerContent]}>
           Error loading artworks: {error.message}
         </ThemedText>
       </ThemedView>
@@ -94,7 +95,7 @@ export default function ArtworksVisitedScreen() {
           }}
         />
         <ThemedView style={styles.emptyState}>
-          <FontAwesome name="eye" size={48} color="#f0f0f0" />
+          <FontAwesome name="eye" size={48} color={Colors.darkMedGray} />
           <ThemedText style={styles.emptyStateTitle}>
             No Artworks Visited Yet
           </ThemedText>
@@ -143,7 +144,7 @@ export default function ArtworksVisitedScreen() {
                   contentFit="cover"
                 />
                 <ThemedView style={styles.checkmarkContainer}>
-                  <FontAwesome name="eye" size={12} color="#fff" />
+                  <FontAwesome name="eye" size={12} color={Colors.lightGray} />
                 </ThemedView>
               </ThemedView>
               <ThemedText style={styles.title} numberOfLines={1}>
@@ -163,10 +164,34 @@ export default function ArtworksVisitedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.lightGray,
   },
   centerContent: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  title: {
+    fontSize: 14,
+    lineHeight: 24,
+  },
+  artist: {
+    fontSize: 12,
+    color: Colors.darkMedGray,
+  },
+  checkmarkContainer: {
+    position: "absolute",
+    bottom: 8,
+    right: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: Colors.lightGray,
+    alignItems: "center",
+    justifyContent: "center",
   },
   scrollView: {
     flex: 1,
@@ -187,36 +212,9 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 1,
     borderRadius: 12,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: Colors.medLightGray,
     marginBottom: 8,
     overflow: "hidden",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  checkmarkContainer: {
-    position: "absolute",
-    bottom: 8,
-    right: 8,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 14,
-  },
-  artist: {
-    fontSize: 12,
-    color: "#666",
-  },
-  errorText: {
-    color: "#dc2626",
-    textAlign: "center",
-    marginHorizontal: 24,
   },
   emptyState: {
     alignItems: "center",
@@ -224,13 +222,12 @@ const styles = StyleSheet.create({
   },
   emptyStateTitle: {
     fontSize: 18,
-    fontWeight: "600",
     marginTop: 16,
     marginBottom: 8,
   },
   emptyStateText: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
     textAlign: "center",
   },
 });

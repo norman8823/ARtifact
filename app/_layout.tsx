@@ -30,7 +30,7 @@ export default function RootLayout() {
             headerStyle: {
               backgroundColor: Colors.lightGray,
             },
-            headerTintColor: "black",
+            headerTintColor: Colors.darkGray,
             headerBackButtonDisplayMode: "minimal",
           }}
         >
@@ -61,19 +61,19 @@ export default function RootLayout() {
           <Stack.Screen
             name="artworksVisited"
             options={{
-              headerTitle: "",
+              headerTitle: "Artworks Visited",
             }}
           />
           <Stack.Screen
             name="favorites"
             options={{
-              headerTitle: "",
+              headerTitle: "Favorites",
             }}
           />
           <Stack.Screen
             name="questsCompleted"
             options={{
-              headerTitle: "",
+              headerTitle: "Quests Completed",
             }}
           />
           <Stack.Screen
