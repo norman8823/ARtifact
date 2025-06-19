@@ -70,21 +70,13 @@ export default function ScanScreen() {
       // Call the rekognition API
       console.log("🔍 Calling Rekognition API...");
 
-      // const bucket = process.env.EXPO_PUBLIC_STORAGE_BUCKET;
-      // const apiName = process.env.EXPO_PUBLIC_API_NAME;
-      const bucket = "artifactbucketd3c4f-dev";
       const apiName = "rekognitionApi";
-
-      if (!bucket || !apiName) {
-        throw new Error("Environment variables not configured properly");
-      }
 
       const rekognitionResponse = await post({
         apiName,
         path: "/rekognition",
         options: {
           body: {
-            bucket,
             key: uploadResult.path,
           },
         },
