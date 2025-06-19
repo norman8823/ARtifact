@@ -14,6 +14,7 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
+import { Colors } from "@/constants/Colors";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const NUM_COLUMNS = 3;
@@ -102,13 +103,13 @@ export default function ExploreScreen() {
           <FontAwesome
             name="search"
             size={16}
-            color="#999"
+            color={Colors.darkMedGray}
             style={styles.searchIcon}
           />
           <TextInput
             style={styles.searchInput}
             placeholder="Search artworks, artists, periods..."
-            placeholderTextColor="#999"
+            placeholderTextColor="Colors.medGray"
             value={searchQuery}
             onChangeText={setSearchQuery}
             onSubmitEditing={Keyboard.dismiss}
@@ -138,7 +139,7 @@ export default function ExploreScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.lightGray,
   },
   centerContent: {
     flex: 1,
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     paddingHorizontal: 12,
     height: 44,
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 14,
-    color: "#333",
+    color: Colors.darkMedGray,
     height: "100%",
   },
   gridContainer: {
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
   },
   artworkImage: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 4,
     alignItems: "center",
     justifyContent: "center",

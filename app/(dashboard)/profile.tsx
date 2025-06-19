@@ -21,6 +21,7 @@ import {
   StyleSheet,
   Switch,
 } from "react-native";
+import { Colors } from "../../constants/Colors";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -131,12 +132,14 @@ export default function ProfileScreen() {
     >
       {/* Profile Header */}
       <ThemedView style={styles.header}>
-        <ThemedText style={styles.headerTitle}>Profile</ThemedText>
+        <ThemedText type="title" style={styles.headerTitle}>
+          Profile
+        </ThemedText>
         <Pressable
           style={styles.settingsButton}
           onPress={() => router.push("/profileSettings")}
         >
-          <FontAwesome name="gear" size={24} color="#666" />
+          <FontAwesome name="gear" size={24} color={Colors.darkMedGray} />
         </Pressable>
       </ThemedView>
 
@@ -170,14 +173,16 @@ export default function ProfileScreen() {
           onPress={() => router.push("/artworksVisited")}
         >
           <ThemedText style={styles.statNumber}>{visitedCount}</ThemedText>
-          <ThemedText style={styles.statLabel}>Artworks Visited</ThemedText>
+          <ThemedText style={styles.statLabel}>Artworks</ThemedText>
+          <ThemedText style={styles.statLabel}>Visited</ThemedText>
         </Pressable>
         <Pressable
           style={styles.statCard}
           onPress={() => router.push("/favorites")}
         >
           <ThemedText style={styles.statNumber}>{favoriteCount}</ThemedText>
-          <ThemedText style={styles.statLabel}>Favorite Artworks</ThemedText>
+          <ThemedText style={styles.statLabel}>Favorite</ThemedText>
+          <ThemedText style={styles.statLabel}>Artworks</ThemedText>
         </Pressable>
         <Pressable
           style={styles.statCard}
@@ -186,19 +191,22 @@ export default function ProfileScreen() {
           <ThemedText style={styles.statNumber}>
             {completedQuestsCount}
           </ThemedText>
-          <ThemedText style={styles.statLabel}>Quests Completed</ThemedText>
+          <ThemedText style={styles.statLabel}>Quests</ThemedText>
+          <ThemedText style={styles.statLabel}>Completed</ThemedText>
         </Pressable>
       </ThemedView>
 
       {/* Rank Progress */}
       <ThemedView style={styles.rankProgress}>
         <ThemedView style={styles.rankHeader}>
-          <ThemedText style={styles.sectionTitle}>Rank Progress</ThemedText>
+          <ThemedText type="title" style={styles.sectionTitle}>
+            Rank Progress
+          </ThemedText>
           <Pressable
             style={styles.helpButton}
             onPress={() => setIsModalVisible(true)}
           >
-            <FontAwesome name="question" size={12} color="#666" />
+            <FontAwesome name="question" size={12} color={Colors.darkMedGray} />
           </Pressable>
         </ThemedView>
         <ThemedView style={styles.progressCard}>
@@ -228,7 +236,7 @@ export default function ProfileScreen() {
         {/* Notifications */}
         <ThemedView style={styles.settingRow}>
           <ThemedView style={styles.settingLeft}>
-            <FontAwesome name="bell" size={20} color="#666" />
+            <FontAwesome name="bell" size={20} color={Colors.darkMedGray} />
             <ThemedText style={styles.settingLabel}>Notifications</ThemedText>
           </ThemedView>
           <Switch value={true} onValueChange={() => {}} />
@@ -262,14 +270,22 @@ export default function ProfileScreen() {
             {/* Header */}
             <ThemedView style={styles.modalHeader}>
               <ThemedView style={styles.modalHeaderLeft}>
-                <FontAwesome name="th-list" size={16} color="#666666" />
+                <FontAwesome
+                  name="th-list"
+                  size={16}
+                  color={Colors.darkMedGray}
+                />
                 <ThemedText style={styles.modalTitle}>Rank Levels</ThemedText>
               </ThemedView>
               <Pressable
                 style={styles.closeButton}
                 onPress={() => setIsModalVisible(false)}
               >
-                <FontAwesome name="times" size={20} color="#666666" />
+                <FontAwesome
+                  name="times"
+                  size={20}
+                  color={Colors.darkMedGray}
+                />
               </Pressable>
             </ThemedView>
 
@@ -278,7 +294,11 @@ export default function ProfileScreen() {
               {/* Art Rookie */}
               <ThemedView style={styles.rankItem}>
                 <ThemedView style={styles.rankIcon}>
-                  <FontAwesome name="leaf" size={16} color="#F59E0B" />
+                  <FontAwesome
+                    name="leaf"
+                    size={16}
+                    color={Colors.darkYellow}
+                  />
                 </ThemedView>
                 <ThemedView style={styles.rankDetails}>
                   <ThemedText style={styles.rankName}>Art Rookie</ThemedText>
@@ -292,7 +312,11 @@ export default function ProfileScreen() {
               {/* Art Enthusiast */}
               <ThemedView style={styles.rankItem}>
                 <ThemedView style={styles.rankIcon}>
-                  <FontAwesome name="paint-brush" size={16} color="#F59E0B" />
+                  <FontAwesome
+                    name="paint-brush"
+                    size={16}
+                    color={Colors.darkYellow}
+                  />
                 </ThemedView>
                 <ThemedView style={styles.rankDetails}>
                   <ThemedText style={styles.rankName}>
@@ -310,7 +334,11 @@ export default function ProfileScreen() {
                 <ThemedView
                   style={[styles.rankIcon, styles.rankIconHighlighted]}
                 >
-                  <FontAwesome name="star" size={16} color="#F59E0B" />
+                  <FontAwesome
+                    name="star"
+                    size={16}
+                    color={Colors.darkYellow}
+                  />
                 </ThemedView>
                 <ThemedView style={styles.rankDetails}>
                   <ThemedText style={styles.rankName}>Art Expert</ThemedText>
@@ -324,7 +352,11 @@ export default function ProfileScreen() {
               {/* Art Master */}
               <ThemedView style={styles.rankItem}>
                 <ThemedView style={styles.rankIcon}>
-                  <FontAwesome name="trophy" size={16} color="#F59E0B" />
+                  <FontAwesome
+                    name="trophy"
+                    size={16}
+                    color={Colors.darkYellow}
+                  />
                 </ThemedView>
                 <ThemedView style={styles.rankDetails}>
                   <ThemedText style={styles.rankName}>Art Master</ThemedText>
@@ -345,7 +377,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.lightGray,
   },
   contentContainer: {
     paddingBottom: 80,
@@ -357,16 +389,15 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 30,
   },
   settingsButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.medLightGray,
     borderWidth: 1,
-    borderColor: "#eee",
+    borderColor: Colors.darkMedGray,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -378,13 +409,11 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: Colors.medLightGray,
     marginBottom: 16,
   },
   userName: {
     fontSize: 20,
-    fontWeight: "500",
-    color: "#333",
     marginBottom: 8,
   },
   rankContainer: {
@@ -393,50 +422,53 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   rankBadge: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: Colors.lightYellow,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#eee",
+    borderColor: Colors.darkYellow,
   },
   rankText: {
-    color: "#333",
     fontSize: 14,
+    color: Colors.darkYellow,
   },
   xpText: {
-    color: "#333",
     fontSize: 14,
   },
   statsGrid: {
     flexDirection: "row",
     gap: 12,
     paddingHorizontal: 20,
-    marginBottom: 24,
+    marginBottom: 36,
   },
   statCard: {
+    backgroundColor: Colors.medLightGray,
     flex: 1,
-    backgroundColor: "#f5f5f5",
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#eee",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 2,
   },
   statNumber: {
     fontSize: 24,
-    fontWeight: "500",
-    color: "#333",
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: "#333",
     textAlign: "center",
+    color: Colors.darkMedGray,
   },
   rankProgress: {
     paddingHorizontal: 20,
-    marginBottom: 32,
+    marginBottom: 36,
   },
   rankHeader: {
     flexDirection: "row",
@@ -446,58 +478,56 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "500",
   },
   helpButton: {
+    backgroundColor: Colors.medLightGray,
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#666",
+    borderColor: Colors.darkMedGray,
     alignItems: "center",
     justifyContent: "center",
   },
   progressCard: {
+    backgroundColor: Colors.medLightGray,
     padding: 16,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#eee",
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 2,
+    shadowRadius: 3,
     elevation: 2,
   },
   rankLabels: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 8,
   },
   currentRank: {
     fontSize: 14,
-    color: "#333",
   },
   nextRank: {
     fontSize: 14,
-    color: "#333",
   },
   progressBarBg: {
+    backgroundColor: Colors.medGray,
     height: 8,
-    backgroundColor: "#eee",
     borderRadius: 4,
     marginBottom: 8,
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: "#FEF3C7",
+    backgroundColor: Colors.lightYellow,
     borderRadius: 4,
   },
   xpNeeded: {
     fontSize: 14,
-    color: "#333",
+    color: Colors.darkMedGray,
   },
   settingsSection: {
     paddingHorizontal: 20,
@@ -505,50 +535,46 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   settingRow: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#eee",
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 2,
+    shadowRadius: 3,
     elevation: 2,
   },
   settingLeft: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
   },
   settingLabel: {
     fontSize: 16,
-    color: "#333",
   },
   logoutButtonWrapper: {
+    backgroundColor: Colors.medLightGray,
     padding: 12,
     borderRadius: 12,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#eee",
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 2,
+    shadowRadius: 3,
     elevation: 2,
   },
   logoutButtonText: {
-    color: "#333",
     fontSize: 14,
-    fontWeight: "500",
   },
   modalOverlay: {
     flex: 1,
@@ -557,13 +583,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
+    backgroundColor: Colors.lightGray,
+    borderRadius: 12,
     padding: 24,
     width: "90%",
     maxWidth: 340,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
   },
   modalHeader: {
     flexDirection: "row",
@@ -578,7 +602,6 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: "600",
   },
   closeButton: {
     width: 32,
@@ -599,28 +622,28 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#F5F5F5",
     alignItems: "center",
     justifyContent: "center",
   },
   rankIconHighlighted: {
-    backgroundColor: "#FEF3C7",
+    backgroundColor: Colors.lightYellow,
+    borderColor: Colors.darkYellow,
+    borderWidth: 1,
   },
   rankDetails: {
     flex: 1,
   },
   rankName: {
     fontSize: 16,
-    fontWeight: "500",
     marginBottom: 2,
   },
   rankXP: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
     marginBottom: 4,
   },
   rankDescription: {
     fontSize: 12,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
 });

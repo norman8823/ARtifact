@@ -1,9 +1,12 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { StyleSheet, View } from "react-native";
+import { Colors } from "../../constants/Colors";
 
 export default function TabBarBackground() {
   return (
-    <View style={[StyleSheet.absoluteFill, { backgroundColor: "#000000" }]} />
+    <View
+      style={[StyleSheet.absoluteFill, { backgroundColor: Colors.darkGray }]}
+    />
   );
 }
 
