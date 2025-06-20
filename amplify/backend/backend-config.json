@@ -84,6 +84,13 @@
       "dependsOn": [
         {
           "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "ARtifactAuth"
+        },
+        {
+          "attributes": [
             "BucketName"
           ],
           "category": "storage",
