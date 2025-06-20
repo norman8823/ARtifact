@@ -17,6 +17,7 @@ export interface Artwork {
   isFeatured: boolean | null;
   hasAudio: boolean | null;
   hasAR: boolean | null;
+  arImage: string | null;
   objectDate: string | null;
   medium: string | null;
   dimensions: string | null;
@@ -106,6 +107,7 @@ export function useArtwork() {
         isFeatured: artwork.isFeatured,
         hasAudio: artwork.hasAudio,
         hasAR: artwork.hasAR,
+        arImage: artwork.arImage,
         objectDate: artwork.objectDate,
         medium: artwork.medium,
         dimensions: artwork.dimensions,
