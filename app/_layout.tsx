@@ -55,7 +55,7 @@ export default function RootLayout() {
           <Stack.Screen
             name="profileSettings"
             options={{
-              headerTitle: "",
+              headerTitle: "Profile Settings",
             }}
           />
           <Stack.Screen
