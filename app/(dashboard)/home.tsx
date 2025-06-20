@@ -1,5 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
 import { useDepartments, type Department } from "@/src/hooks/useDepartments";
 import { useDidYouKnow } from "@/src/hooks/useDidYouKnow";
@@ -11,13 +13,11 @@ import {
   ActivityIndicator,
   Dimensions,
   Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { SafeAreaView } from "react-native";
-import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -81,13 +81,20 @@ export default function HomeScreen() {
   useEffect(() => {
     const loadFactsAndSetRandom = async () => {
       await loadFacts();
+    };
+    loadFactsAndSetRandom();
+  }, [loadFacts]);
+
+  // Set random fact when facts are loaded
+  useEffect(() => {
+    if (randomFact === "") {
+      // Only set if we don't have a fact yet
       const fact = getRandomFact();
       if (fact) {
         setRandomFact(fact.fact);
       }
-    };
-    loadFactsAndSetRandom();
-  }, [loadFacts, getRandomFact]);
+    }
+  }, [getRandomFact, randomFact]);
 
   // Handle navigation focus
   useEffect(() => {
