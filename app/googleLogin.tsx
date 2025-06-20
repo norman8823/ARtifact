@@ -187,7 +187,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
     textAlign: "center",
     marginBottom: 4,
     fontFamily: "Playfair Display",
@@ -222,7 +221,6 @@ const styles = StyleSheet.create({
   },
   googleHeaderText: {
     fontSize: 16,
-    fontWeight: "500",
   },
   accountsList: {
     backgroundColor: "#FFFFFF",
@@ -256,7 +254,6 @@ const styles = StyleSheet.create({
   },
   accountName: {
     fontSize: 16,
-    fontWeight: "500",
   },
   accountEmail: {
     fontSize: 14,
@@ -288,7 +285,6 @@ const styles = StyleSheet.create({
   },
   addAccountText: {
     fontSize: 16,
-    fontWeight: "500",
     color: "#333",
   },
   infoBox: {
@@ -315,7 +311,6 @@ const styles = StyleSheet.create({
   continueButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "500",
   },
   cancelButton: {
     backgroundColor: "#FFFFFF",
@@ -327,7 +322,6 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize: 16,
-    fontWeight: "500",
   },
   footer: {
     paddingHorizontal: 24,
@@ -340,6 +334,5 @@ const styles = StyleSheet.create({
   },
   helpText: {
     color: "#007AFF",
-    fontWeight: "500",
   },
 });

@@ -13,7 +13,8 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { Colors } from "../constants/Colors";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 
 interface QuestDetail {
   quest: Quest;
@@ -381,14 +382,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 36,
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   questHeader: {
     backgroundColor: Colors.medLightGray,
@@ -495,14 +489,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderLeftWidth: 4,
     borderLeftColor: Colors.medGray,
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   artworkCardVisited: {
     borderLeftColor: Colors.darkGreen,

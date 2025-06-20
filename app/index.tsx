@@ -190,7 +190,6 @@ const styles = StyleSheet.create({
   },
   appTitle: {
     fontSize: 30,
-    fontWeight: "bold",
     marginBottom: 4,
     fontFamily: "Playfair Display",
   },
@@ -217,7 +216,6 @@ const styles = StyleSheet.create({
   },
   welcomeTitle: {
     fontSize: 24,
-    fontWeight: "600",
     marginBottom: 12,
     fontFamily: "Playfair Display",
   },
@@ -249,7 +247,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: "500",
   },
   divider: {
     flexDirection: "row",
@@ -299,6 +296,5 @@ const styles = StyleSheet.create({
   },
   signUpText: {
     color: "#007AFF",
-    fontWeight: "500",
   },
 });
