@@ -14,7 +14,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Colors } from "../../constants/Colors";
+import { Colors } from "@/constants/Colors";
 
 export default function ScanScreen() {
   const cameraRef = useRef<CameraView>(null);
@@ -289,7 +289,6 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     color: Colors.lightGray,
-    fontWeight: "500",
   },
   cameraContainer: {
     flex: 1,
