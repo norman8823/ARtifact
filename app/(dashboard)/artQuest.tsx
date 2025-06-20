@@ -15,7 +15,8 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { Colors } from "../../constants/Colors";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 
 type QuestDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -368,14 +369,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   questHeader: {
     marginBottom: 12,

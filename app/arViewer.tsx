@@ -12,6 +12,8 @@ import {
   View,
 } from "react-native";
 import { WebView } from "react-native-webview";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 
 export default function ARViewerScreen() {
   const params = useLocalSearchParams();
@@ -146,7 +148,7 @@ export default function ARViewerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: Colors.lightGray,
   },
   webview: {
     flex: 1,
@@ -172,7 +174,6 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: "600",
     color: "#333",
     textAlign: "center",
   },
@@ -192,7 +193,6 @@ const styles = StyleSheet.create({
   retryButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "500",
   },
   backButtonContainer: {
     position: "absolute",
@@ -208,16 +208,11 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 25,
     gap: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    ...shadowStyle,
   },
   backButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "500",
   },
   infoButtonContainer: {
     position: "absolute",
@@ -232,10 +227,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.7)",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    ...shadowStyle,
   },
 });

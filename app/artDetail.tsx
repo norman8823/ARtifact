@@ -30,7 +30,8 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { Colors } from "../constants/Colors";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const THUMBNAIL_SIZE = 60;
@@ -587,11 +588,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     top: 0,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   scanButton: {
     width: "100%",
@@ -602,11 +599,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     gap: 8,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   scanButtonText: {
     color: Colors.lightGray,
@@ -620,11 +613,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     gap: 8,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   arButtonText: {
     color: Colors.lightGray,
@@ -661,11 +650,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   audioGuideContent: {
     flexDirection: "row",
@@ -703,11 +688,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.darkGray,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   thumbnailContainer: {
     padding: THUMBNAIL_SPACING,

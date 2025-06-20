@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 
 export default function ProfileSettingsScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -283,14 +284,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   inputIcon: {
     marginRight: 8,
@@ -311,14 +305,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 16,
     marginBottom: 16,
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   saveButtonText: {
     color: Colors.lightGray,
@@ -330,14 +317,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     paddingVertical: 16,
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   deleteButtonText: {
     color: Colors.darkMedGray,
