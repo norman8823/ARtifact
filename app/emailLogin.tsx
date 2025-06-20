@@ -11,9 +11,11 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  SafeAreaView,
 } from "react-native";
 import "../src/aws/config";
 import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 
 export default function EmailLoginScreen() {
   const [email, setEmail] = useState("");
@@ -100,336 +102,357 @@ export default function EmailLoginScreen() {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      {/* Header */}
-      <ThemedView style={styles.header}>
-        <ThemedView style={styles.headerTop}>
-          <Pressable style={styles.backButton} onPress={() => router.back()}>
-            <FontAwesome name="arrow-left" size={20} color="#333" />
-          </Pressable>
-          <ThemedText style={styles.title}>
-            {needsVerification
-              ? "Verify Email"
-              : isSignUp
-              ? "Sign Up"
-              : "Sign In"}
-          </ThemedText>
-          <ThemedView style={styles.placeholder} />
-        </ThemedView>
-      </ThemedView>
-
-      {/* Main Content */}
-      <ThemedView style={styles.mainContent}>
-        {/* Instructions */}
-        <ThemedView style={styles.instructions}>
-          <ThemedText style={styles.instructionsTitle}>
-            {needsVerification
-              ? "Enter verification code"
-              : isSignUp
-              ? "Create your account"
-              : "Welcome back"}
-          </ThemedText>
-          <ThemedText style={styles.instructionsText}>
-            {needsVerification
-              ? "Please enter the verification code sent to your email."
-              : isSignUp
-              ? "Please enter your details to create an account."
-              : "Please enter your email and password to sign in."}
-          </ThemedText>
-        </ThemedView>
-
-        {/* Form */}
-        <ThemedView style={styles.formContainer}>
-          {!needsVerification && (
-            <>
-              <ThemedView style={styles.emailInputContainer}>
-                <ThemedView style={styles.emailInputWrapper}>
-                  <FontAwesome
-                    name="envelope"
-                    size={20}
-                    color="#666"
-                    style={styles.emailIcon}
-                  />
-                  <TextInput
-                    style={styles.emailInput}
-                    placeholder="Your email address"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    value={email}
-                    onChangeText={setEmail}
-                  />
-                </ThemedView>
-              </ThemedView>
-
-              {isSignUp && (
-                <>
-                  <ThemedView style={styles.emailInputContainer}>
-                    <ThemedView style={styles.emailInputWrapper}>
-                      <FontAwesome
-                        name="user"
-                        size={20}
-                        color="#666"
-                        style={styles.emailIcon}
-                      />
-                      <TextInput
-                        style={styles.emailInput}
-                        placeholder="Choose a username"
-                        autoCapitalize="none"
-                        value={username}
-                        onChangeText={setUsername}
-                      />
-                    </ThemedView>
-                  </ThemedView>
-
-                  <ThemedView style={styles.emailInputContainer}>
-                    <ThemedView style={styles.emailInputWrapper}>
-                      <FontAwesome
-                        name="phone"
-                        size={20}
-                        color="#666"
-                        style={styles.emailIcon}
-                      />
-                      <TextInput
-                        style={styles.emailInput}
-                        placeholder="Phone number (e.g., +1234567890)"
-                        keyboardType="phone-pad"
-                        value={phoneNumber}
-                        onChangeText={setPhoneNumber}
-                      />
-                    </ThemedView>
-                  </ThemedView>
-                </>
-              )}
-
-              <ThemedView style={styles.emailInputContainer}>
-                <ThemedView style={styles.emailInputWrapper}>
-                  <FontAwesome
-                    name="lock"
-                    size={20}
-                    color="#666"
-                    style={styles.emailIcon}
-                  />
-                  <TextInput
-                    style={styles.emailInput}
-                    placeholder="Password"
-                    secureTextEntry
-                    value={password}
-                    onChangeText={setPassword}
-                  />
-                </ThemedView>
-              </ThemedView>
-            </>
-          )}
-
-          {needsVerification && (
-            <ThemedView style={styles.emailInputContainer}>
-              <ThemedView style={styles.emailInputWrapper}>
+    <>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+        >
+          {/* Header */}
+          <ThemedView style={styles.header}>
+            <ThemedView style={styles.headerTop}>
+              <Pressable
+                style={styles.backButton}
+                onPress={() => router.back()}
+              >
                 <FontAwesome
-                  name="key"
+                  name="chevron-left"
                   size={20}
-                  color="#666"
-                  style={styles.emailIcon}
+                  color={Colors.darkGray}
                 />
-                <TextInput
-                  style={styles.emailInput}
-                  placeholder="Verification code"
-                  keyboardType="number-pad"
-                  value={verificationCode}
-                  onChangeText={setVerificationCode}
-                />
-              </ThemedView>
-            </ThemedView>
-          )}
-
-          <Pressable
-            style={[
-              styles.sendCodeButton,
-              (!email ||
-                !isValidEmail(email) ||
-                (!needsVerification && !isValidPassword(password)) ||
-                (isSignUp &&
-                  !needsVerification &&
-                  !isValidPhoneNumber(phoneNumber)) ||
-                (isSignUp &&
-                  !needsVerification &&
-                  !isValidUsername(username))) &&
-                styles.sendCodeButtonDisabled,
-            ]}
-            disabled={
-              isLoading ||
-              !email ||
-              !isValidEmail(email) ||
-              (!needsVerification && !isValidPassword(password)) ||
-              (isSignUp &&
-                !needsVerification &&
-                !isValidPhoneNumber(phoneNumber)) ||
-              (isSignUp && !needsVerification && !isValidUsername(username))
-            }
-            onPress={handleSubmit}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <ThemedText style={styles.sendCodeButtonText}>
+              </Pressable>
+              <ThemedText style={styles.title}>
                 {needsVerification
                   ? "Verify Email"
                   : isSignUp
                   ? "Sign Up"
                   : "Sign In"}
               </ThemedText>
-            )}
-          </Pressable>
-
-          {!needsVerification && (
-            <Pressable
-              style={styles.toggleAuthMode}
-              onPress={() => {
-                setIsSignUp(!isSignUp);
-                setUsername("");
-                setPhoneNumber("");
-              }}
-            >
-              <ThemedText style={styles.toggleAuthModeText}>
-                {isSignUp
-                  ? "Already have an account? Sign in"
-                  : "Don't have an account? Sign up"}
-              </ThemedText>
-            </Pressable>
-          )}
-        </ThemedView>
-
-        {/* Alternative Options */}
-        {!needsVerification && (
-          <ThemedView style={styles.alternativeContainer}>
-            <ThemedView style={styles.dividerContainer}>
-              <ThemedView style={styles.divider} />
-              <ThemedText style={styles.dividerText}>
-                or continue with
-              </ThemedText>
-              <ThemedView style={styles.divider} />
-            </ThemedView>
-
-            <ThemedView style={styles.alternativeButtons}>
-              <Pressable
-                style={styles.alternativeButton}
-                onPress={() => router.replace("/phoneLogin")}
-              >
-                <FontAwesome name="phone" size={24} color="#333" />
-                <ThemedText style={styles.alternativeButtonText}>
-                  Phone
-                </ThemedText>
-              </Pressable>
-
-              <Pressable
-                style={styles.alternativeButton}
-                onPress={() => router.replace("/googleLogin")}
-              >
-                <FontAwesome name="google" size={24} color="#333" />
-                <ThemedText style={styles.alternativeButtonText}>
-                  Google
-                </ThemedText>
-              </Pressable>
-
-              <Pressable
-                style={styles.alternativeButton}
-                onPress={() => router.replace("/appleLogin")}
-              >
-                <FontAwesome name="apple" size={24} color="#333" />
-                <ThemedText style={styles.alternativeButtonText}>
-                  Apple
-                </ThemedText>
-              </Pressable>
+              <FontAwesome
+                style={styles.placeholder}
+                name="chevron-right"
+                size={20}
+                color={Colors.lightGray}
+              />
             </ThemedView>
           </ThemedView>
-        )}
 
-        {/* Security Note */}
-        <ThemedView style={styles.securityNote}>
-          <FontAwesome name="shield" size={20} color="#007AFF" />
-          <ThemedText style={styles.securityNoteText}>
-            Your information is securely encrypted and protected.
-          </ThemedText>
-        </ThemedView>
-      </ThemedView>
+          {/* Main Content */}
+          <ThemedView style={styles.mainContent}>
+            {/* Instructions */}
+            <ThemedView style={styles.instructions}>
+              <ThemedText type="title" style={styles.instructionsTitle}>
+                {needsVerification
+                  ? "Enter verification code"
+                  : isSignUp
+                  ? "Create your account"
+                  : "Welcome back!"}
+              </ThemedText>
+              <ThemedText style={styles.instructionsText}>
+                {needsVerification
+                  ? "Please enter the verification code sent to your email."
+                  : isSignUp
+                  ? "Please enter your details to create an account."
+                  : "Please enter your email and password to sign in."}
+              </ThemedText>
+            </ThemedView>
 
-      {/* Footer */}
-      <ThemedView style={styles.footer}>
+            {/* Form */}
+            <ThemedView style={styles.formContainer}>
+              {!needsVerification && (
+                <>
+                  <ThemedView style={styles.emailInputContainer}>
+                    <ThemedView style={styles.emailInputWrapper}>
+                      <FontAwesome
+                        name="envelope"
+                        size={20}
+                        color={Colors.darkMedGray}
+                        style={styles.emailIcon}
+                      />
+                      <TextInput
+                        style={styles.emailInput}
+                        placeholder="Your email address"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        value={email}
+                        onChangeText={setEmail}
+                      />
+                    </ThemedView>
+                  </ThemedView>
+
+                  {isSignUp && (
+                    <>
+                      <ThemedView style={styles.emailInputContainer}>
+                        <ThemedView style={styles.emailInputWrapper}>
+                          <FontAwesome
+                            name="user"
+                            size={20}
+                            color={Colors.darkMedGray}
+                            style={styles.emailIcon}
+                          />
+                          <TextInput
+                            style={styles.emailInput}
+                            placeholder="Choose a username"
+                            autoCapitalize="none"
+                            value={username}
+                            onChangeText={setUsername}
+                          />
+                        </ThemedView>
+                      </ThemedView>
+
+                      <ThemedView style={styles.emailInputContainer}>
+                        <ThemedView style={styles.emailInputWrapper}>
+                          <FontAwesome
+                            name="phone"
+                            size={20}
+                            color={Colors.darkMedGray}
+                            style={styles.emailIcon}
+                          />
+                          <TextInput
+                            style={styles.emailInput}
+                            placeholder="Phone number (e.g., +1234567890)"
+                            keyboardType="phone-pad"
+                            value={phoneNumber}
+                            onChangeText={setPhoneNumber}
+                          />
+                        </ThemedView>
+                      </ThemedView>
+                    </>
+                  )}
+
+                  <ThemedView style={styles.emailInputContainer}>
+                    <ThemedView style={styles.emailInputWrapper}>
+                      <FontAwesome
+                        name="lock"
+                        size={20}
+                        color={Colors.darkMedGray}
+                        style={styles.emailIcon}
+                      />
+                      <TextInput
+                        style={styles.emailInput}
+                        placeholder="Password"
+                        secureTextEntry
+                        value={password}
+                        onChangeText={setPassword}
+                      />
+                    </ThemedView>
+                  </ThemedView>
+                </>
+              )}
+
+              {needsVerification && (
+                <ThemedView style={styles.emailInputContainer}>
+                  <ThemedView style={styles.emailInputWrapper}>
+                    <FontAwesome
+                      name="key"
+                      size={20}
+                      color={Colors.darkMedGray}
+                      style={styles.emailIcon}
+                    />
+                    <TextInput
+                      style={styles.emailInput}
+                      placeholder="Verification code"
+                      keyboardType="number-pad"
+                      value={verificationCode}
+                      onChangeText={setVerificationCode}
+                    />
+                  </ThemedView>
+                </ThemedView>
+              )}
+
+              <Pressable
+                style={[
+                  styles.sendCodeButton,
+                  (!email ||
+                    !isValidEmail(email) ||
+                    (!needsVerification && !isValidPassword(password)) ||
+                    (isSignUp &&
+                      !needsVerification &&
+                      !isValidPhoneNumber(phoneNumber)) ||
+                    (isSignUp &&
+                      !needsVerification &&
+                      !isValidUsername(username))) &&
+                    styles.sendCodeButtonDisabled,
+                ]}
+                disabled={
+                  isLoading ||
+                  !email ||
+                  !isValidEmail(email) ||
+                  (!needsVerification && !isValidPassword(password)) ||
+                  (isSignUp &&
+                    !needsVerification &&
+                    !isValidPhoneNumber(phoneNumber)) ||
+                  (isSignUp && !needsVerification && !isValidUsername(username))
+                }
+                onPress={handleSubmit}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color={Colors.lightGray} />
+                ) : (
+                  <ThemedText style={styles.sendCodeButtonText}>
+                    {needsVerification
+                      ? "Verify Email"
+                      : isSignUp
+                      ? "Sign Up"
+                      : "Sign In"}
+                  </ThemedText>
+                )}
+              </Pressable>
+
+              {!needsVerification && (
+                <Pressable
+                  style={styles.toggleAuthMode}
+                  onPress={() => {
+                    setIsSignUp(!isSignUp);
+                    setUsername("");
+                    setPhoneNumber("");
+                  }}
+                >
+                  <ThemedText
+                    style={[
+                      { color: Colors.darkMedGray },
+                      styles.toggleAuthModeText,
+                    ]}
+                  >
+                    {isSignUp
+                      ? "Already have an account? "
+                      : "Don't have an account? "}
+                  </ThemedText>
+                  <ThemedText
+                    style={[
+                      { color: Colors.metRed },
+                      styles.toggleAuthModeText,
+                    ]}
+                  >
+                    {isSignUp ? "Sign in" : "Sign up"}
+                  </ThemedText>
+                </Pressable>
+              )}
+            </ThemedView>
+
+            {/* Alternative Options */}
+            {!needsVerification && (
+              <ThemedView style={styles.alternativeContainer}>
+                <ThemedView style={styles.dividerContainer}>
+                  <ThemedView style={styles.divider} />
+                  <ThemedText style={styles.dividerText}>
+                    or continue with
+                  </ThemedText>
+                  <ThemedView style={styles.divider} />
+                </ThemedView>
+
+                <ThemedView style={styles.alternativeButtons}>
+                  <Pressable
+                    style={styles.alternativeButton}
+                    onPress={() => router.replace("/phoneLogin")}
+                  >
+                    <FontAwesome
+                      name="phone"
+                      size={24}
+                      color={Colors.darkMedGray}
+                    />
+                    <ThemedText style={styles.alternativeButtonText}>
+                      Phone
+                    </ThemedText>
+                  </Pressable>
+
+                  <Pressable
+                    style={styles.alternativeButton}
+                    onPress={() => router.replace("/googleLogin")}
+                  >
+                    <FontAwesome
+                      name="google"
+                      size={24}
+                      color={Colors.darkMedGray}
+                    />
+                    <ThemedText style={styles.alternativeButtonText}>
+                      Google
+                    </ThemedText>
+                  </Pressable>
+
+                  <Pressable
+                    style={styles.alternativeButton}
+                    onPress={() => router.replace("/appleLogin")}
+                  >
+                    <FontAwesome
+                      name="apple"
+                      size={24}
+                      color={Colors.darkMedGray}
+                    />
+                    <ThemedText style={styles.alternativeButtonText}>
+                      Apple
+                    </ThemedText>
+                  </Pressable>
+                </ThemedView>
+              </ThemedView>
+            )}
+          </ThemedView>
+
+          {/* Footer */}
+          {/* <ThemedView style={styles.footer}>
         <ThemedText style={styles.footerText}>
           Need help?{" "}
           <ThemedText style={styles.supportText}>Contact Support</ThemedText>
         </ThemedText>
-      </ThemedView>
-    </ScrollView>
+      </ThemedView> */}
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.lightGray,
   },
   contentContainer: {
     flexGrow: 1,
   },
   header: {
-    paddingTop: 80,
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
   },
   headerTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 36,
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#F5F5F5",
-    alignItems: "center",
-    justifyContent: "center",
+    paddingVertical: 10,
+    paddingRight: 10,
   },
-  placeholder: {
-    width: 40,
-    height: 40,
-  },
+  placeholder: {},
   title: {
     fontSize: 20,
-    textAlign: "center",
-    fontFamily: "Playfair Display",
+    marginLeft: -10,
   },
   mainContent: {
     flex: 1,
-    paddingHorizontal: 24,
-  },
-  instructions: {
-    marginBottom: 32,
+    paddingHorizontal: 20,
   },
   instructionsTitle: {
-    fontSize: 24,
-    marginBottom: 12,
-    fontFamily: "Playfair Display",
+    marginBottom: 16,
+  },
+  instructions: {
+    marginBottom: 20,
   },
   instructionsText: {
-    fontSize: 16,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   formContainer: {
-    marginBottom: 32,
+    marginBottom: 36,
   },
   emailInputContainer: {
-    marginBottom: 24,
+    marginBottom: 16,
+    borderRadius: 12,
+    ...shadowStyle,
   },
   emailInputWrapper: {
+    backgroundColor: Colors.medLightGray,
+    borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E5E5E5",
-    borderRadius: 12,
-    backgroundColor: "#FFFFFF",
   },
   emailIcon: {
     marginLeft: 16,
@@ -437,89 +460,76 @@ const styles = StyleSheet.create({
   emailInput: {
     flex: 1,
     padding: 16,
-    fontSize: 16,
   },
   sendCodeButton: {
-    backgroundColor: "#000000",
+    backgroundColor: Colors.darkGray,
     borderRadius: 12,
     padding: 16,
+    marginTop: 20,
     alignItems: "center",
+    ...shadowStyle,
   },
   sendCodeButtonDisabled: {
-    opacity: 0.5,
+    backgroundColor: Colors.medGray,
   },
   sendCodeButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
+    color: Colors.lightGray,
   },
   alternativeContainer: {
-    marginBottom: 32,
+    marginBottom: 80,
   },
   dividerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 20,
   },
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: "#E5E5E5",
+    backgroundColor: Colors.medGray,
   },
   dividerText: {
     marginHorizontal: 16,
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   alternativeButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
   alternativeButton: {
+    backgroundColor: Colors.medLightGray,
     flex: 1,
     alignItems: "center",
     padding: 12,
-    borderWidth: 1,
-    borderColor: "#E5E5E5",
     borderRadius: 12,
     marginHorizontal: 4,
+    ...shadowStyle,
   },
   alternativeButtonText: {
     fontSize: 12,
     marginTop: 4,
   },
-  securityNote: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    backgroundColor: "#F5F5F5",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 32,
-  },
-  securityNoteText: {
-    flex: 1,
-    fontSize: 14,
-    color: "#666",
-    marginLeft: 12,
-    lineHeight: 20,
-  },
-  footer: {
-    paddingHorizontal: 24,
-    paddingBottom: 32,
-    alignItems: "center",
-  },
-  footerText: {
-    fontSize: 12,
-    color: "#666",
-  },
-  supportText: {
-    color: "#007AFF",
-  },
+  // footer: {
+  //   paddingHorizontal: 24,
+  //   paddingBottom: 32,
+  //   alignItems: "center",
+  // },
+  // footerText: {
+  //   fontSize: 12,
+  //   color: "#666",
+  // },
+  // supportText: {
+  //   color: "#007AFF",
+  // },
   toggleAuthMode: {
-    marginTop: 16,
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
+    marginTop: 20,
   },
   toggleAuthModeText: {
-    color: "#007AFF",
     fontSize: 14,
   },
 });
