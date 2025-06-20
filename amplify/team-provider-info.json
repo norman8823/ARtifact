@@ -27,7 +27,7 @@
           "deploymentBucketName": "amplify-artifact-dev-d3c4f-deployment",
           "s3Key": "amplify-builds/analyzeImage-32413666453072786132-build.zip",
           "storageArtifactstorageBucketname": "artifactbucketd3c4f-dev",
-          "projectVersionArn": "arn:aws:rekognition:us-east-1:008971679041:project/artifactImageScan/1750358004302"
+          "projectVersionArn": "arn:aws:rekognition:us-east-1:008971679041:project/artifactImageScan/version/artifactImageScan.2025-06-19T14.42.43/1750358563584"
         }
       }
     }
