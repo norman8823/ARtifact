@@ -398,7 +398,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: "600",
     textAlign: "center",
     fontFamily: "Playfair Display",
   },
@@ -411,7 +410,6 @@ const styles = StyleSheet.create({
   },
   instructionsTitle: {
     fontSize: 24,
-    fontWeight: "600",
     marginBottom: 12,
     fontFamily: "Playfair Display",
   },
@@ -453,7 +451,6 @@ const styles = StyleSheet.create({
   sendCodeButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "500",
   },
   alternativeContainer: {
     marginBottom: 32,
@@ -516,7 +513,6 @@ const styles = StyleSheet.create({
   },
   supportText: {
     color: "#007AFF",
-    fontWeight: "500",
   },
   toggleAuthMode: {
     marginTop: 16,

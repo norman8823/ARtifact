@@ -167,7 +167,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: "600",
     textAlign: "center",
     fontFamily: "Playfair Display",
   },
@@ -196,7 +195,6 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: "500",
     color: "#333",
     marginBottom: 8,
   },
@@ -250,7 +248,6 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     fontSize: 14,
     color: "#007AFF",
-    fontWeight: "500",
   },
   signInButton: {
     backgroundColor: "#000000",
@@ -262,7 +259,6 @@ const styles = StyleSheet.create({
   signInButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "500",
   },
   biometricContainer: {
     alignItems: "center",
@@ -304,7 +300,6 @@ const styles = StyleSheet.create({
   otherSignInText: {
     fontSize: 14,
     color: "#007AFF",
-    fontWeight: "500",
   },
   termsText: {
     fontSize: 12,

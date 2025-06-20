@@ -21,8 +21,9 @@ import {
   StyleSheet,
   Switch,
 } from "react-native";
-import { Colors } from "../../constants/Colors";
 import { SafeAreaView } from "react-native";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -472,14 +473,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   statNumber: {
     fontSize: 24,
@@ -517,14 +511,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.medLightGray,
     padding: 16,
     borderRadius: 12,
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   rankLabels: {
     backgroundColor: Colors.medLightGray,
@@ -565,14 +552,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderRadius: 12,
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   settingLeft: {
     backgroundColor: Colors.medLightGray,
@@ -588,14 +568,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     alignItems: "center",
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   logoutButtonText: {
     fontSize: 14,
