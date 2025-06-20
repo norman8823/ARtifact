@@ -1,5 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
@@ -12,8 +14,6 @@ import {
   View,
 } from "react-native";
 import { WebView } from "react-native-webview";
-import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
 
 export default function ARViewerScreen() {
   const params = useLocalSearchParams();
@@ -23,13 +23,15 @@ export default function ARViewerScreen() {
   const artworkTitle = Array.isArray(params.title)
     ? params.title[0]
     : params.title || "Artwork";
+  const arImage = Array.isArray(params.arImage)
+    ? params.arImage[0]
+    : params.arImage;
 
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  // For now using the demo URL, but in production you would construct
-  // the URL based on the artwork ID
-  const arURL = `https://artifact2.8thwall.app/ruthgleaning/`;
+  // Use the arImage from the artwork data, fallback to demo URL if not available
+  const arURL = arImage || `https://artifact2.8thwall.app/ruthgleaning/`;
 
   const handleBack = () => {
     router.back();
@@ -132,7 +134,7 @@ export default function ARViewerScreen() {
             onPress={() =>
               Alert.alert(
                 "AR Experience",
-                `Viewing AR content for: ${artworkTitle}\nArtwork ID: ${artworkId}`,
+                `Viewing AR content for: ${artworkTitle}\nArtwork ID: ${artworkId}\nAR URL: ${arURL}`,
                 [{ text: "OK" }]
               )
             }

@@ -1,5 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
 import { type ArtFact, useArtFacts } from "@/src/hooks/useArtFacts";
 import { type Artwork, useArtwork } from "@/src/hooks/useArtwork";
@@ -30,8 +32,6 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const THUMBNAIL_SIZE = 60;
@@ -366,23 +366,24 @@ export default function ArtDetailScreen() {
           </Pressable>
 
           {/* AR Button - Only show if artwork has AR support */}
-          {/* {artwork.hasAR && ( */}
-          <Pressable
-            style={styles.arButton}
-            onPress={() => {
-              router.push({
-                pathname: "/arViewer",
-                params: {
-                  artworkId: artwork.id,
-                  title: artwork.title,
-                },
-              });
-            }}
-          >
-            <FontAwesome name="cube" size={18} color={Colors.lightGray} />
-            <ThemedText style={styles.arButtonText}>View in AR</ThemedText>
-          </Pressable>
-          {/* )} */}
+          {artwork.hasAR && (
+            <Pressable
+              style={styles.arButton}
+              onPress={() => {
+                router.push({
+                  pathname: "/arViewer",
+                  params: {
+                    artworkId: artwork.id,
+                    title: artwork.title,
+                    arImage: artwork.arImage,
+                  },
+                });
+              }}
+            >
+              <FontAwesome name="cube" size={18} color={Colors.lightGray} />
+              <ThemedText style={styles.arButtonText}>View in AR</ThemedText>
+            </Pressable>
+          )}
 
           {/* Artwork Details */}
           <ThemedView style={styles.detailsContainer}>
