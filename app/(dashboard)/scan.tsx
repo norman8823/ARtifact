@@ -48,7 +48,7 @@ export default function ScanScreen() {
       console.log("📸 Starting image analysis...");
 
       // Generate unique filename
-      const fileName = `scans/scan-${Date.now()}.jpg`;
+      const fileName = `public/scans/scan-${Date.now()}.jpg`;
 
       // Read the image file as binary
       const response = await fetch(uri);

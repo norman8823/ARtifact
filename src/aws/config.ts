@@ -10,6 +10,7 @@ const requiredEnvVars = {
   userPoolId: process.env.EXPO_PUBLIC_USER_POOL_ID,
   userPoolClientId: process.env.EXPO_PUBLIC_USER_POOL_CLIENT_ID,
   bucketName: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
+  identityPoolId: process.env.EXPO_PUBLIC_IDENTITY_POOL_ID,
 };
 
 // Check for missing environment variables
@@ -28,7 +29,8 @@ if (
   !requiredEnvVars.region ||
   !requiredEnvVars.userPoolId ||
   !requiredEnvVars.userPoolClientId ||
-  !requiredEnvVars.bucketName
+  !requiredEnvVars.bucketName ||
+  !requiredEnvVars.identityPoolId
 ) {
   throw new Error("Required environment variables are undefined");
 }
@@ -40,6 +42,7 @@ try {
       Cognito: {
         userPoolId: requiredEnvVars.userPoolId,
         userPoolClientId: requiredEnvVars.userPoolClientId,
+        identityPoolId: requiredEnvVars.identityPoolId,
       },
     },
     API: {
@@ -51,7 +54,8 @@ try {
       },
       REST: {
         rekognitionApi: {
-          endpoint: "https://6nffsggmz8.execute-api.us-east-1.amazonaws.com/dev",
+          endpoint:
+            "https://6nffsggmz8.execute-api.us-east-1.amazonaws.com/dev",
           region: requiredEnvVars.region,
         },
       },
@@ -60,6 +64,12 @@ try {
       S3: {
         bucket: requiredEnvVars.bucketName,
         region: requiredEnvVars.region,
+        buckets: {
+          default: {
+            bucketName: requiredEnvVars.bucketName,
+            region: requiredEnvVars.region,
+          },
+        },
       },
     },
   });
