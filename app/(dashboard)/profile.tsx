@@ -46,6 +46,7 @@ export default function ProfileScreen() {
   const [nextRank, setNextRank] = useState<Rank | null>(null);
   const [xpProgress, setXpProgress] = useState(0);
   const [xpNeeded, setXpNeeded] = useState(0);
+  const [allRanks, setAllRanks] = useState<Rank[]>([]);
 
   // Load user data and stats when component mounts or favorites change
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function ProfileScreen() {
         await ensureUserInDB();
 
         // Load all data in parallel
-        const [favorites, visited, quests, xp, allRanks] = await Promise.all([
+        const [favorites, visited, quests, xp, ranks] = await Promise.all([
           getFavoriteCount(),
           getVisitedArtworks(),
           getUserQuests(),
@@ -69,19 +70,20 @@ export default function ProfileScreen() {
           quests.filter((q: UserQuest) => q.isCompleted).length
         );
         setUserXP(xp);
+        setAllRanks(ranks);
 
         // Calculate rank progress
-        if (xp && allRanks.length > 0) {
-          const userRank = allRanks.find(
+        if (xp && ranks.length > 0) {
+          const userRank = ranks.find(
             (rank: Rank) =>
               xp.xpPoints >= rank.minXP && xp.xpPoints <= rank.maxXP
           );
           const nextRankIndex =
-            allRanks.findIndex((r: Rank) => r.id === userRank?.id) + 1;
+            ranks.findIndex((r: Rank) => r.id === userRank?.id) + 1;
           const nextUserRank =
-            nextRankIndex < allRanks.length ? allRanks[nextRankIndex] : null;
+            nextRankIndex < ranks.length ? ranks[nextRankIndex] : null;
 
-          setCurrentRank(userRank || allRanks[0]);
+          setCurrentRank(userRank || ranks[0]);
           setNextRank(nextUserRank);
 
           if (userRank && nextUserRank) {
@@ -303,91 +305,46 @@ export default function ProfileScreen() {
 
                 {/* Rank List */}
                 <ThemedView style={styles.rankList}>
-                  {/* Art Rookie */}
-                  <ThemedView style={styles.rankItem}>
-                    <ThemedView style={styles.rankIcon}>
-                      <FontAwesome
-                        name="leaf"
-                        size={16}
-                        color={Colors.darkYellow}
-                      />
-                    </ThemedView>
-                    <ThemedView style={styles.rankDetails}>
-                      <ThemedText style={styles.rankName}>
-                        Art Rookie
-                      </ThemedText>
-                      <ThemedText style={styles.rankXP}>0-500 XP</ThemedText>
-                      <ThemedText style={styles.rankDescription}>
-                        Begin your journey and start discovering art!
-                      </ThemedText>
-                    </ThemedView>
-                  </ThemedView>
-
-                  {/* Art Enthusiast */}
-                  <ThemedView style={styles.rankItem}>
-                    <ThemedView style={styles.rankIcon}>
-                      <FontAwesome
-                        name="paint-brush"
-                        size={16}
-                        color={Colors.darkYellow}
-                      />
-                    </ThemedView>
-                    <ThemedView style={styles.rankDetails}>
-                      <ThemedText style={styles.rankName}>
-                        Art Enthusiast
-                      </ThemedText>
-                      <ThemedText style={styles.rankXP}>
-                        501-1,500 XP
-                      </ThemedText>
-                      <ThemedText style={styles.rankDescription}>
-                        You're building a collection and learning fast.
-                      </ThemedText>
-                    </ThemedView>
-                  </ThemedView>
-
-                  {/* Art Expert */}
-                  <ThemedView style={styles.rankItem}>
-                    <ThemedView
-                      style={[styles.rankIcon, styles.rankIconHighlighted]}
-                    >
-                      <FontAwesome
-                        name="star"
-                        size={16}
-                        color={Colors.darkYellow}
-                      />
-                    </ThemedView>
-                    <ThemedView style={styles.rankDetails}>
-                      <ThemedText style={styles.rankName}>
-                        Art Expert
-                      </ThemedText>
-                      <ThemedText style={styles.rankXP}>
-                        1,501-3,000 XP
-                      </ThemedText>
-                      <ThemedText style={styles.rankDescription}>
-                        Recognized for your knowledge and dedication.
-                      </ThemedText>
-                    </ThemedView>
-                  </ThemedView>
-
-                  {/* Art Master */}
-                  <ThemedView style={styles.rankItem}>
-                    <ThemedView style={styles.rankIcon}>
-                      <FontAwesome
-                        name="trophy"
-                        size={16}
-                        color={Colors.darkYellow}
-                      />
-                    </ThemedView>
-                    <ThemedView style={styles.rankDetails}>
-                      <ThemedText style={styles.rankName}>
-                        Art Master
-                      </ThemedText>
-                      <ThemedText style={styles.rankXP}>3,001+ XP</ThemedText>
-                      <ThemedText style={styles.rankDescription}>
-                        You're a true master—share your love of art with all!
-                      </ThemedText>
-                    </ThemedView>
-                  </ThemedView>
+                  {allRanks.map((rank, idx) => {
+                    let iconName = "leaf";
+                    if (rank.title.toLowerCase().includes("enthusiast"))
+                      iconName = "paint-brush";
+                    else if (rank.title.toLowerCase().includes("expert"))
+                      iconName = "star";
+                    else if (rank.title.toLowerCase().includes("master"))
+                      iconName = "trophy";
+                    const isCurrent = currentRank?.id === rank.id;
+                    const isLast = idx === allRanks.length - 1;
+                    return (
+                      <ThemedView key={rank.id} style={styles.rankItem}>
+                        <ThemedView
+                          style={[
+                            styles.rankIcon,
+                            isCurrent && styles.rankIconHighlighted,
+                          ]}
+                        >
+                          <FontAwesome
+                            name={iconName as any}
+                            size={16}
+                            color={Colors.darkYellow}
+                          />
+                        </ThemedView>
+                        <ThemedView style={styles.rankDetails}>
+                          <ThemedText style={styles.rankName}>
+                            {rank.title}
+                          </ThemedText>
+                          <ThemedText style={styles.rankXP}>
+                            {isLast
+                              ? `${rank.minXP}+ XP`
+                              : `${rank.minXP}-${rank.maxXP} XP`}
+                          </ThemedText>
+                          <ThemedText style={styles.rankDescription}>
+                            {rank.description || ""}
+                          </ThemedText>
+                        </ThemedView>
+                      </ThemedView>
+                    );
+                  })}
                 </ThemedView>
               </Pressable>
             </Pressable>
