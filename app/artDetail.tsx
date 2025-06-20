@@ -576,7 +576,7 @@ const styles = StyleSheet.create({
   },
   period: {
     fontSize: 14,
-    color: Colors.medGray,
+    color: Colors.darkMedGray,
     flex: 1,
   },
   favoriteButton: {
