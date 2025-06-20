@@ -9,6 +9,7 @@ const requiredEnvVars = {
   region: process.env.EXPO_PUBLIC_AWS_REGION,
   userPoolId: process.env.EXPO_PUBLIC_USER_POOL_ID,
   userPoolClientId: process.env.EXPO_PUBLIC_USER_POOL_CLIENT_ID,
+  bucketName: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
 };
 
 // Check for missing environment variables
@@ -26,7 +27,8 @@ if (missingVars.length > 0) {
 if (
   !requiredEnvVars.region ||
   !requiredEnvVars.userPoolId ||
-  !requiredEnvVars.userPoolClientId
+  !requiredEnvVars.userPoolClientId ||
+  !requiredEnvVars.bucketName
 ) {
   throw new Error("Required environment variables are undefined");
 }
@@ -46,6 +48,18 @@ try {
           "https://pxkzi6ejozb2pnbdngzlqzecdu.appsync-api.us-east-1.amazonaws.com/graphql",
         region: requiredEnvVars.region,
         defaultAuthMode: "userPool",
+      },
+      REST: {
+        rekognitionApi: {
+          endpoint: "https://6nffsggmz8.execute-api.us-east-1.amazonaws.com/dev",
+          region: requiredEnvVars.region,
+        },
+      },
+    },
+    Storage: {
+      S3: {
+        bucket: requiredEnvVars.bucketName,
+        region: requiredEnvVars.region,
       },
     },
   });
