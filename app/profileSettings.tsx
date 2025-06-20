@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 
 export default function ProfileSettingsScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,11 +26,6 @@ export default function ProfileSettingsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      {/* Header */}
-      <ThemedView style={styles.header}>
-        <ThemedText style={styles.headerTitle}>Profile Settings</ThemedText>
-      </ThemedView>
-
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
@@ -42,14 +38,18 @@ export default function ProfileSettingsScreen() {
               <ThemedView style={styles.avatar}>
                 <ThemedText style={styles.avatarText}>SJ</ThemedText>
               </ThemedView>
-              <Pressable style={styles.editAvatarButton}>
-                <FontAwesome name="pencil" size={12} color={"white"} />
+              <Pressable
+                onPress={() => setShowPhotoModal(true)}
+                style={styles.editAvatarButton}
+              >
+                <FontAwesome
+                  name="pencil"
+                  size={12}
+                  color={Colors.darkMedGray}
+                />
               </Pressable>
             </Pressable>
           </View>
-          <ThemedText style={styles.editPhotoText}>
-            Edit profile photo
-          </ThemedText>
         </ThemedView>
 
         {/* Form Fields */}
@@ -144,7 +144,7 @@ export default function ProfileSettingsScreen() {
           <FontAwesome
             name="check"
             size={16}
-            color={"white"}
+            color={Colors.lightGray}
             style={styles.buttonIcon}
           />
           <ThemedText style={styles.saveButtonText}>Save Changes</ThemedText>
@@ -185,7 +185,7 @@ export default function ProfileSettingsScreen() {
               <FontAwesome
                 name="image"
                 size={20}
-                color={Colors.darkGray}
+                color={Colors.darkMedGray}
                 style={styles.modalIcon}
               />
               <ThemedText style={styles.modalButtonText}>
@@ -203,7 +203,7 @@ export default function ProfileSettingsScreen() {
               <FontAwesome
                 name="camera"
                 size={20}
-                color={Colors.darkGray}
+                color={Colors.darkMedGray}
                 style={styles.modalIcon}
               />
               <ThemedText style={styles.modalButtonText}>Take Photo</ThemedText>
@@ -225,16 +225,7 @@ export default function ProfileSettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 24,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "600",
+    backgroundColor: Colors.lightGray,
   },
   scrollView: {
     flex: 1,
@@ -245,7 +236,7 @@ const styles = StyleSheet.create({
   },
   avatarBlock: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: 36,
   },
   avatarContainer: {
     position: "relative",
@@ -254,14 +245,13 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: Colors.darkGray,
+    backgroundColor: Colors.medLightGray,
     alignItems: "center",
     justifyContent: "center",
   },
   avatarText: {
-    color: "white",
+    color: Colors.darkMedGray,
     fontSize: 28,
-    fontWeight: "600",
   },
   editAvatarButton: {
     position: "absolute",
@@ -270,45 +260,38 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#333",
+    backgroundColor: Colors.medLightGray,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
-  editPhotoText: {
-    marginTop: 8,
-    fontSize: 14,
-    color: "#666",
+    borderWidth: 1,
+    borderColor: Colors.darkMedGray,
   },
   formField: {
-    marginBottom: 24,
+    marginBottom: 12,
   },
   lastFormField: {
-    marginBottom: 32,
+    marginBottom: 72,
   },
   label: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
     marginBottom: 4,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    ...shadowStyle,
   },
   inputIcon: {
     marginRight: 8,
   },
   input: {
     flex: 1,
-    fontSize: 16,
-    color: "#333",
+    color: Colors.darkMedGray,
     paddingVertical: 8,
   },
   buttonIcon: {
@@ -318,40 +301,36 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#333",
+    backgroundColor: Colors.darkGray,
     borderRadius: 12,
     paddingVertical: 16,
     marginBottom: 16,
+    ...shadowStyle,
   },
   saveButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
+    color: Colors.lightGray,
   },
   deleteButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f5f5f5",
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     paddingVertical: 16,
+    ...shadowStyle,
   },
   deleteButtonText: {
-    color: "#666",
-    fontSize: 16,
-    fontWeight: "600",
+    color: Colors.darkMedGray,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
+    backgroundColor: Colors.medLightGray,
+    borderRadius: 12,
     width: "90%",
     maxWidth: 375,
     overflow: "hidden",
@@ -363,20 +342,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
+    borderBottomColor: Colors.medGray,
   },
   modalIcon: {
     marginRight: 12,
   },
   modalButtonText: {
-    fontSize: 16,
-    color: "#333",
+    color: Colors.darkMedGray,
   },
   cancelButton: {
     borderBottomWidth: 0,
   },
   cancelButtonText: {
-    fontSize: 16,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
 });

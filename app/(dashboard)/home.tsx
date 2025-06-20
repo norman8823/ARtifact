@@ -15,8 +15,9 @@ import {
   StyleSheet,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -401,12 +402,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: Colors.lightGray,
-    borderRadius: 15,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderRadius: 12,
+    ...shadowStyle,
   },
   featuredItem: {
     width: SCREEN_WIDTH - 40,
@@ -466,14 +463,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     flexDirection: "row",
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 2,
+    ...shadowStyle,
   },
   triviaIconContainer: {
     width: 32,
@@ -512,12 +502,6 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    elevation: 5,
     zIndex: 1,
     top: 130,
     marginHorizontal: -15,
