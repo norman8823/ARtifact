@@ -112,12 +112,26 @@ export default function ExploreScreen() {
               <TextInput
                 style={styles.searchInput}
                 placeholder="Search artworks, artists, periods..."
-                placeholderTextColor="Colors.medGray"
+                placeholderTextColor={Colors.medGray}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 onSubmitEditing={Keyboard.dismiss}
                 returnKeyType="done"
               />
+              {searchQuery.length > 0 && (
+                <Pressable
+                  onPress={() => setSearchQuery("")}
+                  style={styles.clearButton}
+                  accessibilityLabel="Clear search"
+                  hitSlop={8}
+                >
+                  <FontAwesome
+                    name="times"
+                    size={16}
+                    color={Colors.darkMedGray}
+                  />
+                </Pressable>
+              )}
             </ThemedView>
           </ThemedView>
 
@@ -171,6 +185,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.darkMedGray,
     height: "100%",
+  },
+  clearButton: {
+    marginLeft: 8,
+    padding: 4,
+    justifyContent: "center",
+    alignItems: "center",
   },
   gridContainer: {
     paddingTop: 16,
