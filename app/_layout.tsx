@@ -5,7 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Colors } from "../constants/Colors";
+import { Colors } from "@/constants/Colors";
 import { FavoritesProvider } from "@/src/contexts/FavoritesContext";
 
 export default function RootLayout() {
@@ -55,7 +55,7 @@ export default function RootLayout() {
           <Stack.Screen
             name="profileSettings"
             options={{
-              headerTitle: "",
+              headerTitle: "Profile Settings",
             }}
           />
           <Stack.Screen
