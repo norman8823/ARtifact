@@ -5,7 +5,9 @@ import { getCurrentUser } from "aws-amplify/auth";
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
 import { useEffect } from "react";
-import { Pressable, ScrollView, StyleSheet } from "react-native";
+import { Pressable, ScrollView, StyleSheet, SafeAreaView } from "react-native";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 
 export default function LandingScreen() {
   const router = useRouter();
@@ -26,185 +28,188 @@ export default function LandingScreen() {
   }, []);
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      {/* Header */}
-      <ThemedView style={styles.header}>
-        <ThemedView style={styles.logoContainer}>
-          <ThemedView style={styles.logoCircle}>
-            <FontAwesome name="building" size={24} color="#333" />
-          </ThemedView>
-        </ThemedView>
-        <ThemedText style={styles.appTitle}>ARtifact</ThemedText>
-        <ThemedText style={styles.appSubtitle}>
-          Your museum companion
-        </ThemedText>
-      </ThemedView>
-
-      {/* Main Content */}
-      <ThemedView style={styles.mainContent}>
-        {/* Background Image */}
-        <ThemedView style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: "https://storage.googleapis.com/uxpilot-auth.appspot.com/f0a34ddb90-42e312c324d1f17d7705.png",
-            }}
-            style={styles.backgroundImage}
-            contentFit="cover"
-          />
-        </ThemedView>
-
-        {/* Welcome Text */}
-        <ThemedView style={styles.welcomeSection}>
-          <Link href="/home" replace>
-            <ThemedText style={styles.welcomeTitle}>Welcome</ThemedText>
-          </Link>
-          <ThemedText style={styles.welcomeText}>
-            Discover art collections, view your favorite artworks with Augmented
-            Reality, and go on an ArtQuest at the MET.
-          </ThemedText>
-        </ThemedView>
-
-        {/* Login Options */}
-        <ThemedView style={styles.loginOptions}>
-          <Pressable
-            style={styles.loginButton}
-            onPress={() => router.push("/phoneLogin")}
-          >
-            <ThemedView style={styles.buttonContent}>
-              <FontAwesome
-                name="phone"
-                size={20}
-                color="#333"
-                style={styles.buttonIcon}
-              />
-              <ThemedText style={styles.buttonText}>
-                Continue with phone
+    <>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+        >
+          {/* Header */}
+          <ThemedView style={styles.header}>
+            <ThemedView style={styles.titleRow}>
+              <ThemedText style={[{ color: Colors.metRed }, styles.appTitle]}>
+                AR
               </ThemedText>
+              <ThemedText style={styles.appTitle}>tifact</ThemedText>
             </ThemedView>
-            <FontAwesome name="chevron-right" size={16} color="#999" />
-          </Pressable>
-
-          <Pressable
-            style={styles.loginButton}
-            onPress={() => router.push("/emailLogin")}
-          >
-            <ThemedView style={styles.buttonContent}>
-              <FontAwesome
-                name="envelope"
-                size={20}
-                color="#333"
-                style={styles.buttonIcon}
-              />
-              <ThemedText style={styles.buttonText}>
-                Continue with email
-              </ThemedText>
-            </ThemedView>
-            <FontAwesome name="chevron-right" size={16} color="#999" />
-          </Pressable>
-
-          <ThemedView style={styles.divider}>
-            <ThemedView style={styles.dividerLine} />
-            <ThemedText style={styles.dividerText}>or</ThemedText>
-            <ThemedView style={styles.dividerLine} />
           </ThemedView>
 
-          <Pressable
-            style={styles.socialButton}
-            onPress={() => router.push("/googleLogin")}
-          >
-            <FontAwesome
-              name="google"
-              size={20}
-              color="#333"
-              style={styles.buttonIcon}
-            />
-            <ThemedText style={styles.buttonText}>
-              Continue with Google
+          {/* Main Content */}
+          <ThemedView style={styles.mainContent}>
+            {/* Background Image */}
+            <ThemedView style={styles.imageContainer}>
+              <Image
+                source={{
+                  uri: "https://storage.googleapis.com/uxpilot-auth.appspot.com/f0a34ddb90-42e312c324d1f17d7705.png",
+                }}
+                style={styles.backgroundImage}
+                contentFit="cover"
+              />
+            </ThemedView>
+
+            {/* Welcome Text */}
+            <ThemedView style={styles.welcomeSection}>
+              <ThemedText type="title" style={styles.welcomeTitle}>
+                Welcome
+              </ThemedText>
+              <ThemedText style={styles.welcomeText}>
+                Discover art collections, view your favorite artworks with
+                Augmented Reality, and go on an ArtQuest at the MET.
+              </ThemedText>
+            </ThemedView>
+
+            {/* Login Options */}
+            <ThemedView style={styles.loginOptions}>
+              <Pressable
+                style={styles.loginButton}
+                onPress={() => router.push("/phoneLogin")}
+              >
+                <ThemedView style={styles.buttonContent}>
+                  <FontAwesome
+                    name="phone"
+                    size={20}
+                    color={Colors.darkMedGray}
+                    style={styles.buttonIcon}
+                  />
+                  <ThemedText style={styles.buttonText}>
+                    Continue with phone
+                  </ThemedText>
+                </ThemedView>
+                <FontAwesome
+                  name="chevron-right"
+                  size={16}
+                  color={Colors.darkMedGray}
+                />
+              </Pressable>
+
+              <Pressable
+                style={styles.loginButton}
+                onPress={() => router.push("/emailLogin")}
+              >
+                <ThemedView style={styles.buttonContent}>
+                  <FontAwesome
+                    name="envelope"
+                    size={20}
+                    color={Colors.darkMedGray}
+                    style={styles.buttonIcon}
+                  />
+                  <ThemedText style={styles.buttonText}>
+                    Continue with email
+                  </ThemedText>
+                </ThemedView>
+                <FontAwesome
+                  name="chevron-right"
+                  size={16}
+                  color={Colors.darkMedGray}
+                />
+              </Pressable>
+
+              <ThemedView style={styles.divider}>
+                <ThemedView style={styles.dividerLine} />
+                <ThemedText style={styles.dividerText}>or</ThemedText>
+                <ThemedView style={styles.dividerLine} />
+              </ThemedView>
+
+              <Pressable
+                style={styles.socialButton}
+                onPress={() => router.push("/googleLogin")}
+              >
+                <FontAwesome
+                  name="google"
+                  size={20}
+                  color={Colors.darkMedGray}
+                  style={styles.buttonIcon}
+                />
+                <ThemedText style={styles.buttonText}>
+                  Continue with Google
+                </ThemedText>
+              </Pressable>
+
+              <Pressable
+                style={styles.socialButton}
+                onPress={() => router.push("/appleLogin")}
+              >
+                <FontAwesome
+                  name="apple"
+                  size={20}
+                  color={Colors.darkMedGray}
+                  style={styles.buttonIcon}
+                />
+                <ThemedText style={styles.buttonText}>
+                  Continue with Apple
+                </ThemedText>
+              </Pressable>
+            </ThemedView>
+
+            {/* Terms & Privacy */}
+            {/* <ThemedView style={styles.termsSection}>
+              <ThemedText style={styles.termsText}>
+                By continuing, you agree to our{" "}
+                <ThemedText style={styles.underline}>
+                  Terms of Service
+                </ThemedText>{" "}
+                and{" "}
+                <ThemedText style={styles.underline}>Privacy Policy</ThemedText>
+                .
+              </ThemedText>
+            </ThemedView> */}
+          </ThemedView>
+
+          {/* Footer */}
+          <ThemedView style={styles.footer}>
+            <ThemedText style={styles.footerText}>
+              Don't have an account?{" "}
+              <ThemedText style={styles.signUpText}>Sign up</ThemedText>
             </ThemedText>
-          </Pressable>
-
-          <Pressable
-            style={styles.socialButton}
-            onPress={() => router.push("/appleLogin")}
-          >
-            <FontAwesome
-              name="apple"
-              size={20}
-              color="#333"
-              style={styles.buttonIcon}
-            />
-            <ThemedText style={styles.buttonText}>
-              Continue with Apple
-            </ThemedText>
-          </Pressable>
-        </ThemedView>
-
-        {/* Terms & Privacy */}
-        <ThemedView style={styles.termsSection}>
-          <ThemedText style={styles.termsText}>
-            By continuing, you agree to our{" "}
-            <ThemedText style={styles.underline}>Terms of Service</ThemedText>{" "}
-            and <ThemedText style={styles.underline}>Privacy Policy</ThemedText>
-            .
-          </ThemedText>
-        </ThemedView>
-      </ThemedView>
-
-      {/* Footer */}
-      <ThemedView style={styles.footer}>
-        <ThemedText style={styles.footerText}>
-          Don't have an account?{" "}
-          <ThemedText style={styles.signUpText}>Sign up</ThemedText>
-        </ThemedText>
-      </ThemedView>
-    </ScrollView>
+          </ThemedView>
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.lightGray,
   },
   contentContainer: {
     flexGrow: 1,
   },
   header: {
-    paddingTop: 80,
-    paddingHorizontal: 24,
-    alignItems: "center",
+    paddingHorizontal: 20,
   },
-  logoContainer: {
-    marginBottom: 8,
-  },
-  logoCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "#F5F5F5",
-    alignItems: "center",
+  titleRow: {
+    flexDirection: "row",
     justifyContent: "center",
   },
   appTitle: {
-    fontSize: 30,
-    marginBottom: 4,
-    fontFamily: "Playfair Display",
-  },
-  appSubtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 40,
+    fontSize: 48,
+    paddingTop: 48,
+    marginBottom: 36,
+    fontFamily: "TiltPrism",
+    letterSpacing: 5,
+    textShadowColor: "rgba(0,0,0,.5)",
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 4,
   },
   mainContent: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
   },
   imageContainer: {
-    marginBottom: 32,
-    borderRadius: 16,
+    marginBottom: 36,
+    borderRadius: 12,
     overflow: "hidden",
   },
   backgroundImage: {
@@ -212,89 +217,82 @@ const styles = StyleSheet.create({
     height: 192,
   },
   welcomeSection: {
-    marginBottom: 32,
+    marginBottom: 36,
   },
   welcomeTitle: {
-    fontSize: 24,
     marginBottom: 12,
-    fontFamily: "Playfair Display",
   },
   welcomeText: {
-    fontSize: 16,
-    color: "#666",
-    lineHeight: 24,
+    color: Colors.darkMedGray,
   },
   loginOptions: {
-    marginBottom: 32,
+    marginBottom: 16,
   },
   loginButton: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#E5E5E5",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    ...shadowStyle,
   },
   buttonContent: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "center",
   },
   buttonIcon: {
     marginRight: 12,
   },
-  buttonText: {
-    fontSize: 16,
-  },
+  buttonText: {},
   divider: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 24,
+    marginVertical: 4,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "#E5E5E5",
+    backgroundColor: Colors.medGray,
   },
   dividerText: {
     marginHorizontal: 16,
-    color: "#666",
+    color: Colors.darkMedGray,
     fontSize: 14,
   },
   socialButton: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#E5E5E5",
+    backgroundColor: Colors.medLightGray,
     borderRadius: 12,
     padding: 16,
-    marginBottom: 16,
+    marginTop: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    ...shadowStyle,
   },
-  termsSection: {
-    marginBottom: 24,
-  },
-  termsText: {
-    fontSize: 12,
-    color: "#666",
-    textAlign: "center",
-  },
-  underline: {
-    textDecorationLine: "underline",
-  },
+  // termsSection: {
+  //   marginBottom: 24,
+  // },
+  // termsText: {
+  //   fontSize: 12,
+  //   color: Colors.darkMedGray,
+  //   textAlign: "center",
+  // },
+  // underline: {
+  //   textDecorationLine: "underline",
+  // },
   footer: {
     paddingHorizontal: 24,
-    paddingBottom: 32,
+    paddingTop: 20,
+    paddingBottom: 36,
     alignItems: "center",
   },
   footerText: {
-    fontSize: 12,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   signUpText: {
-    color: "#007AFF",
+    color: Colors.metRed,
   },
 });
