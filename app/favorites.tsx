@@ -62,9 +62,15 @@ export default function FavoritesScreen() {
             headerShadowVisible: false,
           }}
         />
-        <ThemedText style={styles.emptyText}>
-          No favorite artworks yet
-        </ThemedText>
+        <ThemedView style={styles.emptyState}>
+          <FontAwesome name="heart" size={48} color={Colors.darkMedGray} />
+          <ThemedText style={styles.emptyStateTitle}>
+            No Favorite Artworks Yet
+          </ThemedText>
+          <ThemedText style={styles.emptyStateText}>
+            Start exploring the museum to find your favorite artworks!
+          </ThemedText>
+        </ThemedView>
       </ThemedView>
     );
   }
@@ -161,7 +167,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  emptyText: {},
   scrollView: {
     flex: 1,
   },
@@ -184,5 +189,19 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.medLightGray,
     marginBottom: 8,
     overflow: "hidden",
+  },
+  emptyState: {
+    alignItems: "center",
+    padding: 24,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateText: {
+    fontSize: 14,
+    color: Colors.darkMedGray,
+    textAlign: "center",
   },
 });
