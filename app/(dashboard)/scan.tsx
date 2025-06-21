@@ -201,12 +201,6 @@ export default function ScanScreen() {
     }
   };
 
-  const toggleCameraType = () => {
-    setCameraType((current: "back" | "front") =>
-      current === "back" ? "front" : "back"
-    );
-  };
-
   const closeModal = () => {
     setModalState({
       visible: false,
@@ -258,23 +252,22 @@ export default function ScanScreen() {
           <CameraView ref={cameraRef} style={styles.camera} facing={cameraType}>
             {/* Camera Controls Overlay */}
             <View style={styles.cameraOverlay}>
-              {/* Top Controls */}
-              <View style={styles.topControls}>
-                <Pressable style={styles.flipButton} onPress={toggleCameraType}>
-                  <FontAwesome
-                    name="refresh"
-                    size={24}
-                    color={Colors.lightGray}
-                  />
-                </Pressable>
-              </View>
-
               {/* Center Viewfinder */}
               <View style={styles.viewfinderContainer}>
-                <View style={styles.viewfinder} />
-                <ThemedText style={styles.instructionText}>
-                  Position artwork within the frame
-                </ThemedText>
+                {isAnalyzing || isProcessing ? (
+                  <View style={styles.statusContainer}>
+                    <ActivityIndicator size="small" color={Colors.lightGray} />
+                    <ThemedText style={styles.statusText}>
+                      {isAnalyzing
+                        ? "Analyzing artwork..."
+                        : "Processing results..."}
+                    </ThemedText>
+                  </View>
+                ) : (
+                  <ThemedText style={styles.instructionText}>
+                    Position artwork in view
+                  </ThemedText>
+                )}
               </View>
 
               {/* Bottom Controls */}
@@ -302,16 +295,6 @@ export default function ScanScreen() {
             </View>
           </CameraView>
         </View>
-
-        {/* Analysis Status */}
-        {(isAnalyzing || isProcessing) && (
-          <ThemedView style={styles.statusContainer}>
-            <ActivityIndicator size="small" color={Colors.darkGray} />
-            <ThemedText style={styles.statusText}>
-              {isAnalyzing ? "Analyzing artwork..." : "Processing results..."}
-            </ThemedText>
-          </ThemedView>
-        )}
       </ThemedView>
 
       {/* Scan Result Modal */}
@@ -372,47 +355,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "transparent",
   },
-  topControls: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    padding: 20,
-    paddingTop: 40,
-  },
-  flipButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   viewfinderContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  viewfinder: {
-    width: 250,
-    height: 250,
-    borderWidth: 2,
-    borderColor: Colors.lightGray,
-    borderRadius: 12,
-    backgroundColor: "transparent",
-  },
   instructionText: {
-    marginTop: 16,
     color: Colors.lightGray,
     textAlign: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   bottomControls: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: "row",
     justifyContent: "center",
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 100,
   },
   captureButton: {
     width: 80,
@@ -431,31 +395,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    padding: 16,
-    backgroundColor: Colors.medLightGray,
-    gap: 8,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    gap: 12,
   },
   statusText: {
-    color: Colors.darkMedGray,
-  },
-  resultsContainer: {
-    maxHeight: 200,
-    backgroundColor: Colors.lightGray,
-  },
-  resultsTitle: {
-    padding: 16,
-    paddingBottom: 8,
-  },
-  resultBox: {
-    margin: 16,
-    marginTop: 0,
-    padding: 16,
-    backgroundColor: Colors.medLightGray,
-    borderRadius: 8,
-  },
-  resultText: {
-    fontSize: 12,
-    fontFamily: "monospace",
-    color: Colors.darkGray,
+    color: Colors.lightGray,
+    paddingVertical: 8,
+    borderRadius: 12,
   },
 });
