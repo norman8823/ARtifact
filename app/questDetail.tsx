@@ -277,7 +277,14 @@ export default function QuestDetailScreen() {
                 });
               }}
             >
-              <ThemedView style={styles.artworkContent}>
+              <ThemedView
+                style={[
+                  styles.artworkContent,
+                  userQuest?.artworksVisited.includes(artwork.id) && {
+                    backgroundColor: Colors.lightGreen,
+                  },
+                ]}
+              >
                 {/* Artwork Image or Placeholder */}
                 <ThemedView style={styles.artworkImage}>
                   {artwork.primaryImageSmall ? (
@@ -297,15 +304,25 @@ export default function QuestDetailScreen() {
                 </ThemedView>
 
                 {/* Artwork Info */}
-                <ThemedView style={styles.artworkInfo}>
-                  <ThemedView style={styles.artworkHeader}>
+                <ThemedView
+                  style={[
+                    styles.artworkInfo,
+                    userQuest?.artworksVisited.includes(artwork.id) && {
+                      backgroundColor: Colors.lightGreen,
+                    },
+                  ]}
+                >
+                  <ThemedView
+                    style={[
+                      styles.artworkHeader,
+                      userQuest?.artworksVisited.includes(artwork.id) && {
+                        backgroundColor: Colors.lightGreen,
+                      },
+                    ]}
+                  >
                     <ThemedText
                       type="title"
-                      style={[
-                        styles.artworkTitle,
-                        !userQuest?.artworksVisited.includes(artwork.id) &&
-                          styles.artworkTitle,
-                      ]}
+                      style={styles.artworkTitle}
                       numberOfLines={1}
                       ellipsizeMode="tail"
                     >
@@ -340,7 +357,14 @@ export default function QuestDetailScreen() {
                     {artwork.artistDisplayName || "Unknown Artist"}
                   </ThemedText>
                   {artwork.galleryNumber && (
-                    <ThemedView style={styles.locationInfo}>
+                    <ThemedView
+                      style={[
+                        styles.locationInfo,
+                        userQuest?.artworksVisited.includes(artwork.id) && {
+                          backgroundColor: Colors.lightGreen,
+                        },
+                      ]}
+                    >
                       <FontAwesome
                         name="map-marker"
                         size={12}
@@ -493,6 +517,7 @@ const styles = StyleSheet.create({
   },
   artworkCardVisited: {
     borderLeftColor: Colors.darkGreen,
+    backgroundColor: Colors.lightGreen,
   },
   artworkContent: {
     backgroundColor: Colors.medLightGray,
