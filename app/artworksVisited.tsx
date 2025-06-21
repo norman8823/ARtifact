@@ -143,8 +143,12 @@ export default function ArtworksVisitedScreen() {
                   style={styles.image}
                   contentFit="cover"
                 />
-                <ThemedView style={styles.checkmarkContainer}>
-                  <FontAwesome name="eye" size={12} color={Colors.lightGray} />
+                <ThemedView style={styles.eyeContainer}>
+                  <FontAwesome
+                    name="eye"
+                    size={12}
+                    color={Colors.darkMedGray}
+                  />
                 </ThemedView>
               </ThemedView>
               <ThemedText style={styles.title} numberOfLines={1}>
@@ -182,7 +186,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.darkMedGray,
   },
-  checkmarkContainer: {
+  eyeContainer: {
     position: "absolute",
     bottom: 8,
     right: 8,
