@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   Pressable,
@@ -13,16 +13,35 @@ import {
 } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
+import { useUserData } from "@/src/hooks/useUserData";
 
 export default function ProfileSettingsScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const { currentUser, ensureUserInDB } = useUserData();
   const [formData, setFormData] = useState({
-    name: "Sarah Johnson",
-    phone: "+1 555 123 4567",
-    email: "sarah@email.com",
+    name: "",
+    email: "",
+    // phone: "",
     password: "password",
   });
+
+  // Load user data on mount
+  useEffect(() => {
+    ensureUserInDB();
+  }, [ensureUserInDB]);
+
+  // Update formData when currentUser changes
+  useEffect(() => {
+    if (currentUser) {
+      setFormData((prev) => ({
+        ...prev,
+        name: currentUser.username || "",
+        email: currentUser.email || "",
+        // phone: currentUser.phone || "",
+      }));
+    }
+  }, [currentUser]);
 
   return (
     <ThemedView style={styles.container}>
@@ -54,7 +73,7 @@ export default function ProfileSettingsScreen() {
 
         {/* Form Fields */}
         <ThemedView style={styles.formField}>
-          <ThemedText style={styles.label}>Name</ThemedText>
+          <ThemedText style={styles.label}>Username</ThemedText>
           <ThemedView style={styles.inputContainer}>
             <FontAwesome
               name="user-o"
@@ -64,7 +83,7 @@ export default function ProfileSettingsScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Sarah Johnson"
+              placeholder="Enter username"
               value={formData.name}
               onChangeText={(text) => setFormData({ ...formData, name: text })}
             />
@@ -72,6 +91,26 @@ export default function ProfileSettingsScreen() {
         </ThemedView>
 
         <ThemedView style={styles.formField}>
+          <ThemedText style={styles.label}>Email</ThemedText>
+          <ThemedView style={styles.inputContainer}>
+            <FontAwesome
+              name="envelope-o"
+              size={16}
+              color={Colors.darkMedGray}
+              style={styles.inputIcon}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Enter email address"
+              value={formData.email}
+              onChangeText={(text) => setFormData({ ...formData, email: text })}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </ThemedView>
+        </ThemedView>
+
+        {/* <ThemedView style={styles.formField}>
           <ThemedText style={styles.label}>Phone</ThemedText>
           <ThemedView style={styles.inputContainer}>
             <FontAwesome
@@ -88,27 +127,7 @@ export default function ProfileSettingsScreen() {
               keyboardType="phone-pad"
             />
           </ThemedView>
-        </ThemedView>
-
-        <ThemedView style={styles.formField}>
-          <ThemedText style={styles.label}>Email</ThemedText>
-          <ThemedView style={styles.inputContainer}>
-            <FontAwesome
-              name="envelope-o"
-              size={16}
-              color={Colors.darkMedGray}
-              style={styles.inputIcon}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="sarah@email.com"
-              value={formData.email}
-              onChangeText={(text) => setFormData({ ...formData, email: text })}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </ThemedView>
-        </ThemedView>
+        </ThemedView> */}
 
         <ThemedView style={[styles.formField, styles.lastFormField]}>
           <ThemedText style={styles.label}>Password</ThemedText>
