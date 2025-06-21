@@ -100,7 +100,7 @@ export function ScanResultModal({
               </ThemedView>
               <ThemedView style={styles.questProgress}>
                 <ThemedText style={styles.questProgressText}>
-                  {quest.progress}
+                  {quest.progress} artworks discovered
                 </ThemedText>
                 {quest.isCompleted && (
                   <ThemedView style={styles.completedBadge}>
@@ -146,21 +146,27 @@ export function ScanResultModal({
           Tips for better scanning:
         </ThemedText>
         <ThemedView style={styles.tipItem}>
-          <FontAwesome
-            name="lightbulb-o"
-            size={14}
-            color={Colors.darkMedGray}
-          />
+          <View style={styles.tipIconContainer}>
+            <FontAwesome
+              name="lightbulb-o"
+              size={14}
+              color={Colors.darkMedGray}
+            />
+          </View>
           <ThemedText style={styles.tipText}>Ensure good lighting</ThemedText>
         </ThemedView>
         <ThemedView style={styles.tipItem}>
-          <FontAwesome name="eye" size={14} color={Colors.darkMedGray} />
+          <View style={styles.tipIconContainer}>
+            <FontAwesome name="eye" size={14} color={Colors.darkMedGray} />
+          </View>
           <ThemedText style={styles.tipText}>
             Position artwork in center
           </ThemedText>
         </ThemedView>
         <ThemedView style={styles.tipItem}>
-          <FontAwesome name="camera" size={14} color={Colors.darkMedGray} />
+          <View style={styles.tipIconContainer}>
+            <FontAwesome name="camera" size={14} color={Colors.darkMedGray} />
+          </View>
           <ThemedText style={styles.tipText}>Hold camera steady</ThemedText>
         </ThemedView>
       </ThemedView>
@@ -201,21 +207,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modal: {
-    width: SCREEN_WIDTH - 48,
+    width: SCREEN_WIDTH - 40,
     maxHeight: "80%",
-    borderRadius: 16,
+    borderRadius: 12,
     backgroundColor: Colors.lightGray,
-    ...shadowStyle,
   },
   content: {
-    padding: 24,
+    padding: 20,
     alignItems: "center",
   },
   iconContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 24,
     textAlign: "center",
     marginBottom: 8,
   },
@@ -228,44 +232,42 @@ const styles = StyleSheet.create({
   statusContainer: {
     flexDirection: "row",
     gap: 12,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   newVisitBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 8,
     backgroundColor: Colors.lightYellow,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 12,
   },
   newVisitText: {
     color: Colors.darkYellow,
     fontSize: 14,
-    fontWeight: "600",
   },
   xpBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 8,
     backgroundColor: Colors.lightGreen,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 12,
   },
   xpText: {
     color: Colors.darkGreen,
     fontSize: 14,
-    fontWeight: "600",
   },
   revisitBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 8,
     backgroundColor: Colors.medLightGray,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 12,
   },
   revisitText: {
     color: Colors.darkMedGray,
@@ -283,10 +285,11 @@ const styles = StyleSheet.create({
   questItem: {
     backgroundColor: Colors.medLightGray,
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 8,
   },
   questHeader: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
@@ -295,9 +298,9 @@ const styles = StyleSheet.create({
   questTitle: {
     flex: 1,
     fontSize: 14,
-    fontWeight: "600",
   },
   questProgress: {
+    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -307,7 +310,7 @@ const styles = StyleSheet.create({
     color: Colors.darkMedGray,
   },
   completedBadge: {
-    backgroundColor: Colors.lightYellow,
+    backgroundColor: Colors.lightGreen,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
@@ -315,21 +318,17 @@ const styles = StyleSheet.create({
   completedText: {
     color: Colors.darkYellow,
     fontSize: 12,
-    fontWeight: "600",
   },
   failureMessage: {
     textAlign: "center",
-    lineHeight: 20,
-    marginBottom: 20,
+    marginBottom: 16,
     color: Colors.darkMedGray,
   },
   tipsContainer: {
     width: "100%",
-    marginBottom: 24,
+    marginBottom: 16,
   },
   tipsTitle: {
-    fontSize: 16,
-    fontWeight: "600",
     marginBottom: 12,
     textAlign: "center",
   },
@@ -339,6 +338,11 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
   },
+  tipIconContainer: {
+    width: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   tipText: {
     fontSize: 14,
     color: Colors.darkMedGray,
@@ -347,13 +351,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.darkGray,
     paddingHorizontal: 32,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 12,
     minWidth: 120,
   },
   actionButtonText: {
     color: Colors.lightGray,
-    fontSize: 16,
-    fontWeight: "600",
     textAlign: "center",
   },
 });
