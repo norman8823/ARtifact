@@ -35,9 +35,9 @@
     "description": "Experience the diversity of artistic expression! Explore 5 different art mediums: pen and wash drawing, silk evening dress, ink calligraphy, gold funerary mask, and carved wood sculpture.",
     "icon": ":art:", 
     "xpReward": 400,
-    "requiredArtworks": ["382503", "897102", "309959", "316173"],
+    "requiredArtworks": ["382503", "897102", "316173"],
     "isPremium": false,
-    "galleryMap": "Galleries 690, 224, 361, 344"
+    "galleryMap": "Galleries 690, 224, 344"
   },
   {
     "id": "quest-005",
@@ -78,5 +78,15 @@
     "requiredArtworks": ["247000", "11952", "204758"],
     "isPremium": false,
     "galleryMap": "Galleries 162, 700, 548"
+  },
+  {
+    "id": "quest-009",
+    "title": "Masked Traditions",
+    "description": "Travel through time and across continents by exploring ceremonial and symbolic masks from global cultures. Each mask tells a unique story of identity, ritual, and tradition.",
+    "icon": ":performing_arts:",
+    "xpReward": 500,
+    "requiredArtworks": ["310750", "311741", "309959", "318622"],
+    "isPremium": false,
+    "galleryMap": "Galleries 341, 350, 361, 342"
   }
 ]
