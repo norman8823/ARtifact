@@ -1,5 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useFavoriteArtworks } from "@/src/hooks/useFavoriteArtworks";
@@ -10,20 +12,17 @@ import { type UserXP, useUserXP } from "@/src/hooks/useUserXP";
 import { useVisited } from "@/src/hooks/useVisited";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
   Modal,
   Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
-  Switch,
-  SafeAreaView,
 } from "react-native";
-import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -48,60 +47,62 @@ export default function ProfileScreen() {
   const [xpNeeded, setXpNeeded] = useState(0);
   const [allRanks, setAllRanks] = useState<Rank[]>([]);
 
-  // Load user data and stats when component mounts or favorites change
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        await ensureUserInDB();
+  // Load user data and stats
+  const loadData = useCallback(async () => {
+    try {
+      await ensureUserInDB();
 
-        // Load all data in parallel
-        const [favorites, visited, quests, xp, ranks] = await Promise.all([
-          getFavoriteCount(),
-          getVisitedArtworks(),
-          getUserQuests(),
-          getUserXP(),
-          getAllRanks(),
-        ]);
+      // Load all data in parallel
+      const [favorites, visited, quests, xp, ranks] = await Promise.all([
+        getFavoriteCount(),
+        getVisitedArtworks(),
+        getUserQuests(),
+        getUserXP(),
+        getAllRanks(),
+      ]);
 
-        // Update counts
-        setFavoriteCount(favorites);
-        setVisitedCount(visited.length);
-        setCompletedQuestsCount(
-          quests.filter((q: UserQuest) => q.isCompleted).length
+      // Update counts
+      setFavoriteCount(favorites);
+      setVisitedCount(visited.length);
+      setCompletedQuestsCount(
+        quests.filter((q: UserQuest) => q.isCompleted).length
+      );
+      setUserXP(xp);
+      setAllRanks(ranks);
+
+      // Calculate rank progress
+      if (xp && ranks.length > 0) {
+        const userRank = ranks.find(
+          (rank: Rank) => xp.xpPoints >= rank.minXP && xp.xpPoints <= rank.maxXP
         );
-        setUserXP(xp);
-        setAllRanks(ranks);
+        const nextRankIndex =
+          ranks.findIndex((r: Rank) => r.id === userRank?.id) + 1;
+        const nextUserRank =
+          nextRankIndex < ranks.length ? ranks[nextRankIndex] : null;
 
-        // Calculate rank progress
-        if (xp && ranks.length > 0) {
-          const userRank = ranks.find(
-            (rank: Rank) =>
-              xp.xpPoints >= rank.minXP && xp.xpPoints <= rank.maxXP
-          );
-          const nextRankIndex =
-            ranks.findIndex((r: Rank) => r.id === userRank?.id) + 1;
-          const nextUserRank =
-            nextRankIndex < ranks.length ? ranks[nextRankIndex] : null;
+        setCurrentRank(userRank || ranks[0]);
+        setNextRank(nextUserRank);
 
-          setCurrentRank(userRank || ranks[0]);
-          setNextRank(nextUserRank);
+        if (userRank && nextUserRank) {
+          const totalXPInLevel = nextUserRank.minXP - userRank.minXP;
+          const userXPInLevel = xp.xpPoints - userRank.minXP;
+          const progress = (userXPInLevel / totalXPInLevel) * 100;
+          const needed = nextUserRank.minXP - xp.xpPoints;
 
-          if (userRank && nextUserRank) {
-            const totalXPInLevel = nextUserRank.minXP - userRank.minXP;
-            const userXPInLevel = xp.xpPoints - userRank.minXP;
-            const progress = (userXPInLevel / totalXPInLevel) * 100;
-            const needed = nextUserRank.minXP - xp.xpPoints;
-
-            setXpProgress(progress);
-            setXpNeeded(needed);
-          }
+          setXpProgress(progress);
+          setXpNeeded(needed);
         }
-      } catch (error) {
-        console.error("Error loading data:", error);
       }
-    };
 
-    loadData();
+      console.log("📊 Profile data refreshed:", {
+        visitedCount: visited.length,
+        xpPoints: xp?.xpPoints || 0,
+        favoriteCount: favorites,
+        completedQuests: quests.filter((q: UserQuest) => q.isCompleted).length,
+      });
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
   }, [
     ensureUserInDB,
     getFavoriteCount,
@@ -109,8 +110,20 @@ export default function ProfileScreen() {
     getUserQuests,
     getUserXP,
     getAllRanks,
-    lastRefreshTime,
   ]);
+
+  // Load data when component mounts or favorites change
+  useEffect(() => {
+    loadData();
+  }, [loadData, lastRefreshTime]);
+
+  // Refresh data when screen comes into focus (e.g., after scanning)
+  useFocusEffect(
+    useCallback(() => {
+      console.log("🔄 Profile screen focused - refreshing data");
+      loadData();
+    }, [loadData])
+  );
 
   const handleLogout = async () => {
     console.log("Logout button pressed");

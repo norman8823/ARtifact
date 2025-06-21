@@ -13,7 +13,6 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
@@ -312,20 +311,6 @@ export default function ScanScreen() {
               {isAnalyzing ? "Analyzing artwork..." : "Processing results..."}
             </ThemedText>
           </ThemedView>
-        )}
-
-        {/* Debug Results Display - Show in development only */}
-        {__DEV__ && rekognitionResult && (
-          <ScrollView style={styles.resultsContainer}>
-            <ThemedText type="subtitle" style={styles.resultsTitle}>
-              Debug: Analysis Results
-            </ThemedText>
-            <ThemedView style={styles.resultBox}>
-              <ThemedText style={styles.resultText}>
-                {JSON.stringify(rekognitionResult, null, 2)}
-              </ThemedText>
-            </ThemedView>
-          </ScrollView>
         )}
       </ThemedView>
 
