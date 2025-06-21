@@ -146,7 +146,7 @@ export default function EmailLoginScreen() {
                   ? "Enter verification code"
                   : isSignUp
                   ? "Create your account"
-                  : "Welcome back!"}
+                  : "Welcome back"}
               </ThemedText>
               <ThemedText style={styles.instructionsText}>
                 {needsVerification
