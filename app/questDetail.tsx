@@ -171,51 +171,67 @@ export default function QuestDetailScreen() {
             {quest.description}
           </ThemedText>
 
-          {/* Progress Bar */}
-          <ThemedView style={styles.progressBar}>
-            <ThemedView
-              style={[
-                styles.progressFill,
-                {
-                  width: `${(progress.current / progress.total) * 100}%`,
-                },
-              ]}
-            />
-          </ThemedView>
-
-          {/* Progress Tracker */}
-          <ThemedView style={styles.progressTracker}>
-            <ThemedView style={styles.progressLeft}>
-              <FontAwesome
-                name="check-circle"
-                size={16}
-                color={Colors.darkGreen}
-                style={styles.checkIcon}
-              />
-              <ThemedText style={styles.progressText}>
-                {progress.current}/{progress.total} artworks discovered
-              </ThemedText>
-            </ThemedView>
-            <ThemedView
-              style={[
-                styles.statusBadge,
-                questStatus === "Completed" && styles.completedBadge,
-                questStatus === "In Progress" && styles.inProgressBadge,
-                questStatus === "Not Started" && styles.notStartedBadge,
-              ]}
-            >
-              <ThemedText
+          {/* Progress Bar - Only show if quest is started */}
+          {userQuest && (
+            <ThemedView style={styles.progressBar}>
+              <ThemedView
                 style={[
-                  styles.statusText,
-                  questStatus === "Completed" && styles.completedText,
-                  questStatus === "In Progress" && styles.inProgressText,
-                  questStatus === "Not Started" && styles.notStartedText,
+                  styles.progressFill,
+                  {
+                    width: `${(progress.current / progress.total) * 100}%`,
+                  },
+                ]}
+              />
+            </ThemedView>
+          )}
+
+          {/* Progress Tracker - Only show if quest is started */}
+          {userQuest ? (
+            <ThemedView style={styles.progressTracker}>
+              <ThemedView style={styles.progressLeft}>
+                <FontAwesome
+                  name="check-circle"
+                  size={16}
+                  color={Colors.darkGreen}
+                  style={styles.checkIcon}
+                />
+                <ThemedText style={styles.progressText}>
+                  {progress.current}/{progress.total} artworks discovered
+                </ThemedText>
+              </ThemedView>
+              <ThemedView
+                style={[
+                  styles.statusBadge,
+                  questStatus === "Completed" && styles.completedBadge,
+                  questStatus === "In Progress" && styles.inProgressBadge,
+                  questStatus === "Not Started" && styles.notStartedBadge,
                 ]}
               >
-                {questStatus}
-              </ThemedText>
+                <ThemedText
+                  style={[
+                    styles.statusText,
+                    questStatus === "Completed" && styles.completedText,
+                    questStatus === "In Progress" && styles.inProgressText,
+                    questStatus === "Not Started" && styles.notStartedText,
+                  ]}
+                >
+                  {questStatus}
+                </ThemedText>
+              </ThemedView>
             </ThemedView>
-          </ThemedView>
+          ) : (
+            /* Status Badge Only - When quest not started */
+            <ThemedView style={styles.progressTracker}>
+              <ThemedView style={styles.progressLeft}>
+                {/* Empty space to push badge to the right */}
+              </ThemedView>
+              <ThemedView style={[styles.statusBadge, styles.notStartedBadge]}>
+                <ThemedText style={[styles.statusText, styles.notStartedText]}>
+                  {questStatus}
+                </ThemedText>
+              </ThemedView>
+            </ThemedView>
+          )}
 
           {/* Start Quest Button */}
           {!userQuest && (
@@ -328,25 +344,28 @@ export default function QuestDetailScreen() {
                     >
                       {artwork.title}
                     </ThemedText>
-                    <ThemedView
-                      style={[
-                        styles.visitedBadge,
-                        !userQuest?.artworksVisited.includes(artwork.id) &&
-                          styles.notVisitedBadge,
-                      ]}
-                    >
-                      <ThemedText
+                    {/* Only show visited badge if quest is started */}
+                    {userQuest && (
+                      <ThemedView
                         style={[
-                          styles.visitedText,
+                          styles.visitedBadge,
                           !userQuest?.artworksVisited.includes(artwork.id) &&
-                            styles.notVisitedText,
+                            styles.notVisitedBadge,
                         ]}
                       >
-                        {userQuest?.artworksVisited.includes(artwork.id)
-                          ? "Visited"
-                          : "Not Visited"}
-                      </ThemedText>
-                    </ThemedView>
+                        <ThemedText
+                          style={[
+                            styles.visitedText,
+                            !userQuest?.artworksVisited.includes(artwork.id) &&
+                              styles.notVisitedText,
+                          ]}
+                        >
+                          {userQuest?.artworksVisited.includes(artwork.id)
+                            ? "Visited"
+                            : "Not Visited"}
+                        </ThemedText>
+                      </ThemedView>
+                    )}
                   </ThemedView>
                   <ThemedText
                     type="subtitle"
