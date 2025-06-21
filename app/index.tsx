@@ -70,7 +70,7 @@ export default function LandingScreen() {
 
             {/* Login Options */}
             <ThemedView style={styles.loginOptions}>
-              <Pressable
+              {/* <Pressable
                 style={styles.loginButton}
                 onPress={() => router.push("/phoneLogin")}
               >
@@ -90,7 +90,7 @@ export default function LandingScreen() {
                   size={16}
                   color={Colors.darkMedGray}
                 />
-              </Pressable>
+              </Pressable> */}
 
               <Pressable
                 style={styles.loginButton}
@@ -114,13 +114,13 @@ export default function LandingScreen() {
                 />
               </Pressable>
 
-              <ThemedView style={styles.divider}>
+              {/* <ThemedView style={styles.divider}>
                 <ThemedView style={styles.dividerLine} />
                 <ThemedText style={styles.dividerText}>or</ThemedText>
                 <ThemedView style={styles.dividerLine} />
-              </ThemedView>
+              </ThemedView> */}
 
-              <Pressable
+              {/* <Pressable
                 style={styles.socialButton}
                 onPress={() => router.push("/googleLogin")}
               >
@@ -133,9 +133,9 @@ export default function LandingScreen() {
                 <ThemedText style={styles.buttonText}>
                   Continue with Google
                 </ThemedText>
-              </Pressable>
+              </Pressable> */}
 
-              <Pressable
+              {/* <Pressable
                 style={styles.socialButton}
                 onPress={() => router.push("/appleLogin")}
               >
@@ -148,30 +148,17 @@ export default function LandingScreen() {
                 <ThemedText style={styles.buttonText}>
                   Continue with Apple
                 </ThemedText>
-              </Pressable>
+              </Pressable> */}
             </ThemedView>
-
-            {/* Terms & Privacy */}
-            {/* <ThemedView style={styles.termsSection}>
-              <ThemedText style={styles.termsText}>
-                By continuing, you agree to our{" "}
-                <ThemedText style={styles.underline}>
-                  Terms of Service
-                </ThemedText>{" "}
-                and{" "}
-                <ThemedText style={styles.underline}>Privacy Policy</ThemedText>
-                .
-              </ThemedText>
-            </ThemedView> */}
           </ThemedView>
 
           {/* Footer */}
-          <ThemedView style={styles.footer}>
+          {/* <ThemedView style={styles.footer}>
             <ThemedText style={styles.footerText}>
               Don't have an account?{" "}
               <ThemedText style={styles.signUpText}>Sign up</ThemedText>
             </ThemedText>
-          </ThemedView>
+          </ThemedView> */}
         </ScrollView>
       </SafeAreaView>
     </>
@@ -272,27 +259,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     ...shadowStyle,
   },
-  // termsSection: {
-  //   marginBottom: 24,
+  // footer: {
+  //   paddingHorizontal: 24,
+  //   paddingTop: 20,
+  //   paddingBottom: 36,
+  //   alignItems: "center",
   // },
-  // termsText: {
-  //   fontSize: 12,
+  // footerText: {
   //   color: Colors.darkMedGray,
-  //   textAlign: "center",
   // },
-  // underline: {
-  //   textDecorationLine: "underline",
+  // signUpText: {
+  //   color: Colors.metRed,
   // },
-  footer: {
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 36,
-    alignItems: "center",
-  },
-  footerText: {
-    color: Colors.darkMedGray,
-  },
-  signUpText: {
-    color: Colors.metRed,
-  },
 });
