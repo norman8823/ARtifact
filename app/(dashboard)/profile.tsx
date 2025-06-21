@@ -20,8 +20,8 @@ import {
   ScrollView,
   StyleSheet,
   Switch,
+  SafeAreaView,
 } from "react-native";
-import { SafeAreaView } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 
@@ -244,7 +244,7 @@ export default function ProfileScreen() {
           {/* Settings Section */}
           <ThemedView style={styles.settingsSection}>
             {/* Notifications */}
-            <ThemedView style={styles.settingRow}>
+            {/* <ThemedView style={styles.settingRow}>
               <ThemedView style={styles.settingLeft}>
                 <FontAwesome name="bell" size={20} color={Colors.darkMedGray} />
                 <ThemedText style={styles.settingLabel}>
@@ -252,7 +252,7 @@ export default function ProfileScreen() {
                 </ThemedText>
               </ThemedView>
               <Switch value={true} onValueChange={() => {}} />
-            </ThemedView>
+            </ThemedView> */}
 
             {/* Logout Button */}
             <ThemedView style={styles.logoutButtonWrapper}>
@@ -264,7 +264,7 @@ export default function ProfileScreen() {
             </ThemedView>
           </ThemedView>
 
-          {/* Simple Modal */}
+          {/* Modal */}
           <Modal
             visible={isModalVisible}
             transparent
@@ -502,24 +502,24 @@ const styles = StyleSheet.create({
     gap: 16,
     marginBottom: 40,
   },
-  settingRow: {
-    backgroundColor: Colors.medLightGray,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    borderRadius: 12,
-    ...shadowStyle,
-  },
-  settingLeft: {
-    backgroundColor: Colors.medLightGray,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  settingLabel: {
-    fontSize: 16,
-  },
+  // settingRow: {
+  //   backgroundColor: Colors.medLightGray,
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  //   padding: 16,
+  //   borderRadius: 12,
+  //   ...shadowStyle,
+  // },
+  // settingLeft: {
+  //   backgroundColor: Colors.medLightGray,
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   gap: 12,
+  // },
+  // settingLabel: {
+  //   fontSize: 16,
+  // },
   logoutButtonWrapper: {
     backgroundColor: Colors.medLightGray,
     padding: 12,
