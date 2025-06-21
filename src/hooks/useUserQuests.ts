@@ -1,5 +1,5 @@
-import { type ListUserQuestsQuery } from "@/src/API";
-import { createUserQuest } from "@/src/graphql/mutations";
+import { type ListUserQuestsQuery, type UpdateUserQuestInput } from "@/src/API";
+import { createUserQuest, updateUserQuest } from "@/src/graphql/mutations";
 import { listUserQuests } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
@@ -239,10 +239,85 @@ export function useUserQuests() {
     [checkAuthState, getVisitedArtworkIds]
   );
 
+  const updateQuestProgress = useCallback(
+    async (artworkId: string) => {
+      setError(null);
+      try {
+        const user = await checkAuthState();
+
+        // Get all user quests
+        const userQuests = await getUserQuests();
+
+        // Find quests that require this artwork
+        const questsToUpdate = userQuests.filter(
+          (quest) =>
+            quest.requiredArtworks.includes(artworkId) && !quest.isCompleted
+        );
+
+        const updatedQuests = [];
+
+        for (const quest of questsToUpdate) {
+          // Check if artwork is already in artworksVisited
+          if (!quest.artworksVisited.includes(artworkId)) {
+            // Add artwork to visited list
+            const newArtworksVisited = [...quest.artworksVisited, artworkId];
+
+            // Check if quest is now completed
+            const isCompleted =
+              newArtworksVisited.length === quest.requiredArtworks.length;
+
+            const updateInput: UpdateUserQuestInput = {
+              id: quest.id,
+              artworksVisited: newArtworksVisited,
+              isCompleted: isCompleted,
+            };
+
+            const result = await client.graphql({
+              query: updateUserQuest,
+              variables: { input: updateInput },
+              authMode: "userPool",
+            });
+
+            if ("errors" in result && result.errors) {
+              throw new Error(
+                result.errors
+                  .map((e: { message: string }) => e.message)
+                  .join(", ")
+              );
+            }
+
+            console.log(
+              `✅ Updated quest progress: ${quest.title} - ${newArtworksVisited.length}/${quest.requiredArtworks.length}`
+            );
+            if (isCompleted) {
+              console.log(`🎉 Quest completed: ${quest.title}`);
+            }
+
+            updatedQuests.push({
+              ...quest,
+              artworksVisited: newArtworksVisited,
+              isCompleted: isCompleted,
+            });
+          }
+        }
+
+        return updatedQuests;
+      } catch (err) {
+        console.error("Error updating quest progress:", err);
+        setError(
+          err instanceof Error ? err : new Error("Unknown error occurred")
+        );
+        throw err;
+      }
+    },
+    [checkAuthState, getUserQuests]
+  );
+
   return {
     getUserQuests,
     getUserQuestByQuestId,
     startQuest,
+    updateQuestProgress,
     isLoading,
     error,
   };
