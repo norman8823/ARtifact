@@ -12,9 +12,9 @@ import { Image } from "expo-image";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
-  Linking,
   Modal,
   Pressable,
   ScrollView,
@@ -32,6 +32,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { WebView } from "react-native-webview";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const THUMBNAIL_SIZE = 60;
@@ -70,6 +71,9 @@ export default function ArtDetailScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
+  const [isGalleryModalVisible, setIsGalleryModalVisible] = useState(false);
+  const [galleryMapURL, setGalleryMapURL] = useState<string | null>(null);
+  const [isWebViewLoading, setIsWebViewLoading] = useState(true);
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   const offsetX = useSharedValue(0);
@@ -185,12 +189,11 @@ export default function ArtDetailScreen() {
   const handleGalleryPress = async (galleryNumber: string) => {
     const mapURL = getMapURLByGalleryNumber(galleryNumber);
     if (mapURL) {
-      const canOpen = await Linking.canOpenURL(mapURL);
-      if (canOpen) {
-        await Linking.openURL(mapURL);
-      } else {
-        console.error("Cannot open URL:", mapURL);
-      }
+      setGalleryMapURL(mapURL);
+      setIsWebViewLoading(true);
+      setIsGalleryModalVisible(true);
+    } else {
+      console.error("No map URL found for gallery:", galleryNumber);
     }
   };
 
@@ -326,6 +329,77 @@ export default function ArtDetailScreen() {
               </GestureDetector>
             </ThemedView>
           </GestureHandlerRootView>
+        </Modal>
+
+        {/* Gallery Map WebView Modal */}
+        <Modal
+          visible={isGalleryModalVisible}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => {
+            setIsGalleryModalVisible(false);
+            setGalleryMapURL(null);
+            setIsWebViewLoading(true);
+          }}
+        >
+          <ThemedView style={styles.webViewModalContainer}>
+            {/* Header */}
+            <ThemedView style={styles.webViewModalHeader}>
+              <ThemedText type="subtitle" style={styles.webViewModalTitle}>
+                Gallery Map
+              </ThemedText>
+              <TouchableOpacity
+                style={styles.webViewModalCloseButton}
+                onPress={() => {
+                  setIsGalleryModalVisible(false);
+                  setGalleryMapURL(null);
+                  setIsWebViewLoading(true);
+                }}
+              >
+                <FontAwesome
+                  name="times"
+                  size={20}
+                  color={Colors.darkMedGray}
+                />
+              </TouchableOpacity>
+            </ThemedView>
+
+            {/* WebView Container */}
+            <ThemedView style={styles.webViewContainer}>
+              {galleryMapURL && (
+                <>
+                  {isWebViewLoading && (
+                    <ThemedView style={styles.webViewLoadingContainer}>
+                      <ActivityIndicator
+                        size="large"
+                        color={Colors.darkMedGray}
+                      />
+                      <ThemedText style={styles.webViewLoadingText}>
+                        Loading map...
+                      </ThemedText>
+                    </ThemedView>
+                  )}
+                  <WebView
+                    source={{ uri: galleryMapURL }}
+                    style={styles.webView}
+                    onLoadStart={() => setIsWebViewLoading(true)}
+                    onLoadEnd={() => setIsWebViewLoading(false)}
+                    onError={(syntheticEvent) => {
+                      const { nativeEvent } = syntheticEvent;
+                      console.error("WebView error: ", nativeEvent);
+                      setIsWebViewLoading(false);
+                    }}
+                    startInLoadingState={true}
+                    scalesPageToFit={true}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                    allowsInlineMediaPlayback={true}
+                    mediaPlaybackRequiresUserAction={false}
+                  />
+                </>
+              )}
+            </ThemedView>
+          </ThemedView>
         </Modal>
 
         {/* Artwork Info */}
@@ -834,5 +908,57 @@ const styles = StyleSheet.create({
   galleryNumber: {
     fontSize: 15,
     color: Colors.darkMedGray,
+  },
+  webViewModalContainer: {
+    flex: 1,
+    backgroundColor: Colors.lightGray,
+    paddingTop: 40, // Safe area padding
+  },
+  webViewModalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: Colors.lightGray,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.medLightGray,
+    ...shadowStyle,
+  },
+  webViewModalTitle: {
+    fontSize: 18,
+    color: Colors.darkGray,
+  },
+  webViewModalCloseButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.medLightGray,
+    justifyContent: "center",
+    alignItems: "center",
+    ...shadowStyle,
+  },
+  webViewContainer: {
+    flex: 1,
+    backgroundColor: Colors.lightGray,
+  },
+  webViewLoadingContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.lightGray,
+    zIndex: 1,
+  },
+  webViewLoadingText: {
+    marginTop: 16,
+    color: Colors.darkMedGray,
+    fontSize: 16,
+  },
+  webView: {
+    flex: 1,
+    backgroundColor: Colors.lightGray,
   },
 });
