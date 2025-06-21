@@ -331,7 +331,7 @@ export default function EmailLoginScreen() {
             </ThemedView>
 
             {/* Alternative Options */}
-            {!needsVerification && (
+            {/* {!needsVerification && (
               <ThemedView style={styles.alternativeContainer}>
                 <ThemedView style={styles.dividerContainer}>
                   <ThemedView style={styles.divider} />
@@ -385,16 +385,8 @@ export default function EmailLoginScreen() {
                   </Pressable>
                 </ThemedView>
               </ThemedView>
-            )}
+            )} */}
           </ThemedView>
-
-          {/* Footer */}
-          {/* <ThemedView style={styles.footer}>
-        <ThemedText style={styles.footerText}>
-          Need help?{" "}
-          <ThemedText style={styles.supportText}>Contact Support</ThemedText>
-        </ThemedText>
-      </ThemedView> */}
         </ScrollView>
       </SafeAreaView>
     </>
@@ -475,52 +467,40 @@ const styles = StyleSheet.create({
   sendCodeButtonText: {
     color: Colors.lightGray,
   },
-  alternativeContainer: {
-    marginBottom: 80,
-  },
-  dividerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.medGray,
-  },
-  dividerText: {
-    marginHorizontal: 16,
-    fontSize: 14,
-    color: Colors.darkMedGray,
-  },
-  alternativeButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  alternativeButton: {
-    backgroundColor: Colors.medLightGray,
-    flex: 1,
-    alignItems: "center",
-    padding: 12,
-    borderRadius: 12,
-    marginHorizontal: 4,
-    ...shadowStyle,
-  },
-  alternativeButtonText: {
-    fontSize: 12,
-    marginTop: 4,
-  },
-  // footer: {
-  //   paddingHorizontal: 24,
-  //   paddingBottom: 32,
+  // alternativeContainer: {
+  //   marginBottom: 80,
+  // },
+  // dividerContainer: {
+  //   flexDirection: "row",
   //   alignItems: "center",
+  //   marginBottom: 20,
   // },
-  // footerText: {
+  // divider: {
+  //   flex: 1,
+  //   height: 1,
+  //   backgroundColor: Colors.medGray,
+  // },
+  // dividerText: {
+  //   marginHorizontal: 16,
+  //   fontSize: 14,
+  //   color: Colors.darkMedGray,
+  // },
+  // alternativeButtons: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  // },
+  // alternativeButton: {
+  //   backgroundColor: Colors.medLightGray,
+  //   flex: 1,
+  //   alignItems: "center",
+  //   padding: 12,
+  //   borderRadius: 12,
+  //   marginHorizontal: 4,
+  //   ...shadowStyle,
+  // },
+  // alternativeButtonText: {
   //   fontSize: 12,
-  //   color: "#666",
-  // },
-  // supportText: {
-  //   color: "#007AFF",
+  //   marginTop: 4,
   // },
   toggleAuthMode: {
     flex: 1,
