@@ -1,5 +1,8 @@
+import { ScanResultModal } from "@/components/ScanResultModal";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { useScanSuccess } from "@/src/hooks/useScanSuccess";
 import { FontAwesome } from "@expo/vector-icons";
 import { post } from "aws-amplify/api";
 import { uploadData } from "aws-amplify/storage";
@@ -14,7 +17,19 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Colors } from "@/constants/Colors";
+
+interface ScanResultState {
+  visible: boolean;
+  success: boolean;
+  artworkTitle?: string;
+  isNewVisit?: boolean;
+  xpAwarded?: number;
+  questsUpdated?: Array<{
+    title: string;
+    isCompleted: boolean;
+    progress: string;
+  }>;
+}
 
 export default function ScanScreen() {
   const cameraRef = useRef<CameraView>(null);
@@ -23,6 +38,12 @@ export default function ScanScreen() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [rekognitionResult, setRekognitionResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [modalState, setModalState] = useState<ScanResultState>({
+    visible: false,
+    success: false,
+  });
+
+  const { processScanSuccess, isProcessing } = useScanSuccess();
 
   useEffect(() => {
     if (!permission) {
@@ -37,6 +58,57 @@ export default function ScanScreen() {
     } catch (error) {
       console.error("Error requesting camera permissions:", error);
       return false;
+    }
+  };
+
+  const handleScanResult = async (rekognitionData: any) => {
+    try {
+      console.log("🔍 Processing Rekognition result:", rekognitionData);
+
+      // Check if we have a successful recognition with labels
+      if (
+        rekognitionData.success &&
+        rekognitionData.labels &&
+        rekognitionData.labels.length > 0 &&
+        rekognitionData.confidence > 0
+      ) {
+        console.log("✅ Artwork identified, processing success...");
+
+        // Process the scan success through our hook
+        const result = await processScanSuccess(rekognitionData);
+
+        if (result) {
+          // Show success modal with results
+          setModalState({
+            visible: true,
+            success: true,
+            artworkTitle: result.artworkTitle,
+            isNewVisit: result.isNewVisit,
+            xpAwarded: result.xpAwarded,
+            questsUpdated: result.questsUpdated,
+          });
+        } else {
+          // This shouldn't happen if we have labels, but handle it
+          setModalState({
+            visible: true,
+            success: false,
+          });
+        }
+      } else {
+        console.log("❌ No artwork identified, showing failure modal");
+        // Show failure modal
+        setModalState({
+          visible: true,
+          success: false,
+        });
+      }
+    } catch (error) {
+      console.error("❌ Error processing scan result:", error);
+      Alert.alert(
+        "Processing Error",
+        "There was an error processing your scan. Please try again.",
+        [{ text: "OK" }]
+      );
     }
   };
 
@@ -88,12 +160,8 @@ export default function ScanScreen() {
       console.log("🔍 Rekognition Result:", result);
       setRekognitionResult(result);
 
-      // Show success alert
-      Alert.alert(
-        "Analysis Complete",
-        "Image analyzed successfully! Check the results below.",
-        [{ text: "OK" }]
-      );
+      // Process the result through our new handler
+      await handleScanResult(result);
     } catch (error) {
       console.error("❌ Error analyzing image:", error);
 
@@ -110,7 +178,7 @@ export default function ScanScreen() {
   };
 
   const takePicture = async () => {
-    if (!cameraRef.current || isAnalyzing) return;
+    if (!cameraRef.current || isAnalyzing || isProcessing) return;
 
     try {
       setIsLoading(true);
@@ -138,6 +206,13 @@ export default function ScanScreen() {
     setCameraType((current: "back" | "front") =>
       current === "back" ? "front" : "back"
     );
+  };
+
+  const closeModal = () => {
+    setModalState({
+      visible: false,
+      success: false,
+    });
   };
 
   // Permission loading state
@@ -208,12 +283,13 @@ export default function ScanScreen() {
                 <Pressable
                   style={[
                     styles.captureButton,
-                    (isAnalyzing || isLoading) && styles.captureButtonDisabled,
+                    (isAnalyzing || isLoading || isProcessing) &&
+                      styles.captureButtonDisabled,
                   ]}
                   onPress={takePicture}
-                  disabled={isAnalyzing || isLoading}
+                  disabled={isAnalyzing || isLoading || isProcessing}
                 >
-                  {isLoading || isAnalyzing ? (
+                  {isLoading || isAnalyzing || isProcessing ? (
                     <ActivityIndicator size="large" color={Colors.lightGray} />
                   ) : (
                     <FontAwesome
@@ -229,20 +305,20 @@ export default function ScanScreen() {
         </View>
 
         {/* Analysis Status */}
-        {isAnalyzing && (
+        {(isAnalyzing || isProcessing) && (
           <ThemedView style={styles.statusContainer}>
             <ActivityIndicator size="small" color={Colors.darkGray} />
             <ThemedText style={styles.statusText}>
-              Analyzing artwork...
+              {isAnalyzing ? "Analyzing artwork..." : "Processing results..."}
             </ThemedText>
           </ThemedView>
         )}
 
-        {/* Results Display */}
-        {rekognitionResult && (
+        {/* Debug Results Display - Show in development only */}
+        {__DEV__ && rekognitionResult && (
           <ScrollView style={styles.resultsContainer}>
             <ThemedText type="subtitle" style={styles.resultsTitle}>
-              Analysis Results
+              Debug: Analysis Results
             </ThemedText>
             <ThemedView style={styles.resultBox}>
               <ThemedText style={styles.resultText}>
@@ -252,6 +328,17 @@ export default function ScanScreen() {
           </ScrollView>
         )}
       </ThemedView>
+
+      {/* Scan Result Modal */}
+      <ScanResultModal
+        visible={modalState.visible}
+        onClose={closeModal}
+        success={modalState.success}
+        artworkTitle={modalState.artworkTitle}
+        isNewVisit={modalState.isNewVisit}
+        xpAwarded={modalState.xpAwarded}
+        questsUpdated={modalState.questsUpdated}
+      />
     </>
   );
 }

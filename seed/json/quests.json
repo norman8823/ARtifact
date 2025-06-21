@@ -5,9 +5,9 @@
     "description": "Travel across Europe through art! Visit 3 masterpieces from different European countries and experience the diversity of European artistic traditions. From British armor to Roman bronzes to Austrian stained glass.",
     "icon": ":flag_eu:",
     "xpReward": 300,
-    "requiredArtworks": ["22139", "248891", "469959"],
+    "requiredArtworks": ["22139", "252453", "437133"],
     "isPremium": false,
-    "galleryMap": "Galleries 371, 162, 009"
+    "galleryMap": "Galleries 371, 160, 818"
   },
   {
     "id": "quest-002", 
@@ -25,9 +25,9 @@
     "description": "Discover the evolution of portraiture across 3 distinct artistic styles. From Van Gogh's expressive self-portrait to Rembrandt's introspective gaze to Modigliani's modernist interpretation.",
     "icon": ":bust_in_silhouette:",
     "xpReward": 300,
-    "requiredArtworks": ["436532", "437397", "488903"],
+    "requiredArtworks": ["488903", "488221", "489994"],
     "isPremium": false,
-    "galleryMap": "Galleries 825, 616, 900"
+    "galleryMap": "Galleries 900, 908, 900"
   },
   {
     "id": "quest-004",
@@ -35,9 +35,9 @@
     "description": "Experience the diversity of artistic expression! Explore 5 different art mediums: pen and wash drawing, silk evening dress, ink calligraphy, gold funerary mask, and carved wood sculpture.",
     "icon": ":art:", 
     "xpReward": 400,
-    "requiredArtworks": ["382503", "159209", "897102", "309959", "316173"],
+    "requiredArtworks": ["382503", "897102", "309959", "316173"],
     "isPremium": false,
-    "galleryMap": "Galleries 690, Costume Institute, 224, Rockefeller Wing, Rockefeller Wing"
+    "galleryMap": "Galleries 690, 224, 361, 344"
   },
   {
     "id": "quest-005",
@@ -55,9 +55,9 @@
     "description": "Experience the full spectrum of artistic color! From the golden brilliance of ancient masks to the rich blues of stained glass, discover how artists across cultures have used color to captivate and inspire.",
     "icon": ":rainbow:",
     "xpReward": 350,
-    "requiredArtworks": ["309959", "469959", "452102", "437658", "42716"],
+    "requiredArtworks": ["469959", "452102", "42716"],
     "isPremium": false,
-    "galleryMap": "Galleries Rockefeller Wing, 009, 461, 825, 206"
+    "galleryMap": "Galleries 009, 461, 206"
   },
   {
     "id": "quest-007",
@@ -67,6 +67,16 @@
     "xpReward": 400,
     "requiredArtworks": ["78594", "313386", "321676", "10796"], 
     "isPremium": false,
-    "galleryMap": "Galleries 231, Rockefeller Wing, 202, 774"
+    "galleryMap": "Galleries 231, 360, 202, 774"
+  },
+  {
+    "id": "quest-008",
+    "title": "Marble Legends",
+    "description": "Celebrate the timeless beauty of marble sculptures at The Met. Discover heroic figures and graceful forms carved in stone, and explore how artists shaped stories from solid rock.",
+    "icon": ":classical_building:",
+    "xpReward": 450,
+    "requiredArtworks": ["247000", "11952", "204758"],
+    "isPremium": false,
+    "galleryMap": "Galleries 162, 700, 548"
   }
 ]

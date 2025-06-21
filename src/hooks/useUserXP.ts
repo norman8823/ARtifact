@@ -1,4 +1,9 @@
-import { type ListUserXPSQuery } from "@/src/API";
+import {
+  type CreateUserXPInput,
+  type ListUserXPSQuery,
+  type UpdateUserXPInput,
+} from "@/src/API";
+import { createUserXP, updateUserXP } from "@/src/graphql/mutations";
 import { listUserXPS } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
@@ -95,8 +100,79 @@ export function useUserXP() {
     }
   }, [checkAuthState]);
 
+  const awardXP = useCallback(
+    async (points: number) => {
+      setError(null);
+      try {
+        const user = await checkAuthState();
+        const currentXP = await getUserXP();
+
+        if (!currentXP || currentXP.id === "default") {
+          // Create new XP record
+          const createInput: CreateUserXPInput = {
+            userId: user.userId,
+            xpPoints: points,
+            timestamp: new Date().toISOString(),
+          };
+
+          const result = await client.graphql({
+            query: createUserXP,
+            variables: { input: createInput },
+            authMode: "userPool",
+          });
+
+          if ("errors" in result && result.errors) {
+            throw new Error(
+              result.errors
+                .map((e: { message: string }) => e.message)
+                .join(", ")
+            );
+          }
+
+          console.log(`✅ Created XP record with ${points} points`);
+          return result.data?.createUserXP;
+        } else {
+          // Update existing XP record
+          const newXPTotal = currentXP.xpPoints + points;
+          const updateInput: UpdateUserXPInput = {
+            id: currentXP.id,
+            xpPoints: newXPTotal,
+            timestamp: new Date().toISOString(),
+          };
+
+          const result = await client.graphql({
+            query: updateUserXP,
+            variables: { input: updateInput },
+            authMode: "userPool",
+          });
+
+          if ("errors" in result && result.errors) {
+            throw new Error(
+              result.errors
+                .map((e: { message: string }) => e.message)
+                .join(", ")
+            );
+          }
+
+          console.log(
+            `✅ Updated XP: ${currentXP.xpPoints} + ${points} = ${newXPTotal}`
+          );
+          return result.data?.updateUserXP;
+        }
+      } catch (err) {
+        console.error("Error awarding XP:", err);
+        setError(
+          err instanceof Error ? err : new Error("Unknown error occurred")
+        );
+        throw err;
+      }
+    },
+    [checkAuthState, getUserXP]
+  );
+
   return {
     getUserXP,
+    awardXP,
     isLoading,
     error,
   };
