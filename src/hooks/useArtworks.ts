@@ -14,6 +14,7 @@ export interface Artwork {
   primaryImage: string | null;
   primaryImageSmall: string | null;
   isFeatured: boolean | null;
+  hasAR: boolean | null;
   culture: string | null;
   medium: string | null;
   classification: string | null;
@@ -91,8 +92,8 @@ export function useArtworks() {
         .filter((item: any): item is NonNullable<typeof item> => {
           if (item === null) return false;
           // Validate required fields
-          if (!item.id || typeof item.id !== 'string') {
-            console.warn('Invalid artwork item:', item);
+          if (!item.id || typeof item.id !== "string") {
+            console.warn("Invalid artwork item:", item);
             return false;
           }
           return true;
@@ -102,11 +103,12 @@ export function useArtworks() {
             item: NonNullable<(typeof result.data.listArtworks.items)[number]>
           ) => ({
             id: item.id,
-            title: item.title || '',
+            title: item.title || "",
             artistDisplayName: item.artistDisplayName || null,
             primaryImage: item.primaryImage || null,
             primaryImageSmall: item.primaryImageSmall || null,
             isFeatured: item.isFeatured || false,
+            hasAR: item.hasAR || false,
             culture: item.culture || null,
             medium: item.medium || null,
             classification: item.classification || null,
@@ -184,8 +186,8 @@ export function useArtworks() {
         .filter((item: any): item is NonNullable<typeof item> => {
           if (item === null) return false;
           // Validate required fields
-          if (!item.id || typeof item.id !== 'string') {
-            console.warn('Invalid artwork item:', item);
+          if (!item.id || typeof item.id !== "string") {
+            console.warn("Invalid artwork item:", item);
             return false;
           }
           return true;
@@ -195,11 +197,12 @@ export function useArtworks() {
             item: NonNullable<(typeof result.data.listArtworks.items)[number]>
           ) => ({
             id: item.id,
-            title: item.title || '',
+            title: item.title || "",
             artistDisplayName: item.artistDisplayName || null,
             primaryImage: item.primaryImage || null,
             primaryImageSmall: item.primaryImageSmall || null,
             isFeatured: item.isFeatured || false,
+            hasAR: item.hasAR || false,
             culture: item.culture || null,
             medium: item.medium || null,
             classification: item.classification || null,
