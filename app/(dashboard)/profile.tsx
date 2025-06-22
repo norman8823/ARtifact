@@ -601,7 +601,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rankName: {
-    fontSize: 16,
     marginBottom: 2,
   },
   rankXP: {

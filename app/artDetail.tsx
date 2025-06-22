@@ -638,12 +638,10 @@ const styles = StyleSheet.create({
     paddingRight: 56,
   },
   title: {
-    fontSize: 24,
     marginBottom: 4,
     flex: 1,
   },
   artist: {
-    fontSize: 16,
     color: Colors.darkMedGray,
     marginBottom: 2,
     flex: 1,
@@ -922,7 +920,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightGray,
     borderBottomWidth: 1,
     borderBottomColor: Colors.medLightGray,
-    ...shadowStyle,
   },
   webViewModalTitle: {
     fontSize: 18,
@@ -955,7 +952,6 @@ const styles = StyleSheet.create({
   webViewLoadingText: {
     marginTop: 16,
     color: Colors.darkMedGray,
-    fontSize: 16,
   },
   webView: {
     flex: 1,
