@@ -175,6 +175,13 @@ export default function ArtQuestScreen() {
                   <ThemedView style={styles.questHeader}>
                     <ThemedView style={styles.questInfo}>
                       <ThemedView style={styles.titleRow}>
+                        <ThemedView style={styles.iconContainer}>
+                          <FontAwesome
+                            name={(quest.icon as any) || "search"}
+                            size={20}
+                            color={Colors.darkYellow}
+                          />
+                        </ThemedView>
                         <ThemedText type="title" style={styles.questTitle}>
                           {quest.title}
                         </ThemedText>
@@ -260,6 +267,13 @@ export default function ArtQuestScreen() {
                 <ThemedView style={styles.questHeader}>
                   <ThemedView style={styles.questInfo}>
                     <ThemedView style={styles.titleRow}>
+                      <ThemedView style={styles.iconContainer}>
+                        <FontAwesome
+                          name={(quest.icon as any) || "search"}
+                          size={20}
+                          color={Colors.darkYellow}
+                        />
+                      </ThemedView>
                       <ThemedText type="title" style={styles.questTitle}>
                         {quest.title}
                       </ThemedText>
@@ -468,5 +482,11 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     textAlign: "center",
+  },
+  iconContainer: {
+    backgroundColor: Colors.lightYellow,
+    borderRadius: 20,
+    padding: 8,
+    marginRight: 8,
   },
 });
