@@ -1,7 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
@@ -17,9 +16,6 @@ import { WebView } from "react-native-webview";
 
 export default function ARViewerScreen() {
   const params = useLocalSearchParams();
-  const artworkId = Array.isArray(params.artworkId)
-    ? params.artworkId[0]
-    : params.artworkId;
   const artworkTitle = Array.isArray(params.title)
     ? params.title[0]
     : params.title || "Artwork";
@@ -70,17 +66,20 @@ export default function ARViewerScreen() {
         {/* Loading Indicator */}
         {isLoading && (
           <ThemedView style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#666" />
+            <ActivityIndicator size="large" color={Colors.darkMedGray} />
             <ThemedText style={styles.loadingText}>
               Loading AR Experience...
             </ThemedText>
           </ThemedView>
         )}
-
         {/* Error State */}
         {hasError ? (
           <ThemedView style={styles.errorContainer}>
-            <FontAwesome name="exclamation-triangle" size={48} color="#999" />
+            <FontAwesome
+              name="exclamation-triangle"
+              size={48}
+              color={Colors.darkMedGray}
+            />
             <ThemedText style={styles.errorTitle}>
               AR Experience Unavailable
             </ThemedText>
@@ -118,15 +117,13 @@ export default function ARViewerScreen() {
             mixedContentMode="compatibility"
           />
         )}
-
         {/* Back Button */}
         <View style={styles.backButtonContainer}>
           <Pressable style={styles.backButton} onPress={handleBack}>
-            <FontAwesome name="arrow-left" size={18} color="#fff" />
+            <FontAwesome name="arrow-left" size={18} color={Colors.lightGray} />
             <ThemedText style={styles.backButtonText}>Back</ThemedText>
           </Pressable>
         </View>
-
         {/* Info Button */}
         <View style={styles.infoButtonContainer}>
           <Pressable
@@ -134,12 +131,12 @@ export default function ARViewerScreen() {
             onPress={() =>
               Alert.alert(
                 "AR Experience",
-                `Viewing AR content for: ${artworkTitle}\nArtwork ID: ${artworkId}\nAR URL: ${arURL}`,
+                `Viewing AR content for: \n${artworkTitle}`,
                 [{ text: "OK" }]
               )
             }
           >
-            <FontAwesome name="info" size={16} color="#fff" />
+            <FontAwesome name="info" size={16} color={Colors.lightGray} />
           </Pressable>
         </View>
       </SafeAreaView>
@@ -156,79 +153,77 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   loadingContainer: {
-    flex: 1,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.lightGray,
     gap: 16,
+    zIndex: 2000,
   },
   loadingText: {
-    fontSize: 16,
-    color: "#666",
+    color: Colors.darkMedGray,
   },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 32,
+    backgroundColor: Colors.lightGray,
+    padding: 20,
     gap: 16,
   },
   errorTitle: {
     fontSize: 20,
-    color: "#333",
     textAlign: "center",
   },
   errorMessage: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.darkMedGray,
     textAlign: "center",
-    lineHeight: 20,
   },
   retryButton: {
-    backgroundColor: "#666",
+    backgroundColor: Colors.darkMedGray,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 12,
     marginTop: 8,
   },
   retryButtonText: {
-    color: "#fff",
-    fontSize: 16,
+    color: Colors.lightGray,
   },
   backButtonContainer: {
     position: "absolute",
-    top: 50,
+    top: 70,
     left: 20,
     zIndex: 1000,
   },
   backButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderRadius: 25,
     gap: 8,
-    ...shadowStyle,
   },
   backButtonText: {
-    color: "#fff",
-    fontSize: 16,
+    color: Colors.lightGray,
   },
   infoButtonContainer: {
     position: "absolute",
-    top: 50,
+    top: 70,
     right: 20,
     zIndex: 1000,
   },
   infoButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    borderRadius: 25,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
-    ...shadowStyle,
   },
 });
