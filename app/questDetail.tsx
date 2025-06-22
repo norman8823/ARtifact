@@ -151,7 +151,7 @@ export default function QuestDetailScreen() {
             <ThemedView style={styles.headerLeft}>
               <ThemedView style={styles.iconContainer}>
                 <FontAwesome
-                  name="paint-brush"
+                  name={(quest.icon as any) || "search"}
                   size={24}
                   color={Colors.darkYellow}
                 />

@@ -202,17 +202,17 @@ export default function ScanScreen() {
   };
 
   const closeModal = () => {
-    setModalState({
+    setModalState((prev) => ({
+      ...prev,
       visible: false,
-      success: false,
-    });
+    }));
   };
 
   // Permission loading state
   if (!permission) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color={Colors.darkGray} />
+        <ActivityIndicator size="large" color={Colors.darkMedGray} />
         <ThemedText style={styles.loadingText}>
           Requesting camera permissions...
         </ThemedText>
@@ -224,7 +224,7 @@ export default function ScanScreen() {
   if (!permission.granted) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
-        <FontAwesome name="camera" size={64} color={Colors.medGray} />
+        <FontAwesome name="camera" size={64} color={Colors.darkMedGray} />
         <ThemedText type="title" style={styles.errorTitle}>
           Camera Access Required
         </ThemedText>
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   centerContent: {
     justifyContent: "center",
     alignItems: "center",
-    padding: 32,
+    padding: 20,
   },
   loadingText: {
     marginTop: 16,
@@ -333,14 +333,13 @@ const styles = StyleSheet.create({
   errorMessage: {
     textAlign: "center",
     color: Colors.darkMedGray,
-    lineHeight: 20,
     marginBottom: 24,
   },
   retryButton: {
-    backgroundColor: Colors.darkGray,
+    backgroundColor: Colors.darkMedGray,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   retryButtonText: {
     color: Colors.lightGray,
