@@ -341,7 +341,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   levelText: {
-    fontSize: 16,
     color: Colors.darkMedGray,
     marginTop: 4,
   },
