@@ -32,6 +32,7 @@ export default function RootLayout() {
             },
             headerTintColor: Colors.darkGray,
             headerBackButtonDisplayMode: "minimal",
+            headerBackButtonMenuEnabled: false,
           }}
         >
           <Stack.Screen
