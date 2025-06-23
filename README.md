@@ -1,6 +1,6 @@
 # ARtifact
 
-**ARtifact** is a sophisticated React Native museum companion app built with Expo and AWS Amplify. Designed to enhance museum visits, it blends augmented reality, image recognition, and gamified exploration into a seamless mobile experience.
+**ARtifact** is a sophisticated museum companion app built with React Native, Expo, and AWS Amplify. Designed to enhance museum visits, it blends augmented reality, image recognition, and gamified exploration into a seamless mobile experience.
 
 ## 🏛️ Application Overview
 
@@ -12,6 +12,8 @@ ARtifact enhances in-person museum experiences through features like:
 - Image recognition to identify artworks via camera
 
 Built with modern tooling and cloud services for scalability, performance, and an engaging user experience.
+
+Check out the [ARtifact Video Walkthrough](https://youtu.be/_-6wWrZNwM4)!
 
 ## 🧱 Architecture & Tech Stack
 
@@ -33,6 +35,8 @@ Built with modern tooling and cloud services for scalability, performance, and a
 - **API Gateway** for managing and routing RESTful endpoints where needed
 - **IAM** (Identity and Access Management) for securing access to AWS resources
 - **CloudWatch** for logging, monitoring, and debugging Lambda and Amplify services
+
+![AWS Services](./assets/images/AWS_Services.png)
 
 ## 📦 Key Dependencies
 
