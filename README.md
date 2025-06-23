@@ -46,19 +46,25 @@ Built with modern tooling and cloud services for scalability, performance, and a
 Built using **Expo Router**, the app has clear routing and screen organization:
 
 ```
-├── index.tsx (landing)
-├── login/ (authentication)
-├── (dashboard)/ (tab nav)
-│   ├── home.tsx
-│   ├── explore.tsx
-│   ├── scan.tsx
-│   ├── artQuest.tsx
-│   ├── profile.tsx
-├── artDetail.tsx
-├── arViewer.tsx
-├── favorites.tsx
-├── collection.tsx
+├── index.tsx                # Landing / Welcome
+├── (dashboard)/             # Main Tab Navigation
+│   ├── home.tsx             # Home (featured, entry point)
+│   ├── explore.tsx          # Explore (search, browse, filter)
+│   ├── scan.tsx             # Camera & image recognition
+│   ├── artQuest.tsx         # Gamified quests & challenges
+│   ├── profile.tsx          # User profile & stats
+├── artDetail.tsx            # Artwork detail view
+├── collection.tsx           # Collection detail view
+├── arViewer.tsx             # Augmented reality viewer
+├── questDetail.tsx          # Quest detail view
+├── favorites.tsx            # User's favorite artworks
+├── artworksVisited.tsx      # Artworks visited history
+├── questsCompleted.tsx      # Completed quests list
 ```
+
+- **Tab navigation** is handled in `(dashboard)/`, with Home, Explore, Scan, ArtQuest, and Profile tabs.
+- **Stack navigation** is used for detail and modal screens (artwork, AR, collection, favorites, etc.).
+- All navigation is managed via file-based routing for clarity and scalability.
 
 ## 🧬 Data Models (GraphQL)
 
@@ -163,11 +169,11 @@ The codebase reflects:
 
 Want to learn more or connect with us? Meet the team behind ARtifact:
 
-- [Manfred Joa](https://www.linkedin.com/in/manfredjoa/)
-- [Norman Li](https://www.linkedin.com/in/norman8823/)
-- [Raul Jiminian](https://www.linkedin.com/in/raul-jiminian/)
+- <a href="https://www.linkedin.com/in/manfredjoa/" target="_blank" rel="noopener">Manfred Joa</a>
+- <a href="https://www.linkedin.com/in/norman8823/" target="_blank" rel="noopener">Norman Li</a>
+- <a href="https://www.linkedin.com/in/raul-jiminian/" target="_blank" rel="noopener">Raul Jiminian</a>
 
-We’d love to hear from you!
+We'd love to hear from you!
 
 ---
 
