@@ -1,0 +1,37 @@
+[
+  {
+    "id": "635680",
+    "isCurated": true,
+    "isFeatured": true,
+    "hasAudio": false,
+    "primaryImage": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/635680/primaryImage.jpg",
+    "primaryImageSmall": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/635680/primaryImageSmall.jpg",
+    "additionalImages": [
+      "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/635680/additional/1.jpg",
+      "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/635680/additional/2.jpg",
+      "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/635680/additional/3.jpg",
+      "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/635680/additional/4.jpg",
+      "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/635680/additional/5.jpg",
+      "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/635680/additional/6.jpg",
+      "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/artworkImages/635680/additional/7.jpg"
+    ],
+    "departmentId": "5",
+    "department": "The Michael C. Rockefeller Wing",
+    "departmentImageUrl": "https://artifactbucketd3c4f-dev.s3.us-east-1.amazonaws.com/departments/5.jpg",
+    "departmentDescription": "The Michael C. Rockefeller Wing features art of sub-Saharan Africa, the Pacific Islands, and indigenous cultures of the Americas, exploring diverse visual languages through sculpture, textiles, and ceremonial objects.",
+    "objectType": "Throne",
+    "title": "Throne of Njouteu",
+    "culture": "Bamileke",
+    "artistDisplayName": "Grassfields carver and master beader",
+    "objectDate": "Late 19th–early 20th century",
+    "medium": "Wood, glass beads, cloth, cowrie shells",
+    "dimensions": "H. 64 × W. 29 1/4 × D. 26 1/2 in. (162.6 × 74.3 × 67.3 cm)",
+    "classification": "Wood-Sculpture",
+    "galleryNumber": "344",
+    "tags": ["Animals", "Couples", "Men", "Women"],
+    "description": "This seat of office was created for a leader in the Grassfields region of western Cameroon. This densely populated region was a prosperous nexus of trade that gave rise to a proliferation of principalities. The powerful rulers of these wealthy city-states, who were responsible for the well-being of their people, became major patrons of the arts. They commissioned lavish palace complexes with sculptural programs, regalia for themselves and members of their courts, masquerades performed at civic celebrations, and, most important, the seat of office identified with their reign. This throne served as the visual focus of rites establishing the legitimate transfer of power as well as continuity in leadership. It was documented in Bansoa in 1957 by the French researcher Pierre Harter, who recorded the name of the late nineteenth-century ruler credited with its creation: Njouteu. The sculpture of a king and his consort standing at the back of a circular seat supported by a leopard was carved from a single piece of wood wrapped in a fine layer of locally woven fabric. Upon this three-dimensional canvas, a master beader applied thousands of glass beads—a luxury good created in Venice and Prague for export to this region of West Africa. The emphatic use of blue underscores the elite status of the subjects, who hold insignia of leadership: a buffalo- horn drinking vessel and a calabash receptacle for palm-wine offerings.",
+    "objectURL": "https://www.metmuseum.org/art/collection/search/635680",
+    "hasAR": true,
+    "arImage": "https://artifact2.8thwall.app/635680-throneofnjouteu/"
+  }
+]
