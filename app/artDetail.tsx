@@ -264,7 +264,7 @@ export default function ArtDetailScreen() {
                 uri: selectedImage || artwork.primaryImage || undefined,
               }}
               style={styles.artworkImage}
-              contentFit="cover"
+              contentFit="contain"
             />
             <Pressable
               style={styles.zoomButton}
@@ -620,6 +620,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {},
   mainImageContainer: {
+    backgroundColor: Colors.lightGray,
     position: "relative",
   },
   artworkImage: {
