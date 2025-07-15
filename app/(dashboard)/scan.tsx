@@ -4,8 +4,6 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useScanSuccess } from "@/src/hooks/useScanSuccess";
 import { FontAwesome } from "@expo/vector-icons";
-import { post } from "aws-amplify/api";
-import { uploadData } from "aws-amplify/storage";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { Stack } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -35,7 +33,7 @@ export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [cameraType, setCameraType] = useState<"back" | "front">("back");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [rekognitionResult, setRekognitionResult] = useState<any>(null);
+  const [analysisResult, setAnalysisResult] = useState<any>(null); // Renamed from rekognitionResult
   const [isLoading, setIsLoading] = useState(false);
   const [modalState, setModalState] = useState<ScanResultState>({
     visible: false,
@@ -62,7 +60,7 @@ export default function ScanScreen() {
 
   const handleScanResult = async (rekognitionData: any) => {
     try {
-      console.log("🔍 Processing Rekognition result:", rekognitionData);
+      console.log("🔍 Processing scan result:", rekognitionData);
 
       // Check if we have a successful recognition with labels
       if (
@@ -111,9 +109,100 @@ export default function ScanScreen() {
     }
   };
 
+  // NEW: Function to analyze image with Flask CNN model
+  const analyzeWithFlask = async (uri: string) => {
+    setIsAnalyzing(true);
+    setAnalysisResult(null);
+
+    try {
+      console.log("📸 Starting Flask CNN analysis...");
+
+      // Create FormData for image upload
+      const formData = new FormData();
+
+      // Add image file to FormData
+      formData.append("image", {
+        uri: uri,
+        type: "image/jpeg",
+        name: "artwork.jpg",
+      } as any);
+
+      console.log("🔍 Calling Flask CNN API...");
+
+      // Call Flask API
+      const response = await fetch("http://10.1.8.164:8000/predict", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Flask API error: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const flaskResult = await response.json();
+      console.log("🔍 Flask CNN Result:", flaskResult);
+
+      // Transform Flask response to match expected format for useScanSuccess
+      let transformedResult;
+
+      if (
+        flaskResult.success &&
+        flaskResult.prediction &&
+        flaskResult.prediction !== "Unknown"
+      ) {
+        // Successful prediction - transform to expected format
+        transformedResult = {
+          success: true,
+          labels: [
+            {
+              Name: flaskResult.prediction,
+              Confidence: flaskResult.confidence * 100, // Convert to percentage
+            },
+          ],
+          confidence: flaskResult.confidence * 100,
+        };
+        console.log(
+          "✅ Artwork identified by Flask CNN:",
+          flaskResult.prediction
+        );
+      } else {
+        // Unsuccessful prediction or Unknown result
+        transformedResult = {
+          success: false,
+          labels: [],
+          confidence: flaskResult.confidence ? flaskResult.confidence * 100 : 0,
+        };
+        console.log("❌ No confident artwork identification from Flask CNN");
+      }
+
+      setAnalysisResult(transformedResult);
+
+      // Process the result through our existing handler
+      await handleScanResult(transformedResult);
+    } catch (error) {
+      console.error("❌ Error analyzing image with Flask:", error);
+
+      Alert.alert(
+        "Analysis Error",
+        `Failed to analyze image: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        [{ text: "OK" }]
+      );
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  /* COMMENTED OUT: Old S3/Rekognition approach
   const uploadToS3AndAnalyze = async (uri: string) => {
     setIsAnalyzing(true);
-    setRekognitionResult(null);
+    setAnalysisResult(null);
 
     try {
       console.log("📸 Starting image analysis...");
@@ -157,7 +246,7 @@ export default function ScanScreen() {
       const result = await rekognitionResponse.body.json();
 
       console.log("🔍 Rekognition Result:", result);
-      setRekognitionResult(result);
+      setAnalysisResult(result);
 
       // Process the result through our new handler
       await handleScanResult(result);
@@ -175,6 +264,7 @@ export default function ScanScreen() {
       setIsAnalyzing(false);
     }
   };
+  */
 
   const takePicture = async () => {
     if (!cameraRef.current || isAnalyzing || isProcessing) return;
@@ -190,7 +280,8 @@ export default function ScanScreen() {
       });
 
       console.log("📸 Picture taken:", photo.uri);
-      await uploadToS3AndAnalyze(photo.uri);
+      // Use new Flask analysis instead of S3/Rekognition
+      await analyzeWithFlask(photo.uri);
     } catch (error) {
       console.error("❌ Error taking picture:", error);
       Alert.alert("Camera Error", "Failed to take picture. Please try again.", [
