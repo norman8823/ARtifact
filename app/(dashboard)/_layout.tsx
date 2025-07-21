@@ -45,13 +45,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="scan"
-        options={{
-          title: "Scan",
-          tabBarIcon: ({ color }) => <TabBarIcon name="camera" color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="artQuest"
         options={{
           title: "ArtQuest",

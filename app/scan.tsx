@@ -6,6 +6,7 @@ import { useScanSuccess } from "@/src/hooks/useScanSuccess";
 import { FontAwesome } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { Stack } from "expo-router";
+import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -14,6 +15,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ScanResultState {
   visible: boolean;
@@ -334,10 +336,17 @@ export default function ScanScreen() {
     <>
       <Stack.Screen
         options={{
-          headerTitle: "Scan Artwork",
+          headerShown: false,
         }}
       />
-      <ThemedView style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        {/* Custom Back Button */}
+        <View style={styles.backButtonContainer}>
+          <Pressable style={styles.backButton} onPress={() => router.back()}>
+            <FontAwesome name="arrow-left" size={18} color={Colors.lightGray} />
+            <ThemedText style={styles.backButtonText}>Back</ThemedText>
+          </Pressable>
+        </View>
         {/* Camera View */}
         <View style={styles.cameraContainer}>
           <CameraView ref={cameraRef} style={styles.camera} facing={cameraType}>
@@ -386,7 +395,7 @@ export default function ScanScreen() {
             </View>
           </CameraView>
         </View>
-      </ThemedView>
+      </SafeAreaView>
 
       {/* Scan Result Modal */}
       <ScanResultModal
@@ -460,13 +469,12 @@ const styles = StyleSheet.create({
   },
   bottomControls: {
     position: "absolute",
-    bottom: 0,
+    bottom: 40,
     left: 0,
     right: 0,
     flexDirection: "row",
     justifyContent: "center",
-    padding: 20,
-    paddingBottom: 100,
+    // padding: 20,
   },
   captureButton: {
     width: 80,
@@ -494,5 +502,23 @@ const styles = StyleSheet.create({
     color: Colors.lightGray,
     paddingVertical: 8,
     borderRadius: 12,
+  },
+  backButtonContainer: {
+    position: "absolute",
+    top: 70,
+    left: 20,
+    zIndex: 1000,
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 25,
+    gap: 8,
+  },
+  backButtonText: {
+    color: Colors.lightGray,
   },
 });
