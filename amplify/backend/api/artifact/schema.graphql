@@ -29,6 +29,7 @@ type Artwork
   id: ID! # MET Object ID
   isCurated: Boolean
   isFeatured: Boolean
+  isScannable: Boolean
   hasAudio: Boolean
   hasAR: Boolean
   primaryImage: String
