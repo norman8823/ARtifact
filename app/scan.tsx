@@ -132,7 +132,7 @@ export default function ScanScreen() {
       console.log("🔍 Calling Flask CNN API...");
 
       // Call Flask API
-      const response = await fetch("http://10.1.8.164:8000/predict", {
+      const response = await fetch("https://artifact-server-production.up.railway.app/predict", {
         method: "POST",
         body: formData,
         headers: {
