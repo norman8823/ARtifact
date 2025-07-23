@@ -85,6 +85,7 @@ export const createArtwork = /* GraphQL */ `mutation CreateArtwork(
     id
     isCurated
     isFeatured
+    isScannable
     hasAudio
     hasAR
     primaryImage
@@ -124,6 +125,7 @@ export const updateArtwork = /* GraphQL */ `mutation UpdateArtwork(
     id
     isCurated
     isFeatured
+    isScannable
     hasAudio
     hasAR
     primaryImage
@@ -163,6 +165,7 @@ export const deleteArtwork = /* GraphQL */ `mutation DeleteArtwork(
     id
     isCurated
     isFeatured
+    isScannable
     hasAudio
     hasAR
     primaryImage

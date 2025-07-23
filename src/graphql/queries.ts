@@ -372,6 +372,7 @@ export const getArtwork = /* GraphQL */ `query GetArtwork($id: ID!) {
     id
     isCurated
     isFeatured
+    isScannable
     hasAudio
     hasAR
     primaryImage
@@ -413,6 +414,7 @@ export const listArtworks = /* GraphQL */ `query ListArtworks(
       id
       isCurated
       isFeatured
+      isScannable
       hasAudio
       hasAR
       primaryImage

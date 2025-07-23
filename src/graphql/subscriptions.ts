@@ -334,6 +334,7 @@ export const onCreateArtwork = /* GraphQL */ `subscription OnCreateArtwork($filt
     id
     isCurated
     isFeatured
+    isScannable
     hasAudio
     hasAR
     primaryImage
@@ -370,6 +371,7 @@ export const onUpdateArtwork = /* GraphQL */ `subscription OnUpdateArtwork($filt
     id
     isCurated
     isFeatured
+    isScannable
     hasAudio
     hasAR
     primaryImage
@@ -406,6 +408,7 @@ export const onDeleteArtwork = /* GraphQL */ `subscription OnDeleteArtwork($filt
     id
     isCurated
     isFeatured
+    isScannable
     hasAudio
     hasAR
     primaryImage
