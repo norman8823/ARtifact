@@ -14,6 +14,7 @@ export interface Artwork {
   primaryImage: string | null;
   primaryImageSmall: string | null;
   isFeatured: boolean | null;
+  isScannable: boolean | null;
   hasAR: boolean | null;
   culture: string | null;
   medium: string | null;
@@ -108,6 +109,7 @@ export function useArtworks() {
             primaryImage: item.primaryImage || null,
             primaryImageSmall: item.primaryImageSmall || null,
             isFeatured: item.isFeatured || false,
+            isScannable: item.isScannable || false,
             hasAR: item.hasAR || false,
             culture: item.culture || null,
             medium: item.medium || null,
@@ -202,6 +204,7 @@ export function useArtworks() {
             primaryImage: item.primaryImage || null,
             primaryImageSmall: item.primaryImageSmall || null,
             isFeatured: item.isFeatured || false,
+            isScannable: item.isScannable || false,
             hasAR: item.hasAR || false,
             culture: item.culture || null,
             medium: item.medium || null,

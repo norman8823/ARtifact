@@ -430,14 +430,18 @@ export default function ArtDetailScreen() {
             </Pressable>
           </ThemedView>
 
-          {/* Scan Button */}
-          <Pressable
-            style={styles.scanButton}
-            onPress={() => router.push("/scan")}
-          >
-            <FontAwesome name="camera" size={18} color={Colors.lightGray} />
-            <ThemedText style={styles.scanButtonText}>Scan Artwork</ThemedText>
-          </Pressable>
+          {/* Scan Button - Only show if artwork is scannable */}
+          {artwork.isScannable && (
+            <Pressable
+              style={styles.scanButton}
+              onPress={() => router.push("/scan")}
+            >
+              <FontAwesome name="camera" size={18} color={Colors.lightGray} />
+              <ThemedText style={styles.scanButtonText}>
+                Scan Artwork
+              </ThemedText>
+            </Pressable>
+          )}
 
           {/* AR Button - Only show if artwork has AR support */}
           {artwork.hasAR && (
