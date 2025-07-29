@@ -24,6 +24,7 @@ const ITEM_WIDTH = (SCREEN_WIDTH - 28) / NUM_COLUMNS;
 export default function ExploreScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [showIsScannableOnly, setShowIsScannableOnly] = useState(false);
   const [showAROnly, setShowAROnly] = useState(false);
   const router = useRouter();
   const { getAllArtworks, isLoading, error } = useArtworks();
@@ -40,7 +41,12 @@ export default function ExploreScreen() {
   const filteredArtworks = useMemo(() => {
     let filtered = artworks;
 
-    // Apply AR filter first
+    // Apply isScannable filter
+    if (showIsScannableOnly) {
+      filtered = filtered.filter((artwork) => artwork.isScannable === true);
+    }
+
+    // Apply AR filter
     if (showAROnly) {
       filtered = filtered.filter((artwork) => artwork.hasAR === true);
     }
@@ -68,7 +74,7 @@ export default function ExploreScreen() {
     }
 
     return filtered;
-  }, [artworks, searchQuery, showAROnly]);
+  }, [artworks, searchQuery, showIsScannableOnly, showAROnly]);
 
   // Count AR-enabled artworks for display
   const arEnabledCount = useMemo(() => {
@@ -92,6 +98,12 @@ export default function ExploreScreen() {
           style={styles.artworkImage}
           contentFit="cover"
         />
+        {/* Scan Badge */}
+        {item.isScannable && (
+          <ThemedView style={styles.scanBadge}>
+            <FontAwesome name="camera" size={12} color={Colors.darkMedGray} />
+          </ThemedView>
+        )}
         {/* AR Badge */}
         {item.hasAR && (
           <ThemedView style={styles.arBadge}>
@@ -156,16 +168,54 @@ export default function ExploreScreen() {
               )}
             </ThemedView>
 
-            {/* AR Filter Checkbox - moved below search bar and aligned right */}
-            <ThemedView style={styles.arFilterRow}>
+            {/* Filter Row */}
+            <ThemedView style={styles.filterRow}>
+              {/* Scannable Filter Checkbox */}
               <Pressable
-                style={styles.arFilterContainer}
+                style={styles.filterContainer}
+                onPress={() => setShowIsScannableOnly(!showIsScannableOnly)}
+                accessibilityLabel={`$${
+                  showIsScannableOnly ? "Disable" : "Enable"
+                } Scannable only filter`}
+              >
+                <ThemedView style={styles.filterCheckbox}>
+                  <ThemedView
+                    style={[
+                      styles.checkbox,
+                      showIsScannableOnly && styles.checkboxChecked,
+                    ]}
+                  >
+                    {showIsScannableOnly && (
+                      <FontAwesome
+                        name="check"
+                        size={12}
+                        color={Colors.lightGray}
+                      />
+                    )}
+                  </ThemedView>
+                  <ThemedView style={styles.filterTextContainer}>
+                    <ThemedView style={styles.filterLabelRow}>
+                      <FontAwesome
+                        name="camera"
+                        size={14}
+                        color={Colors.darkMedGray}
+                        style={styles.filterIcon}
+                      />
+                      <ThemedText style={styles.filterLabel}>Scan</ThemedText>
+                    </ThemedView>
+                  </ThemedView>
+                </ThemedView>
+              </Pressable>
+
+              {/* AR Filter Checkbox */}
+              <Pressable
+                style={styles.filterContainer}
                 onPress={() => setShowAROnly(!showAROnly)}
                 accessibilityLabel={`$${
                   showAROnly ? "Disable" : "Enable"
                 } AR only filter`}
               >
-                <ThemedView style={styles.arFilterCheckbox}>
+                <ThemedView style={styles.filterCheckbox}>
                   <ThemedView
                     style={[
                       styles.checkbox,
@@ -180,17 +230,15 @@ export default function ExploreScreen() {
                       />
                     )}
                   </ThemedView>
-                  <ThemedView style={styles.arFilterTextContainer}>
-                    <ThemedView style={styles.arFilterLabelRow}>
+                  <ThemedView style={styles.filterTextContainer}>
+                    <ThemedView style={styles.filterLabelRow}>
                       <FontAwesome
                         name="cube"
                         size={14}
                         color={Colors.darkMedGray}
-                        style={styles.arFilterIcon}
+                        style={styles.filterIcon}
                       />
-                      <ThemedText style={styles.arFilterLabel}>
-                        AR Available
-                      </ThemedText>
+                      <ThemedText style={styles.filterLabel}>AR</ThemedText>
                     </ThemedView>
                   </ThemedView>
                 </ThemedView>
@@ -218,8 +266,10 @@ export default function ExploreScreen() {
                   No artworks found
                 </ThemedText>
                 <ThemedText style={styles.emptySubtitle}>
-                  {showAROnly && searchQuery.trim()
-                    ? "Try adjusting your search or disable the AR filter"
+                  {showIsScannableOnly && showAROnly && searchQuery.trim()
+                    ? "Try adjusting your search or disabling active filters"
+                    : showIsScannableOnly
+                    ? "No scan-enabled artworks match your criteria"
                     : showAROnly
                     ? "No AR-enabled artworks match your criteria"
                     : "Try adjusting your search terms"}
@@ -287,6 +337,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  scanBadge: {
+    position: "absolute",
+    bottom: 8,
+    left: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: Colors.lightGray,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   arBadge: {
     position: "absolute",
     bottom: 8,
@@ -298,10 +359,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  arFilterContainer: {
+  filterContainer: {
     paddingTop: 8,
   },
-  arFilterCheckbox: {
+  filterCheckbox: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.medLightGray,
@@ -313,25 +374,25 @@ const styles = StyleSheet.create({
     height: 20,
     borderWidth: 2,
     borderColor: Colors.darkMedGray,
-    borderRadius: 4,
+    borderRadius: 6,
     justifyContent: "center",
     alignItems: "center",
   },
   checkboxChecked: {
     backgroundColor: Colors.darkMedGray,
   },
-  arFilterTextContainer: {
+  filterTextContainer: {
     marginLeft: 8,
   },
-  arFilterLabelRow: {
+  filterLabelRow: {
     backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "center",
   },
-  arFilterIcon: {
+  filterIcon: {
     marginRight: 4,
   },
-  arFilterLabel: {
+  filterLabel: {
     fontSize: 14,
     color: Colors.darkMedGray,
   },
@@ -347,10 +408,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.darkMedGray,
   },
-  arFilterRow: {
+  filterRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
     width: "100%",
+    gap: 8,
   },
 });
