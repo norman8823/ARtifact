@@ -1,5 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 import { useAuth } from "@/src/hooks/useAuth";
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -8,14 +10,12 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   TextInput,
-  SafeAreaView,
 } from "react-native";
 import "../src/aws/config";
-import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
 
 export default function EmailLoginScreen() {
   const [email, setEmail] = useState("");
@@ -33,6 +33,8 @@ export default function EmailLoginScreen() {
     signOut,
     isLoading,
     error,
+    getStoredPassword,
+    clearTempCredentials,
   } = useAuth();
 
   const isValidEmail = (email: string) => {
@@ -56,9 +58,20 @@ export default function EmailLoginScreen() {
   const handleSubmit = async () => {
     try {
       if (needsVerification) {
-        const signInResult = await confirmEmailSignUp(email, verificationCode);
-        if (signInResult.isSignedIn) {
-          router.replace("/home");
+        // Step 1: Confirm the sign up
+        const confirmResult = await confirmEmailSignUp(email, verificationCode);
+
+        // Step 2: If confirmation is successful, THEN sign in
+        if (confirmResult.isSignUpConfirmed) {
+          const storedPassword = getStoredPassword();
+          const signInResult = await signInWithEmail(email, storedPassword);
+
+          // Clear stored credentials after successful sign in
+          clearTempCredentials();
+
+          if (signInResult.isSignedIn) {
+            router.replace("/home");
+          }
         }
         return;
       }
@@ -329,63 +342,6 @@ export default function EmailLoginScreen() {
                 </Pressable>
               )}
             </ThemedView>
-
-            {/* Alternative Options */}
-            {/* {!needsVerification && (
-              <ThemedView style={styles.alternativeContainer}>
-                <ThemedView style={styles.dividerContainer}>
-                  <ThemedView style={styles.divider} />
-                  <ThemedText style={styles.dividerText}>
-                    or continue with
-                  </ThemedText>
-                  <ThemedView style={styles.divider} />
-                </ThemedView>
-
-                <ThemedView style={styles.alternativeButtons}>
-                  <Pressable
-                    style={styles.alternativeButton}
-                    onPress={() => router.replace("/phoneLogin")}
-                  >
-                    <FontAwesome
-                      name="phone"
-                      size={24}
-                      color={Colors.darkMedGray}
-                    />
-                    <ThemedText style={styles.alternativeButtonText}>
-                      Phone
-                    </ThemedText>
-                  </Pressable>
-
-                  <Pressable
-                    style={styles.alternativeButton}
-                    onPress={() => router.replace("/googleLogin")}
-                  >
-                    <FontAwesome
-                      name="google"
-                      size={24}
-                      color={Colors.darkMedGray}
-                    />
-                    <ThemedText style={styles.alternativeButtonText}>
-                      Google
-                    </ThemedText>
-                  </Pressable>
-
-                  <Pressable
-                    style={styles.alternativeButton}
-                    onPress={() => router.replace("/appleLogin")}
-                  >
-                    <FontAwesome
-                      name="apple"
-                      size={24}
-                      color={Colors.darkMedGray}
-                    />
-                    <ThemedText style={styles.alternativeButtonText}>
-                      Apple
-                    </ThemedText>
-                  </Pressable>
-                </ThemedView>
-              </ThemedView>
-            )} */}
           </ThemedView>
         </ScrollView>
       </SafeAreaView>
@@ -467,41 +423,6 @@ const styles = StyleSheet.create({
   sendCodeButtonText: {
     color: Colors.lightGray,
   },
-  // alternativeContainer: {
-  //   marginBottom: 80,
-  // },
-  // dividerContainer: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   marginBottom: 20,
-  // },
-  // divider: {
-  //   flex: 1,
-  //   height: 1,
-  //   backgroundColor: Colors.medGray,
-  // },
-  // dividerText: {
-  //   marginHorizontal: 16,
-  //   fontSize: 14,
-  //   color: Colors.darkMedGray,
-  // },
-  // alternativeButtons: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  // },
-  // alternativeButton: {
-  //   backgroundColor: Colors.medLightGray,
-  //   flex: 1,
-  //   alignItems: "center",
-  //   padding: 12,
-  //   borderRadius: 12,
-  //   marginHorizontal: 4,
-  //   ...shadowStyle,
-  // },
-  // alternativeButtonText: {
-  //   fontSize: 12,
-  //   marginTop: 4,
-  // },
   toggleAuthMode: {
     flex: 1,
     flexDirection: "row",

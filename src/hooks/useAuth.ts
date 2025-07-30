@@ -18,9 +18,14 @@ export interface UseAuthReturn {
     phoneNumber: string,
     username: string
   ) => Promise<{ isVerificationRequired: boolean }>;
-  confirmEmailSignUp: (email: string, code: string) => Promise<SignInOutput>;
+  confirmEmailSignUp: (
+    email: string,
+    code: string
+  ) => Promise<{ isSignUpConfirmed: boolean }>;
   signInWithEmail: (email: string, password: string) => Promise<SignInOutput>;
   signOut: () => Promise<void>;
+  getStoredPassword: () => string;
+  clearTempCredentials: () => void;
 }
 
 export function useAuth(): UseAuthReturn {
@@ -144,21 +149,16 @@ export function useAuth(): UseAuthReturn {
         //   JSON.stringify(confirmResult, null, 2)
         // );
 
-        // After successful confirmation, automatically sign in
-        const signInResult = await signInWithEmail(email, tempPassword);
-
-        // Clear stored credentials
-        setTempPassword("");
-        setTempUsername("");
-
-        return signInResult;
+        // DO NOT automatically sign in here. Let the UI handle it.
+        // Return just the confirmation result with a success flag
+        return { isSignUpConfirmed: true };
       } catch (err: any) {
         return handleError(err);
       } finally {
         setIsLoading(false);
       }
     },
-    [signInWithEmail, tempPassword]
+    []
   );
 
   const handleSignOut = useCallback(async () => {
@@ -175,6 +175,15 @@ export function useAuth(): UseAuthReturn {
     }
   }, []);
 
+  const getStoredPassword = useCallback(() => {
+    return tempPassword;
+  }, [tempPassword]);
+
+  const clearTempCredentials = useCallback(() => {
+    setTempPassword("");
+    setTempUsername("");
+  }, []);
+
   return {
     isLoading,
     error,
@@ -182,5 +191,7 @@ export function useAuth(): UseAuthReturn {
     confirmEmailSignUp,
     signInWithEmail,
     signOut: handleSignOut,
+    getStoredPassword,
+    clearTempCredentials,
   };
 }
