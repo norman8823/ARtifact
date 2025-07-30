@@ -15,9 +15,9 @@
           "additionalAuthenticationProviders": [
             {
               "apiKeyConfig": {
-                "apiKeyExpirationDate": "2025-06-03T20:03:36.373Z",
-                "apiKeyExpirationDays": 7,
-                "description": "Dev key for testing"
+                "apiKeyExpirationDate": "2026-07-29T19:56:52.412Z",
+                "apiKeyExpirationDays": 365,
+                "description": "key for testflight"
               },
               "authenticationType": "API_KEY"
             }

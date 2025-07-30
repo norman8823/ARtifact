@@ -11,9 +11,9 @@
     "additionalAuthTypes": [
       {
         "mode": "API_KEY",
-        "expirationTime": 7,
-        "apiKeyExpirationDate": "2025-06-03T20:03:36.373Z",
-        "keyDescription": "Dev key for testing"
+        "expirationTime": 365,
+        "apiKeyExpirationDate": "2026-07-29T19:56:52.412Z",
+        "keyDescription": "key for testflight"
       }
     ]
   }
