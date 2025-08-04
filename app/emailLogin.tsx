@@ -4,8 +4,9 @@ import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuth } from "@/src/hooks/useAuth";
 import { FontAwesome } from "@expo/vector-icons";
+import * as Sentry from "@sentry/react-native";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -91,6 +92,7 @@ export default function EmailLoginScreen() {
           );
           return;
         }
+
         const { isVerificationRequired } = await signUpWithEmail(
           email,
           password,
@@ -107,6 +109,35 @@ export default function EmailLoginScreen() {
         }
       }
     } catch (err: any) {
+      // Enhanced error logging
+      Sentry.captureException(err, {
+        tags: {
+          component: "EmailLoginScreen",
+          action: needsVerification
+            ? "verification"
+            : isSignUp
+            ? "signUp"
+            : "signIn",
+        },
+        extra: {
+          userInput: {
+            email,
+            hasPassword: !!password,
+            hasUsername: !!username,
+            hasPhoneNumber: !!phoneNumber,
+            hasVerificationCode: !!verificationCode,
+          },
+          validationState: {
+            isValidEmail: isValidEmail(email),
+            isValidPassword: isValidPassword(password),
+            isValidPhoneNumber: phoneNumber
+              ? isValidPhoneNumber(phoneNumber)
+              : null,
+            isValidUsername: username ? isValidUsername(username) : null,
+          },
+        },
+      });
+
       Alert.alert(
         "Authentication Error",
         err.message || "An error occurred during authentication"

@@ -7,8 +7,25 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colors } from "@/constants/Colors";
 import { FavoritesProvider } from "@/src/contexts/FavoritesContext";
+import * as Sentry from '@sentry/react-native';
 
-export default function RootLayout() {
+Sentry.init({
+  dsn: 'https://5fca006e6a6f674b48838b231140d026@o4509787380842496.ingest.us.sentry.io/4509787382284288',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
+
+export default Sentry.wrap(function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     TiltPrism: require("../assets/fonts/TiltPrism-Regular-VariableFont_XROT,YROT.ttf"),
@@ -107,4 +124,4 @@ export default function RootLayout() {
       <StatusBar style="auto" />
     </ThemeProvider>
   );
-}
+});

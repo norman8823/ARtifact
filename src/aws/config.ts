@@ -1,5 +1,6 @@
 import { cognitoUserPoolsTokenProvider } from "@aws-amplify/auth/cognito";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Sentry from "@sentry/react-native";
 import { Amplify } from "aws-amplify";
 import "react-native-get-random-values";
 import "react-native-url-polyfill/auto";
@@ -18,10 +19,39 @@ const missingVars = Object.entries(requiredEnvVars)
   .filter(([_, value]) => !value)
   .map(([key]) => key);
 
+// Log environment variable status
+Sentry.addBreadcrumb({
+  message: "AWS environment variables validation",
+  category: "aws_config",
+  level: missingVars.length > 0 ? "error" : "info",
+  data: {
+    hasRegion: !!requiredEnvVars.region,
+    hasUserPoolId: !!requiredEnvVars.userPoolId,
+    hasUserPoolClientId: !!requiredEnvVars.userPoolClientId,
+    hasBucketName: !!requiredEnvVars.bucketName,
+    hasIdentityPoolId: !!requiredEnvVars.identityPoolId,
+    missingVars,
+    totalMissing: missingVars.length,
+  },
+});
+
 if (missingVars.length > 0) {
-  throw new Error(
+  const error = new Error(
     `Missing required environment variables: ${missingVars.join(", ")}`
   );
+
+  Sentry.captureException(error, {
+    tags: {
+      component: "aws_config",
+      action: "env_validation",
+    },
+    extra: {
+      missingVars,
+      allEnvVars: Object.keys(requiredEnvVars),
+    },
+  });
+
+  throw error;
 }
 
 // Ensure all required values are defined
@@ -36,6 +66,20 @@ if (
 }
 
 try {
+  // Log configuration attempt
+  Sentry.addBreadcrumb({
+    message: "Starting AWS Amplify configuration",
+    category: "aws_config",
+    level: "info",
+    data: {
+      region: requiredEnvVars.region,
+      userPoolIdLength: requiredEnvVars.userPoolId?.length || 0,
+      userPoolClientIdLength: requiredEnvVars.userPoolClientId?.length || 0,
+      identityPoolIdLength: requiredEnvVars.identityPoolId?.length || 0,
+      bucketNameLength: requiredEnvVars.bucketName?.length || 0,
+    },
+  });
+
   // Configure both Auth and API
   Amplify.configure({
     Auth: {
@@ -75,9 +119,53 @@ try {
   });
 
   console.log("Setting up token storage...");
+
+  Sentry.addBreadcrumb({
+    message: "Setting up Cognito token storage with AsyncStorage",
+    category: "aws_config",
+    level: "info",
+  });
+
   cognitoUserPoolsTokenProvider.setKeyValueStorage(AsyncStorage);
+
+  Sentry.addBreadcrumb({
+    message: "AWS Amplify configuration completed successfully",
+    category: "aws_config",
+    level: "info",
+    data: {
+      timestamp: new Date().toISOString(),
+    },
+  });
+
   console.log("Amplify configured successfully");
 } catch (error) {
   console.error("Error configuring Amplify:", error);
+
+  Sentry.addBreadcrumb({
+    message: "AWS Amplify configuration failed",
+    category: "aws_config",
+    level: "error",
+    data: {
+      errorMessage: error instanceof Error ? error.message : "Unknown error",
+      timestamp: new Date().toISOString(),
+    },
+  });
+
+  Sentry.captureException(error, {
+    tags: {
+      component: "aws_config",
+      action: "amplify_configure",
+    },
+    extra: {
+      environmentVariables: {
+        hasRegion: !!requiredEnvVars.region,
+        hasUserPoolId: !!requiredEnvVars.userPoolId,
+        hasUserPoolClientId: !!requiredEnvVars.userPoolClientId,
+        hasBucketName: !!requiredEnvVars.bucketName,
+        hasIdentityPoolId: !!requiredEnvVars.identityPoolId,
+      },
+    },
+  });
+
   throw error; // Re-throw to make sure app doesn't continue with bad config
 }
