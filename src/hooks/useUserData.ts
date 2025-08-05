@@ -4,8 +4,8 @@ import { generateClient } from "aws-amplify/api";
 import { getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
-// Create the API client
-const client = generateClient();
+// Helper function to get client when needed
+const getClient = () => generateClient();
 
 export interface UserData {
   id: string;
@@ -25,7 +25,7 @@ export function useUserData() {
   const createUserInDB = useCallback(
     async (userData: Omit<UserData, "id" | "owner">) => {
       try {
-        const result = await client.graphql({
+        const result = await getClient().graphql({
           query: createUser,
           variables: {
             input: {
@@ -52,7 +52,7 @@ export function useUserData() {
       try {
         // First, let's see all users to understand what's in the database
         console.log("Fetching all users to debug...");
-        const allUsersResult = await client.graphql({
+        const allUsersResult = await getClient().graphql({
           query: listUsers,
           variables: {
             limit: 100, // Adjust if needed
@@ -72,7 +72,7 @@ export function useUserData() {
         console.log("Searching for user with formats:", ownerIdFormats);
         console.log("Or email:", email);
 
-        const result = await client.graphql({
+        const result = await getClient().graphql({
           query: listUsers,
           variables: {
             filter: {

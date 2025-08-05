@@ -7,7 +7,7 @@ import { useCallback, useState } from "react";
 import { useVisited } from "./useVisited";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface UserQuest {
   id: string;
@@ -52,7 +52,7 @@ export function useUserQuests() {
       const user = await checkAuthState();
 
       console.log("Fetching user quests for user:", user.userId);
-      const result = await client.graphql<ListUserQuestsQuery>({
+      const result = await getClient().graphql<ListUserQuestsQuery>({
         query: listUserQuests,
         variables: {
           filter: {
@@ -118,7 +118,7 @@ export function useUserQuests() {
         console.log(
           `Fetching user quest for user ${user.userId} and quest ${questId}`
         );
-        const result = await client.graphql<ListUserQuestsQuery>({
+        const result = await getClient().graphql<ListUserQuestsQuery>({
           query: listUserQuests,
           variables: {
             filter: {
@@ -211,7 +211,7 @@ export function useUserQuests() {
           timestamp: new Date().toISOString(),
         };
 
-        const result = await client.graphql({
+        const result = await getClient().graphql({
           query: createUserQuest,
           variables: {
             input: userQuest,
@@ -272,7 +272,7 @@ export function useUserQuests() {
               isCompleted: isCompleted,
             };
 
-            const result = await client.graphql({
+            const result = await getClient().graphql({
               query: updateUserQuest,
               variables: { input: updateInput },
               authMode: "userPool",

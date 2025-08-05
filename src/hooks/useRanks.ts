@@ -5,7 +5,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface Rank {
   id: string;
@@ -42,7 +42,7 @@ export function useRanks() {
     try {
       await checkAuthState();
 
-      const result = await client.graphql<ListRanksQuery>({
+      const result = await getClient().graphql<ListRanksQuery>({
         query: listRanks,
         variables: {
           limit: 1000,

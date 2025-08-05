@@ -1,13 +1,13 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 import { FontAwesome } from "@expo/vector-icons";
 import { getCurrentUser } from "aws-amplify/auth";
 import { Image } from "expo-image";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { Pressable, ScrollView, StyleSheet, SafeAreaView } from "react-native";
-import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
+import { Pressable, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
 export default function LandingScreen() {
   const router = useRouter();
@@ -16,6 +16,10 @@ export default function LandingScreen() {
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
+        // Add a small delay to ensure Amplify is fully configured
+        // This runs after the root layout has confirmed configuration
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
         await getCurrentUser();
         console.log("User already authenticated, redirecting to home");
         router.replace("/home");

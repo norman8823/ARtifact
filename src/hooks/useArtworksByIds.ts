@@ -5,7 +5,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface Artwork {
   id: string;
@@ -44,7 +44,7 @@ export function useArtworksByIds() {
 
         // Fetch artworks one by one since DynamoDB doesn't support IN operator
         const artworkPromises = artworkIds.map((id) =>
-          client.graphql<ListArtworksQuery>({
+          getClient().graphql<ListArtworksQuery>({
             query: listArtworks,
             variables: {
               filter: {

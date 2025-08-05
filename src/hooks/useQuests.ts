@@ -5,7 +5,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface Quest {
   id: string;
@@ -52,7 +52,7 @@ export function useQuests() {
       await checkAuthState();
 
       console.log("Fetching all quests as authenticated user...");
-      const result = await client.graphql<ListQuestsQuery>({
+      const result = await getClient().graphql<ListQuestsQuery>({
         query: listQuests,
         variables: {
           limit: 1000, // Set a high limit to get all quests

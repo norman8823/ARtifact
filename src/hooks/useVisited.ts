@@ -6,7 +6,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface Visited {
   id: string;
@@ -42,7 +42,7 @@ export function useVisited() {
       const user = await checkAuthState();
 
       console.log("Fetching visited artworks for user:", user.userId);
-      const result = await client.graphql<ListVisitedsQuery>({
+      const result = await getClient().graphql<ListVisitedsQuery>({
         query: listVisiteds,
         variables: {
           filter: {
@@ -101,7 +101,7 @@ export function useVisited() {
       try {
         const user = await checkAuthState();
 
-        const result = await client.graphql<ListVisitedsQuery>({
+        const result = await getClient().graphql<ListVisitedsQuery>({
           query: listVisiteds,
           variables: {
             filter: {
@@ -145,7 +145,7 @@ export function useVisited() {
           timestamp: new Date().toISOString(),
         };
 
-        const result = await client.graphql({
+        const result = await getClient().graphql({
           query: createVisited,
           variables: { input: createInput },
           authMode: "userPool",

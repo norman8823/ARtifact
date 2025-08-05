@@ -6,7 +6,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 import { useArtwork } from "./useArtwork";
 
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface FavoriteArtwork {
   id: string;
@@ -44,7 +44,7 @@ export function useFavoriteArtworks() {
       const user = await checkAuthState();
 
       // Get all favorites for the user
-      const result = (await client.graphql<ListFavoritedsQuery>({
+      const result = (await getClient().graphql<ListFavoritedsQuery>({
         query: listFavoriteds,
         variables: {
           filter: {
@@ -97,7 +97,7 @@ export function useFavoriteArtworks() {
     try {
       const user = await checkAuthState();
 
-      const result = (await client.graphql<ListFavoritedsQuery>({
+      const result = (await getClient().graphql<ListFavoritedsQuery>({
         query: listFavoriteds,
         variables: {
           filter: {

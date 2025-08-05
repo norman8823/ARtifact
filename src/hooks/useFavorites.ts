@@ -10,8 +10,8 @@ import { generateClient } from "aws-amplify/api";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
-// Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+// Helper function to get client when needed
+const getClient = () => generateClient();
 
 export function useFavorites() {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +40,7 @@ export function useFavorites() {
       try {
         const user = await checkAuthState();
 
-        const result = (await client.graphql<ListFavoritedsQuery>({
+        const result = (await getClient().graphql<ListFavoritedsQuery>({
           query: listFavoriteds,
           variables: {
             filter: {
@@ -86,7 +86,7 @@ export function useFavorites() {
             id: existingFavorite.id,
           };
 
-          await client.graphql({
+          await getClient().graphql({
             query: deleteFavorited,
             variables: { input: deleteInput },
             authMode: "userPool",
@@ -101,7 +101,7 @@ export function useFavorites() {
             timestamp: new Date().toISOString(),
           };
 
-          await client.graphql({
+          await getClient().graphql({
             query: createFavorited,
             variables: { input: createInput },
             authMode: "userPool",

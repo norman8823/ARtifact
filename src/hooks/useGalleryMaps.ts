@@ -5,7 +5,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface GalleryMap {
   id: string;
@@ -41,7 +41,7 @@ export function useGalleryMaps() {
       await checkAuthState();
 
       console.log("Fetching gallery maps from database...");
-      const result = await client.graphql<ListGalleryMapsQuery>({
+      const result = await getClient().graphql<ListGalleryMapsQuery>({
         query: listGalleryMaps,
         variables: {
           limit: 1000, // Set a high limit to get all gallery maps

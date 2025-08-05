@@ -5,7 +5,7 @@ import { generateClient } from "aws-amplify/api";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface ArtFact {
   id: string;
@@ -43,7 +43,7 @@ export function useArtFacts() {
         await checkAuthState();
 
         const result =
-          (await client.graphql<ArtFactsByArtworkIdAndTimestampQuery>({
+          (await getClient().graphql<ArtFactsByArtworkIdAndTimestampQuery>({
             query: artFactsByArtworkIdAndTimestamp,
             variables: {
               artworkId,

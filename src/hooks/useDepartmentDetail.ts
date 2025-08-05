@@ -5,7 +5,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface DepartmentDetail {
   id: string;
@@ -62,7 +62,7 @@ export function useDepartmentDetail() {
         await checkAuthState();
 
         console.log("Fetching department details as authenticated user...");
-        const result = await client.graphql<GetDepartmentQuery>({
+        const result = await getClient().graphql<GetDepartmentQuery>({
           query: getDepartment,
           variables: {
             id,
@@ -105,7 +105,7 @@ export function useDepartmentDetail() {
         //   "Fetching artworks for department with ID:",
         //   departmentData.id
         // );
-        const artworksResult = await client.graphql<ListArtworksQuery>({
+        const artworksResult = await getClient().graphql<ListArtworksQuery>({
           query: listArtworks,
           variables: {
             filter: {

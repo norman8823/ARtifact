@@ -5,7 +5,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface UserQuest {
   id: string;
@@ -50,7 +50,7 @@ export function useUserQuest() {
         // Create the composite key
         const id = `${userId}#${questId}`;
 
-        const result = await client.graphql<GetUserQuestQuery>({
+        const result = await getClient().graphql<GetUserQuestQuery>({
           query: getUserQuest,
           variables: {
             id,

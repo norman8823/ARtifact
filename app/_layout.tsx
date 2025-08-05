@@ -2,15 +2,18 @@ import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { configureAmplify } from "@/src/aws/config";
 import { FavoritesProvider } from "@/src/contexts/FavoritesContext";
-import * as Sentry from '@sentry/react-native';
+import * as Sentry from "@sentry/react-native";
 
 Sentry.init({
-  dsn: 'https://5fca006e6a6f674b48838b231140d026@o4509787380842496.ingest.us.sentry.io/4509787382284288',
+  dsn: "https://5fca006e6a6f674b48838b231140d026@o4509787380842496.ingest.us.sentry.io/4509787382284288",
 
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
@@ -34,9 +37,90 @@ export default Sentry.wrap(function RootLayout() {
     LatoRegular: require("../assets/fonts/Lato-Regular.ttf"),
   });
 
+  // State to track if Amplify is configured
+  const [isAmplifyConfigured, setIsAmplifyConfigured] = useState(false);
+  const [configError, setConfigError] = useState<string | null>(null);
+
+  // Configure Amplify on component mount
+  useEffect(() => {
+    const initializeAmplify = async () => {
+      try {
+        await configureAmplify();
+        setIsAmplifyConfigured(true);
+      } catch (error) {
+        console.error("Failed to configure Amplify:", error);
+        setConfigError(
+          error instanceof Error ? error.message : "Unknown configuration error"
+        );
+
+        // Log to Sentry
+        Sentry.captureException(error, {
+          tags: {
+            component: "RootLayout",
+            action: "amplify_configuration",
+          },
+        });
+      }
+    };
+
+    initializeAmplify();
+  }, []);
+
+  // Show loading screen while fonts are loading
   if (!loaded) {
-    // Async font loading only occurs in development.
     return null;
+  }
+
+  // Show loading screen while Amplify is configuring
+  if (!isAmplifyConfigured) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: Colors.lightGray,
+        }}
+      >
+        {configError ? (
+          <View style={{ alignItems: "center", paddingHorizontal: 20 }}>
+            <Text
+              style={{
+                color: Colors.darkGray,
+                fontSize: 18,
+                fontWeight: "bold",
+                marginBottom: 10,
+                textAlign: "center",
+              }}
+            >
+              Configuration Error
+            </Text>
+            <Text
+              style={{
+                color: Colors.darkMedGray,
+                fontSize: 14,
+                textAlign: "center",
+              }}
+            >
+              {configError}
+            </Text>
+          </View>
+        ) : (
+          <View style={{ alignItems: "center" }}>
+            <ActivityIndicator size="large" color={Colors.darkGray} />
+            <Text
+              style={{
+                color: Colors.darkGray,
+                fontSize: 16,
+                marginTop: 16,
+              }}
+            >
+              Initializing...
+            </Text>
+          </View>
+        )}
+      </View>
+    );
   }
 
   return (

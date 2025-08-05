@@ -5,7 +5,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface DidYouKnowFact {
   id: string;
@@ -40,7 +40,7 @@ export function useDidYouKnow() {
       await checkAuthState();
 
       console.log("Fetching did you know facts from database...");
-      const result = await client.graphql<ListDidYouKnowsQuery>({
+      const result = await getClient().graphql<ListDidYouKnowsQuery>({
         query: listDidYouKnows,
         variables: {
           limit: 1000, // Set a high limit to get all facts

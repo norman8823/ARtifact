@@ -16,7 +16,6 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
-import "../src/aws/config";
 
 export default function EmailLoginScreen() {
   const [email, setEmail] = useState("");

@@ -10,7 +10,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface UserXP {
   id: string;
@@ -45,7 +45,7 @@ export function useUserXP() {
     try {
       const user = await checkAuthState();
 
-      const result = await client.graphql<ListUserXPSQuery>({
+      const result = await getClient().graphql<ListUserXPSQuery>({
         query: listUserXPS,
         variables: {
           filter: {
@@ -115,7 +115,7 @@ export function useUserXP() {
             timestamp: new Date().toISOString(),
           };
 
-          const result = await client.graphql({
+          const result = await getClient().graphql({
             query: createUserXP,
             variables: { input: createInput },
             authMode: "userPool",
@@ -140,7 +140,7 @@ export function useUserXP() {
             timestamp: new Date().toISOString(),
           };
 
-          const result = await client.graphql({
+          const result = await getClient().graphql({
             query: updateUserXP,
             variables: { input: updateInput },
             authMode: "userPool",

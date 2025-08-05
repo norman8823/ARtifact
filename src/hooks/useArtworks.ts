@@ -5,7 +5,7 @@ import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
-const client = generateClient();
+const getClient = () => generateClient();
 
 export interface Artwork {
   id: string;
@@ -56,7 +56,7 @@ export function useArtworks() {
       await checkAuthState();
 
       // console.log("Fetching featured artworks as authenticated user...");
-      const result = await client.graphql<ListArtworksQuery>({
+      const result = await getClient().graphql<ListArtworksQuery>({
         query: listArtworks,
         variables: {
           filter: {
@@ -158,7 +158,7 @@ export function useArtworks() {
       await checkAuthState();
 
       console.log("Fetching all artworks as authenticated user...");
-      const result = await client.graphql<ListArtworksQuery>({
+      const result = await getClient().graphql<ListArtworksQuery>({
         query: listArtworks,
         variables: {
           limit: 1000, // Set a high limit to get all artworks
