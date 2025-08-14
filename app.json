@@ -11,8 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.rauljiminian.ARtifact",
-      "buildNumber": "1.0.0",
-      "deploymentTarget": "13.4",
+      "buildNumber": "1.0.15",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "This app uses the camera to scan artwork and provide visual recognition features."
