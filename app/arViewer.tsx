@@ -27,7 +27,7 @@ export default function ARViewerScreen() {
   const [hasError, setHasError] = useState(false);
 
   // Use the arImage from the artwork data, fallback to demo URL if not available
-  const arURL = arImage || `https://artifact2.8thwall.app/ruthgleaning/`;
+  const arURL = arImage;
 
   const handleBack = () => {
     router.back();
