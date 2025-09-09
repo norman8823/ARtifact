@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:collectionapi.metmuseum.org)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(for id in 310750 311741 309959 318622 316393 314034 316173 313240)",
+      "Bash(grep:*)",
+      "Bash(done)",
+      "Bash(for id in 488596 486162 488880 483301 486758 503271 503043 503675 503651 503204)",
+      "Bash(for id in 437372 459016 459062 459072 437261)"
     ],
     "deny": [],
     "ask": []
