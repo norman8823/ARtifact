@@ -21,6 +21,7 @@ export interface Artwork {
   classification: string | null;
   objectType: string | null;
   tags: Array<string | null> | null;
+  description: string | null;
 }
 
 export function useArtworks() {
@@ -116,6 +117,7 @@ export function useArtworks() {
             classification: item.classification || null,
             objectType: item.objectType || null,
             tags: item.tags || null,
+            description: item.description || null,
           })
         );
 
@@ -211,6 +213,7 @@ export function useArtworks() {
             classification: item.classification || null,
             objectType: item.objectType || null,
             tags: item.tags || null,
+            description: item.description || null,
           })
         );
 

@@ -67,6 +67,8 @@ export default function ExploreScreen() {
           contains(artwork.medium) ||
           contains(artwork.classification) ||
           contains(artwork.objectType) ||
+          contains(artwork.description) ||
+          contains(artwork.id) ||
           // Check if any tags contain the query
           artwork.tags?.some((tag) => tag?.toLowerCase().includes(query))
         );
