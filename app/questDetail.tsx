@@ -1,5 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
 import { type Artwork, useArtworksByIds } from "@/src/hooks/useArtworksByIds";
 import { type Quest, useQuests } from "@/src/hooks/useQuests";
 import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
@@ -13,8 +15,6 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
 
 interface QuestDetail {
   quest: Quest;

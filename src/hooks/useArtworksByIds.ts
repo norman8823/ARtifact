@@ -1,5 +1,5 @@
-import { type ListArtworksQuery } from "@/src/API";
-import { listArtworks } from "@/src/graphql/queries";
+import { type GetArtworkQuery } from "../API";
+import { getArtwork } from "../graphql/queries";
 import { generateClient } from "aws-amplify/api";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
@@ -44,12 +44,10 @@ export function useArtworksByIds() {
 
         // Fetch artworks one by one since DynamoDB doesn't support IN operator
         const artworkPromises = artworkIds.map((id) =>
-          getClient().graphql<ListArtworksQuery>({
-            query: listArtworks,
+          getClient().graphql<GetArtworkQuery>({
+            query: getArtwork,
             variables: {
-              filter: {
-                id: { eq: id },
-              },
+              id: id,
             },
             authMode: "userPool" as any,
           })
@@ -59,12 +57,12 @@ export function useArtworksByIds() {
 
         // Process all results
         const artworks = results
-          .flatMap((result) => {
+          .map((result) => {
             if ("errors" in result && result.errors) {
               console.error("GraphQL Errors:", result.errors);
               return [];
             }
-            return result.data?.listArtworks?.items || [];
+            return result.data?.getArtwork || [];
           })
           .filter((item): item is NonNullable<typeof item> => item !== null)
           .map((item) => ({
