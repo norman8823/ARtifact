@@ -408,7 +408,7 @@ export default function ArtDetailScreen() {
           <ThemedView style={styles.titleRow}>
             <ThemedView>
               <ThemedText type="title" style={styles.title}>
-                {artwork.title}
+                {id}. {artwork.title}
               </ThemedText>
               <ThemedText type="subtitle" style={styles.artist}>
                 {artwork.artistDisplayName || "Unknown Artist"}
@@ -513,9 +513,6 @@ export default function ArtDetailScreen() {
               {artwork.description}
             </ThemedText>
           )}
-
-          <ThemedText style={styles.description}>{id}</ThemedText>
-
           {/* Did You Know Section */}
           {artFacts.length > 0 && (
             <ThemedView style={styles.didYouKnowContainer}>
