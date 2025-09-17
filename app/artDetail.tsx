@@ -514,6 +514,8 @@ export default function ArtDetailScreen() {
             </ThemedText>
           )}
 
+          <ThemedText style={styles.description}>{id}</ThemedText>
+
           {/* Did You Know Section */}
           {artFacts.length > 0 && (
             <ThemedView style={styles.didYouKnowContainer}>
