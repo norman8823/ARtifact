@@ -5,7 +5,7 @@ import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -23,11 +23,26 @@ const ITEM_WIDTH = (SCREEN_WIDTH - 28) / NUM_COLUMNS;
 
 export default function ExploreScreen() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [inputValue, setInputValue] = useState(""); // For immediate UI update
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [showIsScannableOnly, setShowIsScannableOnly] = useState(false);
   const [showAROnly, setShowAROnly] = useState(false);
   const router = useRouter();
   const { getAllArtworks, isLoading, error } = useArtworks();
+
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return (query: string) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          setSearchQuery(query);
+        }, 300);
+      };
+    })(),
+    []
+  );
 
   useEffect(() => {
     const loadArtworks = async () => {
@@ -149,17 +164,23 @@ export default function ExploreScreen() {
                 style={styles.searchInput}
                 placeholder="Search artworks, artists, periods..."
                 placeholderTextColor={Colors.medGray}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
+                value={inputValue}
+                onChangeText={(text) => {
+                  setInputValue(text); // Update UI immediately
+                  debouncedSearch(text); // Trigger search after 300ms delay
+                }}
                 onSubmitEditing={Keyboard.dismiss}
                 returnKeyType="done"
                 autoCorrect={false}
                 autoCapitalize="none"
                 spellCheck={false}
               />
-              {searchQuery.length > 0 && (
+              {inputValue.length > 0 && (
                 <Pressable
-                  onPress={() => setSearchQuery("")}
+                  onPress={() => {
+                    setInputValue("");
+                    setSearchQuery("");
+                  }}
                   style={styles.clearButton}
                   accessibilityLabel="Clear search"
                   hitSlop={8}
