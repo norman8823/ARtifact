@@ -153,6 +153,9 @@ export default function ExploreScreen() {
                 onChangeText={setSearchQuery}
                 onSubmitEditing={Keyboard.dismiss}
                 returnKeyType="done"
+                autoCorrect={false}
+                autoCapitalize="none"
+                spellCheck={false}
               />
               {searchQuery.length > 0 && (
                 <Pressable
