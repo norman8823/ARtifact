@@ -106,11 +106,40 @@ export function useUserData() {
   );
 
   const ensureUserInDB = useCallback(
-    async (preferredUsername?: string, userEmail?: string) => {
+    async (
+      preferredUsername?: string,
+      userEmail?: string,
+      retryConfig = { maxRetries: 3, initialDelay: 250 }
+    ) => {
+      const getCurrentUserWithRetry = async (): Promise<{ userId: string }> => {
+        const { maxRetries, initialDelay } = retryConfig;
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            console.log(`Attempting to get current user (attempt ${attempt}/${maxRetries})`);
+            const user = await getCurrentUser();
+            console.log("Successfully got current authenticated user ID:", user.userId);
+            return user;
+          } catch (error) {
+            console.log(`Attempt ${attempt} failed:`, error);
+
+            if (attempt === maxRetries) {
+              console.error("All attempts to get current user failed");
+              throw error;
+            }
+
+            // Wait before retrying with exponential backoff
+            const waitTime = initialDelay * Math.pow(1.5, attempt - 1);
+            console.log(`Waiting ${waitTime}ms before retry...`);
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+          }
+        }
+        throw new Error("Failed to get current user after all retries");
+      };
+
       try {
-        // Get the current authenticated user
-        const { userId } = await getCurrentUser();
-        console.log("Current authenticated user ID:", userId);
+        // Get the current authenticated user with retry logic
+        const { userId } = await getCurrentUserWithRetry();
 
         // Try to fetch existing user by owner ID or email
         const existingUser = await getUserByOwnerFromDB(userId, userEmail);
