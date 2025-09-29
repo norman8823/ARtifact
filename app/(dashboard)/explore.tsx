@@ -1,17 +1,19 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
-import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
+import { useInfiniteArtworks, type Artwork } from "@/src/hooks/useInfiniteArtworks";
+import { ArtworkSkeletonGrid } from "@/components/ArtworkSkeleton";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import {
   ActivityIndicator,
   Dimensions,
   FlatList,
   Keyboard,
   Pressable,
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
   TextInput,
@@ -24,11 +26,23 @@ const ITEM_WIDTH = (SCREEN_WIDTH - 28) / NUM_COLUMNS;
 export default function ExploreScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState(""); // For immediate UI update
-  const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [showIsScannableOnly, setShowIsScannableOnly] = useState(false);
   const [showAROnly, setShowAROnly] = useState(false);
   const router = useRouter();
-  const { getAllArtworks, isLoading, error } = useArtworks();
+
+  const {
+    artworks,
+    pagination,
+    fetchNextPage,
+    refresh,
+    shouldPrefetch
+  } = useInfiniteArtworks({
+    limit: 30,
+    prefetchThreshold: 3,
+    searchQuery,
+    showIsScannableOnly,
+    showAROnly
+  });
 
   // Debounced search function
   const debouncedSearch = useCallback(
@@ -44,59 +58,18 @@ export default function ExploreScreen() {
     []
   );
 
+  // Initial load
   useEffect(() => {
-    const loadArtworks = async () => {
-      const fetchedArtworks = await getAllArtworks();
-      setArtworks(fetchedArtworks);
-    };
-    loadArtworks();
-  }, [getAllArtworks]);
+    refresh();
+  }, []);
 
-  // Filter artworks based on search query and AR availability
-  const filteredArtworks = useMemo(() => {
-    let filtered = artworks;
-
-    // Apply isScannable filter
-    if (showIsScannableOnly) {
-      filtered = filtered.filter((artwork) => artwork.isScannable === true);
+  // Handle infinite scroll
+  const handleEndReached = () => {
+    if (pagination.hasNextPage && !pagination.isFetchingMore) {
+      fetchNextPage();
     }
+  };
 
-    // Apply AR filter
-    if (showAROnly) {
-      filtered = filtered.filter((artwork) => artwork.hasAR === true);
-    }
-
-    // Apply search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter((artwork) => {
-        // Helper function to safely check if a string contains the query
-        const contains = (value: string | null | undefined) =>
-          value?.toLowerCase().includes(query) || false;
-
-        // Check if any of the artwork fields match the query
-        return (
-          contains(artwork.title) ||
-          contains(artwork.artistDisplayName) ||
-          contains(artwork.culture) ||
-          contains(artwork.medium) ||
-          contains(artwork.classification) ||
-          contains(artwork.objectType) ||
-          contains(artwork.description) ||
-          contains(artwork.id) ||
-          // Check if any tags contain the query
-          artwork.tags?.some((tag) => tag?.toLowerCase().includes(query))
-        );
-      });
-    }
-
-    return filtered;
-  }, [artworks, searchQuery, showIsScannableOnly, showAROnly]);
-
-  // Count AR-enabled artworks for display
-  const arEnabledCount = useMemo(() => {
-    return artworks.filter((artwork) => artwork.hasAR === true).length;
-  }, [artworks]);
 
   const renderItem = ({ item }: { item: Artwork }) => (
     <Link
@@ -131,18 +104,43 @@ export default function ExploreScreen() {
     </Link>
   );
 
-  if (isLoading) {
+  if (pagination.isLoading && artworks.length === 0) {
     return (
-      <ThemedView style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" />
-      </ThemedView>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
+        <ThemedView style={styles.container}>
+          <ThemedView style={styles.searchContainer}>
+            <ThemedView style={styles.searchBar}>
+              <FontAwesome
+                name="search"
+                size={16}
+                color={Colors.darkMedGray}
+                style={styles.searchIcon}
+              />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search artworks, artists, periods..."
+                placeholderTextColor={Colors.medGray}
+                value={inputValue}
+                onChangeText={(text) => {
+                  setInputValue(text);
+                  debouncedSearch(text);
+                }}
+                editable={false}
+              />
+            </ThemedView>
+          </ThemedView>
+          <ThemedView style={styles.gridContainer}>
+            <ArtworkSkeletonGrid count={12} />
+          </ThemedView>
+        </ThemedView>
+      </SafeAreaView>
     );
   }
 
-  if (error) {
+  if (pagination.error && artworks.length === 0) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
-        <ThemedText>Error loading artworks: {error.message}</ThemedText>
+        <ThemedText>Error loading artworks: {pagination.error.message}</ThemedText>
       </ThemedView>
     );
   }
@@ -274,12 +272,28 @@ export default function ExploreScreen() {
 
           {/* Grid */}
           <FlatList
-            data={filteredArtworks}
+            data={artworks}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
             numColumns={NUM_COLUMNS}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.gridContainer}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.5}
+            refreshControl={
+              <RefreshControl
+                refreshing={pagination.isLoading && artworks.length > 0}
+                onRefresh={refresh}
+                tintColor={Colors.darkMedGray}
+              />
+            }
+            ListFooterComponent={
+              pagination.isFetchingMore ? (
+                <ThemedView style={styles.loadingFooter}>
+                  <ArtworkSkeletonGrid count={6} />
+                </ThemedView>
+              ) : null
+            }
             ListEmptyComponent={
               <ThemedView style={styles.centerContent}>
                 <FontAwesome
@@ -440,5 +454,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     gap: 8,
+  },
+  loadingFooter: {
+    paddingVertical: 20,
   },
 });
