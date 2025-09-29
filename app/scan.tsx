@@ -5,8 +5,7 @@ import { Colors } from "@/constants/Colors";
 import { useScanSuccess } from "@/src/hooks/useScanSuccess";
 import { FontAwesome } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { Stack } from "expo-router";
-import { router } from "expo-router";
+import { Stack , router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -23,11 +22,11 @@ interface ScanResultState {
   artworkTitle?: string;
   isNewVisit?: boolean;
   xpAwarded?: number;
-  questsUpdated?: Array<{
+  questsUpdated?: {
     title: string;
     isCompleted: boolean;
     progress: string;
-  }>;
+  }[];
 }
 
 export default function ScanScreen() {

@@ -7,21 +7,21 @@ import { useVisited } from "./useVisited";
 interface ScanResult {
   success: boolean;
   confidence: number;
-  labels: Array<{
+  labels: {
     Name: string;
     Confidence: number;
-  }>;
+  }[];
 }
 
 interface ScanSuccessResult {
   isNewVisit: boolean;
   artworkTitle: string;
   xpAwarded: number;
-  questsUpdated: Array<{
+  questsUpdated: {
     title: string;
     isCompleted: boolean;
     progress: string;
-  }>;
+  }[];
 }
 
 export function useScanSuccess() {

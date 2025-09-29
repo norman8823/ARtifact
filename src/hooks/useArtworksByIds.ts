@@ -57,12 +57,18 @@ export function useArtworksByIds() {
 
         // Process all results
         const artworks = results
-          .map((result) => {
+          .map((result, index) => {
+            const artworkId = artworkIds[index];
             if ("errors" in result && result.errors) {
-              console.error("GraphQL Errors:", result.errors);
-              return [];
+              console.error(`GraphQL Errors for artwork ${artworkId}:`, result.errors);
+              return null;
             }
-            return result.data?.getArtwork || [];
+            const artwork = result.data?.getArtwork;
+            if (!artwork) {
+              console.warn(`Artwork ${artworkId} not found in database`);
+              return null;
+            }
+            return artwork;
           })
           .filter((item): item is NonNullable<typeof item> => item !== null)
           .map((item) => ({
@@ -79,6 +85,14 @@ export function useArtworksByIds() {
         const sortedArtworks = artworkIds
           .map((id) => artworks.find((artwork) => artwork.id === id))
           .filter((artwork): artwork is Artwork => artwork !== undefined);
+
+        // Log which artworks were found vs requested
+        const foundIds = sortedArtworks.map(artwork => artwork.id);
+        const missingIds = artworkIds.filter(id => !foundIds.includes(id));
+        if (missingIds.length > 0) {
+          console.warn(`Missing artworks from database:`, missingIds);
+        }
+        console.log(`Found ${foundIds.length}/${artworkIds.length} artworks for IDs:`, artworkIds);
 
         return sortedArtworks;
       } catch (err) {

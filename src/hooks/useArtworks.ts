@@ -20,7 +20,7 @@ export interface Artwork {
   medium: string | null;
   classification: string | null;
   objectType: string | null;
-  tags: Array<string | null> | null;
+  tags: (string | null)[] | null;
   description: string | null;
 }
 
