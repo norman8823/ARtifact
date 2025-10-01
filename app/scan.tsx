@@ -5,7 +5,7 @@ import { Colors } from "@/constants/Colors";
 import { useScanSuccess } from "@/src/hooks/useScanSuccess";
 import { FontAwesome } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { Stack , router } from "expo-router";
+import { Stack, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -27,9 +27,24 @@ interface ScanResultState {
     isCompleted: boolean;
     progress: string;
   }[];
+  wrongArtwork?: boolean;
+  expectedArtworkTitle?: string;
 }
 
 export default function ScanScreen() {
+  const params = useLocalSearchParams();
+  const expectedArtworkId = Array.isArray(params.expectedArtworkId)
+    ? params.expectedArtworkId[0]
+    : params.expectedArtworkId;
+  const expectedArtworkTitle = Array.isArray(params.expectedArtworkTitle)
+    ? params.expectedArtworkTitle[0]
+    : params.expectedArtworkTitle;
+
+  console.log("📱 Scan Screen - Expected artwork:", {
+    id: expectedArtworkId,
+    title: expectedArtworkTitle,
+  });
+
   const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [cameraType, setCameraType] = useState<"back" | "front">("back");
@@ -70,7 +85,35 @@ export default function ScanScreen() {
         rekognitionData.labels.length > 0 &&
         rekognitionData.confidence > 0
       ) {
-        console.log("✅ Artwork identified, processing success...");
+        const recognizedArtworkId = rekognitionData.labels[0].Name;
+        console.log("✅ Artwork identified:", recognizedArtworkId);
+
+        // VALIDATION: If we have an expected artwork, check if it matches
+        if (expectedArtworkId) {
+          console.log(
+            "🎯 Validating against expected artwork:",
+            expectedArtworkId
+          );
+
+          if (recognizedArtworkId !== expectedArtworkId) {
+            console.log(
+              "⚠️ Wrong artwork scanned! Recognized:",
+              recognizedArtworkId
+            );
+
+            // Show "wrong artwork" modal
+            setModalState({
+              visible: true,
+              success: false,
+              wrongArtwork: true,
+              expectedArtworkTitle:
+                expectedArtworkTitle || "the correct artwork",
+            });
+            return;
+          }
+
+          console.log("✅ Correct artwork scanned!");
+        }
 
         // Process the scan success through our hook
         const result = await processScanSuccess(rekognitionData);
@@ -131,13 +174,16 @@ export default function ScanScreen() {
       console.log("🔍 Calling Flask CNN API...");
 
       // Call Flask API
-      const response = await fetch("https://artifact-server-production.up.railway.app/predict", {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await fetch(
+        "https://artifact-server-production.up.railway.app/predict",
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(
@@ -405,6 +451,8 @@ export default function ScanScreen() {
         isNewVisit={modalState.isNewVisit}
         xpAwarded={modalState.xpAwarded}
         questsUpdated={modalState.questsUpdated}
+        wrongArtwork={modalState.wrongArtwork}
+        expectedArtworkTitle={modalState.expectedArtworkTitle}
       />
     </>
   );

@@ -1,5 +1,4 @@
 import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
 import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -29,6 +28,8 @@ interface ScanResultModalProps {
   isNewVisit?: boolean;
   xpAwarded?: number;
   questsUpdated?: QuestUpdate[];
+  wrongArtwork?: boolean;
+  expectedArtworkTitle?: string;
 }
 
 export function ScanResultModal({
@@ -39,6 +40,8 @@ export function ScanResultModal({
   isNewVisit,
   xpAwarded,
   questsUpdated = [],
+  wrongArtwork = false,
+  expectedArtworkTitle,
 }: ScanResultModalProps) {
   const renderSuccessContent = () => (
     <>
@@ -122,6 +125,42 @@ export function ScanResultModal({
     </>
   );
 
+  const renderWrongArtworkContent = () => (
+    <>
+      {/* Wrong Artwork Icon */}
+      <ThemedView style={styles.iconContainer}>
+        <FontAwesome
+          name="question-circle"
+          size={64}
+          color={Colors.darkYellow}
+        />
+      </ThemedView>
+
+      {/* Title */}
+      <ThemedText type="title" style={styles.title}>
+        Wait a Minute... 🤔
+      </ThemedText>
+
+      {/* Message */}
+      <ThemedText style={styles.wrongArtworkMessage}>
+        Hmm, that doesn't look like the right artwork.
+      </ThemedText>
+
+      <ThemedText style={styles.wrongArtworkHint}>
+        You're looking for{" "}
+        <ThemedText style={styles.expectedTitle}>
+          {expectedArtworkTitle}
+        </ThemedText>
+        . Make sure you're scanning the correct artwork to get credit!
+      </ThemedText>
+
+      {/* Action Button */}
+      <Pressable style={styles.actionButton} onPress={onClose}>
+        <ThemedText style={styles.actionButtonText}>Got It</ThemedText>
+      </Pressable>
+    </>
+  );
+
   const renderFailureContent = () => (
     <>
       {/* Failure Icon */}
@@ -191,7 +230,11 @@ export function ScanResultModal({
             contentContainerStyle={styles.content}
             showsVerticalScrollIndicator={false}
           >
-            {success ? renderSuccessContent() : renderFailureContent()}
+            {wrongArtwork
+              ? renderWrongArtworkContent()
+              : success
+              ? renderSuccessContent()
+              : renderFailureContent()}
           </ScrollView>
         </ThemedView>
       </View>
@@ -323,6 +366,24 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 16,
     color: Colors.darkMedGray,
+  },
+  wrongArtworkMessage: {
+    textAlign: "center",
+    marginBottom: 12,
+    fontSize: 15,
+    lineHeight: 22,
+    color: Colors.darkMedGray,
+  },
+  wrongArtworkHint: {
+    textAlign: "center",
+    marginBottom: 24,
+    fontSize: 15,
+    lineHeight: 22,
+    color: Colors.darkMedGray,
+  },
+  expectedTitle: {
+    fontWeight: "bold",
+    color: Colors.darkGreen,
   },
   tipsContainer: {
     width: "100%",

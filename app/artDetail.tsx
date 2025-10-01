@@ -434,7 +434,15 @@ export default function ArtDetailScreen() {
           {artwork.isScannable && (
             <Pressable
               style={styles.scanButton}
-              onPress={() => router.push("/scan")}
+              onPress={() =>
+                router.push({
+                  pathname: "/scan",
+                  params: {
+                    expectedArtworkId: artwork.id,
+                    expectedArtworkTitle: artwork.title,
+                  },
+                })
+              }
             >
               <FontAwesome name="camera" size={18} color={Colors.lightGray} />
               <ThemedText style={styles.scanButtonText}>
