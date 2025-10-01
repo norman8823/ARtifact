@@ -16,8 +16,8 @@ import argparse
 import subprocess
 
 # Quest file path
-QUEST_FILE = "/home/norman/main/ARtifact/ARtifact/seed/json/quests.json"
-RESULTS_FILE = "/home/norman/main/ARtifact/ARtifact/gallery_check_results.json"
+QUEST_FILE = "/Users/norman/main/ARtifact/seed/json/quests.json"
+RESULTS_FILE = "/Users/norman/main/ARtifact/gallery_check_results.json"
 
 def get_all_quest_artworks():
     """
