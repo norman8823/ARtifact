@@ -60,4 +60,8 @@ amplifytools.xcconfig
 **.sample
 #amplify-do-not-edit-end
 
+# Seed data and scripts (not needed in build)
+seed/
+scripts/
+
 .env.local

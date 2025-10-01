@@ -60,4 +60,8 @@ amplifytools.xcconfig
 **.sample
 #amplify-do-not-edit-end
 
+# Large directories not needed for build
+.git/
 seed/
+scripts/
+android/build/
