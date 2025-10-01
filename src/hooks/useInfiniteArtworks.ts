@@ -1,7 +1,6 @@
 import { type ListArtworksQuery } from "../API";
 import { listArtworks } from "../graphql/queries";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState, useMemo } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
@@ -91,21 +90,6 @@ export function useInfiniteArtworks(config: UseInfiniteArtworksConfig = {}) {
     isFetchingMore: false,
     error: null,
   });
-
-  const checkAuthState = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const session = await fetchAuthSession();
-
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error("No valid auth tokens found");
-      }
-    } catch (authError) {
-      console.error("Error checking auth state:", authError);
-      throw new Error("Authentication required");
-    }
-  }, []);
-
   const fetchArtworks = useCallback(
     async (nextToken: string | null = null, reset: boolean = false) => {
       if (pagination.isFetchingMore || (!reset && !pagination.hasNextPage)) {
@@ -122,8 +106,6 @@ export function useInfiniteArtworks(config: UseInfiniteArtworksConfig = {}) {
       }));
 
       try {
-        await checkAuthState();
-
         console.log(`Fetching artworks with nextToken: ${nextToken}, limit: ${limit}`);
 
         const result = await getClient().graphql<ListArtworksQuery>({
@@ -228,7 +210,7 @@ export function useInfiniteArtworks(config: UseInfiniteArtworksConfig = {}) {
         }));
       }
     },
-    [checkAuthState, limit, pagination.isFetchingMore, pagination.hasNextPage]
+    [ limit, pagination.isFetchingMore, pagination.hasNextPage]
   );
 
   const fetchNextPage = useCallback(() => {

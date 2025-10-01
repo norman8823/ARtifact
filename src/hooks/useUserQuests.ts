@@ -1,8 +1,8 @@
 import { type ListUserQuestsQuery, type UpdateUserQuestInput } from "@/src/API";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { createUserQuest, updateUserQuest } from "@/src/graphql/mutations";
 import { listUserQuests } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 import { useVisited } from "./useVisited";
 
@@ -25,32 +25,19 @@ export interface UserQuest {
 }
 
 export function useUserQuests() {
+  const { user } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { getVisitedArtworkIds } = useVisited();
-
-  const checkAuthState = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const session = await fetchAuthSession();
-
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error("No valid auth tokens found");
-      }
-
-      return user;
-    } catch (authError) {
-      console.error("Error checking auth state:", authError);
-      throw new Error("Authentication required");
-    }
-  }, []);
-
   const getUserQuests = useCallback(async () => {
+    if (!user) {
+      console.warn("No authenticated user");
+      return [];
+    }
+
     setIsLoading(true);
     setError(null);
     try {
-      const user = await checkAuthState();
-
       console.log("Fetching user quests for user:", user.userId);
       const result = await getClient().graphql<ListUserQuestsQuery>({
         query: listUserQuests,
@@ -106,15 +93,18 @@ export function useUserQuests() {
     } finally {
       setIsLoading(false);
     }
-  }, [checkAuthState]);
+  }, [user]);
 
   const getUserQuestByQuestId = useCallback(
     async (questId: string) => {
+      if (!user) {
+        console.warn("No authenticated user");
+        return null;
+      }
+
       setIsLoading(true);
       setError(null);
       try {
-        const user = await checkAuthState();
-
         console.log(
           `Fetching user quest for user ${user.userId} and quest ${questId}`
         );
@@ -167,7 +157,7 @@ export function useUserQuests() {
         setIsLoading(false);
       }
     },
-    [checkAuthState]
+    [user]
   );
 
   const startQuest = useCallback(
@@ -180,11 +170,13 @@ export function useUserQuests() {
       requiredArtworks: string[];
       galleryMap: string | null;
     }) => {
+      if (!user) {
+        throw new Error("No authenticated user");
+      }
+
       setIsLoading(true);
       setError(null);
       try {
-        const user = await checkAuthState();
-
         // Get all visited artwork IDs for the user
         const visitedArtworkIds = await getVisitedArtworkIds();
 
@@ -236,15 +228,13 @@ export function useUserQuests() {
         setIsLoading(false);
       }
     },
-    [checkAuthState, getVisitedArtworkIds]
+    [getVisitedArtworkIds]
   );
 
   const updateQuestProgress = useCallback(
     async (artworkId: string) => {
       setError(null);
       try {
-        const user = await checkAuthState();
-
         // Get all user quests
         const userQuests = await getUserQuests();
 
@@ -310,7 +300,7 @@ export function useUserQuests() {
         throw err;
       }
     },
-    [checkAuthState, getUserQuests]
+    [getUserQuests]
   );
 
   return {

@@ -1,8 +1,8 @@
 import { type CreateVisitedInput, type ListVisitedsQuery } from "@/src/API";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { createVisited } from "@/src/graphql/mutations";
 import { listVisiteds } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
@@ -18,29 +18,17 @@ export interface Visited {
 export function useVisited() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  const checkAuthState = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const session = await fetchAuthSession();
-
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error("No valid auth tokens found");
-      }
-
-      return user;
-    } catch (authError) {
-      console.error("Error checking auth state:", authError);
-      throw new Error("Authentication required");
-    }
-  }, []);
+  const { user } = useAuthContext();
 
   const getVisitedArtworks = useCallback(async () => {
+    if (!user) {
+      console.warn("No authenticated user");
+      return [];
+    }
+
     setIsLoading(true);
     setError(null);
     try {
-      const user = await checkAuthState();
-
       console.log("Fetching visited artworks for user:", user.userId);
       const result = await getClient().graphql<ListVisitedsQuery>({
         query: listVisiteds,
@@ -88,7 +76,7 @@ export function useVisited() {
     } finally {
       setIsLoading(false);
     }
-  }, [checkAuthState]);
+  }, [user]);
 
   const getVisitedArtworkIds = useCallback(async () => {
     const visited = await getVisitedArtworks();
@@ -97,10 +85,13 @@ export function useVisited() {
 
   const checkIfArtworkVisited = useCallback(
     async (artworkId: string) => {
+      if (!user) {
+        console.warn("No authenticated user");
+        return null;
+      }
+
       setError(null);
       try {
-        const user = await checkAuthState();
-
         const result = await getClient().graphql<ListVisitedsQuery>({
           query: listVisiteds,
           variables: {
@@ -130,15 +121,17 @@ export function useVisited() {
         return null;
       }
     },
-    [checkAuthState]
+    [user]
   );
 
   const createVisitRecord = useCallback(
     async (artworkId: string) => {
+      if (!user) {
+        throw new Error("No authenticated user");
+      }
+
       setError(null);
       try {
-        const user = await checkAuthState();
-
         const createInput: CreateVisitedInput = {
           userId: user.userId,
           artworkId: artworkId,
@@ -167,7 +160,7 @@ export function useVisited() {
         throw err;
       }
     },
-    [checkAuthState]
+    [user]
   );
 
   return {

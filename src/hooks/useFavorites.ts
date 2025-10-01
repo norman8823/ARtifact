@@ -3,43 +3,30 @@ import {
   DeleteFavoritedInput,
   ListFavoritedsQuery,
 } from "@/src/API";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { createFavorited, deleteFavorited } from "@/src/graphql/mutations";
 import { listFavoriteds } from "@/src/graphql/queries";
 import { GraphQLResult } from "@aws-amplify/api-graphql";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Helper function to get client when needed
 const getClient = () => generateClient();
 
 export function useFavorites() {
+  const { user } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  const checkAuthState = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const session = await fetchAuthSession();
-
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error("No valid auth tokens found");
-      }
-
-      return user;
-    } catch (authError) {
-      console.error("Error checking auth state:", authError);
-      throw new Error("Authentication required");
-    }
-  }, []);
-
   const checkIfFavorited = useCallback(
     async (artworkId: string) => {
+      if (!user) {
+        console.warn("No authenticated user");
+        return null;
+      }
+
       setIsLoading(true);
       setError(null);
       try {
-        const user = await checkAuthState();
-
         const result = (await getClient().graphql<ListFavoritedsQuery>({
           query: listFavoriteds,
           variables: {
@@ -69,15 +56,18 @@ export function useFavorites() {
         setIsLoading(false);
       }
     },
-    [checkAuthState]
+    [user]
   );
 
   const toggleFavorite = useCallback(
     async (artworkId: string) => {
+      if (!user) {
+        throw new Error("No authenticated user");
+      }
+
       setIsLoading(true);
       setError(null);
       try {
-        const user = await checkAuthState();
         const existingFavorite = await checkIfFavorited(artworkId);
 
         if (existingFavorite) {
@@ -119,7 +109,7 @@ export function useFavorites() {
         setIsLoading(false);
       }
     },
-    [checkAuthState, checkIfFavorited]
+    [user, checkIfFavorited]
   );
 
   return {

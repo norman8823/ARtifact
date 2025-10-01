@@ -1,8 +1,8 @@
 import { ListFavoritedsQuery } from "@/src/API";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { listFavoriteds } from "@/src/graphql/queries";
 import { GraphQLResult } from "@aws-amplify/api-graphql";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 import { useArtwork } from "./useArtwork";
 
@@ -17,32 +17,19 @@ export interface FavoriteArtwork {
 }
 
 export function useFavoriteArtworks() {
+  const { user } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { getArtworkById } = useArtwork();
-
-  const checkAuthState = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const session = await fetchAuthSession();
-
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error("No valid auth tokens found");
-      }
-
-      return user;
-    } catch (authError) {
-      console.error("Error checking auth state:", authError);
-      throw new Error("Authentication required");
-    }
-  }, []);
-
   const getFavoriteArtworks = useCallback(async () => {
+    if (!user) {
+      console.warn("No authenticated user");
+      return [];
+    }
+
     setIsLoading(true);
     setError(null);
     try {
-      const user = await checkAuthState();
-
       // Get all favorites for the user
       const result = (await getClient().graphql<ListFavoritedsQuery>({
         query: listFavoriteds,
@@ -91,12 +78,14 @@ export function useFavoriteArtworks() {
     } finally {
       setIsLoading(false);
     }
-  }, [checkAuthState, getArtworkById]);
+  }, [user, getArtworkById]);
 
   const getFavoriteCount = useCallback(async () => {
-    try {
-      const user = await checkAuthState();
+    if (!user) {
+      return 0;
+    }
 
+    try {
       const result = (await getClient().graphql<ListFavoritedsQuery>({
         query: listFavoriteds,
         variables: {
@@ -116,7 +105,7 @@ export function useFavoriteArtworks() {
       console.error("Error getting favorite count:", err);
       return 0;
     }
-  }, [checkAuthState]);
+  }, [user]);
 
   return {
     getFavoriteArtworks,

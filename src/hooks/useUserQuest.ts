@@ -1,7 +1,7 @@
 import { type GetUserQuestQuery } from "@/src/API";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { getUserQuest } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
@@ -23,30 +23,19 @@ export interface UserQuest {
 export function useUserQuest() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  const checkAuthState = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const session = await fetchAuthSession();
-
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error("No valid auth tokens found");
-      }
-
-      return user.userId;
-    } catch (authError) {
-      console.error("Error checking auth state:", authError);
-      throw new Error("Authentication required");
-    }
-  }, []);
+  const { user } = useAuthContext();
 
   const getUserQuestStatus = useCallback(
     async (questId: string) => {
+      if (!user) {
+        console.warn("No authenticated user");
+        return null;
+      }
+
       setIsLoading(true);
       setError(null);
       try {
-        const userId = await checkAuthState();
-
+        const userId = user.userId;
         // Create the composite key
         const id = `${userId}#${questId}`;
 
@@ -93,7 +82,7 @@ export function useUserQuest() {
         setIsLoading(false);
       }
     },
-    [checkAuthState]
+    [user]
   );
 
   return {

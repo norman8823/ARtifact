@@ -2,34 +2,51 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { FontAwesome } from "@expo/vector-icons";
-import { getCurrentUser } from "aws-amplify/auth";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 
 export default function LandingScreen() {
   const router = useRouter();
+  const { isAuthReady, isAuthenticated } = useAuthContext();
 
-  // Check for existing authenticated user
+  // Redirect to home if user is already authenticated
   useEffect(() => {
-    const checkAuthentication = async () => {
-      try {
-        // Add a small delay to ensure Amplify is fully configured
-        // This runs after the root layout has confirmed configuration
-        await new Promise((resolve) => setTimeout(resolve, 100));
+    if (!isAuthReady) return; // Wait for auth initialization
 
-        await getCurrentUser();
-        console.log("User already authenticated, redirecting to home");
-        router.replace("/home");
-      } catch (error) {
-        console.log("No authenticated user found");
-      }
-    };
+    if (isAuthenticated) {
+      console.log("✅ User already authenticated, redirecting to home");
+      router.replace("/home");
+    } else {
+      console.log("ℹ️ No authenticated user, showing login options");
+    }
+  }, [isAuthReady, isAuthenticated, router]);
 
-    checkAuthentication();
-  }, []);
+  // Show loading screen while auth is initializing
+  if (!isAuthReady) {
+    return (
+      <SafeAreaView
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color={Colors.darkGray} />
+        <ThemedText style={{ marginTop: 16, color: Colors.darkMedGray }}>
+          Loading...
+        </ThemedText>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <>

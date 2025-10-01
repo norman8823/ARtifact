@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
 import { useDepartments, type Department } from "@/src/hooks/useDepartments";
 import { useDidYouKnow } from "@/src/hooks/useDidYouKnow";
@@ -22,6 +23,7 @@ import Carousel from "react-native-reanimated-carousel";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function HomeScreen() {
+  const { isAuthReady } = useAuthContext();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
@@ -59,31 +61,37 @@ export default function HomeScreen() {
     setCurrentDate(formattedDate);
   }, []);
 
-  // Fetch featured artworks on mount
+  // Fetch featured artworks - wait for auth first
   useEffect(() => {
+    if (!isAuthReady) return;
+
     const loadArtworks = async () => {
       const artworks = await getFeaturedArtworks();
       setFeaturedArtworks(artworks);
     };
     loadArtworks();
-  }, [getFeaturedArtworks]);
+  }, [isAuthReady, getFeaturedArtworks]);
 
-  // Fetch departments on mount
+  // Fetch departments - wait for auth first
   useEffect(() => {
+    if (!isAuthReady) return;
+
     const loadDepartments = async () => {
       const fetchedDepartments = await getAllDepartments();
       setDepartments(fetchedDepartments);
     };
     loadDepartments();
-  }, [getAllDepartments]);
+  }, [isAuthReady, getAllDepartments]);
 
-  // Load facts and set random fact on mount
+  // Load facts - wait for auth first
   useEffect(() => {
+    if (!isAuthReady) return;
+
     const loadFactsAndSetRandom = async () => {
       await loadFacts();
     };
     loadFactsAndSetRandom();
-  }, [loadFacts]);
+  }, [isAuthReady, loadFacts]);
 
   // Set random fact when facts are loaded
   useEffect(() => {
@@ -189,8 +197,9 @@ export default function HomeScreen() {
     );
   };
 
-  // Show loading state
+  // Show loading state (including auth initialization)
   if (
+    !isAuthReady ||
     (isLoadingArtworks && featuredArtworks.length === 0) ||
     (isLoadingDepartments && departments.length === 0) ||
     (isLoadingFacts && randomFact === "")

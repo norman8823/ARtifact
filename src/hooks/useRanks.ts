@@ -1,7 +1,6 @@
 import { type ListRanksQuery } from "@/src/API";
 import { listRanks } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
@@ -19,29 +18,10 @@ export interface Rank {
 export function useRanks() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  const checkAuthState = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const session = await fetchAuthSession();
-
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error("No valid auth tokens found");
-      }
-
-      return user;
-    } catch (authError) {
-      console.error("Error checking auth state:", authError);
-      throw new Error("Authentication required");
-    }
-  }, []);
-
   const getAllRanks = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      await checkAuthState();
-
       const result = await getClient().graphql<ListRanksQuery>({
         query: listRanks,
         variables: {
@@ -79,7 +59,7 @@ export function useRanks() {
     } finally {
       setIsLoading(false);
     }
-  }, [checkAuthState]);
+  }, []);
 
   const getRankByXP = useCallback(
     async (xpPoints: number) => {

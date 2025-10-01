@@ -1,5 +1,8 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { type Quest as BaseQuest, useQuests } from "@/src/hooks/useQuests";
 import { type Rank, useRanks } from "@/src/hooks/useRanks";
 import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
@@ -15,8 +18,6 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
 
 type QuestDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -28,6 +29,7 @@ interface ActiveQuest extends BaseQuest {
 }
 
 export default function ArtQuestScreen() {
+  const { isAuthReady } = useAuthContext();
   const {
     getAllQuests,
     isLoading: isLoadingQuests,
@@ -55,6 +57,7 @@ export default function ArtQuestScreen() {
   const [currentRank, setCurrentRank] = useState<Rank | null>(null);
 
   const loadData = useCallback(async () => {
+    if (!isAuthReady) return; // Wait for auth to be ready
     const [allQuests, userQuests, xp] = await Promise.all([
       getAllQuests(),
       getUserQuests(),
@@ -78,12 +81,13 @@ export default function ArtQuestScreen() {
       const rank = await getRankByXP(xp.xpPoints);
       setCurrentRank(rank);
     }
-  }, [getAllQuests, getUserQuests, getUserXP, getRankByXP]);
+  }, [isAuthReady, getAllQuests, getUserQuests, getUserXP, getRankByXP]);
 
   // Initial load
   useEffect(() => {
+    if (!isAuthReady) return; // Guard clause
     loadData();
-  }, [loadData]);
+  }, [isAuthReady, loadData]);
 
   // Refresh when screen comes into focus
   useFocusEffect(
@@ -94,6 +98,7 @@ export default function ArtQuestScreen() {
 
   // Show loading state
   if (
+    !isAuthReady ||
     isLoadingQuests ||
     isLoadingUserQuests ||
     isLoadingUserXP ||

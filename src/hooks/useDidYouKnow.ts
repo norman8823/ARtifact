@@ -1,7 +1,6 @@
 import { type ListDidYouKnowsQuery } from "@/src/API";
 import { listDidYouKnows } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
@@ -17,28 +16,10 @@ export function useDidYouKnow() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const checkAuthState = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const session = await fetchAuthSession();
-
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error("No valid auth tokens found");
-      }
-
-      return user;
-    } catch (authError) {
-      console.error("Error checking auth state:", authError);
-      throw new Error("Authentication required");
-    }
-  }, []);
-
   const loadFacts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      await checkAuthState();
-
       console.log("Fetching did you know facts from database...");
       const result = await getClient().graphql<ListDidYouKnowsQuery>({
         query: listDidYouKnows,
@@ -94,7 +75,7 @@ export function useDidYouKnow() {
     } finally {
       setIsLoading(false);
     }
-  }, [checkAuthState]);
+  }, []);
 
   const getRandomFact = useCallback(() => {
     if (facts.length === 0) {

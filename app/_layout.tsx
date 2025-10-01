@@ -12,6 +12,7 @@ import "react-native-reanimated";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { configureAmplify } from "@/src/aws/config";
+import { AuthProvider } from "@/src/contexts/AuthContext";
 import { FavoritesProvider } from "@/src/contexts/FavoritesContext";
 import * as Sentry from "@sentry/react-native";
 
@@ -128,86 +129,88 @@ export default Sentry.wrap(function RootLayout() {
 
   return (
     <ThemeProvider value={DefaultTheme}>
-      <FavoritesProvider>
-        <Stack
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: Colors.lightGray,
-            },
-            headerTintColor: Colors.darkGray,
-            headerBackButtonDisplayMode: "minimal",
-            headerBackButtonMenuEnabled: false,
-          }}
-        >
-          <Stack.Screen
-            name="index"
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
+      <AuthProvider>
+        <FavoritesProvider>
+          <Stack
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: Colors.lightGray,
+              },
+              headerTintColor: Colors.darkGray,
+              headerBackButtonDisplayMode: "minimal",
+              headerBackButtonMenuEnabled: false,
             }}
-          />
-          <Stack.Screen name="googleLogin" options={{ headerShown: false }} />
-          <Stack.Screen name="appleLogin" options={{ headerShown: false }} />
-          <Stack.Screen name="phoneLogin" options={{ headerShown: false }} />
-          <Stack.Screen name="emailLogin" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="(dashboard)"
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-            }}
-          />
-          <Stack.Screen
-            name="profileSettings"
-            options={{
-              headerTitle: "Profile Settings",
-            }}
-          />
-          <Stack.Screen
-            name="artworksVisited"
-            options={{
-              headerTitle: "Artworks Visited",
-            }}
-          />
-          <Stack.Screen
-            name="favorites"
-            options={{
-              headerTitle: "Favorites",
-            }}
-          />
-          <Stack.Screen
-            name="questsCompleted"
-            options={{
-              headerTitle: "Quests Completed",
-            }}
-          />
-          <Stack.Screen
-            name="collection"
-            options={{
-              headerTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="artDetail"
-            options={{
-              headerTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="questDetail"
-            options={{
-              headerTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="arViewer"
-            options={{
-              headerShown: false,
-              gestureEnabled: true,
-            }}
-          />
-        </Stack>
-      </FavoritesProvider>
+          >
+            <Stack.Screen
+              name="index"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen name="googleLogin" options={{ headerShown: false }} />
+            <Stack.Screen name="appleLogin" options={{ headerShown: false }} />
+            <Stack.Screen name="phoneLogin" options={{ headerShown: false }} />
+            <Stack.Screen name="emailLogin" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="(dashboard)"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
+              name="profileSettings"
+              options={{
+                headerTitle: "Profile Settings",
+              }}
+            />
+            <Stack.Screen
+              name="artworksVisited"
+              options={{
+                headerTitle: "Artworks Visited",
+              }}
+            />
+            <Stack.Screen
+              name="favorites"
+              options={{
+                headerTitle: "Favorites",
+              }}
+            />
+            <Stack.Screen
+              name="questsCompleted"
+              options={{
+                headerTitle: "Quests Completed",
+              }}
+            />
+            <Stack.Screen
+              name="collection"
+              options={{
+                headerTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="artDetail"
+              options={{
+                headerTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="questDetail"
+              options={{
+                headerTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="arViewer"
+              options={{
+                headerShown: false,
+                gestureEnabled: true,
+              }}
+            />
+          </Stack>
+        </FavoritesProvider>
+      </AuthProvider>
       <StatusBar style="auto" />
     </ThemeProvider>
   );

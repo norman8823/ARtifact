@@ -1,7 +1,6 @@
 import { type ListGalleryMapsQuery } from "@/src/API";
 import { listGalleryMaps } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
@@ -17,29 +16,10 @@ export function useGalleryMaps() {
   const [galleryMaps, setGalleryMaps] = useState<GalleryMap[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  const checkAuthState = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const session = await fetchAuthSession();
-
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error("No valid auth tokens found");
-      }
-
-      return user;
-    } catch (authError) {
-      console.error("Error checking auth state:", authError);
-      throw new Error("Authentication required");
-    }
-  }, []);
-
   const loadGalleryMaps = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      await checkAuthState();
-
       console.log("Fetching gallery maps from database...");
       const result = await getClient().graphql<ListGalleryMapsQuery>({
         query: listGalleryMaps,
@@ -96,7 +76,7 @@ export function useGalleryMaps() {
     } finally {
       setIsLoading(false);
     }
-  }, [checkAuthState]);
+  }, []);
 
   const getMapURLByGalleryNumber = useCallback(
     (galleryNumber: string) => {

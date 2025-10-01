@@ -2,7 +2,6 @@ import { ArtFactsByArtworkIdAndTimestampQuery } from "@/src/API";
 import { artFactsByArtworkIdAndTimestamp } from "@/src/graphql/queries";
 import { GraphQLResult } from "@aws-amplify/api-graphql";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 const getClient = () => generateClient();
@@ -18,30 +17,11 @@ export interface ArtFact {
 export function useArtFacts() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  const checkAuthState = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const session = await fetchAuthSession();
-
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error("No valid auth tokens found");
-      }
-
-      return user;
-    } catch (authError) {
-      console.error("Error checking auth state:", authError);
-      throw new Error("Authentication required");
-    }
-  }, []);
-
   const getArtFactsByArtworkId = useCallback(
     async (artworkId: string) => {
       setIsLoading(true);
       setError(null);
       try {
-        await checkAuthState();
-
         const result =
           (await getClient().graphql<ArtFactsByArtworkIdAndTimestampQuery>({
             query: artFactsByArtworkIdAndTimestamp,
@@ -82,7 +62,7 @@ export function useArtFacts() {
         setIsLoading(false);
       }
     },
-    [checkAuthState]
+    []
   );
 
   return {

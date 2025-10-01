@@ -1,7 +1,6 @@
 import { type GetArtworkQuery } from "@/src/API";
 import { getArtwork } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
@@ -35,29 +34,6 @@ export function useArtwork() {
     setIsLoading(true);
     setError(null);
     try {
-      // Check authentication state
-      // console.log("useArtwork - Checking authentication state...");
-      try {
-        const user = await getCurrentUser();
-        // console.log("useArtwork - Current user:", user.username);
-
-        const session = await fetchAuthSession();
-        // console.log("useArtwork - Auth session tokens:", {
-        //   accessToken:
-        //     session.tokens?.accessToken?.toString().substring(0, 20) + "...",
-        //   idToken: session.tokens?.idToken?.toString().substring(0, 20) + "...",
-        // });
-
-        // Make sure we have valid tokens before proceeding
-        if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-          console.error("useArtwork - No valid auth tokens found");
-          throw new Error("No valid auth tokens found");
-        }
-      } catch (authError) {
-        console.error("useArtwork - Error checking auth state:", authError);
-        throw new Error("Authentication required");
-      }
-
       // console.log("useArtwork - Making GraphQL query for artwork:", id);
       const result = await getClient().graphql<GetArtworkQuery>({
         query: getArtwork,

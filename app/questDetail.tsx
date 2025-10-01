@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { type Artwork, useArtworksByIds } from "@/src/hooks/useArtworksByIds";
 import { type Quest, useQuests } from "@/src/hooks/useQuests";
 import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
@@ -23,6 +24,7 @@ interface QuestDetail {
 }
 
 export default function QuestDetailScreen() {
+  const { isAuthReady } = useAuthContext();
   const params = useLocalSearchParams();
   const questId = Array.isArray(params.id) ? params.id[0] : params.id;
 
@@ -40,6 +42,8 @@ export default function QuestDetailScreen() {
 
   useEffect(() => {
     const loadQuestDetail = async () => {
+      if (!isAuthReady) return; // Wait for auth to be ready
+
       try {
         // Get the quest data
         const quests = await getAllQuests();
@@ -67,24 +71,46 @@ export default function QuestDetailScreen() {
       }
     };
 
-    if (questId) {
+    if (questId && isAuthReady) {
       loadQuestDetail();
     }
-  }, [questId, getAllQuests, getUserQuestByQuestId, getArtworksByIds]);
+  }, [
+    questId,
+    isAuthReady,
+    getAllQuests,
+    getUserQuestByQuestId,
+    getArtworksByIds,
+  ]);
 
   const handleStartQuest = async () => {
     if (!questDetail?.quest) return;
 
+    const { quest } = questDetail;
+
+    // Validate that the quest has required artworks
+    if (!quest.requiredArtworks || quest.requiredArtworks.length === 0) {
+      setError("Quest must have required artworks");
+      return;
+    }
+
     setIsStarting(true);
     try {
-      const result = await startQuest(questDetail.quest);
+      const result = await startQuest({
+        id: quest.id,
+        title: quest.title,
+        description: quest.description,
+        icon: quest.icon,
+        xpReward: quest.xpReward,
+        requiredArtworks: quest.requiredArtworks,
+        galleryMap: quest.galleryMap,
+      });
       if (result) {
         // Update the local state with the new UserQuest
         setQuestDetail((prev) =>
           prev
             ? {
                 ...prev,
-                userQuest: result,
+                userQuest: result as UserQuest,
               }
             : null
         );
@@ -98,10 +124,15 @@ export default function QuestDetailScreen() {
   };
 
   // Show loading state
-  if (isLoadingQuest || isLoadingUserQuest || isLoadingArtworks) {
+  if (
+    !isAuthReady ||
+    isLoadingQuest ||
+    isLoadingUserQuest ||
+    isLoadingArtworks
+  ) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
-        <ThemedText>Loading quest details...</ThemedText>
+        <ActivityIndicator size="large" />
       </ThemedView>
     );
   }
