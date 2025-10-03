@@ -37,7 +37,7 @@ export default function ExploreScreen() {
     refresh,
     shouldPrefetch
   } = useInfiniteArtworks({
-    limit: 30,
+    limit: 60,
     prefetchThreshold: 3,
     searchQuery,
     showIsScannableOnly,

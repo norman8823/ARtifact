@@ -243,7 +243,11 @@ export default function ProfileScreen() {
               </ThemedView>
               <ThemedView style={styles.progressBarBg}>
                 <ThemedView
-                  style={[styles.progressBarFill, { width: `${xpProgress}%` }]}
+                  style={[
+                    styles.progressBarFill,
+                    { width: nextRank ? `${xpProgress}%` : '100%' },
+                    !nextRank && styles.progressBarMaxRank
+                  ]}
                 />
               </ThemedView>
               <ThemedText style={styles.xpNeeded}>
@@ -505,6 +509,9 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: Colors.lightYellow,
     borderRadius: 4,
+  },
+  progressBarMaxRank: {
+    backgroundColor: Colors.lightGreen,
   },
   xpNeeded: {
     fontSize: 14,

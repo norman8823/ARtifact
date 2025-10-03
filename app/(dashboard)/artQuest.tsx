@@ -61,13 +61,6 @@ const ActiveQuestItem = React.memo(({ quest }: { quest: UserQuest }) => (
     <ThemedView style={styles.questHeader}>
       <ThemedView style={styles.questInfo}>
         <ThemedView style={styles.titleRow}>
-          <ThemedView style={styles.iconContainer}>
-            <FontAwesome
-              name={(quest.icon as any) || "search"}
-              size={20}
-              color={Colors.darkYellow}
-            />
-          </ThemedView>
           <ThemedText type="title" style={styles.questTitle}>
             {quest.title}
           </ThemedText>
@@ -125,13 +118,6 @@ const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => (
     <ThemedView style={styles.questHeader}>
       <ThemedView style={styles.questInfo}>
         <ThemedView style={styles.titleRow}>
-          <ThemedView style={styles.iconContainer}>
-            <FontAwesome
-              name={(quest.icon as any) || "search"}
-              size={20}
-              color={Colors.darkYellow}
-            />
-          </ThemedView>
           <ThemedText type="title" style={styles.questTitle}>
             {quest.title}
           </ThemedText>
