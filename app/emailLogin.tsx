@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useAuth } from "@/src/hooks/useAuth";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Sentry from "@sentry/react-native";
@@ -36,6 +37,7 @@ export default function EmailLoginScreen() {
     getStoredPassword,
     clearTempCredentials,
   } = useAuth();
+  const { refreshAuth } = useAuthContext();
 
   const isValidEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -70,6 +72,8 @@ export default function EmailLoginScreen() {
           clearTempCredentials();
 
           if (signInResult.isSignedIn) {
+            // Refresh auth context to update authentication state
+            await refreshAuth();
             router.replace("/home");
           }
         }
@@ -104,6 +108,8 @@ export default function EmailLoginScreen() {
       } else {
         const signInResult = await signInWithEmail(email, password);
         if (signInResult.isSignedIn) {
+          // Refresh auth context to update authentication state
+          await refreshAuth();
           router.replace("/home");
         }
       }
@@ -304,7 +310,7 @@ export default function EmailLoginScreen() {
               )}
 
               <Pressable
-                style={[
+                style={({ pressed }) => [
                   styles.sendCodeButton,
                   (!email ||
                     !isValidEmail(email) ||
@@ -316,6 +322,7 @@ export default function EmailLoginScreen() {
                       !needsVerification &&
                       !isValidUsername(username))) &&
                     styles.sendCodeButtonDisabled,
+                  pressed && !isLoading && styles.sendCodeButtonPressed,
                 ]}
                 disabled={
                   isLoading ||
@@ -449,6 +456,11 @@ const styles = StyleSheet.create({
   },
   sendCodeButtonDisabled: {
     backgroundColor: Colors.medGray,
+  },
+  sendCodeButtonPressed: {
+    shadowOpacity: 0,
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
   sendCodeButtonText: {
     color: Colors.lightGray,

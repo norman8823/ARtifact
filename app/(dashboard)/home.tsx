@@ -23,7 +23,7 @@ import Carousel from "react-native-reanimated-carousel";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function HomeScreen() {
-  const { isAuthReady } = useAuthContext();
+  const { isAuthReady, isAuthenticated } = useAuthContext();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
@@ -49,6 +49,14 @@ export default function HomeScreen() {
     isLoading: isLoadingFacts,
     error: factsError,
   } = useDidYouKnow();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (isAuthReady && !isAuthenticated) {
+      console.log("User not authenticated, redirecting to login");
+      router.replace("/");
+    }
+  }, [isAuthReady, isAuthenticated]);
 
   // Set current date on mount
   useEffect(() => {

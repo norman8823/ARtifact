@@ -88,14 +88,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = useCallback(async () => {
     try {
       console.log("👋 AuthContext: Signing out...");
+
       await amplifySignOut();
+
+      // Clear local state after successful AWS sign out
       setIsAuthenticated(false);
       setUser(null);
       setTokens(null);
-      console.log("✅ AuthContext: Sign out complete");
+
+      console.log("✅ AuthContext: Sign out complete, state cleared");
+      console.log("✅ AuthContext: isAuthenticated is now:", false);
     } catch (error) {
       console.error("❌ AuthContext: Error signing out:", error);
-      throw error;
+      // Even if AWS sign out fails, clear local state to prevent issues
+      setIsAuthenticated(false);
+      setUser(null);
+      setTokens(null);
+      console.log("✅ AuthContext: Local state cleared despite sign out error");
     }
   }, []);
 

@@ -420,7 +420,7 @@ export default function ArtDetailScreen() {
           <ThemedView style={styles.titleRow}>
             <ThemedView>
               <ThemedText type="title" style={styles.title}>
-                {id}. {artwork.title}
+                {artwork.title}
               </ThemedText>
               <ThemedText type="subtitle" style={styles.artist}>
                 {artwork.artistDisplayName || "Unknown Artist"}
@@ -501,6 +501,12 @@ export default function ArtDetailScreen() {
                 </ThemedText>
               </ThemedView>
             )}
+            <ThemedView style={styles.detailRow}>
+              <ThemedText style={styles.detailLabel}>Object ID</ThemedText>
+              <ThemedText style={styles.detailValue}>
+                {artwork.id}
+              </ThemedText>
+            </ThemedView>
             {artwork.galleryNumber && (
               <ThemedView style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>

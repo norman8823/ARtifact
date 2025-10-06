@@ -114,7 +114,10 @@ export default function LandingScreen() {
               </Pressable> */}
 
               <Pressable
-                style={styles.loginButton}
+                style={({ pressed }) => [
+                  styles.loginButton,
+                  pressed && styles.loginButtonPressed
+                ]}
                 onPress={() => router.push("/emailLogin")}
               >
                 <ThemedView style={styles.buttonContent}>
@@ -245,6 +248,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     ...shadowStyle,
+  },
+  loginButtonPressed: {
+    shadowOpacity: 0,
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
   buttonContent: {
     backgroundColor: Colors.medLightGray,

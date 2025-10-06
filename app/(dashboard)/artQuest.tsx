@@ -179,6 +179,14 @@ export default function ArtQuestScreen() {
   const [currentRank, setCurrentRank] = useState<Rank | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (isAuthReady && !isAuthenticated) {
+      console.log("User not authenticated in ArtQuest, redirecting to login");
+      router.replace("/");
+    }
+  }, [isAuthReady, isAuthenticated]);
+
   const loadData = useCallback(async () => {
     console.log("🔍 ArtQuest Auth Check:", { isAuthReady, isAuthenticated });
     if (!isAuthReady) {
@@ -188,14 +196,7 @@ export default function ArtQuestScreen() {
 
     if (!isAuthenticated) {
       console.warn("User not authenticated - isAuthenticated:", isAuthenticated);
-      // Add a small retry delay in case of race condition
-      setTimeout(() => {
-        if (isAuthReady && isAuthenticated) {
-          console.log("🔄 Retrying after auth state change...");
-          loadData();
-        }
-      }, 500);
-      return;
+      return; // Don't retry, redirect will handle this
     }
 
     try {
