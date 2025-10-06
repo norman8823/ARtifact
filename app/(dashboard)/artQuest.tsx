@@ -15,6 +15,7 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
 } from "react-native";
@@ -33,6 +34,9 @@ type FlatListItem =
   | { type: 'activeHeader'; data: { count: number } }
   | { type: 'activeQuest'; data: UserQuest }
   | { type: 'activeEmpty' }
+  | { type: 'completedHeader'; data: { count: number } }
+  | { type: 'completedQuest'; data: UserQuest }
+  | { type: 'completedEmpty' }
   | { type: 'availableHeader'; data: { count: number } }
   | { type: 'availableQuest'; data: BaseQuest };
 
@@ -170,12 +174,27 @@ export default function ArtQuestScreen() {
 
   const [availableQuests, setAvailableQuests] = useState<BaseQuest[]>([]);
   const [activeQuests, setActiveQuests] = useState<UserQuest[]>([]);
+  const [completedQuests, setCompletedQuests] = useState<UserQuest[]>([]);
   const [userXP, setUserXP] = useState<UserXP | null>(null);
   const [currentRank, setCurrentRank] = useState<Rank | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadData = useCallback(async () => {
-    if (!isAuthReady || !isAuthenticated) {
-      console.warn("No authenticated user");
+    console.log("🔍 ArtQuest Auth Check:", { isAuthReady, isAuthenticated });
+    if (!isAuthReady) {
+      console.warn("Auth not ready yet, waiting...");
+      return;
+    }
+
+    if (!isAuthenticated) {
+      console.warn("User not authenticated - isAuthenticated:", isAuthenticated);
+      // Add a small retry delay in case of race condition
+      setTimeout(() => {
+        if (isAuthReady && isAuthenticated) {
+          console.log("🔄 Retrying after auth state change...");
+          loadData();
+        }
+      }, 500);
       return;
     }
 
@@ -187,7 +206,11 @@ export default function ArtQuestScreen() {
         getUserXP(),
       ]);
 
-      // Filter out quests that the user has already started
+      // Separate user quests into active (in progress) and completed
+      const activeQuests = userQuests.filter((uq: UserQuest) => !uq.isCompleted);
+      const completedQuests = userQuests.filter((uq: UserQuest) => uq.isCompleted);
+
+      // Filter out quests that the user has already started (both active and completed)
       const startedQuestIds = new Set(
         userQuests.map((uq: UserQuest) => uq.questId)
       );
@@ -196,7 +219,8 @@ export default function ArtQuestScreen() {
       );
 
       setAvailableQuests(available);
-      setActiveQuests(userQuests);
+      setActiveQuests(activeQuests);
+      setCompletedQuests(completedQuests);
       setUserXP(xp);
 
       // Get user's rank based on XP
@@ -211,6 +235,15 @@ export default function ArtQuestScreen() {
     }
   }, [isAuthReady, isAuthenticated, getAllQuests, getUserQuests, getUserXP, getRankByXP]);
 
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await loadData();
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [loadData]);
+
   // Prepare data for FlatList
   const flatListData: FlatListItem[] = [
     { type: 'header', data: { userXP, currentRank } },
@@ -220,7 +253,12 @@ export default function ArtQuestScreen() {
       : activeQuests.map(quest => ({ type: 'activeQuest' as const, data: quest }))
     ),
     { type: 'availableHeader', data: { count: availableQuests.length } },
-    ...availableQuests.map(quest => ({ type: 'availableQuest' as const, data: quest }))
+    ...availableQuests.map(quest => ({ type: 'availableQuest' as const, data: quest })),
+    { type: 'completedHeader', data: { count: completedQuests.length } },
+    ...(completedQuests.length === 0
+      ? [{ type: 'completedEmpty' as const }]
+      : completedQuests.map(quest => ({ type: 'completedQuest' as const, data: quest }))
+    )
   ];
 
   const renderItem = useCallback(({ item }: { item: FlatListItem }) => {
@@ -256,6 +294,40 @@ export default function ArtQuestScreen() {
         );
 
       case 'activeQuest':
+        return (
+          <ThemedView style={[styles.section, { paddingTop: 0 }]}>
+            <ActiveQuestItem quest={item.data} />
+          </ThemedView>
+        );
+
+      case 'completedHeader':
+        return (
+          <ThemedView style={styles.section}>
+            <ThemedView style={styles.sectionHeader}>
+              <ThemedText type="title" style={styles.sectionTitle}>
+                Completed Quests
+              </ThemedText>
+              <ThemedView style={[styles.badge, styles.completedBadge]}>
+                <ThemedText style={[styles.badgeText, styles.completedText]}>
+                  {item.data.count} Completed
+                </ThemedText>
+              </ThemedView>
+            </ThemedView>
+          </ThemedView>
+        );
+
+      case 'completedEmpty':
+        return (
+          <ThemedView style={[styles.section, { paddingTop: 0 }]}>
+            <ThemedView style={styles.emptyStateContainer}>
+              <ThemedText style={styles.emptyStateText}>
+                Complete quests to see them here and earn rewards!
+              </ThemedText>
+            </ThemedView>
+          </ThemedView>
+        );
+
+      case 'completedQuest':
         return (
           <ThemedView style={[styles.section, { paddingTop: 0 }]}>
             <ActiveQuestItem quest={item.data} />
@@ -342,6 +414,14 @@ export default function ArtQuestScreen() {
         removeClippedSubviews={true}
         maxToRenderPerBatch={10}
         windowSize={10}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            tintColor={Colors.darkMedGray}
+            colors={[Colors.darkMedGray]}
+          />
+        }
       />
     </SafeAreaView>
   );
@@ -517,5 +597,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 8,
     marginRight: 8,
+  },
+  completedBadge: {
+    backgroundColor: Colors.lightGreen,
+  },
+  completedText: {
+    color: Colors.darkGreen,
   },
 });

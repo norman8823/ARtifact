@@ -72,6 +72,7 @@ export default function ArtDetailScreen() {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   const [isGalleryModalVisible, setIsGalleryModalVisible] = useState(false);
+
   const [galleryMapURL, setGalleryMapURL] = useState<string | null>(null);
   const [isWebViewLoading, setIsWebViewLoading] = useState(true);
   const scale = useSharedValue(1);
@@ -113,6 +114,7 @@ export default function ArtDetailScreen() {
     });
 
   const composed = Gesture.Simultaneous(pinchGesture, panGesture);
+
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -175,12 +177,22 @@ export default function ArtDetailScreen() {
     if (isTogglingFavorite || !artwork) return;
 
     setIsTogglingFavorite(true);
+
+    // Optimistic UI update - immediately toggle the heart
+    const optimisticState = !isFavorited;
+    setIsFavorited(optimisticState);
+
     try {
       const newFavoritedState = await toggleFavorite(artwork.id);
-      setIsFavorited(newFavoritedState);
+      // Verify the optimistic update was correct
+      if (newFavoritedState !== optimisticState) {
+        setIsFavorited(newFavoritedState);
+      }
       triggerRefresh(); // Trigger refresh after successful toggle
     } catch (err) {
       console.error("Error toggling favorite:", err);
+      // Revert optimistic update on error
+      setIsFavorited(!optimisticState);
     } finally {
       setIsTogglingFavorite(false);
     }

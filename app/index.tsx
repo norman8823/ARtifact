@@ -50,7 +50,7 @@ export default function LandingScreen() {
 
   return (
     <>
-      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#f7f5f3" }}>
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
@@ -71,10 +71,10 @@ export default function LandingScreen() {
             <ThemedView style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: "https://storage.googleapis.com/uxpilot-auth.appspot.com/f0a34ddb90-42e312c324d1f17d7705.png",
+                  uri: "/Users/norman/main/ARtifact/assets/images/RuthSpinning.gif",
                 }}
                 style={styles.backgroundImage}
-                contentFit="cover"
+                contentFit="contain"
               />
             </ThemedView>
 
@@ -189,7 +189,7 @@ export default function LandingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: "#f9f6f3",
   },
   contentContainer: {
     flexGrow: 1,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     width: "100%",
-    height: 192,
+    aspectRatio: 1,
   },
   welcomeSection: {
     marginBottom: 36,
