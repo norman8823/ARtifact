@@ -430,7 +430,10 @@ export default function ArtDetailScreen() {
               </ThemedText>
             </ThemedView>
             <Pressable
-              style={styles.favoriteButton}
+              style={({ pressed }) => [
+                styles.favoriteButton,
+                pressed && !isTogglingFavorite && styles.favoriteButtonPressed
+              ]}
               onPress={handleToggleFavorite}
               disabled={isTogglingFavorite}
             >
@@ -692,6 +695,11 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     ...shadowStyle,
+  },
+  favoriteButtonPressed: {
+    shadowOpacity: 0,
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
   scanButton: {
     width: "100%",
