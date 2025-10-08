@@ -52,7 +52,7 @@ const UserStatsHeader = React.memo(({ userXP, currentRank }: { userXP: UserXP | 
       </ThemedText>
     </ThemedView>
     <ThemedView style={styles.medalContainer}>
-      <FontAwesome name="trophy" size={24} color={Colors.darkYellow} />
+      <FontAwesome name={currentRank?.icon as any || "trophy"} size={24} color={Colors.darkYellow} />
     </ThemedView>
   </ThemedView>
 ));
@@ -89,6 +89,9 @@ const ActiveQuestItem = React.memo(({ quest }: { quest: UserQuest }) => (
               width: `${
                 (quest.artworksVisited.length / quest.requiredArtworks.length) * 100
               }%`,
+              backgroundColor: quest.isCompleted
+                ? Colors.darkGreen
+                : Colors.lightYellow,
             },
           ]}
         />

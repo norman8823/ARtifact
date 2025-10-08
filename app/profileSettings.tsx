@@ -10,15 +10,19 @@ import {
   StyleSheet,
   TextInput,
   View,
+  FlatList,
 } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useUserData } from "@/src/hooks/useUserData";
+import { Image } from "expo-image";
 
 export default function ProfileSettingsScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
-  const { currentUser, ensureUserInDB } = useUserData();
+  const [selectedAvatarSeed, setSelectedAvatarSeed] = useState("Felix");
+  const [tempSelectedSeed, setTempSelectedSeed] = useState("Felix");
+  const { currentUser, ensureUserInDB, updateUserInDB } = useUserData();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -31,6 +35,32 @@ export default function ProfileSettingsScreen() {
     ensureUserInDB();
   }, [ensureUserInDB]);
 
+  // Generate avatar options based on user ID/email
+  const generateAvatarSeeds = () => {
+    const baseSeeds = ["Felix"]; // Default option first
+    if (currentUser?.id) {
+      baseSeeds.push(
+        currentUser.id,
+        `${currentUser.id}-1`,
+        `${currentUser.id}-2`,
+        `${currentUser.id}-3`,
+        `${currentUser.id}-art`,
+        `${currentUser.id}-quest`,
+        `${currentUser.id}-museum`
+      );
+    }
+    if (currentUser?.email) {
+      baseSeeds.push(
+        currentUser.email,
+        `${currentUser.email}-variant`,
+        `${currentUser.email}-alt`,
+        `${currentUser.email}-creative`
+      );
+    }
+    // Take first 12 unique seeds
+    return [...new Set(baseSeeds)].slice(0, 12);
+  };
+
   // Update formData when currentUser changes
   useEffect(() => {
     if (currentUser) {
@@ -40,6 +70,11 @@ export default function ProfileSettingsScreen() {
         email: currentUser.email || "",
         // phone: currentUser.phone || "",
       }));
+
+      // Set current avatar seed (stored in profileImage field) or default to Felix
+      const currentSeed = currentUser.profileImage || "Felix";
+      setSelectedAvatarSeed(currentSeed);
+      setTempSelectedSeed(currentSeed);
     }
   }, [currentUser]);
 
@@ -54,9 +89,13 @@ export default function ProfileSettingsScreen() {
         <ThemedView style={styles.avatarBlock}>
           <View style={styles.avatarContainer}>
             <Pressable onPress={() => setShowPhotoModal(true)}>
-              <ThemedView style={styles.avatar}>
-                <ThemedText style={styles.avatarText}>SJ</ThemedText>
-              </ThemedView>
+              <Image
+                source={{
+                  uri: `https://api.dicebear.com/9.x/lorelei-neutral/svg?seed=${selectedAvatarSeed}`,
+                }}
+                style={styles.avatar}
+                contentFit="cover"
+              />
               <Pressable
                 onPress={() => setShowPhotoModal(true)}
                 style={styles.editAvatarButton}
@@ -182,58 +221,111 @@ export default function ProfileSettingsScreen() {
         </Pressable>
       </ScrollView>
 
-      {/* Photo Selection Modal */}
+      {/* Avatar Selection Modal */}
       <Modal
         visible={showPhotoModal}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => setShowPhotoModal(false)}
+        onRequestClose={() => {
+          setTempSelectedSeed(selectedAvatarSeed);
+          setShowPhotoModal(false);
+        }}
       >
         <Pressable
           style={styles.modalOverlay}
-          onPress={() => setShowPhotoModal(false)}
+          onPress={() => {
+            setTempSelectedSeed(selectedAvatarSeed);
+            setShowPhotoModal(false);
+          }}
         >
-          <Pressable style={styles.modalContent}>
-            <Pressable
-              style={styles.modalButton}
-              onPress={() => {
-                // Handle photo library
-                setShowPhotoModal(false);
-              }}
-            >
-              <FontAwesome
-                name="image"
-                size={20}
-                color={Colors.darkMedGray}
-                style={styles.modalIcon}
-              />
-              <ThemedText style={styles.modalButtonText}>
-                Photo Library
+          <Pressable
+            style={styles.avatarModalContent}
+            onPress={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <ThemedView style={styles.avatarModalHeader}>
+              <ThemedText style={styles.avatarModalTitle}>
+                Choose Your Avatar
               </ThemedText>
-            </Pressable>
+              <Pressable
+                style={styles.closeButton}
+                onPress={() => {
+                  setTempSelectedSeed(selectedAvatarSeed);
+                  setShowPhotoModal(false);
+                }}
+              >
+                <FontAwesome
+                  name="times"
+                  size={20}
+                  color={Colors.darkMedGray}
+                />
+              </Pressable>
+            </ThemedView>
 
-            <Pressable
-              style={styles.modalButton}
-              onPress={() => {
-                // Handle camera
-                setShowPhotoModal(false);
-              }}
-            >
-              <FontAwesome
-                name="camera"
-                size={20}
-                color={Colors.darkMedGray}
-                style={styles.modalIcon}
-              />
-              <ThemedText style={styles.modalButtonText}>Take Photo</ThemedText>
-            </Pressable>
 
-            <Pressable
-              style={[styles.modalButton, styles.cancelButton]}
-              onPress={() => setShowPhotoModal(false)}
+            {/* Avatar Grid */}
+            <ScrollView
+              style={styles.avatarGrid}
+              contentContainerStyle={styles.avatarGridContent}
+              showsVerticalScrollIndicator={false}
             >
-              <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
-            </Pressable>
+              <ThemedView style={styles.avatarGridContainer}>
+                {generateAvatarSeeds().map((item) => (
+                  <Pressable
+                    key={item}
+                    style={[
+                      styles.avatarOption,
+                      tempSelectedSeed === item && styles.selectedAvatarOption,
+                    ]}
+                    onPress={() => setTempSelectedSeed(item)}
+                  >
+                    <Image
+                      source={{
+                        uri: `https://api.dicebear.com/9.x/lorelei-neutral/svg?seed=${item}`,
+                      }}
+                      style={styles.avatarOptionImage}
+                      contentFit="cover"
+                    />
+                  </Pressable>
+                ))}
+              </ThemedView>
+            </ScrollView>
+
+            {/* Action Buttons */}
+            <ThemedView style={styles.modalActions}>
+              <Pressable
+                style={styles.cancelModalButton}
+                onPress={() => {
+                  setTempSelectedSeed(selectedAvatarSeed);
+                  setShowPhotoModal(false);
+                }}
+              >
+                <ThemedText style={styles.cancelModalButtonText}>
+                  Cancel
+                </ThemedText>
+              </Pressable>
+              <Pressable
+                style={styles.saveModalButton}
+                onPress={async () => {
+                  try {
+                    if (currentUser?.id) {
+                      await updateUserInDB(currentUser.id, {
+                        profileImage: tempSelectedSeed,
+                      });
+                    }
+                    setSelectedAvatarSeed(tempSelectedSeed);
+                    setShowPhotoModal(false);
+                  } catch (error) {
+                    console.error("Failed to save avatar:", error);
+                    // Could add error handling/toast here
+                  }
+                }}
+              >
+                <ThemedText style={styles.saveModalButtonText}>
+                  Save
+                </ThemedText>
+              </Pressable>
+            </ThemedView>
           </Pressable>
         </Pressable>
       </Modal>
@@ -267,10 +359,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.medLightGray,
     alignItems: "center",
     justifyContent: "center",
-  },
-  avatarText: {
-    color: Colors.darkMedGray,
-    fontSize: 28,
   },
   editAvatarButton: {
     position: "absolute",
@@ -347,32 +435,98 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  modalContent: {
-    backgroundColor: Colors.medLightGray,
-    borderRadius: 12,
-    width: "90%",
-    maxWidth: 375,
+  avatarModalContent: {
+    backgroundColor: Colors.lightGray,
+    borderRadius: 16,
+    width: "85%",
+    maxWidth: 340,
+    paddingBottom: 16,
+    marginHorizontal: 20,
     overflow: "hidden",
   },
-  modalButton: {
-    width: "100%",
-    paddingVertical: 20,
+  avatarModalHeader: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    paddingBottom: 12,
+  },
+  avatarModalTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.medGray,
   },
-  modalIcon: {
-    marginRight: 12,
+  avatarGrid: {
+    paddingHorizontal: 16,
+    maxHeight: 360,
   },
-  modalButtonText: {
+  avatarGridContent: {
+    paddingBottom: 16,
+  },
+  avatarGridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+  avatarOption: {
+    width: 70,
+    height: 70,
+    margin: 6,
+    borderRadius: 35,
+    overflow: "hidden",
+    position: "relative",
+    backgroundColor: Colors.medLightGray,
+    borderWidth: 2,
+    borderColor: Colors.medGray,
+  },
+  selectedAvatarOption: {
+    borderWidth: 3,
+    borderColor: Colors.darkGray,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  avatarOptionImage: {
+    width: "100%",
+    height: "100%",
+  },
+  modalActions: {
+    flexDirection: "row",
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+  cancelModalButton: {
+    flex: 1,
+    backgroundColor: Colors.medLightGray,
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: "center",
+    ...shadowStyle,
+  },
+  cancelModalButtonText: {
     color: Colors.darkMedGray,
+    fontSize: 16,
   },
-  cancelButton: {
-    borderBottomWidth: 0,
+  saveModalButton: {
+    flex: 1,
+    backgroundColor: Colors.darkGray,
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: "center",
+    ...shadowStyle,
   },
-  cancelButtonText: {
-    color: Colors.darkMedGray,
+  saveModalButtonText: {
+    color: Colors.lightGray,
+    fontSize: 16,
   },
 });

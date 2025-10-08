@@ -16,7 +16,6 @@ export interface UseAuthReturn {
   signUpWithEmail: (
     email: string,
     password: string,
-    phoneNumber: string,
     username: string
   ) => Promise<{ isVerificationRequired: boolean }>;
   confirmEmailSignUp: (
@@ -71,7 +70,6 @@ export function useAuth(): UseAuthReturn {
     async (
       email: string,
       password: string,
-      phoneNumber: string,
       username: string
     ) => {
       setIsLoading(true);
@@ -83,17 +81,12 @@ export function useAuth(): UseAuthReturn {
         setTempPassword(password);
         setTempUsername(username);
 
-        const formattedPhoneNumber = phoneNumber.startsWith("+")
-          ? phoneNumber
-          : `+${phoneNumber}`;
-
         const signUpResult = await signUp({
           username: email,
           password,
           options: {
             userAttributes: {
               email,
-              phone_number: formattedPhoneNumber,
             },
           },
         });

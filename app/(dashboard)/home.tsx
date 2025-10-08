@@ -247,10 +247,11 @@ export default function HomeScreen() {
         >
           {/* Header */}
           <ThemedView style={styles.header}>
-            <ThemedText style={[{ color: Colors.metRed }, styles.headerTitle]}>
-              AR
-            </ThemedText>
-            <ThemedText style={styles.headerTitle}>tifact</ThemedText>
+            <Image
+              source={require("@/assets/images/Color logo - no background.png")}
+              style={styles.headerLogo}
+              contentFit="contain"
+            />
           </ThemedView>
 
           {/* Featured Artworks */}
@@ -392,18 +393,16 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   header: {
-    flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
+    paddingTop: 24,
+    marginBottom: 12,
   },
-  headerTitle: {
-    fontSize: 48,
-    paddingTop: 48,
-    fontFamily: "TiltPrism",
-    letterSpacing: 5,
-    textShadowColor: "rgba(0,0,0,.5)",
-    textShadowOffset: { width: 0, height: 4 },
-    textShadowRadius: 4,
+  headerLogo: {
+    width: "100%",
+    height: 80,
+    maxWidth: 400,
   },
   section: {
     marginTop: 36,

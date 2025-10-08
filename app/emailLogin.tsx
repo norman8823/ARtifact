@@ -21,7 +21,6 @@ import {
 export default function EmailLoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
@@ -47,10 +46,6 @@ export default function EmailLoginScreen() {
     return password.length >= 8;
   };
 
-  const isValidPhoneNumber = (phone: string) => {
-    // Basic phone number validation - can be made more robust
-    return /^\+?[1-9]\d{1,14}$/.test(phone);
-  };
 
   const isValidUsername = (username: string) => {
     // Only allow numbers and English letters, 3-20 characters
@@ -81,13 +76,6 @@ export default function EmailLoginScreen() {
       }
 
       if (isSignUp) {
-        if (!isValidPhoneNumber(phoneNumber)) {
-          Alert.alert(
-            "Invalid Phone Number",
-            "Please enter a valid phone number with country code (e.g., +1234567890)"
-          );
-          return;
-        }
         if (!isValidUsername(username)) {
           Alert.alert(
             "Invalid Username",
@@ -99,7 +87,6 @@ export default function EmailLoginScreen() {
         const { isVerificationRequired } = await signUpWithEmail(
           email,
           password,
-          phoneNumber,
           username
         );
         if (isVerificationRequired) {
@@ -129,15 +116,11 @@ export default function EmailLoginScreen() {
             email,
             hasPassword: !!password,
             hasUsername: !!username,
-            hasPhoneNumber: !!phoneNumber,
             hasVerificationCode: !!verificationCode,
           },
           validationState: {
             isValidEmail: isValidEmail(email),
             isValidPassword: isValidPassword(password),
-            isValidPhoneNumber: phoneNumber
-              ? isValidPhoneNumber(phoneNumber)
-              : null,
             isValidUsername: username ? isValidUsername(username) : null,
           },
         },
@@ -249,23 +232,6 @@ export default function EmailLoginScreen() {
                         </ThemedView>
                       </ThemedView>
 
-                      <ThemedView style={styles.emailInputContainer}>
-                        <ThemedView style={styles.emailInputWrapper}>
-                          <FontAwesome
-                            name="phone"
-                            size={20}
-                            color={Colors.darkMedGray}
-                            style={styles.emailIcon}
-                          />
-                          <TextInput
-                            style={styles.emailInput}
-                            placeholder="Phone number (e.g., +1234567890)"
-                            keyboardType="phone-pad"
-                            value={phoneNumber}
-                            onChangeText={setPhoneNumber}
-                          />
-                        </ThemedView>
-                      </ThemedView>
                     </>
                   )}
 
@@ -317,9 +283,6 @@ export default function EmailLoginScreen() {
                     (!needsVerification && !isValidPassword(password)) ||
                     (isSignUp &&
                       !needsVerification &&
-                      !isValidPhoneNumber(phoneNumber)) ||
-                    (isSignUp &&
-                      !needsVerification &&
                       !isValidUsername(username))) &&
                     styles.sendCodeButtonDisabled,
                   pressed && !isLoading && styles.sendCodeButtonPressed,
@@ -329,9 +292,6 @@ export default function EmailLoginScreen() {
                   !email ||
                   !isValidEmail(email) ||
                   (!needsVerification && !isValidPassword(password)) ||
-                  (isSignUp &&
-                    !needsVerification &&
-                    !isValidPhoneNumber(phoneNumber)) ||
                   (isSignUp && !needsVerification && !isValidUsername(username))
                 }
                 onPress={handleSubmit}
@@ -355,7 +315,6 @@ export default function EmailLoginScreen() {
                   onPress={() => {
                     setIsSignUp(!isSignUp);
                     setUsername("");
-                    setPhoneNumber("");
                   }}
                 >
                   <ThemedText

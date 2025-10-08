@@ -198,7 +198,7 @@ export default function ProfileScreen() {
           <ThemedView style={styles.userInfo}>
             <Image
               source={{
-                uri: "https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=789",
+                uri: `https://api.dicebear.com/9.x/lorelei-neutral/svg?seed=${currentUser?.profileImage || "Felix"}`,
               }}
               style={styles.avatar}
             />

@@ -262,7 +262,7 @@ export default function ExploreScreen() {
                         color={Colors.darkMedGray}
                         style={styles.filterIcon}
                       />
-                      <ThemedText style={styles.filterLabel}>AR</ThemedText>
+                      <ThemedText style={[styles.filterLabel, { color: Colors.metRed }]}>AR</ThemedText>
                     </ThemedView>
                   </ThemedView>
                 </ThemedView>
