@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { WebView } from "react-native-webview";
+import ARPermissionManager from "@/src/utils/ARPermissionManager";
 
 export default function ARViewerScreen() {
   const params = useLocalSearchParams();
@@ -27,7 +28,7 @@ export default function ARViewerScreen() {
   const [hasError, setHasError] = useState(false);
 
   // Use the arImage from the artwork data, fallback to demo URL if not available
-  const arURL = arImage;
+  const arURL = arImage ? ARPermissionManager.buildOptimizedARURL(arImage) : arImage;
 
   const handleBack = () => {
     router.back();
@@ -104,17 +105,30 @@ export default function ARViewerScreen() {
             allowsFullscreenVideo={true}
             javaScriptEnabled={true}
             domStorageEnabled={true}
+            cacheEnabled={true}
             startInLoadingState={true}
             onLoadStart={handleLoadStart}
             onLoadEnd={handleLoadEnd}
             onError={handleError}
             onHttpError={handleError}
-            // Enable camera access for AR
+            // AR optimizations
             allowsAirPlayForMediaPlayback={false}
             allowsBackForwardNavigationGestures={false}
             // Security settings
             originWhitelist={["https://*"]}
             mixedContentMode="compatibility"
+            // Reduce console noise
+            injectedJavaScript={`
+              console.log('🎯 AR Viewer: WebView initialized with optimized settings');
+              // Suppress excessive 8th Wall logs
+              const originalLog = console.log;
+              console.log = function(...args) {
+                if (!args.join(' ').includes('8thwall') || args.join(' ').includes('error')) {
+                  originalLog.apply(console, args);
+                }
+              };
+              true;
+            `}
           />
         )}
         {/* Back Button */}
