@@ -80,7 +80,13 @@ export class ARPermissionManager {
   // Optimize AR URL with autoplay parameters
   buildOptimizedARURL(baseURL: string): string {
     try {
-      const url = new URL(baseURL);
+      // Add https:// if no protocol is present
+      let urlString = baseURL;
+      if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
+        urlString = 'https://' + urlString;
+      }
+
+      const url = new URL(urlString);
 
       // Add minimal parameters that are more likely to work
       url.searchParams.set('autoplay', 'true');
@@ -90,6 +96,10 @@ export class ARPermissionManager {
       return url.toString();
     } catch (error) {
       console.error('❌ Error building optimized AR URL, using original:', error);
+      // If URL parsing still fails, try adding https:// to original
+      if (!baseURL.startsWith('http://') && !baseURL.startsWith('https://')) {
+        return 'https://' + baseURL;
+      }
       return baseURL;
     }
   }
