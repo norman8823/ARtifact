@@ -45,18 +45,25 @@ export default function ExploreScreen() {
   });
 
   // Debounced search function
-  const debouncedSearch = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return (query: string) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          setSearchQuery(query);
-        }, 300);
-      };
-    })(),
-    []
-  );
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const debouncedSearch = useCallback((query: string) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      setSearchQuery(query);
+    }, 300);
+  }, []);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   // Initial load and filter changes
   useEffect(() => {
@@ -144,7 +151,11 @@ export default function ExploreScreen() {
                   setInputValue(text);
                   debouncedSearch(text);
                 }}
-                editable={false}
+                onSubmitEditing={Keyboard.dismiss}
+                returnKeyType="done"
+                autoCorrect={false}
+                autoCapitalize="none"
+                spellCheck={false}
               />
             </ThemedView>
           </ThemedView>
@@ -191,6 +202,9 @@ export default function ExploreScreen() {
                 autoCorrect={false}
                 autoCapitalize="none"
                 spellCheck={false}
+                keyboardType="default"
+                textContentType="none"
+                clearButtonMode="never"
               />
               {inputValue.length > 0 && (
                 <Pressable
