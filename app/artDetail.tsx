@@ -249,7 +249,9 @@ export default function ArtDetailScreen() {
   const allImages = [
     artwork.primaryImage,
     ...(artwork.additionalImages || []),
-  ].filter((img): img is string => !!img);
+  ]
+    .filter((img): img is string => !!img)
+    .filter((img, index, arr) => arr.indexOf(img) === index); // Remove duplicates
 
   const renderThumbnail = ({ item: imageUrl }: { item: string }) => (
     <Pressable
@@ -300,7 +302,7 @@ export default function ArtDetailScreen() {
             <FlatList
               data={allImages}
               renderItem={renderThumbnail}
-              keyExtractor={(item) => item}
+              keyExtractor={(item, index) => `${item}-${index}`}
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={[
