@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
 import {
   Dimensions,
@@ -25,6 +26,7 @@ interface ScanResultModalProps {
   onClose: () => void;
   success: boolean;
   artworkTitle?: string;
+  artworkId?: string;
   isNewVisit?: boolean;
   xpAwarded?: number;
   questsUpdated?: QuestUpdate[];
@@ -37,6 +39,7 @@ export function ScanResultModal({
   onClose,
   success,
   artworkTitle,
+  artworkId,
   isNewVisit,
   xpAwarded,
   questsUpdated = [],
@@ -119,8 +122,19 @@ export function ScanResultModal({
       )}
 
       {/* Action Button */}
-      <Pressable style={styles.actionButton} onPress={onClose}>
-        <ThemedText style={styles.actionButtonText}>Continue</ThemedText>
+      <Pressable
+        style={styles.actionButton}
+        onPress={() => {
+          onClose();
+          if (artworkId) {
+            router.push({
+              pathname: "/artDetail",
+              params: { id: artworkId }
+            });
+          }
+        }}
+      >
+        <ThemedText style={styles.actionButtonText}>View Artwork</ThemedText>
       </Pressable>
     </>
   );

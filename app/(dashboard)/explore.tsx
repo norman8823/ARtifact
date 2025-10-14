@@ -58,14 +58,33 @@ export default function ExploreScreen() {
     []
   );
 
-  // Initial load
+  // Initial load and filter changes
   useEffect(() => {
     refresh();
-  }, []);
+  }, [searchQuery, showIsScannableOnly, showAROnly]);
 
-  // Handle infinite scroll
+  // Auto-fetch more data when filters result in too few items
+  useEffect(() => {
+    const hasActiveFilters = showIsScannableOnly || showAROnly;
+    const needsMoreData = hasActiveFilters &&
+                          artworks.length < 15 &&
+                          pagination.hasNextPage &&
+                          !pagination.isFetchingMore &&
+                          !pagination.isLoading;
+
+    if (needsMoreData) {
+      console.log(`Auto-fetching more data. Current filtered results: ${artworks.length}`);
+      fetchNextPage();
+    }
+  }, [artworks.length, showIsScannableOnly, showAROnly, pagination.hasNextPage, pagination.isFetchingMore, pagination.isLoading, fetchNextPage]);
+
+  // Handle infinite scroll - need to check if we need more results for filtering
   const handleEndReached = () => {
-    if (pagination.hasNextPage && !pagination.isFetchingMore) {
+    // If we have filters active and few results, keep fetching until we have enough
+    const hasActiveFilters = showIsScannableOnly || showAROnly;
+    const shouldContinueFetching = hasActiveFilters && artworks.length < 20 && pagination.hasNextPage;
+
+    if ((pagination.hasNextPage && !pagination.isFetchingMore) || shouldContinueFetching) {
       fetchNextPage();
     }
   };
@@ -197,8 +216,10 @@ export default function ExploreScreen() {
               {/* Scannable Filter Checkbox */}
               <Pressable
                 style={styles.filterContainer}
-                onPress={() => setShowIsScannableOnly(!showIsScannableOnly)}
-                accessibilityLabel={`$${
+                onPress={() => {
+                  setShowIsScannableOnly(!showIsScannableOnly);
+                }}
+                accessibilityLabel={`${
                   showIsScannableOnly ? "Disable" : "Enable"
                 } Scannable only filter`}
               >
@@ -234,8 +255,10 @@ export default function ExploreScreen() {
               {/* AR Filter Checkbox */}
               <Pressable
                 style={styles.filterContainer}
-                onPress={() => setShowAROnly(!showAROnly)}
-                accessibilityLabel={`$${
+                onPress={() => {
+                  setShowAROnly(!showAROnly);
+                }}
+                accessibilityLabel={`${
                   showAROnly ? "Disable" : "Enable"
                 } AR only filter`}
               >

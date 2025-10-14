@@ -28,7 +28,11 @@ export default function ARViewerScreen() {
   const [hasError, setHasError] = useState(false);
 
   // Use the arImage from the artwork data, fallback to demo URL if not available
-  const arURL = arImage ? ARPermissionManager.buildOptimizedARURL(arImage) : arImage;
+  const arURL = arImage ? ARPermissionManager.buildOptimizedARURL(arImage) : null;
+
+  // Debug logging
+  console.log('🎯 AR Viewer - arImage:', arImage);
+  console.log('🎯 AR Viewer - final arURL:', arURL);
 
   const handleBack = () => {
     router.back();
@@ -74,7 +78,7 @@ export default function ARViewerScreen() {
           </ThemedView>
         )}
         {/* Error State */}
-        {hasError ? (
+        {hasError || !arURL ? (
           <ThemedView style={styles.errorContainer}>
             <FontAwesome
               name="exclamation-triangle"
@@ -85,8 +89,10 @@ export default function ARViewerScreen() {
               AR Experience Unavailable
             </ThemedText>
             <ThemedText style={styles.errorMessage}>
-              Unable to load the AR experience. Please check your internet
-              connection and try again.
+              {!arURL
+                ? "AR experience URL is missing or invalid."
+                : "Unable to load the AR experience. Please check your internet connection and try again."
+              }
             </ThemedText>
             <Pressable
               style={styles.retryButton}

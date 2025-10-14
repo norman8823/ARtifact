@@ -20,6 +20,7 @@ interface ScanResultState {
   visible: boolean;
   success: boolean;
   artworkTitle?: string;
+  artworkId?: string;
   isNewVisit?: boolean;
   xpAwarded?: number;
   questsUpdated?: {
@@ -124,6 +125,7 @@ export default function ScanScreen() {
             visible: true,
             success: true,
             artworkTitle: result.artworkTitle,
+            artworkId: recognizedArtworkId,
             isNewVisit: result.isNewVisit,
             xpAwarded: result.xpAwarded,
             questsUpdated: result.questsUpdated,
@@ -448,6 +450,7 @@ export default function ScanScreen() {
         onClose={closeModal}
         success={modalState.success}
         artworkTitle={modalState.artworkTitle}
+        artworkId={modalState.artworkId}
         isNewVisit={modalState.isNewVisit}
         xpAwarded={modalState.xpAwarded}
         questsUpdated={modalState.questsUpdated}
