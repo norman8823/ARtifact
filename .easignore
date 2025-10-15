@@ -63,5 +63,7 @@ amplifytools.xcconfig
 # Large directories not needed for build
 .git/
 seed/
+seed/**
 scripts/
+scripts/**
 android/build/
