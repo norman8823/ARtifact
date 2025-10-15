@@ -14,6 +14,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { configureAmplify } from "@/src/aws/config";
 import { AuthProvider } from "@/src/contexts/AuthContext";
 import { FavoritesProvider } from "@/src/contexts/FavoritesContext";
+import ARPrewarmManager from "@/src/components/ARPrewarmManager";
 import * as Sentry from "@sentry/react-native";
 
 Sentry.init({
@@ -131,6 +132,7 @@ export default Sentry.wrap(function RootLayout() {
     <ThemeProvider value={DefaultTheme}>
       <AuthProvider>
         <FavoritesProvider>
+          <ARPrewarmManager />
           <Stack
             screenOptions={{
               headerStyle: {

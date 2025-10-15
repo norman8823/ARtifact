@@ -11,7 +11,7 @@ export const UniversalColors = {
   lightGreen: "#f0fdf4",
   darkGreen: "#16a34a",
 
-  metRed: "#b60021",
+  metRed: "#E4012A",
   favoriteRed: "#ff4444",
 } as const;
 

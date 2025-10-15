@@ -7,6 +7,7 @@ import { type ArtFact, useArtFacts } from "@/src/hooks/useArtFacts";
 import { type Artwork, useArtwork } from "@/src/hooks/useArtwork";
 import { useFavorites } from "@/src/hooks/useFavorites";
 import { useGalleryMaps } from "@/src/hooks/useGalleryMaps";
+import { useVisited } from "@/src/hooks/useVisited";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router, Stack, useLocalSearchParams } from "expo-router";
@@ -65,13 +66,16 @@ export default function ArtDetailScreen() {
   } = useArtFacts();
   const { checkIfFavorited, toggleFavorite } = useFavorites();
   const { triggerRefresh } = useFavoritesContext();
+  const { checkIfArtworkVisited } = useVisited();
   const [artwork, setArtwork] = useState<Artwork | null>(null);
+  const [isVisited, setIsVisited] = useState(false);
   const [artFacts, setArtFacts] = useState<ArtFact[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   const [isGalleryModalVisible, setIsGalleryModalVisible] = useState(false);
+
   const [galleryMapURL, setGalleryMapURL] = useState<string | null>(null);
   const [isWebViewLoading, setIsWebViewLoading] = useState(true);
   const scale = useSharedValue(1);
@@ -114,6 +118,7 @@ export default function ArtDetailScreen() {
 
   const composed = Gesture.Simultaneous(pinchGesture, panGesture);
 
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: offsetX.value },
@@ -148,6 +153,10 @@ export default function ArtDetailScreen() {
           // Check if the artwork is favorited
           const favorite = await checkIfFavorited(id);
           setIsFavorited(!!favorite);
+
+          // Check if the artwork has been visited
+          const visitRecord = await checkIfArtworkVisited(id);
+          setIsVisited(!!visitRecord);
         }
 
         // Ensure facts match our ArtFact interface
@@ -165,7 +174,7 @@ export default function ArtDetailScreen() {
     };
 
     loadData();
-  }, [id, getArtworkById, getArtFactsByArtworkId, checkIfFavorited]);
+  }, [id, getArtworkById, getArtFactsByArtworkId, checkIfFavorited, checkIfArtworkVisited]);
 
   useEffect(() => {
     loadGalleryMaps();
@@ -175,12 +184,22 @@ export default function ArtDetailScreen() {
     if (isTogglingFavorite || !artwork) return;
 
     setIsTogglingFavorite(true);
+
+    // Optimistic UI update - immediately toggle the heart
+    const optimisticState = !isFavorited;
+    setIsFavorited(optimisticState);
+
     try {
       const newFavoritedState = await toggleFavorite(artwork.id);
-      setIsFavorited(newFavoritedState);
+      // Verify the optimistic update was correct
+      if (newFavoritedState !== optimisticState) {
+        setIsFavorited(newFavoritedState);
+      }
       triggerRefresh(); // Trigger refresh after successful toggle
     } catch (err) {
       console.error("Error toggling favorite:", err);
+      // Revert optimistic update on error
+      setIsFavorited(!optimisticState);
     } finally {
       setIsTogglingFavorite(false);
     }
@@ -230,7 +249,9 @@ export default function ArtDetailScreen() {
   const allImages = [
     artwork.primaryImage,
     ...(artwork.additionalImages || []),
-  ].filter((img): img is string => !!img);
+  ]
+    .filter((img): img is string => !!img)
+    .filter((img, index, arr) => arr.indexOf(img) === index); // Remove duplicates
 
   const renderThumbnail = ({ item: imageUrl }: { item: string }) => (
     <Pressable
@@ -281,7 +302,7 @@ export default function ArtDetailScreen() {
             <FlatList
               data={allImages}
               renderItem={renderThumbnail}
-              keyExtractor={(item) => item}
+              keyExtractor={(item, index) => `${item}-${index}`}
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={[
@@ -406,9 +427,9 @@ export default function ArtDetailScreen() {
         <ThemedView style={styles.infoContainer}>
           {/* Title and Favorite Button */}
           <ThemedView style={styles.titleRow}>
-            <ThemedView>
+            <ThemedView style={styles.titleSection}>
               <ThemedText type="title" style={styles.title}>
-                {id}. {artwork.title}
+                {artwork.title}
               </ThemedText>
               <ThemedText type="subtitle" style={styles.artist}>
                 {artwork.artistDisplayName || "Unknown Artist"}
@@ -417,17 +438,32 @@ export default function ArtDetailScreen() {
                 {artwork.objectDate}
               </ThemedText>
             </ThemedView>
-            <Pressable
-              style={styles.favoriteButton}
-              onPress={handleToggleFavorite}
-              disabled={isTogglingFavorite}
-            >
-              <FontAwesome
-                name={isFavorited ? "heart" : "heart-o"}
-                size={20}
-                color={isFavorited ? Colors.favoriteRed : Colors.darkMedGray}
-              />
-            </Pressable>
+            <ThemedView style={styles.rightSection}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.favoriteButton,
+                  pressed && !isTogglingFavorite && styles.favoriteButtonPressed
+                ]}
+                onPress={handleToggleFavorite}
+                disabled={isTogglingFavorite}
+              >
+                <FontAwesome
+                  name={isFavorited ? "heart" : "heart-o"}
+                  size={20}
+                  color={isFavorited ? Colors.favoriteRed : Colors.darkMedGray}
+                />
+              </Pressable>
+              {isVisited && (
+                <ThemedView style={styles.visitedBadge}>
+                  <FontAwesome
+                    name="check"
+                    size={12}
+                    color={Colors.darkGreen}
+                  />
+                  <ThemedText style={styles.visitedText}>Visited</ThemedText>
+                </ThemedView>
+              )}
+            </ThemedView>
           </ThemedView>
 
           {/* Scan Button - Only show if artwork is scannable */}
@@ -489,6 +525,12 @@ export default function ArtDetailScreen() {
                 </ThemedText>
               </ThemedView>
             )}
+            <ThemedView style={styles.detailRow}>
+              <ThemedText style={styles.detailLabel}>Object ID</ThemedText>
+              <ThemedText style={styles.detailValue}>
+                {artwork.id}
+              </ThemedText>
+            </ThemedView>
             {artwork.galleryNumber && (
               <ThemedView style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>
@@ -647,21 +689,39 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    paddingRight: 56,
+  },
+  titleSection: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  rightSection: {
+    alignItems: "center",
+    gap: 8,
   },
   title: {
     marginBottom: 4,
-    flex: 1,
   },
   artist: {
     color: Colors.darkMedGray,
     marginBottom: 2,
-    flex: 1,
   },
   period: {
     fontSize: 14,
     color: Colors.darkMedGray,
-    flex: 1,
+  },
+  visitedBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: Colors.lightGreen,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+  },
+  visitedText: {
+    fontSize: 12,
+    color: Colors.darkGreen,
+    fontWeight: "500",
   },
   favoriteButton: {
     width: 40,
@@ -670,10 +730,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightGray,
     alignItems: "center",
     justifyContent: "center",
-    position: "absolute",
-    right: 0,
-    top: 0,
     ...shadowStyle,
+  },
+  favoriteButtonPressed: {
+    shadowOpacity: 0,
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
   scanButton: {
     width: "100%",

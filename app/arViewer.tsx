@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { WebView } from "react-native-webview";
+import ARPermissionManager from "@/src/utils/ARPermissionManager";
 
 export default function ARViewerScreen() {
   const params = useLocalSearchParams();
@@ -27,7 +28,11 @@ export default function ARViewerScreen() {
   const [hasError, setHasError] = useState(false);
 
   // Use the arImage from the artwork data, fallback to demo URL if not available
-  const arURL = arImage;
+  const arURL = arImage ? ARPermissionManager.buildOptimizedARURL(arImage) : null;
+
+  // Debug logging
+  console.log('🎯 AR Viewer - arImage:', arImage);
+  console.log('🎯 AR Viewer - final arURL:', arURL);
 
   const handleBack = () => {
     router.back();
@@ -73,7 +78,7 @@ export default function ARViewerScreen() {
           </ThemedView>
         )}
         {/* Error State */}
-        {hasError ? (
+        {hasError || !arURL ? (
           <ThemedView style={styles.errorContainer}>
             <FontAwesome
               name="exclamation-triangle"
@@ -84,8 +89,10 @@ export default function ARViewerScreen() {
               AR Experience Unavailable
             </ThemedText>
             <ThemedText style={styles.errorMessage}>
-              Unable to load the AR experience. Please check your internet
-              connection and try again.
+              {!arURL
+                ? "AR experience URL is missing or invalid."
+                : "Unable to load the AR experience. Please check your internet connection and try again."
+              }
             </ThemedText>
             <Pressable
               style={styles.retryButton}
@@ -104,17 +111,30 @@ export default function ARViewerScreen() {
             allowsFullscreenVideo={true}
             javaScriptEnabled={true}
             domStorageEnabled={true}
+            cacheEnabled={true}
             startInLoadingState={true}
             onLoadStart={handleLoadStart}
             onLoadEnd={handleLoadEnd}
             onError={handleError}
             onHttpError={handleError}
-            // Enable camera access for AR
+            // AR optimizations
             allowsAirPlayForMediaPlayback={false}
             allowsBackForwardNavigationGestures={false}
             // Security settings
             originWhitelist={["https://*"]}
             mixedContentMode="compatibility"
+            // Reduce console noise
+            injectedJavaScript={`
+              console.log('🎯 AR Viewer: WebView initialized with optimized settings');
+              // Suppress excessive 8th Wall logs
+              const originalLog = console.log;
+              console.log = function(...args) {
+                if (!args.join(' ').includes('8thwall') || args.join(' ').includes('error')) {
+                  originalLog.apply(console, args);
+                }
+              };
+              true;
+            `}
           />
         )}
         {/* Back Button */}

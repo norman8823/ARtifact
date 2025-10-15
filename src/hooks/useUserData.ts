@@ -1,4 +1,4 @@
-import { createUser } from "@/src/graphql/mutations";
+import { createUser, updateUser } from "@/src/graphql/mutations";
 import { listUsers } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 import { getCurrentUser } from "aws-amplify/auth";
@@ -158,6 +158,7 @@ export function useUserData() {
         const newUser = await createUserInDB({
           username: preferredUsername || userEmail || userId,
           email: userEmail || userId,
+          profileImage: "Felix", // Default avatar for new users
         });
 
         console.log("Created new user in DB:", newUser);
@@ -170,10 +171,34 @@ export function useUserData() {
     [createUserInDB, getUserByOwnerFromDB]
   );
 
+  const updateUserInDB = useCallback(
+    async (userId: string, updates: Partial<Omit<UserData, "id" | "owner">>) => {
+      try {
+        const result = await getClient().graphql({
+          query: updateUser,
+          variables: {
+            input: {
+              id: userId,
+              ...updates,
+            },
+          },
+        });
+        const updatedUser = result.data.updateUser;
+        setCurrentUser(updatedUser);
+        return updatedUser;
+      } catch (error) {
+        console.error("Error updating user in DB:", error);
+        throw error;
+      }
+    },
+    []
+  );
+
   return {
     currentUser,
     createUserInDB,
     getUserByOwnerFromDB,
     ensureUserInDB,
+    updateUserInDB,
   };
 }

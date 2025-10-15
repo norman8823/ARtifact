@@ -50,18 +50,19 @@ export default function LandingScreen() {
 
   return (
     <>
-      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFEF9" }}>
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
           {/* Header */}
           <ThemedView style={styles.header}>
-            <ThemedView style={styles.titleRow}>
-              <ThemedText style={[{ color: Colors.metRed }, styles.appTitle]}>
-                AR
-              </ThemedText>
-              <ThemedText style={styles.appTitle}>tifact</ThemedText>
+            <ThemedView style={styles.logoContainer}>
+              <Image
+                source={require("@/assets/images/Color logo - no background.png")}
+                style={styles.logo}
+                contentFit="contain"
+              />
             </ThemedView>
           </ThemedView>
 
@@ -71,7 +72,7 @@ export default function LandingScreen() {
             <ThemedView style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: "https://storage.googleapis.com/uxpilot-auth.appspot.com/f0a34ddb90-42e312c324d1f17d7705.png",
+                  uri: "/Users/norman/main/ARtifact/assets/images/RuthSpinning.gif",
                 }}
                 style={styles.backgroundImage}
                 contentFit="cover"
@@ -91,30 +92,11 @@ export default function LandingScreen() {
 
             {/* Login Options */}
             <ThemedView style={styles.loginOptions}>
-              {/* <Pressable
-                style={styles.loginButton}
-                onPress={() => router.push("/phoneLogin")}
-              >
-                <ThemedView style={styles.buttonContent}>
-                  <FontAwesome
-                    name="phone"
-                    size={20}
-                    color={Colors.darkMedGray}
-                    style={styles.buttonIcon}
-                  />
-                  <ThemedText style={styles.buttonText}>
-                    Continue with phone
-                  </ThemedText>
-                </ThemedView>
-                <FontAwesome
-                  name="chevron-right"
-                  size={16}
-                  color={Colors.darkMedGray}
-                />
-              </Pressable> */}
-
               <Pressable
-                style={styles.loginButton}
+                style={({ pressed }) => [
+                  styles.loginButton,
+                  pressed && styles.loginButtonPressed
+                ]}
                 onPress={() => router.push("/emailLogin")}
               >
                 <ThemedView style={styles.buttonContent}>
@@ -189,7 +171,7 @@ export default function LandingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: "#FFFEF9",
   },
   contentContainer: {
     flexGrow: 1,
@@ -197,32 +179,29 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
   },
-  titleRow: {
-    flexDirection: "row",
+  logoContainer: {
+    alignItems: "center",
     justifyContent: "center",
+    paddingTop: 12,
+    marginBottom: 24,
   },
-  appTitle: {
-    fontSize: 48,
-    paddingTop: 48,
-    marginBottom: 36,
-    fontFamily: "TiltPrism",
-    letterSpacing: 5,
-    textShadowColor: "rgba(0,0,0,.5)",
-    textShadowOffset: { width: 0, height: 4 },
-    textShadowRadius: 4,
+  logo: {
+    width: "100%",
+    height: 80,
+    maxWidth: 400,
   },
   mainContent: {
     flex: 1,
     paddingHorizontal: 20,
   },
   imageContainer: {
-    marginBottom: 36,
-    borderRadius: 12,
-    overflow: "hidden",
+    marginBottom: 24,
+    alignItems: "center",
+    justifyContent: "center",
   },
   backgroundImage: {
-    width: "100%",
-    height: 192,
+    width: "85%",
+    aspectRatio: 1,
   },
   welcomeSection: {
     marginBottom: 36,
@@ -245,6 +224,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     ...shadowStyle,
+  },
+  loginButtonPressed: {
+    shadowOpacity: 0,
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
   buttonContent: {
     backgroundColor: Colors.medLightGray,

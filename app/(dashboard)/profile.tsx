@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useFavoriteArtworks } from "@/src/hooks/useFavoriteArtworks";
@@ -28,7 +29,8 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function ProfileScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { signOut, isLoading } = useAuth();
+  const { signOut: authHookSignOut, isLoading } = useAuth();
+  const { isAuthReady, isAuthenticated, signOut: contextSignOut } = useAuthContext();
   const { currentUser, ensureUserInDB } = useUserData();
   const { getFavoriteCount } = useFavoriteArtworks();
   const { getVisitedArtworks } = useVisited();
@@ -49,6 +51,12 @@ export default function ProfileScreen() {
 
   // Load user data and stats
   const loadData = useCallback(async () => {
+    // Don't load data if not authenticated
+    if (!isAuthReady || !isAuthenticated) {
+      console.log("⚠️ Profile: Skipping data load - user not authenticated");
+      return;
+    }
+
     try {
       await ensureUserInDB();
 
@@ -104,6 +112,8 @@ export default function ProfileScreen() {
       console.error("Error loading data:", error);
     }
   }, [
+    isAuthReady,
+    isAuthenticated,
     ensureUserInDB,
     getFavoriteCount,
     getVisitedArtworks,
@@ -112,26 +122,39 @@ export default function ProfileScreen() {
     getAllRanks,
   ]);
 
-  // Load data when component mounts or favorites change
+  // Redirect to login if not authenticated (check this FIRST)
   useEffect(() => {
-    loadData();
-  }, [loadData, lastRefreshTime]);
+    console.log("🔍 Profile: Auth state check - isAuthReady:", isAuthReady, "isAuthenticated:", isAuthenticated);
+    if (isAuthReady && !isAuthenticated) {
+      console.log("🚪 User not authenticated in Profile, redirecting to login");
+      router.replace("/");
+    }
+  }, [isAuthReady, isAuthenticated]);
+
+  // Load data when component mounts or favorites change (only if authenticated)
+  useEffect(() => {
+    if (isAuthReady && isAuthenticated) {
+      loadData();
+    }
+  }, [loadData, lastRefreshTime, isAuthReady, isAuthenticated]);
 
   // Refresh data when screen comes into focus (e.g., after scanning)
   useFocusEffect(
     useCallback(() => {
-      console.log("🔄 Profile screen focused - refreshing data");
-      loadData();
-    }, [loadData])
+      if (isAuthReady && isAuthenticated) {
+        console.log("🔄 Profile screen focused - refreshing data");
+        loadData();
+      }
+    }, [loadData, isAuthReady, isAuthenticated])
   );
 
   const handleLogout = async () => {
     console.log("Logout button pressed");
     try {
-      console.log("Calling sign out...");
-      await signOut();
-      console.log("Sign out completed, redirecting to login screen...");
-      router.replace("/");
+      console.log("Calling AuthContext sign out...");
+      await contextSignOut();
+      console.log("Sign out completed");
+      // Don't manually redirect - the useEffect will handle it when isAuthenticated becomes false
     } catch (error: any) {
       console.error("Logout error in profile screen:", error);
       Alert.alert(
@@ -140,6 +163,15 @@ export default function ProfileScreen() {
       );
     }
   };
+
+  // Show loading state while auth is initializing or during logout
+  if (!isAuthReady || (isAuthReady && !isAuthenticated)) {
+    return (
+      <SafeAreaView style={[{ flex: 1, backgroundColor: Colors.lightGray }, { justifyContent: "center", alignItems: "center" }]}>
+        <ThemedText>Loading...</ThemedText>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <>
@@ -166,7 +198,7 @@ export default function ProfileScreen() {
           <ThemedView style={styles.userInfo}>
             <Image
               source={{
-                uri: "https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=789",
+                uri: `https://api.dicebear.com/9.x/lorelei-neutral/svg?seed=${currentUser?.profileImage || "Felix"}`,
               }}
               style={styles.avatar}
             />
@@ -243,7 +275,11 @@ export default function ProfileScreen() {
               </ThemedView>
               <ThemedView style={styles.progressBarBg}>
                 <ThemedView
-                  style={[styles.progressBarFill, { width: `${xpProgress}%` }]}
+                  style={[
+                    styles.progressBarFill,
+                    { width: nextRank ? `${xpProgress}%` : '100%' },
+                    !nextRank && styles.progressBarMaxRank
+                  ]}
                 />
               </ThemedView>
               <ThemedText style={styles.xpNeeded}>
@@ -268,13 +304,18 @@ export default function ProfileScreen() {
             </ThemedView> */}
 
             {/* Logout Button */}
-            <ThemedView style={styles.logoutButtonWrapper}>
-              <Pressable onPress={handleLogout} disabled={isLoading}>
-                <ThemedText style={styles.logoutButtonText}>
-                  {isLoading ? "Logging out..." : "Logout"}
-                </ThemedText>
-              </Pressable>
-            </ThemedView>
+            <Pressable
+              style={({ pressed }) => [
+                styles.logoutButtonWrapper,
+                pressed && styles.logoutButtonPressed
+              ]}
+              onPress={handleLogout}
+              disabled={isLoading}
+            >
+              <ThemedText style={styles.logoutButtonText}>
+                {isLoading ? "Logging out..." : "Logout"}
+              </ThemedText>
+            </Pressable>
           </ThemedView>
 
           {/* Modal */}
@@ -506,6 +547,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightYellow,
     borderRadius: 4,
   },
+  progressBarMaxRank: {
+    backgroundColor: Colors.lightGreen,
+  },
   xpNeeded: {
     fontSize: 14,
     color: Colors.darkMedGray,
@@ -539,6 +583,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     ...shadowStyle,
+  },
+  logoutButtonPressed: {
+    shadowOpacity: 0,
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
   logoutButtonText: {
     fontSize: 14,

@@ -16,7 +16,6 @@ export interface UseAuthReturn {
   signUpWithEmail: (
     email: string,
     password: string,
-    phoneNumber: string,
     username: string
   ) => Promise<{ isVerificationRequired: boolean }>;
   confirmEmailSignUp: (
@@ -71,7 +70,6 @@ export function useAuth(): UseAuthReturn {
     async (
       email: string,
       password: string,
-      phoneNumber: string,
       username: string
     ) => {
       setIsLoading(true);
@@ -83,17 +81,12 @@ export function useAuth(): UseAuthReturn {
         setTempPassword(password);
         setTempUsername(username);
 
-        const formattedPhoneNumber = phoneNumber.startsWith("+")
-          ? phoneNumber
-          : `+${phoneNumber}`;
-
         const signUpResult = await signUp({
           username: email,
           password,
           options: {
             userAttributes: {
               email,
-              phone_number: formattedPhoneNumber,
             },
           },
         });
@@ -150,6 +143,32 @@ export function useAuth(): UseAuthReturn {
 
         return signInResult;
       } catch (err: any) {
+        // Handle case where there's already a signed-in user
+        if (err.name === "UserAlreadyAuthenticatedException") {
+          console.log("User already authenticated, signing out first...");
+          try {
+            await signOut();
+            console.log("Previous session cleared, retrying sign in...");
+
+            // Retry the sign in after clearing the previous session
+            const retrySignInResult = await signIn({
+              username: email,
+              password,
+              options: {
+                authFlowType: "USER_PASSWORD_AUTH",
+              },
+            });
+
+            if (retrySignInResult.isSignedIn) {
+              await ensureUserInDB(tempUsername || undefined, email);
+            }
+
+            return retrySignInResult;
+          } catch (retryErr: any) {
+            return handleError(retryErr, "signInWithEmail_retry");
+          }
+        }
+
         return handleError(err, "signInWithEmail");
       } finally {
         setIsLoading(false);

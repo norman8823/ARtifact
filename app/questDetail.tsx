@@ -227,7 +227,7 @@ export default function QuestDetailScreen() {
                   style={styles.checkIcon}
                 />
                 <ThemedText style={styles.progressText}>
-                  {progress.current}/{progress.total} artworks discovered
+                  {progress.current}/{progress.total} artworks visited
                 </ThemedText>
               </ThemedView>
               <ThemedView

@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useAuth } from "@/src/hooks/useAuth";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Sentry from "@sentry/react-native";
@@ -20,7 +21,6 @@ import {
 export default function EmailLoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
@@ -36,6 +36,7 @@ export default function EmailLoginScreen() {
     getStoredPassword,
     clearTempCredentials,
   } = useAuth();
+  const { refreshAuth } = useAuthContext();
 
   const isValidEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -45,10 +46,6 @@ export default function EmailLoginScreen() {
     return password.length >= 8;
   };
 
-  const isValidPhoneNumber = (phone: string) => {
-    // Basic phone number validation - can be made more robust
-    return /^\+?[1-9]\d{1,14}$/.test(phone);
-  };
 
   const isValidUsername = (username: string) => {
     // Only allow numbers and English letters, 3-20 characters
@@ -70,6 +67,8 @@ export default function EmailLoginScreen() {
           clearTempCredentials();
 
           if (signInResult.isSignedIn) {
+            // Refresh auth context to update authentication state
+            await refreshAuth();
             router.replace("/home");
           }
         }
@@ -77,13 +76,6 @@ export default function EmailLoginScreen() {
       }
 
       if (isSignUp) {
-        if (!isValidPhoneNumber(phoneNumber)) {
-          Alert.alert(
-            "Invalid Phone Number",
-            "Please enter a valid phone number with country code (e.g., +1234567890)"
-          );
-          return;
-        }
         if (!isValidUsername(username)) {
           Alert.alert(
             "Invalid Username",
@@ -95,7 +87,6 @@ export default function EmailLoginScreen() {
         const { isVerificationRequired } = await signUpWithEmail(
           email,
           password,
-          phoneNumber,
           username
         );
         if (isVerificationRequired) {
@@ -104,6 +95,8 @@ export default function EmailLoginScreen() {
       } else {
         const signInResult = await signInWithEmail(email, password);
         if (signInResult.isSignedIn) {
+          // Refresh auth context to update authentication state
+          await refreshAuth();
           router.replace("/home");
         }
       }
@@ -123,15 +116,11 @@ export default function EmailLoginScreen() {
             email,
             hasPassword: !!password,
             hasUsername: !!username,
-            hasPhoneNumber: !!phoneNumber,
             hasVerificationCode: !!verificationCode,
           },
           validationState: {
             isValidEmail: isValidEmail(email),
             isValidPassword: isValidPassword(password),
-            isValidPhoneNumber: phoneNumber
-              ? isValidPhoneNumber(phoneNumber)
-              : null,
             isValidUsername: username ? isValidUsername(username) : null,
           },
         },
@@ -243,23 +232,6 @@ export default function EmailLoginScreen() {
                         </ThemedView>
                       </ThemedView>
 
-                      <ThemedView style={styles.emailInputContainer}>
-                        <ThemedView style={styles.emailInputWrapper}>
-                          <FontAwesome
-                            name="phone"
-                            size={20}
-                            color={Colors.darkMedGray}
-                            style={styles.emailIcon}
-                          />
-                          <TextInput
-                            style={styles.emailInput}
-                            placeholder="Phone number (e.g., +1234567890)"
-                            keyboardType="phone-pad"
-                            value={phoneNumber}
-                            onChangeText={setPhoneNumber}
-                          />
-                        </ThemedView>
-                      </ThemedView>
                     </>
                   )}
 
@@ -304,27 +276,22 @@ export default function EmailLoginScreen() {
               )}
 
               <Pressable
-                style={[
+                style={({ pressed }) => [
                   styles.sendCodeButton,
                   (!email ||
                     !isValidEmail(email) ||
                     (!needsVerification && !isValidPassword(password)) ||
                     (isSignUp &&
                       !needsVerification &&
-                      !isValidPhoneNumber(phoneNumber)) ||
-                    (isSignUp &&
-                      !needsVerification &&
                       !isValidUsername(username))) &&
                     styles.sendCodeButtonDisabled,
+                  pressed && !isLoading && styles.sendCodeButtonPressed,
                 ]}
                 disabled={
                   isLoading ||
                   !email ||
                   !isValidEmail(email) ||
                   (!needsVerification && !isValidPassword(password)) ||
-                  (isSignUp &&
-                    !needsVerification &&
-                    !isValidPhoneNumber(phoneNumber)) ||
                   (isSignUp && !needsVerification && !isValidUsername(username))
                 }
                 onPress={handleSubmit}
@@ -348,7 +315,6 @@ export default function EmailLoginScreen() {
                   onPress={() => {
                     setIsSignUp(!isSignUp);
                     setUsername("");
-                    setPhoneNumber("");
                   }}
                 >
                   <ThemedText
@@ -449,6 +415,11 @@ const styles = StyleSheet.create({
   },
   sendCodeButtonDisabled: {
     backgroundColor: Colors.medGray,
+  },
+  sendCodeButtonPressed: {
+    shadowOpacity: 0,
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
   sendCodeButtonText: {
     color: Colors.lightGray,

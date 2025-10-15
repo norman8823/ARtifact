@@ -37,7 +37,7 @@ export default function ExploreScreen() {
     refresh,
     shouldPrefetch
   } = useInfiniteArtworks({
-    limit: 30,
+    limit: 60,
     prefetchThreshold: 3,
     searchQuery,
     showIsScannableOnly,
@@ -45,27 +45,53 @@ export default function ExploreScreen() {
   });
 
   // Debounced search function
-  const debouncedSearch = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return (query: string) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          setSearchQuery(query);
-        }, 300);
-      };
-    })(),
-    []
-  );
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Initial load
-  useEffect(() => {
-    refresh();
+  const debouncedSearch = useCallback((query: string) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      setSearchQuery(query);
+    }, 300);
   }, []);
 
-  // Handle infinite scroll
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Initial load and filter changes
+  useEffect(() => {
+    refresh();
+  }, [searchQuery, showIsScannableOnly, showAROnly]);
+
+  // Auto-fetch more data when filters result in too few items
+  useEffect(() => {
+    const hasActiveFilters = showIsScannableOnly || showAROnly;
+    const needsMoreData = hasActiveFilters &&
+                          artworks.length < 15 &&
+                          pagination.hasNextPage &&
+                          !pagination.isFetchingMore &&
+                          !pagination.isLoading;
+
+    if (needsMoreData) {
+      console.log(`Auto-fetching more data. Current filtered results: ${artworks.length}`);
+      fetchNextPage();
+    }
+  }, [artworks.length, showIsScannableOnly, showAROnly, pagination.hasNextPage, pagination.isFetchingMore, pagination.isLoading, fetchNextPage]);
+
+  // Handle infinite scroll - need to check if we need more results for filtering
   const handleEndReached = () => {
-    if (pagination.hasNextPage && !pagination.isFetchingMore) {
+    // If we have filters active and few results, keep fetching until we have enough
+    const hasActiveFilters = showIsScannableOnly || showAROnly;
+    const shouldContinueFetching = hasActiveFilters && artworks.length < 20 && pagination.hasNextPage;
+
+    if ((pagination.hasNextPage && !pagination.isFetchingMore) || shouldContinueFetching) {
       fetchNextPage();
     }
   };
@@ -125,7 +151,11 @@ export default function ExploreScreen() {
                   setInputValue(text);
                   debouncedSearch(text);
                 }}
-                editable={false}
+                onSubmitEditing={Keyboard.dismiss}
+                returnKeyType="done"
+                autoCorrect={false}
+                autoCapitalize="none"
+                spellCheck={false}
               />
             </ThemedView>
           </ThemedView>
@@ -172,6 +202,9 @@ export default function ExploreScreen() {
                 autoCorrect={false}
                 autoCapitalize="none"
                 spellCheck={false}
+                keyboardType="default"
+                textContentType="none"
+                clearButtonMode="never"
               />
               {inputValue.length > 0 && (
                 <Pressable
@@ -197,8 +230,10 @@ export default function ExploreScreen() {
               {/* Scannable Filter Checkbox */}
               <Pressable
                 style={styles.filterContainer}
-                onPress={() => setShowIsScannableOnly(!showIsScannableOnly)}
-                accessibilityLabel={`$${
+                onPress={() => {
+                  setShowIsScannableOnly(!showIsScannableOnly);
+                }}
+                accessibilityLabel={`${
                   showIsScannableOnly ? "Disable" : "Enable"
                 } Scannable only filter`}
               >
@@ -234,8 +269,10 @@ export default function ExploreScreen() {
               {/* AR Filter Checkbox */}
               <Pressable
                 style={styles.filterContainer}
-                onPress={() => setShowAROnly(!showAROnly)}
-                accessibilityLabel={`$${
+                onPress={() => {
+                  setShowAROnly(!showAROnly);
+                }}
+                accessibilityLabel={`${
                   showAROnly ? "Disable" : "Enable"
                 } AR only filter`}
               >
@@ -262,7 +299,7 @@ export default function ExploreScreen() {
                         color={Colors.darkMedGray}
                         style={styles.filterIcon}
                       />
-                      <ThemedText style={styles.filterLabel}>AR</ThemedText>
+                      <ThemedText style={[styles.filterLabel, { color: Colors.metRed }]}>AR</ThemedText>
                     </ThemedView>
                   </ThemedView>
                 </ThemedView>

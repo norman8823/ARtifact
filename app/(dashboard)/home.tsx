@@ -23,7 +23,7 @@ import Carousel from "react-native-reanimated-carousel";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function HomeScreen() {
-  const { isAuthReady } = useAuthContext();
+  const { isAuthReady, isAuthenticated } = useAuthContext();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
@@ -49,6 +49,14 @@ export default function HomeScreen() {
     isLoading: isLoadingFacts,
     error: factsError,
   } = useDidYouKnow();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (isAuthReady && !isAuthenticated) {
+      console.log("User not authenticated, redirecting to login");
+      router.replace("/");
+    }
+  }, [isAuthReady, isAuthenticated]);
 
   // Set current date on mount
   useEffect(() => {
@@ -239,10 +247,11 @@ export default function HomeScreen() {
         >
           {/* Header */}
           <ThemedView style={styles.header}>
-            <ThemedText style={[{ color: Colors.metRed }, styles.headerTitle]}>
-              AR
-            </ThemedText>
-            <ThemedText style={styles.headerTitle}>tifact</ThemedText>
+            <Image
+              source={require("@/assets/images/Color logo - no background.png")}
+              style={styles.headerLogo}
+              contentFit="contain"
+            />
           </ThemedView>
 
           {/* Featured Artworks */}
@@ -384,18 +393,16 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   header: {
-    flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
+    paddingTop: 24,
+    marginBottom: 12,
   },
-  headerTitle: {
-    fontSize: 48,
-    paddingTop: 48,
-    fontFamily: "TiltPrism",
-    letterSpacing: 5,
-    textShadowColor: "rgba(0,0,0,.5)",
-    textShadowOffset: { width: 0, height: 4 },
-    textShadowRadius: 4,
+  headerLogo: {
+    width: "100%",
+    height: 80,
+    maxWidth: 400,
   },
   section: {
     marginTop: 36,
