@@ -77,7 +77,7 @@ export class ARPermissionManager {
     return this.permissionStatus;
   }
 
-  // Optimize AR URL with autoplay parameters
+  // Optimize AR URL with autoplay and permission parameters
   buildOptimizedARURL(baseURL: string): string {
     try {
       // Add https:// if no protocol is present
@@ -88,9 +88,16 @@ export class ARPermissionManager {
 
       const url = new URL(urlString);
 
-      // Add minimal parameters that are more likely to work
+      // Add parameters that help with permission handling and autoplay
       url.searchParams.set('autoplay', 'true');
       url.searchParams.set('muted', 'false');
+
+      // Add parameters that might help with camera permission handling
+      url.searchParams.set('allowCamera', 'true');
+      url.searchParams.set('permissions', 'camera');
+
+      // Add timestamp to prevent caching issues
+      url.searchParams.set('t', Date.now().toString());
 
       console.log('🎯 Optimized AR URL:', url.toString());
       return url.toString();

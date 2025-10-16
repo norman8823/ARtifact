@@ -106,7 +106,7 @@ export function ScanResultModal({
               </ThemedView>
               <ThemedView style={styles.questProgress}>
                 <ThemedText style={styles.questProgressText}>
-                  {quest.progress} artworks discovered
+                  {quest.progress} artworks visited
                 </ThemedText>
                 {quest.isCompleted && (
                   <ThemedView style={styles.completedBadge}>
@@ -134,7 +134,7 @@ export function ScanResultModal({
           }
         }}
       >
-        <ThemedText style={styles.actionButtonText}>View Artwork</ThemedText>
+        <ThemedText style={styles.actionButtonText}>Back to Artwork</ThemedText>
       </Pressable>
     </>
   );
@@ -165,7 +165,7 @@ export function ScanResultModal({
         <ThemedText style={styles.expectedTitle}>
           {expectedArtworkTitle}
         </ThemedText>
-        . Make sure you're scanning the correct artwork to get credit!
+        . Make sure you're scanning the correct artwork!
       </ThemedText>
 
       {/* Action Button */}
