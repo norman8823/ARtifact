@@ -203,6 +203,9 @@ export default function QuestDetailScreen() {
                   styles.progressFill,
                   {
                     width: `${(progress.current / progress.total) * 100}%`,
+                    backgroundColor: userQuest?.isCompleted
+                      ? Colors.darkGreen
+                      : Colors.lightYellow,
                   },
                 ]}
               />

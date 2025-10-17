@@ -1,10 +1,16 @@
-import { type ListQuestsQuery } from "@/src/API";
-import { listQuests } from "@/src/graphql/queries";
+import { type ListQuestsQuery, type GetArtworkQuery } from "@/src/API";
+import { listQuests, getArtwork } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
+
+export interface QuestArtworkThumbnail {
+  id: string;
+  title: string;
+  primaryImageSmall: string | null;
+}
 
 export interface Quest {
   id: string;
@@ -13,6 +19,7 @@ export interface Quest {
   xpReward: number;
   icon: string | null;
   requiredArtworks: string[] | null;
+  artworkThumbnails?: QuestArtworkThumbnail[];
   isPremium: boolean | null;
   galleryMap: string | null;
 }
@@ -20,20 +27,106 @@ export interface Quest {
 export function useQuests() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  // Removed cached quests to force fresh data fetches
+
+  // Helper function to fetch artwork thumbnails for a quest
+  const fetchArtworkThumbnails = useCallback(async (artworkIds: string[]): Promise<QuestArtworkThumbnail[]> => {
+    if (!artworkIds || artworkIds.length === 0) return [];
+
+    console.log(`🎨 Fetching artwork thumbnails for IDs:`, artworkIds);
+
+    try {
+      // Fetch all artworks in parallel
+      const artworkPromises = artworkIds.map(async (id) => {
+        try {
+          const result = await getClient().graphql<GetArtworkQuery>({
+            query: getArtwork,
+            variables: { id },
+            authMode: "userPool" as any,
+          });
+
+          if ("errors" in result && result.errors) {
+            console.warn(`Error fetching artwork ${id}:`, result.errors);
+            return null;
+          }
+
+          if (!("data" in result) || !result.data?.getArtwork) {
+            console.warn(`No data for artwork ${id}`);
+            return null;
+          }
+
+          const artwork = result.data.getArtwork;
+          const thumbnailData = {
+            id: artwork.id,
+            title: artwork.title || "",
+            primaryImageSmall: artwork.primaryImageSmall || null,
+          };
+
+          // Debug log for specific problematic quests - simplified
+          if (["247117", "252958", "246701", "247000", "255973", "204758", "11952", "437372", "437261", "459016", "459062", "459072"].includes(artwork.id)) {
+            console.log(`🖼️ Artwork ${artwork.id}: ${artwork.title} - ${artwork.primaryImageSmall ? 'Has image' : 'No image'}`);
+          }
+
+          return thumbnailData;
+        } catch (err) {
+          console.warn(`Failed to fetch artwork ${id}:`, err);
+          return null;
+        }
+      });
+
+      const artworks = await Promise.all(artworkPromises);
+      const validArtworks = artworks.filter((artwork): artwork is QuestArtworkThumbnail => artwork !== null);
+      console.log(`🖼️ Successfully fetched ${validArtworks.length}/${artworkIds.length} artwork thumbnails`);
+      return validArtworks;
+    } catch (error) {
+      console.error("Error fetching artwork thumbnails:", error);
+      return [];
+    }
+  }, []);
   const getAllQuests = useCallback(async () => {
+    // Force fresh data with timestamp to prevent caching
+    const timestamp = Date.now();
+    console.log(`🔄 Force refreshing quest data from database... [${timestamp}]`);
+
     setIsLoading(true);
     setError(null);
     try {
       console.log("Fetching all quests as authenticated user...");
-      const result = await getClient().graphql<ListQuestsQuery>({
-        query: listQuests,
-        variables: {
-          limit: 1000, // Set a high limit to get all quests
-        },
+
+      // Use a completely fresh query to bypass AppSync caching
+      const timestampedQuery = `
+        query GetFreshQuests {
+          listQuests(limit: 1000) {
+            items {
+              id
+              title
+              description
+              icon
+              xpReward
+              requiredArtworks
+              isPremium
+              galleryMap
+              createdAt
+              updatedAt
+              __typename
+            }
+            nextToken
+            __typename
+          }
+        }
+      `;
+
+      console.log("🔄 Using custom query to bypass AppSync cache");
+
+      // Create fresh client instance with custom query
+      const freshClient = generateClient();
+      const result = await freshClient.graphql({
+        query: timestampedQuery,
         authMode: "userPool" as any,
       });
 
-      // console.log("Raw API Response:", JSON.stringify(result, null, 2));
+      // Debug: Simple API response summary
+      console.log(`✅ Fetched ${result.data?.listQuests?.items?.length || 0} quests from GraphQL`);
 
       // Type guard for GraphQL errors
       if ("errors" in result && result.errors) {
@@ -50,7 +143,7 @@ export function useQuests() {
       }
 
       // Map the DynamoDB items to our simplified Quest interface
-      const quests = result.data.listQuests.items
+      const basicQuests = result.data.listQuests.items
         .filter((item: any): item is NonNullable<typeof item> => item !== null)
         .map(
           (
@@ -67,8 +160,50 @@ export function useQuests() {
           })
         );
 
-      console.log("Fetched quests:", quests.length);
-      return quests;
+      console.log("Fetched basic quests:", basicQuests.length);
+
+      // Debug: Log the first quest's description to verify it's being fetched
+      if (basicQuests.length > 0) {
+        console.log("🔍 Debug - First quest description:", basicQuests[0].description);
+      }
+
+      // Fetch artwork thumbnails for each quest
+      const questsWithThumbnails = await Promise.all(
+        basicQuests.map(async (quest) => {
+          if (quest.requiredArtworks && quest.requiredArtworks.length > 0) {
+            const artworkThumbnails = await fetchArtworkThumbnails(quest.requiredArtworks);
+            return {
+              ...quest,
+              artworkThumbnails,
+            };
+          }
+          return quest;
+        })
+      );
+
+      console.log("✅ Fetched quests with thumbnails:", questsWithThumbnails.length);
+
+      // Debug thumbnail fetching
+      questsWithThumbnails.forEach(quest => {
+        console.log(`📋 Quest "${quest.title}": ${quest.artworkThumbnails?.length || 0} thumbnails`);
+      });
+
+      // Specific debug for missing quests
+      const missingQuests = ["Bronze Legacy", "Marble Legends", "Renaissance Masterpieces"];
+      missingQuests.forEach(questTitle => {
+        const found = questsWithThumbnails.find(q => q.title === questTitle);
+        if (found) {
+          console.log(`✅ Found "${questTitle}":`, {
+            id: found.id,
+            thumbnails: found.artworkThumbnails?.length || 0,
+            requiredArtworks: found.requiredArtworks?.length || 0
+          });
+        } else {
+          console.log(`❌ Missing "${questTitle}"`);
+        }
+      });
+
+      return questsWithThumbnails;
     } catch (err) {
       console.error("Error fetching quests:", err);
       if (err instanceof Error) {
