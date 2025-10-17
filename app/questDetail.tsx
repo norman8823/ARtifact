@@ -180,13 +180,6 @@ export default function QuestDetailScreen() {
         <ThemedView style={styles.questCard}>
           <ThemedView style={styles.questHeader}>
             <ThemedView style={styles.headerLeft}>
-              <ThemedView style={styles.iconContainer}>
-                <FontAwesome
-                  name={(quest.icon as any) || "search"}
-                  size={24}
-                  color={Colors.darkYellow}
-                />
-              </ThemedView>
               <ThemedView>
                 <ThemedText type="title" style={styles.questTitle}>
                   {quest.title}

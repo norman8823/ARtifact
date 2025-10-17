@@ -71,9 +71,7 @@ export default function LandingScreen() {
             {/* Background Image */}
             <ThemedView style={styles.imageContainer}>
               <Image
-                source={{
-                  uri: "/Users/norman/main/ARtifact/assets/images/RuthSpinning.gif",
-                }}
+                source={require("@/assets/images/RuthSpinning.gif")}
                 style={styles.backgroundImage}
                 contentFit="cover"
               />
