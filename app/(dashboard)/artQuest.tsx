@@ -44,15 +44,15 @@ type FlatListItem =
 const UserStatsHeader = React.memo(({ userXP, currentRank }: { userXP: UserXP | null; currentRank: Rank | null }) => (
   <ThemedView style={styles.statsSection}>
     <ThemedView>
-      <ThemedText type="title" style={styles.rankTitle}>
-        {currentRank?.title || "Loading rank..."}
+      <ThemedText type="title" style={styles.pageTitle}>
+        Art Quests
       </ThemedText>
-      <ThemedText style={styles.levelText}>
-        {userXP?.xpPoints || 0} XP
-      </ThemedText>
-    </ThemedView>
-    <ThemedView style={styles.medalContainer}>
-      <FontAwesome name={currentRank?.icon as any || "trophy"} size={24} color={Colors.darkYellow} />
+      <ThemedView style={styles.rankSection}>
+        <FontAwesome name={currentRank?.icon as any || "trophy"} size={16} color={Colors.darkYellow} />
+        <ThemedText style={styles.rankText}>
+          {currentRank?.title || "Loading rank..."} • {userXP?.xpPoints || 0} XP
+        </ThemedText>
+      </ThemedView>
     </ThemedView>
   </ThemedView>
 ));
@@ -445,25 +445,21 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   statsSection: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     padding: 20,
     paddingTop: 16,
   },
-  rankTitle: {
+  pageTitle: {
     fontSize: 30,
   },
-  levelText: {
-    color: Colors.darkMedGray,
-    marginTop: 4,
+  rankSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 20,
+    gap: 8,
   },
-  medalContainer: {
-    backgroundColor: Colors.lightYellow,
-    borderColor: Colors.darkYellow,
-    borderWidth: 1,
-    padding: 12,
-    borderRadius: 50,
+  rankText: {
+    color: Colors.darkMedGray,
+    fontSize: 16,
   },
   section: {
     padding: 20,
