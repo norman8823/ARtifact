@@ -5,6 +5,7 @@ import { Colors } from "@/constants/Colors";
 import { useScanSuccess } from "@/src/hooks/useScanSuccess";
 import { FontAwesome } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import * as Haptics from "expo-haptics";
 import { Stack, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -120,6 +121,9 @@ export default function ScanScreen() {
         const result = await processScanSuccess(rekognitionData);
 
         if (result) {
+          // Trigger haptic feedback for successful scan
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
           // Show success modal with results
           setModalState({
             visible: true,
