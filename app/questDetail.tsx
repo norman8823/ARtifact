@@ -39,6 +39,7 @@ export default function QuestDetailScreen() {
   const [questDetail, setQuestDetail] = useState<QuestDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isStarting, setIsStarting] = useState(false);
+  const [pressedArtworkId, setPressedArtworkId] = useState<string | null>(null);
 
   useEffect(() => {
     const loadQuestDetail = async () => {
@@ -283,6 +284,13 @@ export default function QuestDetailScreen() {
 
         {/* Artworks Section */}
         <ThemedView style={styles.artworksSection}>
+          {/* Instruction Text */}
+          <ThemedView style={styles.instructionContainer}>
+            <ThemedText style={styles.instructionText}>
+              Scan the artworks below to complete the quest!
+            </ThemedText>
+          </ThemedView>
+
           <ThemedView style={styles.sectionHeader}>
             <ThemedText type="title" style={styles.sectionTitle}>
               Artworks to Discover
@@ -309,6 +317,7 @@ export default function QuestDetailScreen() {
                 styles.artworkCard,
                 userQuest?.artworksVisited.includes(artwork.id) &&
                   styles.artworkCardVisited,
+                pressedArtworkId === artwork.id && styles.artworkCardPressed,
               ]}
               onPress={() => {
                 router.push({
@@ -319,6 +328,8 @@ export default function QuestDetailScreen() {
                   },
                 });
               }}
+              onPressIn={() => setPressedArtworkId(artwork.id)}
+              onPressOut={() => setPressedArtworkId(null)}
             >
               <ThemedView
                 style={[
@@ -480,21 +491,30 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.medLightGray,
   },
   xpBadge: {
-    backgroundColor: Colors.lightGreen,
-    paddingHorizontal: 12,
-    borderRadius: 12,
+    backgroundColor: Colors.medLightGray,
     marginLeft: 12,
-    height: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    minWidth: 70,
+    alignSelf: "flex-start",
   },
   xpText: {
-    color: Colors.darkGreen,
+    color: Colors.darkMedGray,
     fontSize: 14,
   },
   description: {
     marginBottom: 16,
+  },
+  instructionContainer: {
+    marginTop: -8,
+    marginBottom: 8,
+    paddingHorizontal: 16,
+  },
+  instructionText: {
+    fontSize: 12,
+    color: Colors.darkMedGray,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.15)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   progressBar: {
     height: 16,
@@ -560,6 +580,14 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: Colors.medGray,
     ...shadowStyle,
+  },
+  artworkCardPressed: {
+    shadowOpacity: 0.4,
+    shadowRadius: 2,
+    shadowOffset: { width: -1, height: -1 },
+    shadowColor: '#000',
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
   artworkCardVisited: {
     borderLeftColor: Colors.darkGreen,

@@ -73,6 +73,7 @@ const UserStatsHeader = React.memo(({ userXP, currentRank }: { userXP: UserXP | 
 ));
 
 const ActiveQuestItem = React.memo(({ quest, questLookup, isCompleted = false }: { quest: UserQuest; questLookup: Map<string, BaseQuest>; isCompleted?: boolean }) => {
+  const [isPressed, setIsPressed] = useState(false);
   // Get artwork thumbnails from the base quest data
   const baseQuest = questLookup.get(quest.questId);
   const artworkThumbnails = baseQuest?.artworkThumbnails || [];
@@ -85,8 +86,10 @@ const ActiveQuestItem = React.memo(({ quest, questLookup, isCompleted = false }:
 
   return (
     <Pressable
-      style={styles.questCard}
+      style={[styles.questCard, isPressed && styles.questCardPressed]}
       onPress={() => router.push(`/questDetail?id=${quest.questId}`)}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
     >
       <ThemedView style={styles.questHeader}>
         <ThemedView style={styles.questInfo}>
@@ -151,11 +154,16 @@ const ActiveQuestItem = React.memo(({ quest, questLookup, isCompleted = false }:
   );
 });
 
-const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => (
-  <Pressable
-    style={styles.questCard}
-    onPress={() => router.push(`/questDetail?id=${quest.id}`)}
-  >
+const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => {
+  const [isPressed, setIsPressed] = useState(false);
+
+  return (
+    <Pressable
+      style={[styles.questCard, isPressed && styles.questCardPressed]}
+      onPress={() => router.push(`/questDetail?id=${quest.id}`)}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+    >
     <ThemedView style={styles.questHeader}>
       <ThemedView style={styles.questInfo}>
         <ThemedView style={styles.titleRow}>
@@ -187,7 +195,8 @@ const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => (
       </ThemedView>
     )}
   </Pressable>
-));
+  );
+});
 
 export default function ArtQuestScreen() {
   const { isAuthReady, isAuthenticated } = useAuthContext();
@@ -329,8 +338,8 @@ export default function ArtQuestScreen() {
               <ThemedText type="title" style={styles.sectionTitle}>
                 Active Quests
               </ThemedText>
-              <ThemedView style={styles.badge}>
-                <ThemedText style={styles.badgeText}>
+              <ThemedView style={[styles.badge, styles.activeBadge]}>
+                <ThemedText style={[styles.badgeText, styles.activeText]}>
                   {item.data.count} In Progress
                 </ThemedText>
               </ThemedView>
@@ -524,16 +533,21 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {},
   badge: {
-    backgroundColor: Colors.lightYellow,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
   },
   badgeText: {
-    color: Colors.darkYellow,
     fontSize: 14,
   },
+  activeBadge: {
+    backgroundColor: Colors.lightYellow,
+  },
+  activeText: {
+    color: Colors.darkYellow,
+  },
   grayBadge: {
+    backgroundColor: Colors.medLightGray,
   },
   grayText: {
     color: Colors.darkMedGray,
@@ -544,6 +558,14 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     ...shadowStyle,
+  },
+  questCardPressed: {
+    shadowOpacity: 0.4,
+    shadowRadius: 2,
+    shadowOffset: { width: -1, height: -1 },
+    shadowColor: '#000',
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
   questHeader: {
     backgroundColor: Colors.medLightGray,
@@ -566,14 +588,11 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   xpBadge: {
-    backgroundColor: Colors.lightGreen,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    backgroundColor: Colors.medLightGray,
     alignSelf: "flex-start",
   },
   xpText: {
-    color: Colors.darkGreen,
+    color: Colors.darkMedGray,
     fontSize: 14,
   },
   progressContainer: {
