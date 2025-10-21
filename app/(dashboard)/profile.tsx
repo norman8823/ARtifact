@@ -20,6 +20,7 @@ import {
   Dimensions,
   Modal,
   Pressable,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -48,6 +49,7 @@ export default function ProfileScreen() {
   const [xpProgress, setXpProgress] = useState(0);
   const [xpNeeded, setXpNeeded] = useState(0);
   const [allRanks, setAllRanks] = useState<Rank[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Load user data and stats
   const loadData = useCallback(async () => {
@@ -122,6 +124,15 @@ export default function ProfileScreen() {
     getAllRanks,
   ]);
 
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await loadData();
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [loadData]);
+
   // Redirect to login if not authenticated (check this FIRST)
   useEffect(() => {
     console.log("🔍 Profile: Auth state check - isAuthReady:", isAuthReady, "isAuthenticated:", isAuthenticated);
@@ -180,6 +191,14 @@ export default function ProfileScreen() {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              tintColor={Colors.darkMedGray}
+              colors={[Colors.darkMedGray]}
+            />
+          }
         >
           {/* Profile Header */}
           <ThemedView style={styles.header}>
@@ -550,7 +569,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   progressBarMaxRank: {
-    backgroundColor: Colors.lightGreen,
+    backgroundColor: Colors.darkGreen,
   },
   xpNeeded: {
     fontSize: 14,
