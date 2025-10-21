@@ -597,7 +597,7 @@ const styles = StyleSheet.create({
   },
   progressContainer: {
     backgroundColor: Colors.medLightGray,
-    marginBottom: 12,
+    marginBottom: 4,
   },
   progressBar: {
     backgroundColor: Colors.medGray,

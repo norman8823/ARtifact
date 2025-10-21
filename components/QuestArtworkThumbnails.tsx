@@ -25,21 +25,14 @@ export const QuestArtworkThumbnails = memo(function QuestArtworkThumbnails({
   // Limit to 5 artworks maximum for clean layout
   const displayArtworks = artworks.slice(0, 5);
 
-  // Ultra-aggressive cache-busting to prevent persistent cache issues
-  const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2);
-  const componentId = React.useId ? React.useId() : 'default';
-
+  // Use stable cache-busting based on artwork ID only
   const getCacheBustedUrl = (artwork: any) => {
     if (!artwork.primaryImageSmall) return null;
 
-    // Multi-layer cache-busting with timestamp, random, and component hash
+    // Use artwork ID as stable cache buster - won't change on re-renders
     const separator = artwork.primaryImageSmall.includes('?') ? '&' : '?';
-    const cacheBuster = `${separator}v=${timestamp}&r=${random}&c=${componentId}&force=true`;
+    const cacheBuster = `${separator}v=${artwork.id}`;
     const finalUrl = `${artwork.primaryImageSmall}${cacheBuster}`;
-    console.log(`🔧 Ultra cache-busting URL for ${artwork.id} (${artwork.title}):`);
-    console.log(`   Original: ${artwork.primaryImageSmall}`);
-    console.log(`   Final: ${finalUrl}`);
     return finalUrl;
   };
 
@@ -72,7 +65,6 @@ export const QuestArtworkThumbnails = memo(function QuestArtworkThumbnails({
 
   return (
     <ThemedView
-      key={`thumbnails-${timestamp}-${random}`}
       style={[styles.container, { gap: gapSize }]}
     >
       {displayArtworks.map((artwork, index) => {
@@ -131,8 +123,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 12,
-    backgroundColor: 'transparent',
+    marginVertical: 6,
+    backgroundColor: "transparent",
     // No horizontal margins - align with other card elements (respects card's 16px padding)
     // Gap is now dynamic based on artwork count
   },

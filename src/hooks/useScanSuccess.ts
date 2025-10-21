@@ -73,9 +73,9 @@ export function useScanSuccess() {
           // Create visit record
           await createVisitRecord(artworkId);
 
-          // Award 50 XP points
-          await awardXP(50);
-          xpAwarded = 50;
+          // Award 100 XP points
+          await awardXP(100);
+          xpAwarded = 100;
 
           console.log("✅ Visit recorded and XP awarded");
         } else {

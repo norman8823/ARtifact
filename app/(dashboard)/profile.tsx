@@ -367,6 +367,8 @@ export default function ProfileScreen() {
                       iconName = "star";
                     else if (rank.title.toLowerCase().includes("master"))
                       iconName = "trophy";
+                    else if (rank.title.toLowerCase().includes("legend"))
+                      iconName = "diamond";
                     const isCurrent = currentRank?.id === rank.id;
                     const isLast = idx === allRanks.length - 1;
                     return (
