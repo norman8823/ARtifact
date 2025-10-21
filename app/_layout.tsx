@@ -141,6 +141,8 @@ export default Sentry.wrap(function RootLayout() {
               headerTintColor: Colors.darkGray,
               headerBackButtonDisplayMode: "minimal",
               headerBackButtonMenuEnabled: false,
+              gestureEnabled: true,
+              animation: "slide_from_right",
             }}
           >
             <Stack.Screen
@@ -165,42 +167,56 @@ export default Sentry.wrap(function RootLayout() {
               name="profileSettings"
               options={{
                 headerTitle: "Profile Settings",
+                gestureEnabled: true,
+                animation: "slide_from_right",
               }}
             />
             <Stack.Screen
               name="artworksVisited"
               options={{
                 headerTitle: "Artworks Visited",
+                gestureEnabled: true,
+                animation: "slide_from_right",
               }}
             />
             <Stack.Screen
               name="favorites"
               options={{
                 headerTitle: "Favorites",
+                gestureEnabled: true,
+                animation: "slide_from_right",
               }}
             />
             <Stack.Screen
               name="questsCompleted"
               options={{
                 headerTitle: "Quests Completed",
+                gestureEnabled: true,
+                animation: "slide_from_right",
               }}
             />
             <Stack.Screen
               name="collection"
               options={{
                 headerTitle: "",
+                gestureEnabled: true,
+                animation: "slide_from_right",
               }}
             />
             <Stack.Screen
               name="artDetail"
               options={{
                 headerTitle: "",
+                gestureEnabled: true,
+                animation: "slide_from_right",
               }}
             />
             <Stack.Screen
               name="questDetail"
               options={{
                 headerTitle: "",
+                gestureEnabled: true,
+                animation: "slide_from_right",
               }}
             />
             <Stack.Screen

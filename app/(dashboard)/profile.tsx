@@ -486,6 +486,7 @@ const styles = StyleSheet.create({
   rankText: {
     fontSize: 16,
     fontWeight: "700",
+    color: Colors.darkMedGray,
     textShadowColor: "rgba(0, 0, 0, 0.1)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
@@ -493,6 +494,7 @@ const styles = StyleSheet.create({
   xpText: {
     fontSize: 16,
     fontWeight: "400",
+    color: Colors.darkMedGray,
     textShadowColor: "rgba(0, 0, 0, 0.1)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
