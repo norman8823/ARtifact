@@ -225,11 +225,14 @@ export default function ProfileScreen() {
               {currentUser?.username || "Loading..."}
             </ThemedText>
             <ThemedView style={styles.rankContainer}>
-              <ThemedView style={styles.rankBadge}>
-                <ThemedText style={styles.rankText}>
-                  {currentRank?.title || "Loading..."}
-                </ThemedText>
-              </ThemedView>
+              <FontAwesome
+                name={(currentRank?.icon as any) || "trophy"}
+                size={16}
+                color={Colors.darkYellow}
+              />
+              <ThemedText style={styles.rankText}>
+                {currentRank?.title || "Loading..."}
+              </ThemedText>
               <ThemedText style={styles.xpText}>
                 {userXP?.xpPoints || 0} XP
               </ThemedText>
@@ -468,6 +471,8 @@ const styles = StyleSheet.create({
     borderRadius: 48,
     backgroundColor: Colors.medLightGray,
     marginBottom: 16,
+    borderWidth: 2,
+    borderColor: Colors.medGray,
   },
   userName: {
     fontSize: 20,
@@ -475,23 +480,22 @@ const styles = StyleSheet.create({
   },
   rankContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "baseline",
     gap: 8,
   },
-  rankBadge: {
-    backgroundColor: Colors.lightYellow,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: Colors.darkYellow,
-  },
   rankText: {
-    fontSize: 14,
-    color: Colors.darkYellow,
+    fontSize: 16,
+    fontWeight: "700",
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   xpText: {
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: "400",
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   statsGrid: {
     flexDirection: "row",
