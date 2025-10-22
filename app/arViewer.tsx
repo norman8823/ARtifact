@@ -3,7 +3,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -26,9 +26,34 @@ export default function ARViewerScreen() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [permissionsChecked, setPermissionsChecked] = useState(false);
+  const [hasPermissions, setHasPermissions] = useState(false);
 
-  // Use the arImage from the artwork data, fallback to demo URL if not available
-  const arURL = arImage ? ARPermissionManager.buildOptimizedARURL(arImage) : null;
+  // Check permissions when component mounts
+  useEffect(() => {
+    const checkARPermissions = async () => {
+      try {
+        console.log('🎯 ARViewer: Checking camera permissions...');
+        const permissions = await ARPermissionManager.checkPermissions();
+        setHasPermissions(permissions.camera);
+        setPermissionsChecked(true);
+
+        if (!permissions.camera) {
+          console.log('🎯 ARViewer: No camera permissions, requesting...');
+          const newPermissions = await ARPermissionManager.requestAllPermissions();
+          setHasPermissions(newPermissions.camera);
+        }
+      } catch (error) {
+        console.error('❌ Error checking AR permissions:', error);
+        setPermissionsChecked(true);
+      }
+    };
+
+    checkARPermissions();
+  }, []);
+
+  // Build AR URL with permission-aware parameters
+  const arURL = arImage && hasPermissions ? ARPermissionManager.buildOptimizedARURL(arImage) : null;
 
   // Debug logging
   console.log('🎯 AR Viewer - arImage:', arImage);
@@ -77,8 +102,44 @@ export default function ARViewerScreen() {
             </ThemedText>
           </ThemedView>
         )}
+        {/* Permission Check Loading */}
+        {!permissionsChecked && (
+          <ThemedView style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={Colors.darkMedGray} />
+            <ThemedText style={styles.loadingText}>
+              Checking camera permissions...
+            </ThemedText>
+          </ThemedView>
+        )}
+
+        {/* Permission Denied State */}
+        {permissionsChecked && !hasPermissions && (
+          <ThemedView style={styles.errorContainer}>
+            <FontAwesome
+              name="camera"
+              size={48}
+              color={Colors.darkMedGray}
+            />
+            <ThemedText style={styles.errorTitle}>
+              Camera Access Required
+            </ThemedText>
+            <ThemedText style={styles.errorMessage}>
+              This AR experience requires camera access to function properly. Please enable camera permissions in your device settings.
+            </ThemedText>
+            <Pressable
+              style={styles.retryButton}
+              onPress={async () => {
+                const newPermissions = await ARPermissionManager.requestAllPermissions();
+                setHasPermissions(newPermissions.camera);
+              }}
+            >
+              <ThemedText style={styles.retryButtonText}>Grant Permission</ThemedText>
+            </Pressable>
+          </ThemedView>
+        )}
+
         {/* Error State */}
-        {hasError || !arURL ? (
+        {permissionsChecked && hasPermissions && (hasError || !arURL) ? (
           <ThemedView style={styles.errorContainer}>
             <FontAwesome
               name="exclamation-triangle"
@@ -101,7 +162,7 @@ export default function ARViewerScreen() {
               <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
             </Pressable>
           </ThemedView>
-        ) : (
+        ) : permissionsChecked && hasPermissions && arURL ? (
           /* WebView */
           <WebView
             source={{ uri: arURL }}
@@ -136,7 +197,7 @@ export default function ARViewerScreen() {
               true;
             `}
           />
-        )}
+        ) : null}
         {/* Back Button */}
         <View style={styles.backButtonContainer}>
           <Pressable style={styles.backButton} onPress={handleBack}>

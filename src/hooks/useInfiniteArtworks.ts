@@ -191,7 +191,24 @@ export function useInfiniteArtworks(config: UseInfiniteArtworksConfig = {}) {
 
         console.log(`Fetched ${newArtworks.length} artworks, nextToken: ${newNextToken}`);
 
-        setArtworks(prev => reset ? newArtworks : [...prev, ...newArtworks]);
+        setArtworks(prev => {
+          if (reset) {
+            return newArtworks;
+          }
+
+          // Merge with deduplication based on artwork ID
+          const existingIds = new Set(prev.map(artwork => artwork.id));
+          const uniqueNewArtworks = newArtworks.filter(artwork => !existingIds.has(artwork.id));
+
+          const duplicateCount = newArtworks.length - uniqueNewArtworks.length;
+          if (duplicateCount > 0) {
+            console.log(`🔍 Filtered out ${duplicateCount} duplicate artworks`);
+          }
+
+          console.log(`📊 Total artworks before: ${prev.length}, adding: ${uniqueNewArtworks.length}, total after: ${prev.length + uniqueNewArtworks.length}`);
+
+          return [...prev, ...uniqueNewArtworks];
+        });
         setPagination(prev => ({
           ...prev,
           nextToken: newNextToken,

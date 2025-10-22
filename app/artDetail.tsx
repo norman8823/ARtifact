@@ -75,6 +75,7 @@ export default function ArtDetailScreen() {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   const [isGalleryModalVisible, setIsGalleryModalVisible] = useState(false);
+  const [pressedButton, setPressedButton] = useState<string | null>(null);
 
   const [galleryMapURL, setGalleryMapURL] = useState<string | null>(null);
   const [isWebViewLoading, setIsWebViewLoading] = useState(true);
@@ -469,7 +470,12 @@ export default function ArtDetailScreen() {
           {/* Scan Button - Only show if artwork is scannable */}
           {artwork.isScannable && (
             <Pressable
-              style={styles.scanButton}
+              style={[
+                styles.scanButton,
+                pressedButton === "scan" && styles.buttonPressed,
+              ]}
+              onPressIn={() => setPressedButton("scan")}
+              onPressOut={() => setPressedButton(null)}
               onPress={() =>
                 router.push({
                   pathname: "/scan",
@@ -490,7 +496,12 @@ export default function ArtDetailScreen() {
           {/* AR Button - Only show if artwork has AR support */}
           {artwork.hasAR && (
             <Pressable
-              style={styles.arButton}
+              style={[
+                styles.arButton,
+                pressedButton === "ar" && styles.buttonPressed,
+              ]}
+              onPressIn={() => setPressedButton("ar")}
+              onPressOut={() => setPressedButton(null)}
               onPress={() => {
                 router.push({
                   pathname: "/arViewer",
@@ -1030,5 +1041,12 @@ const styles = StyleSheet.create({
   webView: {
     flex: 1,
     backgroundColor: Colors.lightGray,
+  },
+  buttonPressed: {
+    shadowOpacity: 0.4,
+    shadowRadius: 2,
+    shadowOffset: { width: -1, height: -1 },
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
 });

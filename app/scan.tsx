@@ -5,6 +5,7 @@ import { Colors } from "@/constants/Colors";
 import { useScanSuccess } from "@/src/hooks/useScanSuccess";
 import { FontAwesome } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import * as Haptics from "expo-haptics";
 import { Stack, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -56,6 +57,7 @@ export default function ScanScreen() {
     visible: false,
     success: false,
   });
+  const [pressedButton, setPressedButton] = useState<string | null>(null);
 
   const { processScanSuccess, isProcessing } = useScanSuccess();
 
@@ -120,6 +122,9 @@ export default function ScanScreen() {
         const result = await processScanSuccess(rekognitionData);
 
         if (result) {
+          // Trigger haptic feedback for successful scan
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
           // Show success modal with results
           setModalState({
             visible: true,
@@ -372,7 +377,12 @@ export default function ScanScreen() {
           Please enable camera permissions in your device settings to scan
           artworks.
         </ThemedText>
-        <Pressable style={styles.retryButton} onPress={getCameraPermissions}>
+        <Pressable
+          style={[styles.retryButton, pressedButton === 'retry' && styles.buttonPressed]}
+          onPress={getCameraPermissions}
+          onPressIn={() => setPressedButton('retry')}
+          onPressOut={() => setPressedButton(null)}
+        >
           <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
         </Pressable>
       </ThemedView>
@@ -389,7 +399,12 @@ export default function ScanScreen() {
       <SafeAreaView style={styles.container}>
         {/* Custom Back Button */}
         <View style={styles.backButtonContainer}>
-          <Pressable style={styles.backButton} onPress={() => router.back()}>
+          <Pressable
+            style={[styles.backButton, pressedButton === 'back' && styles.buttonPressed]}
+            onPress={() => router.back()}
+            onPressIn={() => setPressedButton('back')}
+            onPressOut={() => setPressedButton(null)}
+          >
             <FontAwesome name="arrow-left" size={18} color={Colors.lightGray} />
             <ThemedText style={styles.backButtonText}>Back</ThemedText>
           </Pressable>
@@ -424,8 +439,11 @@ export default function ScanScreen() {
                     styles.captureButton,
                     (isAnalyzing || isLoading || isProcessing) &&
                       styles.captureButtonDisabled,
+                    pressedButton === 'capture' && styles.buttonPressed,
                   ]}
                   onPress={takePicture}
+                  onPressIn={() => setPressedButton('capture')}
+                  onPressOut={() => setPressedButton(null)}
                   disabled={isAnalyzing || isLoading || isProcessing}
                 >
                   {isLoading || isAnalyzing || isProcessing ? (
@@ -570,5 +588,13 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     color: Colors.lightGray,
+  },
+  buttonPressed: {
+    shadowOpacity: 0.4,
+    shadowRadius: 2,
+    shadowOffset: { width: -1, height: -1 },
+    shadowColor: '#000',
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
 });

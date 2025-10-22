@@ -20,6 +20,7 @@ import {
   Dimensions,
   Modal,
   Pressable,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -48,6 +49,7 @@ export default function ProfileScreen() {
   const [xpProgress, setXpProgress] = useState(0);
   const [xpNeeded, setXpNeeded] = useState(0);
   const [allRanks, setAllRanks] = useState<Rank[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Load user data and stats
   const loadData = useCallback(async () => {
@@ -122,6 +124,15 @@ export default function ProfileScreen() {
     getAllRanks,
   ]);
 
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await loadData();
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [loadData]);
+
   // Redirect to login if not authenticated (check this FIRST)
   useEffect(() => {
     console.log("🔍 Profile: Auth state check - isAuthReady:", isAuthReady, "isAuthenticated:", isAuthenticated);
@@ -180,6 +191,14 @@ export default function ProfileScreen() {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              tintColor={Colors.darkMedGray}
+              colors={[Colors.darkMedGray]}
+            />
+          }
         >
           {/* Profile Header */}
           <ThemedView style={styles.header}>
@@ -206,11 +225,14 @@ export default function ProfileScreen() {
               {currentUser?.username || "Loading..."}
             </ThemedText>
             <ThemedView style={styles.rankContainer}>
-              <ThemedView style={styles.rankBadge}>
-                <ThemedText style={styles.rankText}>
-                  {currentRank?.title || "Loading..."}
-                </ThemedText>
-              </ThemedView>
+              <FontAwesome
+                name={(currentRank?.icon as any) || "trophy"}
+                size={16}
+                color={Colors.darkYellow}
+              />
+              <ThemedText style={styles.rankText}>
+                {currentRank?.title || "Loading..."}
+              </ThemedText>
               <ThemedText style={styles.xpText}>
                 {userXP?.xpPoints || 0} XP
               </ThemedText>
@@ -367,6 +389,8 @@ export default function ProfileScreen() {
                       iconName = "star";
                     else if (rank.title.toLowerCase().includes("master"))
                       iconName = "trophy";
+                    else if (rank.title.toLowerCase().includes("legend"))
+                      iconName = "diamond";
                     const isCurrent = currentRank?.id === rank.id;
                     const isLast = idx === allRanks.length - 1;
                     return (
@@ -447,6 +471,8 @@ const styles = StyleSheet.create({
     borderRadius: 48,
     backgroundColor: Colors.medLightGray,
     marginBottom: 16,
+    borderWidth: 2,
+    borderColor: Colors.medGray,
   },
   userName: {
     fontSize: 20,
@@ -454,23 +480,24 @@ const styles = StyleSheet.create({
   },
   rankContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "baseline",
     gap: 8,
   },
-  rankBadge: {
-    backgroundColor: Colors.lightYellow,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: Colors.darkYellow,
-  },
   rankText: {
-    fontSize: 14,
-    color: Colors.darkYellow,
+    fontSize: 16,
+    fontWeight: "700",
+    color: Colors.darkMedGray,
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   xpText: {
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: "400",
+    color: Colors.darkMedGray,
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   statsGrid: {
     flexDirection: "row",
@@ -548,7 +575,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   progressBarMaxRank: {
-    backgroundColor: Colors.lightGreen,
+    backgroundColor: Colors.darkGreen,
   },
   xpNeeded: {
     fontSize: 14,

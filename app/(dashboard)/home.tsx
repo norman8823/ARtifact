@@ -1,15 +1,18 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { QuestArtworkThumbnails } from "@/components/QuestArtworkThumbnails";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
 import { useDepartments, type Department } from "@/src/hooks/useDepartments";
 import { useDidYouKnow } from "@/src/hooks/useDidYouKnow";
+import { useQuests, type Quest } from "@/src/hooks/useQuests";
+import { useUserQuests } from "@/src/hooks/useUserQuests";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router, useNavigation } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -30,6 +33,10 @@ export default function HomeScreen() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [currentDate, setCurrentDate] = useState("");
   const [randomFact, setRandomFact] = useState<string>("");
+  const [featuredQuest, setFeaturedQuest] = useState<Quest | null>(null);
+  const [allQuests, setAllQuests] = useState<Quest[]>([]);
+  const [userQuests, setUserQuests] = useState<any[]>([]);
+  const [isFeaturedQuestPressed, setIsFeaturedQuestPressed] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   const navigation = useNavigation();
@@ -49,6 +56,16 @@ export default function HomeScreen() {
     isLoading: isLoadingFacts,
     error: factsError,
   } = useDidYouKnow();
+  const {
+    getAllQuests,
+    isLoading: isLoadingQuests,
+    error: questsError,
+  } = useQuests();
+  const {
+    getUserQuests,
+    isLoading: isLoadingUserQuests,
+    error: userQuestsError,
+  } = useUserQuests();
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -111,6 +128,65 @@ export default function HomeScreen() {
       }
     }
   }, [getRandomFact, randomFact]);
+
+  // Load quests data - wait for auth first
+  useEffect(() => {
+    if (!isAuthReady) return;
+
+    const loadQuestsData = async () => {
+      try {
+        const [questsData, userQuestsData] = await Promise.all([
+          getAllQuests(),
+          getUserQuests()
+        ]);
+        setAllQuests(questsData);
+        setUserQuests(userQuestsData);
+      } catch (error) {
+        console.error("Error loading quests data:", error);
+      }
+    };
+
+    loadQuestsData();
+  }, [isAuthReady, getAllQuests, getUserQuests]);
+
+  // Stable quest selection using useMemo
+  const stableFeaturedQuest = useMemo(() => {
+    if (allQuests.length === 0) return null;
+
+    // Get completed quest IDs
+    const completedQuestIds = new Set(
+      userQuests
+        .filter(uq => uq.status === 'completed')
+        .map(uq => uq.questId)
+    );
+
+    // Filter available quests (not completed)
+    const availableQuests = allQuests.filter(
+      quest => !completedQuestIds.has(quest.id)
+    );
+
+    // Select a quest, prioritizing available ones
+    const questsToChooseFrom = availableQuests.length > 0 ? availableQuests : allQuests;
+    if (questsToChooseFrom.length > 0) {
+      // Use a deterministic selection based on the current date
+      // This will give a different quest each day but remain stable during the day
+      const today = new Date().toDateString();
+      const seed = today.split('').reduce((a, b) => {
+        a = ((a << 5) - a) + b.charCodeAt(0);
+        return a & a;
+      }, 0);
+      const index = Math.abs(seed) % questsToChooseFrom.length;
+      return questsToChooseFrom[index];
+    }
+    return null;
+  }, [allQuests, userQuests]);
+
+  // Update featured quest when stable selection changes
+  useEffect(() => {
+    if (stableFeaturedQuest && stableFeaturedQuest !== featuredQuest) {
+      setFeaturedQuest(stableFeaturedQuest);
+    }
+  }, [stableFeaturedQuest, featuredQuest]);
 
   // Handle navigation focus
   useEffect(() => {
@@ -177,8 +253,11 @@ export default function HomeScreen() {
       style={styles.featuredItem}
     >
       <Image
+        key={item.id}
         source={{ uri: item.primaryImage || undefined }}
         style={styles.featuredImage}
+        contentFit="cover"
+        cachePolicy="memory-disk"
       />
       <ThemedText type="subtitle" style={styles.artworkTitle}>
         {item.title}
@@ -210,7 +289,8 @@ export default function HomeScreen() {
     !isAuthReady ||
     (isLoadingArtworks && featuredArtworks.length === 0) ||
     (isLoadingDepartments && departments.length === 0) ||
-    (isLoadingFacts && randomFact === "")
+    (isLoadingFacts && randomFact === "") ||
+    (isLoadingQuests && allQuests.length === 0)
   ) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
@@ -223,7 +303,8 @@ export default function HomeScreen() {
   if (
     (artworksError && featuredArtworks.length === 0) ||
     (departmentsError && departments.length === 0) ||
-    (factsError && randomFact === "")
+    (factsError && randomFact === "") ||
+    (questsError && allQuests.length === 0)
   ) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
@@ -231,7 +312,8 @@ export default function HomeScreen() {
           Error loading content:{" "}
           {artworksError?.message ||
             departmentsError?.message ||
-            factsError?.message}
+            factsError?.message ||
+            questsError?.message}
         </ThemedText>
       </ThemedView>
     );
@@ -279,6 +361,7 @@ export default function HomeScreen() {
                       parallaxScrollingScale: 0.9,
                       parallaxScrollingOffset: 40,
                     }}
+                    windowSize={5}
                   />
                   <Pressable
                     style={[styles.carouselButton, styles.carouselButtonLeft]}
@@ -343,8 +426,60 @@ export default function HomeScreen() {
             </ScrollView>
           </ThemedView>
 
+          {/* Featured Quest */}
+          {featuredQuest && (
+            <ThemedView style={styles.section}>
+              <ThemedText type="title" style={styles.sectionTitle}>
+                Featured Quest
+              </ThemedText>
+              <Pressable
+                style={[
+                  styles.featuredQuestCard,
+                  isFeaturedQuestPressed && styles.featuredQuestCardPressed,
+                ]}
+                onPressIn={() => setIsFeaturedQuestPressed(true)}
+                onPressOut={() => setIsFeaturedQuestPressed(false)}
+                onPress={() => {
+                  router.push({
+                    pathname: "/questDetail",
+                    params: { id: featuredQuest.id },
+                  });
+                }}
+              >
+                <ThemedView style={styles.questHeader}>
+                  <ThemedView style={styles.questInfo}>
+                    <ThemedView style={styles.titleRow}>
+                      <ThemedText type="title" style={styles.questTitle}>
+                        {featuredQuest.title}
+                      </ThemedText>
+                      {featuredQuest.isPremium && (
+                        <ThemedView style={styles.premiumBadge}>
+                          <ThemedText style={styles.premiumText}>Premium</ThemedText>
+                        </ThemedView>
+                      )}
+                      <ThemedView style={styles.xpBadge}>
+                        <ThemedText style={styles.xpText}>{featuredQuest.xpReward} XP</ThemedText>
+                      </ThemedView>
+                    </ThemedView>
+                    {featuredQuest.artworkThumbnails && featuredQuest.artworkThumbnails.length > 0 && (
+                      <QuestArtworkThumbnails
+                        artworks={featuredQuest.artworkThumbnails}
+                        visitedArtworkIds={[]}
+                      />
+                    )}
+                  </ThemedView>
+                </ThemedView>
+                {featuredQuest.description && (
+                  <ThemedView style={styles.descriptionContainer}>
+                    <ThemedText style={styles.descriptionText}>{featuredQuest.description}</ThemedText>
+                  </ThemedView>
+                )}
+              </Pressable>
+            </ThemedView>
+          )}
+
           {/* Did You Know */}
-          <ThemedView style={[styles.section, styles.lastSection]}>
+          <ThemedView style={[styles.section, styles.didYouKnowSection]}>
             <ThemedText type="title" style={styles.sectionTitle}>
               Did You Know?
             </ThemedText>
@@ -410,6 +545,10 @@ const styles = StyleSheet.create({
   },
   lastSection: {
     marginBottom: 80,
+  },
+  didYouKnowSection: {
+    marginTop: 56,
+    marginBottom: 36,
   },
   sectionTitle: {
     marginBottom: 16,
@@ -534,5 +673,68 @@ const styles = StyleSheet.create({
   },
   carouselButtonRight: {
     right: 0,
+  },
+  featuredQuestCard: {
+    backgroundColor: "#f7f7f7",
+    borderRadius: 12,
+    padding: 16,
+    ...shadowStyle,
+  },
+  questHeader: {
+    marginBottom: 8,
+    backgroundColor: "#f7f7f7",
+  },
+  questInfo: {
+    gap: 8,
+    backgroundColor: "#f7f7f7",
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#f7f7f7",
+  },
+  questTitle: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  xpBadge: {
+    backgroundColor: "transparent",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  xpText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: Colors.darkMedGray,
+  },
+  premiumBadge: {
+    backgroundColor: Colors.darkYellow,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  premiumText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: Colors.lightGray,
+  },
+  descriptionContainer: {
+    marginTop: 4,
+    backgroundColor: "#f7f7f7",
+  },
+  descriptionText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: Colors.darkMedGray,
+  },
+  featuredQuestCardPressed: {
+    shadowOpacity: 0.4,
+    shadowRadius: 2,
+    shadowOffset: { width: -1, height: -1 },
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
 });

@@ -8,11 +8,12 @@ import { type Quest, useQuests } from "@/src/hooks/useQuests";
 import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
 } from "react-native";
@@ -39,48 +40,53 @@ export default function QuestDetailScreen() {
   const [questDetail, setQuestDetail] = useState<QuestDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isStarting, setIsStarting] = useState(false);
+  const [pressedArtworkId, setPressedArtworkId] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const loadQuestDetail = useCallback(async () => {
+    if (!isAuthReady) return; // Wait for auth to be ready
+
+    try {
+      // Get the quest data
+      const quests = await getAllQuests();
+      const quest = quests.find((q: Quest) => q.id === questId);
+      if (!quest) {
+        throw new Error("Quest not found");
+      }
+
+      // Get the user's progress on this quest
+      const userQuest = await getUserQuestByQuestId(questId);
+
+      // Get the artwork details
+      const artworks = quest.requiredArtworks
+        ? await getArtworksByIds(quest.requiredArtworks)
+        : [];
+
+      setQuestDetail({
+        quest,
+        userQuest,
+        artworks,
+      });
+    } catch (err) {
+      console.error("Error loading quest detail:", err);
+      setError(err instanceof Error ? err.message : "Failed to load quest");
+    }
+  }, [isAuthReady, questId, getAllQuests, getUserQuestByQuestId, getArtworksByIds]);
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await loadQuestDetail();
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [loadQuestDetail]);
 
   useEffect(() => {
-    const loadQuestDetail = async () => {
-      if (!isAuthReady) return; // Wait for auth to be ready
-
-      try {
-        // Get the quest data
-        const quests = await getAllQuests();
-        const quest = quests.find((q: Quest) => q.id === questId);
-        if (!quest) {
-          throw new Error("Quest not found");
-        }
-
-        // Get the user's progress on this quest
-        const userQuest = await getUserQuestByQuestId(questId);
-
-        // Get the artwork details
-        const artworks = quest.requiredArtworks
-          ? await getArtworksByIds(quest.requiredArtworks)
-          : [];
-
-        setQuestDetail({
-          quest,
-          userQuest,
-          artworks,
-        });
-      } catch (err) {
-        console.error("Error loading quest detail:", err);
-        setError(err instanceof Error ? err.message : "Failed to load quest");
-      }
-    };
-
     if (questId && isAuthReady) {
       loadQuestDetail();
     }
-  }, [
-    questId,
-    isAuthReady,
-    getAllQuests,
-    getUserQuestByQuestId,
-    getArtworksByIds,
-  ]);
+  }, [questId, isAuthReady, loadQuestDetail]);
 
   const handleStartQuest = async () => {
     if (!questDetail?.quest) return;
@@ -175,18 +181,19 @@ export default function QuestDetailScreen() {
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            tintColor={Colors.darkMedGray}
+            colors={[Colors.darkMedGray]}
+          />
+        }
       >
         {/* Quest Info Card */}
         <ThemedView style={styles.questCard}>
           <ThemedView style={styles.questHeader}>
             <ThemedView style={styles.headerLeft}>
-              <ThemedView style={styles.iconContainer}>
-                <FontAwesome
-                  name={(quest.icon as any) || "search"}
-                  size={24}
-                  color={Colors.darkYellow}
-                />
-              </ThemedView>
               <ThemedView>
                 <ThemedText type="title" style={styles.questTitle}>
                   {quest.title}
@@ -210,6 +217,9 @@ export default function QuestDetailScreen() {
                   styles.progressFill,
                   {
                     width: `${(progress.current / progress.total) * 100}%`,
+                    backgroundColor: userQuest?.isCompleted
+                      ? Colors.darkGreen
+                      : Colors.lightYellow,
                   },
                 ]}
               />
@@ -287,6 +297,13 @@ export default function QuestDetailScreen() {
 
         {/* Artworks Section */}
         <ThemedView style={styles.artworksSection}>
+          {/* Instruction Text */}
+          <ThemedView style={styles.instructionContainer}>
+            <ThemedText style={styles.instructionText}>
+              Scan the artworks below to complete the quest!
+            </ThemedText>
+          </ThemedView>
+
           <ThemedView style={styles.sectionHeader}>
             <ThemedText type="title" style={styles.sectionTitle}>
               Artworks to Discover
@@ -313,6 +330,7 @@ export default function QuestDetailScreen() {
                 styles.artworkCard,
                 userQuest?.artworksVisited.includes(artwork.id) &&
                   styles.artworkCardVisited,
+                pressedArtworkId === artwork.id && styles.artworkCardPressed,
               ]}
               onPress={() => {
                 router.push({
@@ -323,6 +341,8 @@ export default function QuestDetailScreen() {
                   },
                 });
               }}
+              onPressIn={() => setPressedArtworkId(artwork.id)}
+              onPressOut={() => setPressedArtworkId(null)}
             >
               <ThemedView
                 style={[
@@ -484,21 +504,30 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.medLightGray,
   },
   xpBadge: {
-    backgroundColor: Colors.lightGreen,
-    paddingHorizontal: 12,
-    borderRadius: 12,
+    backgroundColor: Colors.medLightGray,
     marginLeft: 12,
-    height: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    minWidth: 70,
+    alignSelf: "flex-start",
   },
   xpText: {
-    color: Colors.darkGreen,
+    color: Colors.darkMedGray,
     fontSize: 14,
   },
   description: {
     marginBottom: 16,
+  },
+  instructionContainer: {
+    marginTop: -8,
+    marginBottom: 8,
+    paddingHorizontal: 16,
+  },
+  instructionText: {
+    fontSize: 12,
+    color: Colors.darkMedGray,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.15)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   progressBar: {
     height: 16,
@@ -564,6 +593,14 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: Colors.medGray,
     ...shadowStyle,
+  },
+  artworkCardPressed: {
+    shadowOpacity: 0.4,
+    shadowRadius: 2,
+    shadowOffset: { width: -1, height: -1 },
+    shadowColor: '#000',
+    elevation: 0,
+    transform: [{ translateY: 1 }],
   },
   artworkCardVisited: {
     borderLeftColor: Colors.darkGreen,

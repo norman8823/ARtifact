@@ -45,7 +45,7 @@ export default function ExploreScreen() {
   });
 
   // Debounced search function
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const debouncedSearch = useCallback((query: string) => {
     if (debounceTimerRef.current) {
@@ -134,6 +134,13 @@ export default function ExploreScreen() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
         <ThemedView style={styles.container}>
+          {/* Header */}
+          <ThemedView style={styles.headerContainer}>
+            <ThemedText type="title" style={styles.pageTitle}>
+              Explore
+            </ThemedText>
+          </ThemedView>
+
           <ThemedView style={styles.searchContainer}>
             <ThemedView style={styles.searchBar}>
               <FontAwesome
@@ -179,6 +186,13 @@ export default function ExploreScreen() {
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
         <ThemedView style={styles.container}>
+          {/* Header */}
+          <ThemedView style={styles.headerContainer}>
+            <ThemedText type="title" style={styles.pageTitle}>
+              Explore
+            </ThemedText>
+          </ThemedView>
+
           {/* Search Bar */}
           <ThemedView style={styles.searchContainer}>
             <ThemedView style={styles.searchBar}>
@@ -364,6 +378,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.lightGray,
+  },
+  headerContainer: {
+    padding: 20,
+    paddingTop: 16,
+    paddingBottom: 0,
+  },
+  pageTitle: {
+    fontSize: 30,
   },
   centerContent: {
     flex: 1,

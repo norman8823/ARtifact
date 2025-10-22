@@ -1,5 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { QuestArtworkThumbnails } from "@/components/QuestArtworkThumbnails";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
@@ -40,88 +41,129 @@ type FlatListItem =
   | { type: 'availableHeader'; data: { count: number } }
   | { type: 'availableQuest'; data: BaseQuest };
 
+// Helper function to deduplicate gallery numbers
+const deduplicateGalleries = (galleryMap: string | null): string => {
+  if (!galleryMap) return '';
+
+  // Extract gallery numbers using regex to find patterns like "Gallery 908" or "Galleries 908, 910, 908"
+  const galleryNumbers = galleryMap.match(/\d+/g) || [];
+  const uniqueNumbers = [...new Set(galleryNumbers)];
+
+  // Reconstruct the text with deduplicated numbers
+  if (uniqueNumbers.length === 0) return galleryMap;
+  if (uniqueNumbers.length === 1) return `Gallery ${uniqueNumbers[0]}`;
+  return `Galleries ${uniqueNumbers.join(', ')}`;
+};
+
 // Memoized components for better performance
 const UserStatsHeader = React.memo(({ userXP, currentRank }: { userXP: UserXP | null; currentRank: Rank | null }) => (
   <ThemedView style={styles.statsSection}>
     <ThemedView>
-      <ThemedText type="title" style={styles.rankTitle}>
-        {currentRank?.title || "Loading rank..."}
+      <ThemedText type="title" style={styles.pageTitle}>
+        Art Quests
       </ThemedText>
-      <ThemedText style={styles.levelText}>
-        {userXP?.xpPoints || 0} XP
-      </ThemedText>
-    </ThemedView>
-    <ThemedView style={styles.medalContainer}>
-      <FontAwesome name={currentRank?.icon as any || "trophy"} size={24} color={Colors.darkYellow} />
+      <ThemedView style={styles.rankSection}>
+        <FontAwesome name={currentRank?.icon as any || "trophy"} size={16} color={Colors.darkYellow} />
+        <ThemedText style={styles.rankText}>
+          {currentRank?.title || "Loading rank..."} • {userXP?.xpPoints || 0} XP
+        </ThemedText>
+      </ThemedView>
     </ThemedView>
   </ThemedView>
 ));
 
-const ActiveQuestItem = React.memo(({ quest }: { quest: UserQuest }) => (
-  <Pressable
-    style={styles.questCard}
-    onPress={() => router.push(`/questDetail?id=${quest.questId}`)}
-  >
-    <ThemedView style={styles.questHeader}>
-      <ThemedView style={styles.questInfo}>
-        <ThemedView style={styles.titleRow}>
-          <ThemedText type="title" style={styles.questTitle}>
-            {quest.title}
-          </ThemedText>
-          <ThemedView style={styles.xpBadge}>
-            <ThemedText style={styles.xpText}>
-              {quest.xpReward} XP
+const ActiveQuestItem = React.memo(({ quest, questLookup, isCompleted = false }: { quest: UserQuest; questLookup: Map<string, BaseQuest>; isCompleted?: boolean }) => {
+  const [isPressed, setIsPressed] = useState(false);
+  // Get artwork thumbnails from the base quest data
+  const baseQuest = questLookup.get(quest.questId);
+  const artworkThumbnails = baseQuest?.artworkThumbnails || [];
+
+  // Simple thumbnail logging
+  if (artworkThumbnails.length === 0) {
+    console.log(`⚠️ No thumbnails for quest "${quest.title}"`);
+  }
+
+
+  return (
+    <Pressable
+      style={[styles.questCard, isPressed && styles.questCardPressed]}
+      onPress={() => router.push(`/questDetail?id=${quest.questId}`)}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+    >
+      <ThemedView style={styles.questHeader}>
+        <ThemedView style={styles.questInfo}>
+          <ThemedView style={styles.titleRow}>
+            <ThemedText type="title" style={styles.questTitle}>
+              {quest.title}
             </ThemedText>
+            <ThemedView style={styles.xpBadge}>
+              <ThemedText style={styles.xpText}>
+                {quest.xpReward} XP
+              </ThemedText>
+            </ThemedView>
           </ThemedView>
+          {/* Show artwork thumbnails with progress */}
+          {artworkThumbnails.length > 0 && (
+            <QuestArtworkThumbnails
+              artworks={artworkThumbnails}
+              visitedArtworkIds={quest.artworksVisited}
+              isCompleted={isCompleted}
+            />
+          )}
         </ThemedView>
-        <ThemedText style={styles.questDescription}>
-          {quest.description}
-        </ThemedText>
       </ThemedView>
-    </ThemedView>
 
-    <ThemedView style={styles.progressContainer}>
-      <ThemedView style={styles.progressBar}>
-        <ThemedView
-          style={[
-            styles.progressFill,
-            {
-              width: `${
-                (quest.artworksVisited.length / quest.requiredArtworks.length) * 100
-              }%`,
-              backgroundColor: quest.isCompleted
-                ? Colors.darkGreen
-                : Colors.lightYellow,
-            },
-          ]}
-        />
+      <ThemedView style={styles.progressContainer}>
+        <ThemedView style={styles.progressBar}>
+          <ThemedView
+            style={[
+              styles.progressFill,
+              {
+                width: `${
+                  (quest.artworksVisited.length / quest.requiredArtworks.length) * 100
+                }%`,
+                backgroundColor: quest.isCompleted
+                  ? Colors.darkGreen
+                  : Colors.lightYellow,
+              },
+            ]}
+          />
+        </ThemedView>
+        <ThemedView style={styles.progressText}>
+          <ThemedText style={styles.progressCount}>
+            {quest.artworksVisited.length}/{quest.requiredArtworks.length} visited
+          </ThemedText>
+          <ThemedText style={styles.progressPercentage}>
+            {Math.round(
+              (quest.artworksVisited.length / quest.requiredArtworks.length) * 100
+            )}%
+          </ThemedText>
+        </ThemedView>
       </ThemedView>
-      <ThemedView style={styles.progressText}>
-        <ThemedText style={styles.progressCount}>
-          {quest.artworksVisited.length}/{quest.requiredArtworks.length} visited
-        </ThemedText>
-        <ThemedText style={styles.progressPercentage}>
-          {Math.round(
-            (quest.artworksVisited.length / quest.requiredArtworks.length) * 100
-          )}%
-        </ThemedText>
-      </ThemedView>
-    </ThemedView>
 
-    {quest.galleryMap && (
-      <ThemedView style={styles.locationContainer}>
-        <FontAwesome name="map-marker" size={14} color={Colors.darkMedGray} />
-        <ThemedText style={styles.locationText}>{quest.galleryMap}</ThemedText>
-      </ThemedView>
-    )}
-  </Pressable>
-));
+      {/* Use fresh description from baseQuest lookup instead of stale UserQuest description */}
+      {(baseQuest?.description || quest.description) && (
+        <ThemedView style={styles.descriptionContainer}>
+          <ThemedText style={styles.descriptionText}>
+            {baseQuest?.description || quest.description}
+          </ThemedText>
+        </ThemedView>
+      )}
+    </Pressable>
+  );
+});
 
-const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => (
-  <Pressable
-    style={styles.questCard}
-    onPress={() => router.push(`/questDetail?id=${quest.id}`)}
-  >
+const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => {
+  const [isPressed, setIsPressed] = useState(false);
+
+  return (
+    <Pressable
+      style={[styles.questCard, isPressed && styles.questCardPressed]}
+      onPress={() => router.push(`/questDetail?id=${quest.id}`)}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+    >
     <ThemedView style={styles.questHeader}>
       <ThemedView style={styles.questInfo}>
         <ThemedView style={styles.titleRow}>
@@ -137,20 +179,24 @@ const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => (
             <ThemedText style={styles.xpText}>{quest.xpReward} XP</ThemedText>
           </ThemedView>
         </ThemedView>
-        <ThemedText style={styles.questDescription}>
-          {quest.description}
-        </ThemedText>
+        {/* Show artwork thumbnails instead of description */}
+        {quest.artworkThumbnails && quest.artworkThumbnails.length > 0 && (
+          <QuestArtworkThumbnails
+            artworks={quest.artworkThumbnails}
+            visitedArtworkIds={[]} // Available quests have no progress
+          />
+        )}
       </ThemedView>
     </ThemedView>
 
-    {quest.galleryMap && (
-      <ThemedView style={styles.locationContainer}>
-        <FontAwesome name="map-marker" size={14} color={Colors.darkMedGray} />
-        <ThemedText style={styles.locationText}>{quest.galleryMap}</ThemedText>
+    {quest.description && (
+      <ThemedView style={styles.descriptionContainer}>
+        <ThemedText style={styles.descriptionText}>{quest.description}</ThemedText>
       </ThemedView>
     )}
   </Pressable>
-));
+  );
+});
 
 export default function ArtQuestScreen() {
   const { isAuthReady, isAuthenticated } = useAuthContext();
@@ -181,6 +227,7 @@ export default function ArtQuestScreen() {
   const [userXP, setUserXP] = useState<UserXP | null>(null);
   const [currentRank, setCurrentRank] = useState<Rank | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [questLookup, setQuestLookup] = useState<Map<string, BaseQuest>>(new Map());
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -210,6 +257,9 @@ export default function ArtQuestScreen() {
         getUserXP(),
       ]);
 
+      // Simple quest loading summary
+      console.log(`📋 Quest Page: Loaded ${allQuests.length} quests`);
+
       // Separate user quests into active (in progress) and completed
       const activeQuests = userQuests.filter((uq: UserQuest) => !uq.isCompleted);
       const completedQuests = userQuests.filter((uq: UserQuest) => uq.isCompleted);
@@ -226,6 +276,17 @@ export default function ArtQuestScreen() {
       setActiveQuests(activeQuests);
       setCompletedQuests(completedQuests);
       setUserXP(xp);
+
+      // Create quest lookup map for accessing artwork thumbnails
+      const lookup = new Map<string, BaseQuest>();
+      allQuests.forEach(quest => {
+        lookup.set(quest.id, quest);
+      });
+      setQuestLookup(lookup);
+
+      // Simple quest summary
+      console.log(`🗂️ Quest summary: ${activeQuests.length} active, ${available.length} available, ${completedQuests.length} completed`);
+
 
       // Get user's rank based on XP
       if (xp) {
@@ -277,8 +338,8 @@ export default function ArtQuestScreen() {
               <ThemedText type="title" style={styles.sectionTitle}>
                 Active Quests
               </ThemedText>
-              <ThemedView style={styles.badge}>
-                <ThemedText style={styles.badgeText}>
+              <ThemedView style={[styles.badge, styles.activeBadge]}>
+                <ThemedText style={[styles.badgeText, styles.activeText]}>
                   {item.data.count} In Progress
                 </ThemedText>
               </ThemedView>
@@ -300,7 +361,7 @@ export default function ArtQuestScreen() {
       case 'activeQuest':
         return (
           <ThemedView style={[styles.section, { paddingTop: 0 }]}>
-            <ActiveQuestItem quest={item.data} />
+            <ActiveQuestItem quest={item.data} questLookup={questLookup} />
           </ThemedView>
         );
 
@@ -334,7 +395,7 @@ export default function ArtQuestScreen() {
       case 'completedQuest':
         return (
           <ThemedView style={[styles.section, { paddingTop: 0 }]}>
-            <ActiveQuestItem quest={item.data} />
+            <ActiveQuestItem quest={item.data} questLookup={questLookup} isCompleted={true} />
           </ThemedView>
         );
 
@@ -364,7 +425,7 @@ export default function ArtQuestScreen() {
       default:
         return null;
     }
-  }, []);
+  }, [questLookup]);
 
   // Initial load
   useEffect(() => {
@@ -445,25 +506,21 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   statsSection: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     padding: 20,
     paddingTop: 16,
   },
-  rankTitle: {
+  pageTitle: {
     fontSize: 30,
   },
-  levelText: {
-    color: Colors.darkMedGray,
-    marginTop: 4,
+  rankSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 20,
+    gap: 8,
   },
-  medalContainer: {
-    backgroundColor: Colors.lightYellow,
-    borderColor: Colors.darkYellow,
-    borderWidth: 1,
-    padding: 12,
-    borderRadius: 50,
+  rankText: {
+    color: Colors.darkMedGray,
+    fontSize: 16,
   },
   section: {
     padding: 20,
@@ -476,14 +533,18 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {},
   badge: {
-    backgroundColor: Colors.lightYellow,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
   },
   badgeText: {
-    color: Colors.darkYellow,
     fontSize: 14,
+  },
+  activeBadge: {
+    backgroundColor: Colors.lightYellow,
+  },
+  activeText: {
+    color: Colors.darkYellow,
   },
   grayBadge: {
     backgroundColor: Colors.medLightGray,
@@ -498,7 +559,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     ...shadowStyle,
   },
+  questCardPressed: {
+    shadowOpacity: 0.4,
+    shadowRadius: 2,
+    shadowOffset: { width: -1, height: -1 },
+    shadowColor: '#000',
+    elevation: 0,
+    transform: [{ translateY: 1 }],
+  },
   questHeader: {
+    backgroundColor: Colors.medLightGray,
     marginBottom: 12,
   },
   questInfo: {
@@ -512,29 +582,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   questTitle: {
+    backgroundColor: Colors.medLightGray,
     fontSize: 18,
     flex: 1,
     paddingRight: 8,
   },
-  questDescription: {
-    backgroundColor: Colors.medLightGray,
-    fontSize: 14,
-    marginBottom: 8,
-  },
   xpBadge: {
-    backgroundColor: Colors.lightGreen,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    backgroundColor: Colors.medLightGray,
     alignSelf: "flex-start",
   },
   xpText: {
-    color: Colors.darkGreen,
+    color: Colors.darkMedGray,
     fontSize: 14,
   },
   progressContainer: {
     backgroundColor: Colors.medLightGray,
-    marginBottom: 12,
+    marginBottom: 4,
   },
   progressBar: {
     backgroundColor: Colors.medGray,
@@ -562,7 +625,6 @@ const styles = StyleSheet.create({
     color: Colors.darkMedGray,
   },
   locationContainer: {
-    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
@@ -570,6 +632,16 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: 14,
     color: Colors.darkMedGray,
+  },
+  descriptionContainer: {
+    backgroundColor: Colors.medLightGray,
+    marginTop: 8,
+    paddingHorizontal: 4,
+  },
+  descriptionText: {
+    fontSize: 14,
+    color: Colors.darkMedGray,
+    lineHeight: 18,
   },
   questFooter: {
     alignItems: "center",
