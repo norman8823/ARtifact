@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
   },
   buttonIconTrashCan: {
     marginRight: 8,
-    color: "#FF3B30"
+    color: "#FF3B30",
   },
   saveButton: {
     flexDirection: "row",
