@@ -254,7 +254,7 @@ export default function HomeScreen() {
     >
       <Image
         key={item.id}
-        source={{ uri: item.primaryImage }}
+        source={{ uri: item.primaryImage || undefined }}
         style={styles.featuredImage}
         contentFit="cover"
         cachePolicy="memory-disk"

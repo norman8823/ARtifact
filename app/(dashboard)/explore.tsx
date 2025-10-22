@@ -45,7 +45,7 @@ export default function ExploreScreen() {
   });
 
   // Debounced search function
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const debouncedSearch = useCallback((query: string) => {
     if (debounceTimerRef.current) {
