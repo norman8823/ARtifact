@@ -1,33 +1,39 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { shadowStyle } from "@/constants/Shadow";
+import { useProfileUpdate } from "@/src/hooks/useProfileUpdate";
+import { useUserData } from "@/src/hooks/useUserData";
 import { FontAwesome } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { useState, useEffect } from "react";
+import { Image } from "expo-image";
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
   View,
-  FlatList,
 } from "react-native";
-import { Colors } from "@/constants/Colors";
-import { shadowStyle } from "@/constants/Shadow";
-import { useUserData } from "@/src/hooks/useUserData";
-import { Image } from "expo-image";
 
 export default function ProfileSettingsScreen() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [selectedAvatarSeed, setSelectedAvatarSeed] = useState("Felix");
   const [tempSelectedSeed, setTempSelectedSeed] = useState("Felix");
   const { currentUser, ensureUserInDB, updateUserInDB } = useUserData();
+  const { updateProfile, isUpdating } = useProfileUpdate();
+
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
-    // phone: "",
-    password: "password",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   // Load user data on mount
@@ -66,9 +72,8 @@ export default function ProfileSettingsScreen() {
     if (currentUser) {
       setFormData((prev) => ({
         ...prev,
-        name: currentUser.username || "",
+        username: currentUser.username || "",
         email: currentUser.email || "",
-        // phone: currentUser.phone || "",
       }));
 
       // Set current avatar seed (stored in profileImage field) or default to Felix
@@ -77,6 +82,97 @@ export default function ProfileSettingsScreen() {
       setTempSelectedSeed(currentSeed);
     }
   }, [currentUser]);
+
+  // Handle save changes
+  const handleSaveChanges = async () => {
+    if (!currentUser?.id) {
+      Alert.alert("Error", "User information not loaded");
+      return;
+    }
+
+    // Check if any changes were made
+    const usernameChanged = formData.username !== currentUser.username;
+    const passwordChanged = formData.newPassword.trim().length > 0;
+
+    if (!usernameChanged && !passwordChanged) {
+      Alert.alert("No Changes", "You haven't made any changes to save");
+      return;
+    }
+
+    // Validate password fields if password is being changed
+    if (passwordChanged) {
+      if (!formData.currentPassword) {
+        Alert.alert(
+          "Current Password Required",
+          "Please enter your current password to change it"
+        );
+        return;
+      }
+
+      if (formData.newPassword !== formData.confirmPassword) {
+        Alert.alert(
+          "Passwords Don't Match",
+          "New password and confirm password must match"
+        );
+        return;
+      }
+
+      if (formData.newPassword.length < 8) {
+        Alert.alert(
+          "Invalid Password",
+          "Password must be at least 8 characters long"
+        );
+        return;
+      }
+    }
+
+    try {
+      const updateParams: {
+        username?: string;
+        currentPassword?: string;
+        newPassword?: string;
+      } = {};
+
+      if (usernameChanged) {
+        updateParams.username = formData.username.trim();
+      }
+
+      if (passwordChanged) {
+        updateParams.currentPassword = formData.currentPassword;
+        updateParams.newPassword = formData.newPassword;
+      }
+
+      const result = await updateProfile(
+        updateParams,
+        currentUser.id,
+        currentUser.username,
+        updateUserInDB
+      );
+
+      // Clear password fields after successful update
+      setFormData((prev) => ({
+        ...prev,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      }));
+
+      // Show success message
+      const updatedFieldsText = result.updatedFields.join(" and ");
+      Alert.alert(
+        "Success",
+        `Your ${updatedFieldsText} ${
+          result.updatedFields.length > 1 ? "have" : "has"
+        } been updated successfully`
+      );
+    } catch (error: any) {
+      console.error("Error saving changes:", error);
+      Alert.alert(
+        "Error",
+        error.message || "Failed to save changes. Please try again."
+      );
+    }
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -123,15 +219,19 @@ export default function ProfileSettingsScreen() {
             <TextInput
               style={styles.input}
               placeholder="Enter username"
-              value={formData.name}
-              onChangeText={(text) => setFormData({ ...formData, name: text })}
+              value={formData.username}
+              onChangeText={(text) =>
+                setFormData({ ...formData, username: text })
+              }
+              autoCapitalize="none"
+              editable={!isUpdating}
             />
           </ThemedView>
         </ThemedView>
 
         <ThemedView style={styles.formField}>
           <ThemedText style={styles.label}>Email</ThemedText>
-          <ThemedView style={styles.inputContainer}>
+          <ThemedView style={[styles.inputContainer, styles.readOnlyInput]}>
             <FontAwesome
               name="envelope-o"
               size={16}
@@ -139,81 +239,152 @@ export default function ProfileSettingsScreen() {
               style={styles.inputIcon}
             />
             <TextInput
-              style={styles.input}
-              placeholder="Enter email address"
+              style={[styles.input, styles.readOnlyText]}
               value={formData.email}
-              onChangeText={(text) => setFormData({ ...formData, email: text })}
-              keyboardType="email-address"
-              autoCapitalize="none"
+              editable={false}
             />
           </ThemedView>
+          <ThemedText style={styles.helperText}>
+            Email cannot be changed
+          </ThemedText>
         </ThemedView>
 
-        {/* <ThemedView style={styles.formField}>
-          <ThemedText style={styles.label}>Phone</ThemedText>
-          <ThemedView style={styles.inputContainer}>
-            <FontAwesome
-              name="phone"
-              size={16}
-              color={Colors.darkMedGray}
-              style={styles.inputIcon}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="+1 555 123 4567"
-              value={formData.phone}
-              onChangeText={(text) => setFormData({ ...formData, phone: text })}
-              keyboardType="phone-pad"
-            />
-          </ThemedView>
-        </ThemedView> */}
+        {/* Password Change Section */}
+        <ThemedView style={styles.passwordSection}>
+          <ThemedText style={styles.sectionTitle}>Change Password</ThemedText>
 
-        <ThemedView style={[styles.formField, styles.lastFormField]}>
-          <ThemedText style={styles.label}>Password</ThemedText>
-          <ThemedView style={styles.inputContainer}>
-            <FontAwesome
-              name="lock"
-              size={16}
-              color={Colors.darkMedGray}
-              style={styles.inputIcon}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="••••••••"
-              value={formData.password}
-              onChangeText={(text) =>
-                setFormData({ ...formData, password: text })
-              }
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-            />
-            <Pressable onPress={() => setShowPassword(!showPassword)}>
+          <ThemedView style={styles.formField}>
+            <ThemedText style={styles.label}>Current Password</ThemedText>
+            <ThemedView style={styles.inputContainer}>
               <FontAwesome
-                name={showPassword ? "eye" : "eye-slash"}
+                name="lock"
                 size={16}
                 color={Colors.darkMedGray}
+                style={styles.inputIcon}
               />
-            </Pressable>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter current password"
+                value={formData.currentPassword}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, currentPassword: text })
+                }
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                editable={!isUpdating}
+              />
+              <Pressable onPress={() => setShowPassword(!showPassword)}>
+                <FontAwesome
+                  name={showPassword ? "eye" : "eye-slash"}
+                  size={16}
+                  color={Colors.darkMedGray}
+                />
+              </Pressable>
+            </ThemedView>
+          </ThemedView>
+
+          <ThemedView style={styles.formField}>
+            <ThemedText style={styles.label}>New Password</ThemedText>
+            <ThemedView style={styles.inputContainer}>
+              <FontAwesome
+                name="lock"
+                size={16}
+                color={Colors.darkMedGray}
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Enter new password"
+                value={formData.newPassword}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, newPassword: text })
+                }
+                secureTextEntry={!showNewPassword}
+                autoCapitalize="none"
+                editable={!isUpdating}
+              />
+              <Pressable onPress={() => setShowNewPassword(!showNewPassword)}>
+                <FontAwesome
+                  name={showNewPassword ? "eye" : "eye-slash"}
+                  size={16}
+                  color={Colors.darkMedGray}
+                />
+              </Pressable>
+            </ThemedView>
+          </ThemedView>
+
+          <ThemedView style={[styles.formField, styles.lastFormField]}>
+            <ThemedText style={styles.label}>Confirm New Password</ThemedText>
+            <ThemedView style={styles.inputContainer}>
+              <FontAwesome
+                name="lock"
+                size={16}
+                color={Colors.darkMedGray}
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm new password"
+                value={formData.confirmPassword}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, confirmPassword: text })
+                }
+                secureTextEntry={!showConfirmPassword}
+                autoCapitalize="none"
+                editable={!isUpdating}
+              />
+              <Pressable
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <FontAwesome
+                  name={showConfirmPassword ? "eye" : "eye-slash"}
+                  size={16}
+                  color={Colors.darkMedGray}
+                />
+              </Pressable>
+            </ThemedView>
           </ThemedView>
         </ThemedView>
 
         {/* Buttons */}
-        <Pressable style={styles.saveButton}>
-          <FontAwesome
-            name="check"
-            size={16}
-            color={Colors.lightGray}
-            style={styles.buttonIcon}
-          />
-          <ThemedText style={styles.saveButtonText}>Save Changes</ThemedText>
+        <Pressable
+          style={[styles.saveButton, isUpdating && styles.disabledButton]}
+          onPress={handleSaveChanges}
+          disabled={isUpdating}
+        >
+          {isUpdating ? (
+            <ActivityIndicator color={Colors.lightGray} />
+          ) : (
+            <>
+              <FontAwesome
+                name="check"
+                size={16}
+                color={Colors.lightGray}
+                style={styles.buttonIcon}
+              />
+              <ThemedText style={styles.saveButtonText}>
+                Save Changes
+              </ThemedText>
+            </>
+          )}
         </Pressable>
 
-        <Pressable style={styles.deleteButton}>
+        <Pressable
+          style={styles.deleteButton}
+          onPress={() => {
+            Alert.alert(
+              "Delete Account",
+              "This feature is not yet implemented. Please contact support to delete your account.",
+              [{ text: "OK" }]
+            );
+          }}
+          disabled={isUpdating}
+        >
           <FontAwesome
             name="trash"
             size={16}
             color={Colors.darkMedGray}
-            style={styles.buttonIcon}
+            style={styles.buttonIconTrashCan}
           />
           <ThemedText style={styles.deleteButtonText}>
             Delete Account
@@ -261,7 +432,6 @@ export default function ProfileSettingsScreen() {
                 />
               </Pressable>
             </ThemedView>
-
 
             {/* Avatar Grid */}
             <ScrollView
@@ -321,9 +491,7 @@ export default function ProfileSettingsScreen() {
                   }
                 }}
               >
-                <ThemedText style={styles.saveModalButtonText}>
-                  Save
-                </ThemedText>
+                <ThemedText style={styles.saveModalButtonText}>Save</ThemedText>
               </Pressable>
             </ThemedView>
           </Pressable>
@@ -347,7 +515,7 @@ const styles = StyleSheet.create({
   },
   avatarBlock: {
     alignItems: "center",
-    marginBottom: 36,
+    marginBottom: 15,
   },
   avatarContainer: {
     position: "relative",
@@ -377,12 +545,41 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   lastFormField: {
-    marginBottom: 72,
+    marginBottom: 5,
   },
   label: {
     fontSize: 14,
     color: Colors.darkMedGray,
     marginBottom: 4,
+  },
+  helperText: {
+    fontSize: 12,
+    color: Colors.darkMedGray,
+    marginTop: 4,
+    marginBottom: 5,
+    fontStyle: "italic",
+  },
+  readOnlyInput: {
+    opacity: 0.6,
+  },
+  readOnlyText: {
+    color: Colors.darkMedGray,
+  },
+  passwordSection: {
+    marginBottom: 24,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: Colors.medGray,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  sectionSubtitle: {
+    fontSize: 12,
+    color: Colors.darkMedGray,
+    marginBottom: 16,
   },
   inputContainer: {
     flexDirection: "row",
@@ -404,6 +601,10 @@ const styles = StyleSheet.create({
   buttonIcon: {
     marginRight: 8,
   },
+  buttonIconTrashCan: {
+    marginRight: 8,
+    color: "#FF3B30"
+  },
   saveButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -417,6 +618,9 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: Colors.lightGray,
   },
+  disabledButton: {
+    opacity: 0.5,
+  },
   deleteButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -427,7 +631,7 @@ const styles = StyleSheet.create({
     ...shadowStyle,
   },
   deleteButtonText: {
-    color: Colors.darkMedGray,
+    color: "#FF3B30",
   },
   modalOverlay: {
     flex: 1,
