@@ -253,8 +253,11 @@ export default function HomeScreen() {
       style={styles.featuredItem}
     >
       <Image
-        source={{ uri: item.primaryImage || undefined }}
+        key={item.id}
+        source={{ uri: item.primaryImage }}
         style={styles.featuredImage}
+        contentFit="cover"
+        cachePolicy="memory-disk"
       />
       <ThemedText type="subtitle" style={styles.artworkTitle}>
         {item.title}
@@ -358,6 +361,7 @@ export default function HomeScreen() {
                       parallaxScrollingScale: 0.9,
                       parallaxScrollingOffset: 40,
                     }}
+                    windowSize={5}
                   />
                   <Pressable
                     style={[styles.carouselButton, styles.carouselButtonLeft]}
