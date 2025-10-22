@@ -8,11 +8,12 @@ import { type Quest, useQuests } from "@/src/hooks/useQuests";
 import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
 } from "react-native";
@@ -40,48 +41,52 @@ export default function QuestDetailScreen() {
   const [error, setError] = useState<string | null>(null);
   const [isStarting, setIsStarting] = useState(false);
   const [pressedArtworkId, setPressedArtworkId] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const loadQuestDetail = useCallback(async () => {
+    if (!isAuthReady) return; // Wait for auth to be ready
+
+    try {
+      // Get the quest data
+      const quests = await getAllQuests();
+      const quest = quests.find((q: Quest) => q.id === questId);
+      if (!quest) {
+        throw new Error("Quest not found");
+      }
+
+      // Get the user's progress on this quest
+      const userQuest = await getUserQuestByQuestId(questId);
+
+      // Get the artwork details
+      const artworks = quest.requiredArtworks
+        ? await getArtworksByIds(quest.requiredArtworks)
+        : [];
+
+      setQuestDetail({
+        quest,
+        userQuest,
+        artworks,
+      });
+    } catch (err) {
+      console.error("Error loading quest detail:", err);
+      setError(err instanceof Error ? err.message : "Failed to load quest");
+    }
+  }, [isAuthReady, questId, getAllQuests, getUserQuestByQuestId, getArtworksByIds]);
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await loadQuestDetail();
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [loadQuestDetail]);
 
   useEffect(() => {
-    const loadQuestDetail = async () => {
-      if (!isAuthReady) return; // Wait for auth to be ready
-
-      try {
-        // Get the quest data
-        const quests = await getAllQuests();
-        const quest = quests.find((q: Quest) => q.id === questId);
-        if (!quest) {
-          throw new Error("Quest not found");
-        }
-
-        // Get the user's progress on this quest
-        const userQuest = await getUserQuestByQuestId(questId);
-
-        // Get the artwork details
-        const artworks = quest.requiredArtworks
-          ? await getArtworksByIds(quest.requiredArtworks)
-          : [];
-
-        setQuestDetail({
-          quest,
-          userQuest,
-          artworks,
-        });
-      } catch (err) {
-        console.error("Error loading quest detail:", err);
-        setError(err instanceof Error ? err.message : "Failed to load quest");
-      }
-    };
-
     if (questId && isAuthReady) {
       loadQuestDetail();
     }
-  }, [
-    questId,
-    isAuthReady,
-    getAllQuests,
-    getUserQuestByQuestId,
-    getArtworksByIds,
-  ]);
+  }, [questId, isAuthReady, loadQuestDetail]);
 
   const handleStartQuest = async () => {
     if (!questDetail?.quest) return;
@@ -176,6 +181,14 @@ export default function QuestDetailScreen() {
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            tintColor={Colors.darkMedGray}
+            colors={[Colors.darkMedGray]}
+          />
+        }
       >
         {/* Quest Info Card */}
         <ThemedView style={styles.questCard}>
