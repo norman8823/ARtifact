@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { WebView } from "react-native-webview";
+import { useCameraPermissions } from "expo-camera";
 import ARPermissionManager from "@/src/utils/ARPermissionManager";
 
 export default function ARViewerScreen() {
@@ -26,34 +27,18 @@ export default function ARViewerScreen() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [permissionsChecked, setPermissionsChecked] = useState(false);
-  const [hasPermissions, setHasPermissions] = useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
 
-  // Check permissions when component mounts
+  // Request permissions when component mounts if not granted
   useEffect(() => {
-    const checkARPermissions = async () => {
-      try {
-        console.log('🎯 ARViewer: Checking camera permissions...');
-        const permissions = await ARPermissionManager.checkPermissions();
-        setHasPermissions(permissions.camera);
-        setPermissionsChecked(true);
-
-        if (!permissions.camera) {
-          console.log('🎯 ARViewer: No camera permissions, requesting...');
-          const newPermissions = await ARPermissionManager.requestAllPermissions();
-          setHasPermissions(newPermissions.camera);
-        }
-      } catch (error) {
-        console.error('❌ Error checking AR permissions:', error);
-        setPermissionsChecked(true);
-      }
-    };
-
-    checkARPermissions();
-  }, []);
+    if (permission && !permission.granted) {
+      console.log('🎯 ARViewer: No camera permissions, requesting...');
+      requestPermission();
+    }
+  }, [permission]);
 
   // Build AR URL with permission-aware parameters
-  const arURL = arImage && hasPermissions ? ARPermissionManager.buildOptimizedARURL(arImage) : null;
+  const arURL = arImage && permission?.granted ? ARPermissionManager.buildOptimizedARURL(arImage) : null;
 
   // Debug logging
   console.log('🎯 AR Viewer - arImage:', arImage);
@@ -103,7 +88,7 @@ export default function ARViewerScreen() {
           </ThemedView>
         )}
         {/* Permission Check Loading */}
-        {!permissionsChecked && (
+        {!permission && (
           <ThemedView style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={Colors.darkMedGray} />
             <ThemedText style={styles.loadingText}>
@@ -113,7 +98,7 @@ export default function ARViewerScreen() {
         )}
 
         {/* Permission Denied State */}
-        {permissionsChecked && !hasPermissions && (
+        {permission && !permission.granted && (
           <ThemedView style={styles.errorContainer}>
             <FontAwesome
               name="camera"
@@ -128,10 +113,7 @@ export default function ARViewerScreen() {
             </ThemedText>
             <Pressable
               style={styles.retryButton}
-              onPress={async () => {
-                const newPermissions = await ARPermissionManager.requestAllPermissions();
-                setHasPermissions(newPermissions.camera);
-              }}
+              onPress={requestPermission}
             >
               <ThemedText style={styles.retryButtonText}>Grant Permission</ThemedText>
             </Pressable>
@@ -139,7 +121,7 @@ export default function ARViewerScreen() {
         )}
 
         {/* Error State */}
-        {permissionsChecked && hasPermissions && (hasError || !arURL) ? (
+        {permission?.granted && (hasError || !arURL) ? (
           <ThemedView style={styles.errorContainer}>
             <FontAwesome
               name="exclamation-triangle"
@@ -162,7 +144,7 @@ export default function ARViewerScreen() {
               <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
             </Pressable>
           </ThemedView>
-        ) : permissionsChecked && hasPermissions && arURL ? (
+        ) : permission?.granted && arURL ? (
           /* WebView */
           <WebView
             source={{ uri: arURL }}

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { useCameraPermissions } from 'expo-camera';
 import ARPermissionManager from '../utils/ARPermissionManager';
 
 interface ARPrewarmManagerProps {
@@ -15,9 +16,10 @@ export const ARPrewarmManager: React.FC<ARPrewarmManagerProps> = ({
 }) => {
   const webViewRef = useRef<WebView>(null);
   const [isPrewarming, setIsPrewarming] = React.useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !permission) return;
 
     const initializeARPrewarming = async () => {
       try {
@@ -32,12 +34,14 @@ export const ARPrewarmManager: React.FC<ARPrewarmManagerProps> = ({
 
         setIsPrewarming(true);
 
-        // Request permissions first
-        const permissions = await ARPermissionManager.requestAllPermissions();
-        console.log('🎯 Pre-warm permissions result:', permissions);
+        // Request permissions first if not granted
+        if (!permission.granted) {
+          console.log('🎯 Requesting camera permissions for AR pre-warming...');
+          await requestPermission();
+        }
 
         // Only pre-warm if we have necessary permissions
-        if (permissions.camera) {
+        if (permission.granted) {
           console.log('🔥 Starting AR WebView pre-warming...');
 
           // Give permissions time to propagate
@@ -58,7 +62,7 @@ export const ARPrewarmManager: React.FC<ARPrewarmManagerProps> = ({
     const timeoutId = setTimeout(initializeARPrewarming, 2000);
 
     return () => clearTimeout(timeoutId);
-  }, [enabled, sampleARURL]);
+  }, [enabled, sampleARURL, permission]);
 
   const handlePrewarmLoadEnd = async () => {
     try {
