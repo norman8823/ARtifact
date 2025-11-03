@@ -1,0 +1,32 @@
+{
+  "cli": {
+    "version": ">= 16.10.1",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      }
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "SENTRY_AUTH_TOKEN": "${secret.SENTRY_AUTH_TOKEN}",
+        "EXPO_PUBLIC_AWS_REGION": "${secret.AWS_REGION}",
+        "EXPO_PUBLIC_USER_POOL_ID": "${secret.USER_POOL_ID}",
+        "EXPO_PUBLIC_USER_POOL_CLIENT_ID": "${secret.USER_POOL_CLIENT_ID}",
+        "EXPO_PUBLIC_IDENTITY_POOL_ID": "${secret.IDENTITY_POOL_ID}",
+        "EXPO_PUBLIC_STORAGE_BUCKET": "${secret.STORAGE_BUCKET}"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
