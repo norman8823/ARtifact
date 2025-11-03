@@ -25,12 +25,18 @@ export default function EmailLoginScreen() {
   const [verificationCode, setVerificationCode] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [needsVerification, setNeedsVerification] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetCode, setResetCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [needsResetCode, setNeedsResetCode] = useState(false);
 
   const {
     signUpWithEmail,
     confirmEmailSignUp,
     signInWithEmail,
     signOut,
+    requestPasswordReset,
+    confirmPasswordReset,
     isLoading,
     error,
     getStoredPassword,
@@ -46,7 +52,6 @@ export default function EmailLoginScreen() {
     return password.length >= 8;
   };
 
-
   const isValidUsername = (username: string) => {
     // Only allow numbers and English letters, 3-20 characters
     return /^[a-zA-Z0-9]{3,20}$/.test(username);
@@ -54,6 +59,48 @@ export default function EmailLoginScreen() {
 
   const handleSubmit = async () => {
     try {
+      // Handle password reset flow
+      if (isForgotPassword) {
+        if (needsResetCode) {
+          // Confirm password reset with code and new password
+          const result = await confirmPasswordReset(
+            email,
+            resetCode,
+            newPassword
+          );
+          if (result.isPasswordReset) {
+            Alert.alert(
+              "Password Reset Successful",
+              "Your password has been reset. Please sign in with your new password.",
+              [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    // Reset all forgot password states and return to sign in
+                    setIsForgotPassword(false);
+                    setNeedsResetCode(false);
+                    setResetCode("");
+                    setNewPassword("");
+                    setPassword("");
+                  },
+                },
+              ]
+            );
+          }
+        } else {
+          // Request password reset code
+          const result = await requestPasswordReset(email);
+          if (result.isCodeSent) {
+            setNeedsResetCode(true);
+            Alert.alert(
+              "Reset Code Sent",
+              "A password reset code has been sent to your email. Please check your inbox."
+            );
+          }
+        }
+        return;
+      }
+
       if (needsVerification) {
         // Step 1: Confirm the sign up
         const confirmResult = await confirmEmailSignUp(email, verificationCode);
@@ -105,7 +152,11 @@ export default function EmailLoginScreen() {
       Sentry.captureException(err, {
         tags: {
           component: "EmailLoginScreen",
-          action: needsVerification
+          action: isForgotPassword
+            ? needsResetCode
+              ? "confirmPasswordReset"
+              : "requestPasswordReset"
+            : needsVerification
             ? "verification"
             : isSignUp
             ? "signUp"
@@ -117,6 +168,8 @@ export default function EmailLoginScreen() {
             hasPassword: !!password,
             hasUsername: !!username,
             hasVerificationCode: !!verificationCode,
+            hasResetCode: !!resetCode,
+            hasNewPassword: !!newPassword,
           },
           validationState: {
             isValidEmail: isValidEmail(email),
@@ -154,7 +207,9 @@ export default function EmailLoginScreen() {
                 />
               </Pressable>
               <ThemedText style={styles.title}>
-                {needsVerification
+                {isForgotPassword
+                  ? "Reset Password"
+                  : needsVerification
                   ? "Verify Email"
                   : isSignUp
                   ? "Sign Up"
@@ -174,14 +229,22 @@ export default function EmailLoginScreen() {
             {/* Instructions */}
             <ThemedView style={styles.instructions}>
               <ThemedText type="title" style={styles.instructionsTitle}>
-                {needsVerification
+                {isForgotPassword
+                  ? needsResetCode
+                    ? "Enter reset code"
+                    : "Reset your password"
+                  : needsVerification
                   ? "Enter verification code"
                   : isSignUp
                   ? "Create your account"
                   : "Welcome back"}
               </ThemedText>
               <ThemedText style={styles.instructionsText}>
-                {needsVerification
+                {isForgotPassword
+                  ? needsResetCode
+                    ? "Please enter the reset code sent to your email and choose a new password."
+                    : "Enter your email address and we'll send you a code to reset your password."
+                  : needsVerification
                   ? "Please enter the verification code sent to your email."
                   : isSignUp
                   ? "Please enter your details to create an account."
@@ -191,7 +254,74 @@ export default function EmailLoginScreen() {
 
             {/* Form */}
             <ThemedView style={styles.formContainer}>
-              {!needsVerification && (
+              {/* Forgot Password Flow */}
+              {isForgotPassword && (
+                <>
+                  {!needsResetCode && (
+                    <ThemedView style={styles.emailInputContainer}>
+                      <ThemedView style={styles.emailInputWrapper}>
+                        <FontAwesome
+                          name="envelope"
+                          size={20}
+                          color={Colors.darkMedGray}
+                          style={styles.emailIcon}
+                        />
+                        <TextInput
+                          style={styles.emailInput}
+                          placeholder="Your email address"
+                          keyboardType="email-address"
+                          autoCapitalize="none"
+                          value={email}
+                          onChangeText={setEmail}
+                        />
+                      </ThemedView>
+                    </ThemedView>
+                  )}
+
+                  {needsResetCode && (
+                    <>
+                      <ThemedView style={styles.emailInputContainer}>
+                        <ThemedView style={styles.emailInputWrapper}>
+                          <FontAwesome
+                            name="key"
+                            size={20}
+                            color={Colors.darkMedGray}
+                            style={styles.emailIcon}
+                          />
+                          <TextInput
+                            style={styles.emailInput}
+                            placeholder="Reset code"
+                            keyboardType="number-pad"
+                            value={resetCode}
+                            onChangeText={setResetCode}
+                          />
+                        </ThemedView>
+                      </ThemedView>
+
+                      <ThemedView style={styles.emailInputContainer}>
+                        <ThemedView style={styles.emailInputWrapper}>
+                          <FontAwesome
+                            name="lock"
+                            size={20}
+                            color={Colors.darkMedGray}
+                            style={styles.emailIcon}
+                          />
+                          <TextInput
+                            style={styles.emailInput}
+                            placeholder="New password (min 8 characters)"
+                            secureTextEntry
+                            value={newPassword}
+                            onChangeText={setNewPassword}
+                          />
+                        </ThemedView>
+                      </ThemedView>
+                    </>
+                  )}
+                </>
+              )}
+
+              {/* Regular Sign In/Sign Up Flow */}
+              {!isForgotPassword && !needsVerification && (
                 <>
                   <ThemedView style={styles.emailInputContainer}>
                     <ThemedView style={styles.emailInputWrapper}>
@@ -231,7 +361,6 @@ export default function EmailLoginScreen() {
                           />
                         </ThemedView>
                       </ThemedView>
-
                     </>
                   )}
 
@@ -255,7 +384,8 @@ export default function EmailLoginScreen() {
                 </>
               )}
 
-              {needsVerification && (
+              {/* Verification Code */}
+              {!isForgotPassword && needsVerification && (
                 <ThemedView style={styles.emailInputContainer}>
                   <ThemedView style={styles.emailInputWrapper}>
                     <FontAwesome
@@ -278,21 +408,35 @@ export default function EmailLoginScreen() {
               <Pressable
                 style={({ pressed }) => [
                   styles.sendCodeButton,
-                  (!email ||
-                    !isValidEmail(email) ||
-                    (!needsVerification && !isValidPassword(password)) ||
-                    (isSignUp &&
-                      !needsVerification &&
-                      !isValidUsername(username))) &&
+                  (isForgotPassword
+                    ? needsResetCode
+                      ? !resetCode ||
+                        !newPassword ||
+                        !isValidPassword(newPassword)
+                      : !email || !isValidEmail(email)
+                    : !email ||
+                      !isValidEmail(email) ||
+                      (!needsVerification && !isValidPassword(password)) ||
+                      (isSignUp &&
+                        !needsVerification &&
+                        !isValidUsername(username))) &&
                     styles.sendCodeButtonDisabled,
                   pressed && !isLoading && styles.sendCodeButtonPressed,
                 ]}
                 disabled={
                   isLoading ||
-                  !email ||
-                  !isValidEmail(email) ||
-                  (!needsVerification && !isValidPassword(password)) ||
-                  (isSignUp && !needsVerification && !isValidUsername(username))
+                  (isForgotPassword
+                    ? needsResetCode
+                      ? !resetCode ||
+                        !newPassword ||
+                        !isValidPassword(newPassword)
+                      : !email || !isValidEmail(email)
+                    : !email ||
+                      !isValidEmail(email) ||
+                      (!needsVerification && !isValidPassword(password)) ||
+                      (isSignUp &&
+                        !needsVerification &&
+                        !isValidUsername(username)))
                 }
                 onPress={handleSubmit}
               >
@@ -300,7 +444,11 @@ export default function EmailLoginScreen() {
                   <ActivityIndicator color={Colors.lightGray} />
                 ) : (
                   <ThemedText style={styles.sendCodeButtonText}>
-                    {needsVerification
+                    {isForgotPassword
+                      ? needsResetCode
+                        ? "Reset Password"
+                        : "Send Reset Code"
+                      : needsVerification
                       ? "Verify Email"
                       : isSignUp
                       ? "Sign Up"
@@ -309,7 +457,58 @@ export default function EmailLoginScreen() {
                 )}
               </Pressable>
 
-              {!needsVerification && (
+              {/* Forgot Password Link */}
+              {!needsVerification && !isSignUp && !isForgotPassword && (
+                <Pressable
+                  style={styles.forgotPasswordLink}
+                  onPress={() => {
+                    setIsForgotPassword(true);
+                    setPassword("");
+                  }}
+                >
+                  <ThemedText
+                    style={[
+                      { color: Colors.metRed },
+                      styles.forgotPasswordText,
+                    ]}
+                  >
+                    Forgot password?
+                  </ThemedText>
+                </Pressable>
+              )}
+
+              {/* Back to Sign In Link */}
+              {isForgotPassword && (
+                <Pressable
+                  style={styles.toggleAuthMode}
+                  onPress={() => {
+                    setIsForgotPassword(false);
+                    setNeedsResetCode(false);
+                    setResetCode("");
+                    setNewPassword("");
+                  }}
+                >
+                  <ThemedText
+                    style={[
+                      { color: Colors.darkMedGray },
+                      styles.toggleAuthModeText,
+                    ]}
+                  >
+                    Remember your password?{" "}
+                  </ThemedText>
+                  <ThemedText
+                    style={[
+                      { color: Colors.metRed },
+                      styles.toggleAuthModeText,
+                    ]}
+                  >
+                    Sign in
+                  </ThemedText>
+                </Pressable>
+              )}
+
+              {/* Toggle Sign Up / Sign In */}
+              {!needsVerification && !isForgotPassword && (
                 <Pressable
                   style={styles.toggleAuthMode}
                   onPress={() => {
@@ -432,6 +631,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   toggleAuthModeText: {
+    fontSize: 14,
+  },
+  forgotPasswordLink: {
+    marginTop: 16,
+    alignItems: "center",
+  },
+  forgotPasswordText: {
     fontSize: 14,
   },
 });
