@@ -3,7 +3,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -13,8 +13,6 @@ import {
   View,
 } from "react-native";
 import { WebView } from "react-native-webview";
-import { useCameraPermissions } from "expo-camera";
-import ARPermissionManager from "@/src/utils/ARPermissionManager";
 
 export default function ARViewerScreen() {
   const params = useLocalSearchParams();
@@ -27,22 +25,21 @@ export default function ARViewerScreen() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [permission, requestPermission] = useCameraPermissions();
 
-  // Request permissions when component mounts if not granted
-  useEffect(() => {
-    if (permission && !permission.granted) {
-      console.log('🎯 ARViewer: No camera permissions, requesting...');
-      requestPermission();
+  // Build AR URL - add https if needed
+  const buildARURL = (url: string): string => {
+    if (!url) return "";
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      return "https://" + url;
     }
-  }, [permission]);
+    return url;
+  };
 
-  // Build AR URL with permission-aware parameters
-  const arURL = arImage && permission?.granted ? ARPermissionManager.buildOptimizedARURL(arImage) : null;
+  const arURL = arImage ? buildARURL(arImage) : null;
 
   // Debug logging
-  console.log('🎯 AR Viewer - arImage:', arImage);
-  console.log('🎯 AR Viewer - final arURL:', arURL);
+  console.log("🎯 AR Viewer - arImage:", arImage);
+  console.log("🎯 AR Viewer - final arURL:", arURL);
 
   const handleBack = () => {
     router.back();
@@ -85,43 +82,16 @@ export default function ARViewerScreen() {
             <ThemedText style={styles.loadingText}>
               Loading AR Experience...
             </ThemedText>
-          </ThemedView>
-        )}
-        {/* Permission Check Loading */}
-        {!permission && (
-          <ThemedView style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={Colors.darkMedGray} />
-            <ThemedText style={styles.loadingText}>
-              Checking camera permissions...
-            </ThemedText>
-          </ThemedView>
-        )}
-
-        {/* Permission Denied State */}
-        {permission && !permission.granted && (
-          <ThemedView style={styles.errorContainer}>
-            <FontAwesome
-              name="camera"
-              size={48}
-              color={Colors.darkMedGray}
-            />
-            <ThemedText style={styles.errorTitle}>
-              Camera Access Required
-            </ThemedText>
-            <ThemedText style={styles.errorMessage}>
-              This AR experience requires camera access to function properly. Please enable camera permissions in your device settings.
-            </ThemedText>
-            <Pressable
-              style={styles.retryButton}
-              onPress={requestPermission}
+            <ThemedText
+              style={[styles.loadingText, { fontSize: 12, marginTop: 8 }]}
             >
-              <ThemedText style={styles.retryButtonText}>Grant Permission</ThemedText>
-            </Pressable>
+              You may be asked for camera permissions
+            </ThemedText>
           </ThemedView>
         )}
 
         {/* Error State */}
-        {permission?.granted && (hasError || !arURL) ? (
+        {hasError || !arURL ? (
           <ThemedView style={styles.errorContainer}>
             <FontAwesome
               name="exclamation-triangle"
@@ -134,8 +104,7 @@ export default function ARViewerScreen() {
             <ThemedText style={styles.errorMessage}>
               {!arURL
                 ? "AR experience URL is missing or invalid."
-                : "Unable to load the AR experience. Please check your internet connection and try again."
-              }
+                : "Unable to load the AR experience. Please check your internet connection and try again."}
             </ThemedText>
             <Pressable
               style={styles.retryButton}
@@ -144,8 +113,8 @@ export default function ARViewerScreen() {
               <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
             </Pressable>
           </ThemedView>
-        ) : permission?.granted && arURL ? (
-          /* WebView */
+        ) : arURL ? (
+          /* WebView - Let 8th Wall handle camera permissions internally */
           <WebView
             source={{ uri: arURL }}
             style={styles.webview}
@@ -166,16 +135,28 @@ export default function ARViewerScreen() {
             // Security settings
             originWhitelist={["https://*"]}
             mixedContentMode="compatibility"
-            // Reduce console noise
+            // Optimize camera permission handling
             injectedJavaScript={`
-              console.log('🎯 AR Viewer: WebView initialized with optimized settings');
-              // Suppress excessive 8th Wall logs
-              const originalLog = console.log;
-              console.log = function(...args) {
-                if (!args.join(' ').includes('8thwall') || args.join(' ').includes('error')) {
-                  originalLog.apply(console, args);
-                }
-              };
+              console.log('🎯 AR Viewer: WebView initialized');
+              
+              // Track if we've already requested camera permissions
+              window.cameraPermissionRequested = false;
+              
+              // Wrap getUserMedia to prevent multiple permission requests
+              if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+                
+                navigator.mediaDevices.getUserMedia = function(constraints) {
+                  if (window.cameraPermissionRequested) {
+                    console.log('🎯 Camera permission already requested, reusing...');
+                  } else {
+                    console.log('🎯 Requesting camera permissions for the first time');
+                    window.cameraPermissionRequested = true;
+                  }
+                  return originalGetUserMedia(constraints);
+                };
+              }
+              
               true;
             `}
           />
