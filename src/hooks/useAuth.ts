@@ -67,11 +67,7 @@ export function useAuth(): UseAuthReturn {
   };
 
   const signUpWithEmail = useCallback(
-    async (
-      email: string,
-      password: string,
-      username: string
-    ) => {
+    async (email: string, password: string, username: string) => {
       setIsLoading(true);
       setError(null);
 
@@ -87,6 +83,7 @@ export function useAuth(): UseAuthReturn {
           options: {
             userAttributes: {
               email,
+              phone_number: "+10000000000", // Dummy phone number to satisfy Cognito + requirement
             },
           },
         });
