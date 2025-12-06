@@ -115,6 +115,18 @@ export default function LandingScreen() {
                 />
               </Pressable>
 
+              <Pressable
+                style={({ pressed }) => [
+                  styles.guestButton,
+                  pressed && styles.loginButtonPressed
+                ]}
+                onPress={() => router.replace("/home")}
+              >
+                <ThemedText style={styles.guestButtonText}>
+                  Browse as Guest
+                </ThemedText>
+              </Pressable>
+
               {/* <ThemedView style={styles.divider}>
                 <ThemedView style={styles.dividerLine} />
                 <ThemedText style={styles.dividerText}>or</ThemedText>
@@ -227,6 +239,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
     elevation: 0,
     transform: [{ translateY: 1 }],
+  },
+  guestButton: {
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  guestButtonText: {
+    color: Colors.darkMedGray,
+    textDecorationLine: "underline",
   },
   buttonContent: {
     backgroundColor: Colors.medLightGray,

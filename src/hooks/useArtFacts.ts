@@ -2,9 +2,20 @@ import { ArtFactsByArtworkIdAndTimestampQuery } from "@/src/API";
 import { artFactsByArtworkIdAndTimestamp } from "@/src/graphql/queries";
 import { GraphQLResult } from "@aws-amplify/api-graphql";
 import { generateClient } from "aws-amplify/api";
+import { fetchAuthSession } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 const getClient = () => generateClient();
+
+// Helper to determine auth mode based on user session
+const getAuthMode = async (): Promise<"userPool" | "apiKey"> => {
+  try {
+    const session = await fetchAuthSession();
+    return session.tokens?.accessToken ? "userPool" : "apiKey";
+  } catch {
+    return "apiKey";
+  }
+};
 
 export interface ArtFact {
   id: string;
@@ -22,6 +33,7 @@ export function useArtFacts() {
       setIsLoading(true);
       setError(null);
       try {
+        const authMode = await getAuthMode();
         const result =
           (await getClient().graphql<ArtFactsByArtworkIdAndTimestampQuery>({
             query: artFactsByArtworkIdAndTimestamp,
@@ -33,7 +45,7 @@ export function useArtFacts() {
               sortDirection: "DESC", // Get newest facts first
               limit: 10, // Limit to 10 facts
             },
-            authMode: "userPool",
+            authMode: authMode,
           })) as GraphQLResult<ArtFactsByArtworkIdAndTimestampQuery>;
 
         if ("errors" in result && result.errors) {

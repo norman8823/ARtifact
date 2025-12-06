@@ -1,10 +1,21 @@
 import { type GetDepartmentQuery, type ListArtworksQuery } from "@/src/API";
 import { getDepartment, listArtworks } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
+import { fetchAuthSession } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
+
+// Helper to determine auth mode based on user session
+const getAuthMode = async (): Promise<"userPool" | "apiKey"> => {
+  try {
+    const session = await fetchAuthSession();
+    return session.tokens?.accessToken ? "userPool" : "apiKey";
+  } catch {
+    return "apiKey";
+  }
+};
 
 export interface DepartmentDetail {
   id: string;
@@ -35,12 +46,13 @@ export function useDepartmentDetail() {
     setError(null);
     try {
       console.log("Fetching department details as authenticated user...");
+      const authMode = await getAuthMode();
       const result = await getClient().graphql<GetDepartmentQuery>({
         query: getDepartment,
         variables: {
           id,
         },
-        authMode: "userPool" as any,
+        authMode: authMode as any,
       });
 
       // console.log(
@@ -78,6 +90,7 @@ export function useDepartmentDetail() {
       //   "Fetching artworks for department with ID:",
       //   departmentData.id
       // );
+      const artworksAuthMode = await getAuthMode();
       const artworksResult = await getClient().graphql<ListArtworksQuery>({
         query: listArtworks,
         variables: {
@@ -86,7 +99,7 @@ export function useDepartmentDetail() {
           },
           limit: 1000,
         },
-        authMode: "userPool" as any,
+        authMode: artworksAuthMode as any,
       });
 
       // console.log(

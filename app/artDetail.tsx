@@ -1,7 +1,9 @@
+import { AuthPromptModal, type AuthPromptContext } from "@/components/AuthPromptModal";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
 import { type ArtFact, useArtFacts } from "@/src/hooks/useArtFacts";
 import { type Artwork, useArtwork } from "@/src/hooks/useArtwork";
@@ -42,6 +44,7 @@ const CARD_PADDING = 36;
 const CARD_WIDTH = SCREEN_WIDTH - CARD_PADDING * 2;
 
 export default function ArtDetailScreen() {
+  const { isAuthenticated } = useAuthContext();
   const params = useLocalSearchParams();
   // Log all params to see what we're receiving
   console.log("Art Detail Screen - Received params:", params);
@@ -79,6 +82,8 @@ export default function ArtDetailScreen() {
 
   const [galleryMapURL, setGalleryMapURL] = useState<string | null>(null);
   const [isWebViewLoading, setIsWebViewLoading] = useState(true);
+  const [authModalVisible, setAuthModalVisible] = useState(false);
+  const [authModalContext, setAuthModalContext] = useState<AuthPromptContext>("scan");
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   const offsetX = useSharedValue(0);
@@ -182,6 +187,12 @@ export default function ArtDetailScreen() {
   }, [loadGalleryMaps]);
 
   const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      setAuthModalContext("favorite");
+      setAuthModalVisible(true);
+      return;
+    }
+
     if (isTogglingFavorite || !artwork) return;
 
     setIsTogglingFavorite(true);
@@ -272,6 +283,11 @@ export default function ArtDetailScreen() {
 
   return (
     <>
+      <AuthPromptModal
+        visible={authModalVisible}
+        onClose={() => setAuthModalVisible(false)}
+        context={authModalContext}
+      />
       <Stack.Screen
         options={{
           title: "Artwork Details",
@@ -476,15 +492,20 @@ export default function ArtDetailScreen() {
               ]}
               onPressIn={() => setPressedButton("scan")}
               onPressOut={() => setPressedButton(null)}
-              onPress={() =>
+              onPress={() => {
+                if (!isAuthenticated) {
+                  setAuthModalContext("scan");
+                  setAuthModalVisible(true);
+                  return;
+                }
                 router.push({
                   pathname: "/scan",
                   params: {
                     expectedArtworkId: artwork.id,
                     expectedArtworkTitle: artwork.title,
                   },
-                })
-              }
+                });
+              }}
             >
               <FontAwesome name="camera" size={18} color={Colors.lightGray} />
               <ThemedText style={styles.scanButtonText}>
@@ -503,6 +524,11 @@ export default function ArtDetailScreen() {
               onPressIn={() => setPressedButton("ar")}
               onPressOut={() => setPressedButton(null)}
               onPress={() => {
+                if (!isAuthenticated) {
+                  setAuthModalContext("ar");
+                  setAuthModalVisible(true);
+                  return;
+                }
                 router.push({
                   pathname: "/arViewer",
                   params: {

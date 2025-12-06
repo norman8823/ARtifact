@@ -1,10 +1,21 @@
 import { type ListQuestsQuery, type GetArtworkQuery } from "@/src/API";
 import { listQuests, getArtwork } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
+import { fetchAuthSession } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
+
+// Helper to determine auth mode based on user session
+const getAuthMode = async (): Promise<"userPool" | "apiKey"> => {
+  try {
+    const session = await fetchAuthSession();
+    return session.tokens?.accessToken ? "userPool" : "apiKey";
+  } catch {
+    return "apiKey";
+  }
+};
 
 export interface QuestArtworkThumbnail {
   id: string;
@@ -39,10 +50,11 @@ export function useQuests() {
       // Fetch all artworks in parallel
       const artworkPromises = artworkIds.map(async (id) => {
         try {
+          const artworkAuthMode = await getAuthMode();
           const result = await getClient().graphql<GetArtworkQuery>({
             query: getArtwork,
             variables: { id },
-            authMode: "userPool" as any,
+            authMode: artworkAuthMode as any,
           });
 
           if ("errors" in result && result.errors) {
@@ -120,9 +132,10 @@ export function useQuests() {
 
       // Create fresh client instance with custom query
       const freshClient = generateClient();
+      const authMode = await getAuthMode();
       const result = await freshClient.graphql({
         query: timestampedQuery,
-        authMode: "userPool" as any,
+        authMode: authMode as any,
       });
 
       // Debug: Simple API response summary

@@ -13,6 +13,7 @@ export const configureAmplify = async (): Promise<void> => {
     userPoolClientId: process.env.EXPO_PUBLIC_USER_POOL_CLIENT_ID,
     bucketName: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
     identityPoolId: process.env.EXPO_PUBLIC_IDENTITY_POOL_ID,
+    appSyncApiKey: process.env.EXPO_PUBLIC_APPSYNC_API_KEY,
   };
 
   // Check for missing environment variables
@@ -31,6 +32,7 @@ export const configureAmplify = async (): Promise<void> => {
       hasUserPoolClientId: !!requiredEnvVars.userPoolClientId,
       hasBucketName: !!requiredEnvVars.bucketName,
       hasIdentityPoolId: !!requiredEnvVars.identityPoolId,
+      hasAppSyncApiKey: !!requiredEnvVars.appSyncApiKey,
       missingVars,
       totalMissing: missingVars.length,
     },
@@ -61,7 +63,8 @@ export const configureAmplify = async (): Promise<void> => {
     !requiredEnvVars.userPoolId ||
     !requiredEnvVars.userPoolClientId ||
     !requiredEnvVars.bucketName ||
-    !requiredEnvVars.identityPoolId
+    !requiredEnvVars.identityPoolId ||
+    !requiredEnvVars.appSyncApiKey
   ) {
     throw new Error("Required environment variables are undefined");
   }
@@ -78,6 +81,7 @@ export const configureAmplify = async (): Promise<void> => {
         userPoolClientIdLength: requiredEnvVars.userPoolClientId?.length || 0,
         identityPoolIdLength: requiredEnvVars.identityPoolId?.length || 0,
         bucketNameLength: requiredEnvVars.bucketName?.length || 0,
+        appSyncApiKeyLength: requiredEnvVars.appSyncApiKey?.length || 0,
       },
     });
 
@@ -96,6 +100,7 @@ export const configureAmplify = async (): Promise<void> => {
             "https://pxkzi6ejozb2pnbdngzlqzecdu.appsync-api.us-east-1.amazonaws.com/graphql",
           region: requiredEnvVars.region,
           defaultAuthMode: "userPool",
+          apiKey: requiredEnvVars.appSyncApiKey,
         },
         REST: {
           rekognitionApi: {
@@ -164,6 +169,7 @@ export const configureAmplify = async (): Promise<void> => {
           hasUserPoolClientId: !!requiredEnvVars.userPoolClientId,
           hasBucketName: !!requiredEnvVars.bucketName,
           hasIdentityPoolId: !!requiredEnvVars.identityPoolId,
+          hasAppSyncApiKey: !!requiredEnvVars.appSyncApiKey,
         },
       },
     });

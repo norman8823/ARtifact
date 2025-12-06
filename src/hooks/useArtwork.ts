@@ -1,10 +1,21 @@
 import { type GetArtworkQuery } from "@/src/API";
 import { getArtwork } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
+import { fetchAuthSession } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
+
+// Helper to determine auth mode based on user session
+const getAuthMode = async (): Promise<"userPool" | "apiKey"> => {
+  try {
+    const session = await fetchAuthSession();
+    return session.tokens?.accessToken ? "userPool" : "apiKey";
+  } catch {
+    return "apiKey";
+  }
+};
 
 export interface Artwork {
   id: string;
@@ -35,12 +46,13 @@ export function useArtwork() {
     setError(null);
     try {
       // console.log("useArtwork - Making GraphQL query for artwork:", id);
+      const authMode = await getAuthMode();
       const result = await getClient().graphql<GetArtworkQuery>({
         query: getArtwork,
         variables: {
           id,
         },
-        authMode: "userPool" as any,
+        authMode: authMode as any,
       });
 
       // console.log(

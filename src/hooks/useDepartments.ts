@@ -1,10 +1,21 @@
 import { type ListDepartmentsQuery } from "@/src/API";
 import { listDepartments } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
+import { fetchAuthSession } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
+
+// Helper to determine auth mode based on user session
+const getAuthMode = async (): Promise<"userPool" | "apiKey"> => {
+  try {
+    const session = await fetchAuthSession();
+    return session.tokens?.accessToken ? "userPool" : "apiKey";
+  } catch {
+    return "apiKey";
+  }
+};
 
 export interface Department {
   id: string;
@@ -22,12 +33,13 @@ export function useDepartments() {
     setError(null);
     try {
       console.log("Fetching all departments as authenticated user...");
+      const authMode = await getAuthMode();
       const result = await getClient().graphql<ListDepartmentsQuery>({
         query: listDepartments,
         variables: {
           limit: 1000, // Set a high limit to get all departments
         },
-        authMode: "userPool" as any,
+        authMode: authMode as any,
       });
 
       // console.log("Raw API Response:", JSON.stringify(result, null, 2));

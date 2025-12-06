@@ -616,6 +616,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.medGray,
   },
   sendCodeButtonPressed: {
+    backgroundColor: Colors.metRed,
     shadowOpacity: 0,
     elevation: 0,
     transform: [{ translateY: 1 }],

@@ -1,10 +1,21 @@
 import { type ListArtworksQuery } from "@/src/API";
 import { listArtworks } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
+import { fetchAuthSession } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
+
+// Helper to determine auth mode based on user session
+const getAuthMode = async (): Promise<"userPool" | "apiKey"> => {
+  try {
+    const session = await fetchAuthSession();
+    return session.tokens?.accessToken ? "userPool" : "apiKey";
+  } catch {
+    return "apiKey";
+  }
+};
 
 export interface Artwork {
   id: string;
@@ -32,6 +43,7 @@ export function useArtworks() {
     setError(null);
     try {
       // console.log("Fetching featured artworks as authenticated user...");
+      const authMode = await getAuthMode();
       const result = await getClient().graphql<ListArtworksQuery>({
         query: listArtworks,
         variables: {
@@ -41,7 +53,7 @@ export function useArtworks() {
           // Get all featured artworks first, then we'll randomly select from them
           limit: 1000,
         },
-        authMode: "userPool" as any,
+        authMode: authMode as any,
       });
 
       // Log the raw response for debugging
@@ -133,12 +145,13 @@ export function useArtworks() {
     setError(null);
     try {
       console.log("Fetching all artworks as authenticated user...");
+      const authMode = await getAuthMode();
       const result = await getClient().graphql<ListArtworksQuery>({
         query: listArtworks,
         variables: {
           limit: 1000, // Set a high limit to get all artworks
         },
-        authMode: "userPool" as any,
+        authMode: authMode as any,
       });
 
       // Log the raw response for debugging

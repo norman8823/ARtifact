@@ -1,3 +1,4 @@
+import { AuthPromptModal } from "@/components/AuthPromptModal";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { QuestArtworkThumbnails } from "@/components/QuestArtworkThumbnails";
@@ -37,6 +38,7 @@ export default function HomeScreen() {
   const [allQuests, setAllQuests] = useState<Quest[]>([]);
   const [userQuests, setUserQuests] = useState<any[]>([]);
   const [isFeaturedQuestPressed, setIsFeaturedQuestPressed] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   const navigation = useNavigation();
@@ -67,13 +69,7 @@ export default function HomeScreen() {
     error: userQuestsError,
   } = useUserQuests();
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (isAuthReady && !isAuthenticated) {
-      console.log("User not authenticated, redirecting to login");
-      router.replace("/");
-    }
-  }, [isAuthReady, isAuthenticated]);
+  // No longer redirect - allow guests to browse
 
   // Set current date on mount
   useEffect(() => {
@@ -135,19 +131,21 @@ export default function HomeScreen() {
 
     const loadQuestsData = async () => {
       try {
-        const [questsData, userQuestsData] = await Promise.all([
-          getAllQuests(),
-          getUserQuests()
-        ]);
+        const questsData = await getAllQuests();
         setAllQuests(questsData);
-        setUserQuests(userQuestsData);
+
+        // Only fetch user quests if authenticated
+        if (isAuthenticated) {
+          const userQuestsData = await getUserQuests();
+          setUserQuests(userQuestsData);
+        }
       } catch (error) {
         console.error("Error loading quests data:", error);
       }
     };
 
     loadQuestsData();
-  }, [isAuthReady, getAllQuests, getUserQuests]);
+  }, [isAuthReady, isAuthenticated, getAllQuests, getUserQuests]);
 
   // Stable quest selection using useMemo
   const stableFeaturedQuest = useMemo(() => {
@@ -321,6 +319,11 @@ export default function HomeScreen() {
 
   return (
     <>
+      <AuthPromptModal
+        visible={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        context="quest"
+      />
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors.lightGray }}>
         <ScrollView
           style={styles.container}
@@ -440,6 +443,10 @@ export default function HomeScreen() {
                 onPressIn={() => setIsFeaturedQuestPressed(true)}
                 onPressOut={() => setIsFeaturedQuestPressed(false)}
                 onPress={() => {
+                  if (!isAuthenticated) {
+                    setShowAuthModal(true);
+                    return;
+                  }
                   router.push({
                     pathname: "/questDetail",
                     params: { id: featuredQuest.id },
