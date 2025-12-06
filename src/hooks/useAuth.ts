@@ -1,6 +1,13 @@
 import { type SignInOutput } from "@aws-amplify/auth";
 import * as Sentry from "@sentry/react-native";
-import { confirmSignUp, signIn, signOut, signUp } from "aws-amplify/auth";
+import {
+  confirmResetPassword,
+  confirmSignUp,
+  resetPassword,
+  signIn,
+  signOut,
+  signUp,
+} from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 import { useUserData } from "./useUserData";
 
@@ -24,6 +31,12 @@ export interface UseAuthReturn {
   ) => Promise<{ isSignUpConfirmed: boolean }>;
   signInWithEmail: (email: string, password: string) => Promise<SignInOutput>;
   signOut: () => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<{ isCodeSent: boolean }>;
+  confirmPasswordReset: (
+    email: string,
+    code: string,
+    newPassword: string
+  ) => Promise<{ isPasswordReset: boolean }>;
   getStoredPassword: () => string;
   clearTempCredentials: () => void;
 }
@@ -67,11 +80,7 @@ export function useAuth(): UseAuthReturn {
   };
 
   const signUpWithEmail = useCallback(
-    async (
-      email: string,
-      password: string,
-      username: string
-    ) => {
+    async (email: string, password: string, username: string) => {
       setIsLoading(true);
       setError(null);
 
@@ -87,6 +96,7 @@ export function useAuth(): UseAuthReturn {
           options: {
             userAttributes: {
               email,
+              phone_number: "+10000000000", // Dummy phone number to satisfy Cognito + requirement
             },
           },
         });
@@ -235,6 +245,56 @@ export function useAuth(): UseAuthReturn {
     setTempUsername("");
   }, []);
 
+  const requestPasswordReset = useCallback(async (email: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      console.log("Requesting password reset for email:", email);
+
+      const resetResult = await resetPassword({
+        username: email,
+      });
+
+      console.log(
+        "Password reset result:",
+        JSON.stringify(resetResult, null, 2)
+      );
+
+      return { isCodeSent: true };
+    } catch (err: any) {
+      return handleError(err, "requestPasswordReset");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const confirmPasswordReset = useCallback(
+    async (email: string, code: string, newPassword: string) => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        console.log("Confirming password reset for email:", email);
+
+        await confirmResetPassword({
+          username: email,
+          confirmationCode: code,
+          newPassword,
+        });
+
+        console.log("Password reset confirmed successfully");
+
+        return { isPasswordReset: true };
+      } catch (err: any) {
+        return handleError(err, "confirmPasswordReset");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
+
   return {
     isLoading,
     error,
@@ -242,6 +302,8 @@ export function useAuth(): UseAuthReturn {
     confirmEmailSignUp,
     signInWithEmail,
     signOut: handleSignOut,
+    requestPasswordReset,
+    confirmPasswordReset,
     getStoredPassword,
     clearTempCredentials,
   };

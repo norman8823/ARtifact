@@ -16,14 +16,7 @@
     },
     "production": {
       "autoIncrement": true,
-      "env": {
-        "SENTRY_AUTH_TOKEN": "${secret.SENTRY_AUTH_TOKEN}",
-        "EXPO_PUBLIC_AWS_REGION": "${secret.AWS_REGION}",
-        "EXPO_PUBLIC_USER_POOL_ID": "${secret.USER_POOL_ID}",
-        "EXPO_PUBLIC_USER_POOL_CLIENT_ID": "${secret.USER_POOL_CLIENT_ID}",
-        "EXPO_PUBLIC_IDENTITY_POOL_ID": "${secret.IDENTITY_POOL_ID}",
-        "EXPO_PUBLIC_STORAGE_BUCKET": "${secret.STORAGE_BUCKET}"
-      }
+      "environment": "production"
     }
   },
   "submit": {
