@@ -8,10 +8,20 @@ import { useCallback, useState } from "react";
 const getClient = () => generateClient();
 
 // Helper to determine auth mode based on user session
+// Note: Guest access API key expires on Dec 6, 2026 at 04:00 GMT
+const GUEST_API_KEY_EXPIRY = new Date("2026-12-06T04:00:00Z");
+
 const getAuthMode = async (): Promise<"userPool" | "apiKey"> => {
   try {
     const session = await fetchAuthSession();
-    return session.tokens?.accessToken ? "userPool" : "apiKey";
+    if (session.tokens?.accessToken) {
+      return "userPool";
+    }
+    // Check if guest API key has expired
+    if (new Date() > GUEST_API_KEY_EXPIRY) {
+      console.error("Guest access API key has expired (Dec 6, 2026 04:00 GMT). Please generate a new API key in AWS AppSync console.");
+    }
+    return "apiKey";
   } catch {
     return "apiKey";
   }
