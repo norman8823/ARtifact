@@ -34,7 +34,7 @@ type FlatListItem =
   | { type: 'header'; data: { userXP: UserXP | null; currentRank: Rank | null } }
   | { type: 'activeHeader'; data: { count: number } }
   | { type: 'activeQuest'; data: UserQuest }
-  | { type: 'activeEmpty' }
+  | { type: 'activeEmpty'; data: { completedCount: number; availableCount: number } }
   | { type: 'completedHeader'; data: { count: number } }
   | { type: 'completedQuest'; data: UserQuest }
   | { type: 'completedEmpty' }
@@ -314,7 +314,7 @@ export default function ArtQuestScreen() {
     { type: 'header', data: { userXP, currentRank } },
     { type: 'activeHeader', data: { count: activeQuests.length } },
     ...(activeQuests.length === 0
-      ? [{ type: 'activeEmpty' as const }]
+      ? [{ type: 'activeEmpty' as const, data: { completedCount: completedQuests.length, availableCount: availableQuests.length } }]
       : activeQuests.map(quest => ({ type: 'activeQuest' as const, data: quest }))
     ),
     { type: 'availableHeader', data: { count: availableQuests.length } },
@@ -348,11 +348,23 @@ export default function ArtQuestScreen() {
         );
 
       case 'activeEmpty':
+        // Determine the appropriate message based on quest status
+        let emptyMessage: string;
+        if (item.data.availableCount === 0 && item.data.completedCount > 0) {
+          // User has completed all available quests
+          emptyMessage = "You've completed all available quests!";
+        } else if (item.data.completedCount > 0) {
+          // User has completed some quests but there are more available
+          emptyMessage = "Continue your journey by selecting a quest below!";
+        } else {
+          // User hasn't started any quests yet
+          emptyMessage = "Begin your journey by selecting a quest below!";
+        }
         return (
           <ThemedView style={[styles.section, { paddingTop: 0 }]}>
             <ThemedView style={styles.emptyStateContainer}>
               <ThemedText style={styles.emptyStateText}>
-                You haven't started any quests yet. Begin your journey by selecting a quest below!
+                {emptyMessage}
               </ThemedText>
             </ThemedView>
           </ThemedView>
