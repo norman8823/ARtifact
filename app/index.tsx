@@ -9,10 +9,11 @@ import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import {
   ActivityIndicator,
+  Dimensions,
   Pressable,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
+  View,
 } from "react-native";
 
 export default function LandingScreen() {
@@ -34,157 +35,123 @@ export default function LandingScreen() {
   // Show loading screen while auth is initializing
   if (!isAuthReady) {
     return (
-      <SafeAreaView
-        style={[
-          styles.container,
-          { justifyContent: "center", alignItems: "center" },
-        ]}
-      >
-        <ActivityIndicator size="large" color={Colors.darkGray} />
-        <ThemedText style={{ marginTop: 16, color: Colors.darkMedGray }}>
-          Loading...
-        </ThemedText>
-      </SafeAreaView>
+      <View style={styles.outerContainer}>
+        <SafeAreaView
+          style={[
+            styles.container,
+            { justifyContent: "center", alignItems: "center" },
+          ]}
+        >
+          <ActivityIndicator size="large" color={Colors.darkGray} />
+          <ThemedText style={{ marginTop: 16, color: Colors.darkMedGray }}>
+            Loading...
+          </ThemedText>
+        </SafeAreaView>
+      </View>
     );
   }
 
+  // Calculate responsive image size - smaller on larger screens to fit content
+  const { height: screenHeight } = Dimensions.get("window");
+  const imageSize = Math.min(screenHeight * 0.3, 280);
+
   return (
-    <>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFEF9" }}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
-        >
-          {/* Header */}
-          <ThemedView style={styles.header}>
-            <ThemedView style={styles.logoContainer}>
-              <Image
-                source={require("@/assets/images/Color logo - no background.png")}
-                style={styles.logo}
-                contentFit="contain"
-              />
-            </ThemedView>
+    <View style={styles.outerContainer}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.contentContainer}>
+        {/* Header */}
+        <ThemedView style={styles.header}>
+          <ThemedView style={styles.logoContainer}>
+            <Image
+              source={require("@/assets/images/Color logo - no background.png")}
+              style={styles.logo}
+              contentFit="contain"
+            />
+          </ThemedView>
+        </ThemedView>
+
+        {/* Main Content */}
+        <ThemedView style={styles.mainContent}>
+          {/* Background Image */}
+          <ThemedView style={styles.imageContainer}>
+            <Image
+              source={require("@/assets/images/RuthSpinning.gif")}
+              style={[styles.backgroundImage, { width: imageSize, height: imageSize }]}
+              contentFit="cover"
+            />
           </ThemedView>
 
-          {/* Main Content */}
-          <ThemedView style={styles.mainContent}>
-            {/* Background Image */}
-            <ThemedView style={styles.imageContainer}>
-              <Image
-                source={require("@/assets/images/RuthSpinning.gif")}
-                style={styles.backgroundImage}
-                contentFit="cover"
-              />
-            </ThemedView>
-
-            {/* Welcome Text */}
-            <ThemedView style={styles.welcomeSection}>
-              <ThemedText type="title" style={styles.welcomeTitle}>
-                Welcome
-              </ThemedText>
-              <ThemedText style={styles.welcomeText}>
-                Discover art collections, view your favorite artworks with
-                Augmented Reality, and go on an ArtQuest at the MET.
-              </ThemedText>
-            </ThemedView>
-
-            {/* Login Options */}
-            <ThemedView style={styles.loginOptions}>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.loginButton,
-                  pressed && styles.loginButtonPressed
-                ]}
-                onPress={() => router.push("/emailLogin")}
-              >
-                <ThemedView style={styles.buttonContent}>
-                  <FontAwesome
-                    name="envelope"
-                    size={20}
-                    color={Colors.darkMedGray}
-                    style={styles.buttonIcon}
-                  />
-                  <ThemedText style={styles.buttonText}>
-                    Continue with email
-                  </ThemedText>
-                </ThemedView>
-                <FontAwesome
-                  name="chevron-right"
-                  size={16}
-                  color={Colors.darkMedGray}
-                />
-              </Pressable>
-
-              <Pressable
-                style={({ pressed }) => [
-                  styles.guestButton,
-                  pressed && styles.loginButtonPressed
-                ]}
-                onPress={() => router.replace("/home")}
-              >
-                <ThemedText style={styles.guestButtonText}>
-                  Browse as Guest
-                </ThemedText>
-              </Pressable>
-
-              {/* <ThemedView style={styles.divider}>
-                <ThemedView style={styles.dividerLine} />
-                <ThemedText style={styles.dividerText}>or</ThemedText>
-                <ThemedView style={styles.dividerLine} />
-              </ThemedView> */}
-
-              {/* <Pressable
-                style={styles.socialButton}
-                onPress={() => router.push("/googleLogin")}
-              >
-                <FontAwesome
-                  name="google"
-                  size={20}
-                  color={Colors.darkMedGray}
-                  style={styles.buttonIcon}
-                />
-                <ThemedText style={styles.buttonText}>
-                  Continue with Google
-                </ThemedText>
-              </Pressable> */}
-
-              {/* <Pressable
-                style={styles.socialButton}
-                onPress={() => router.push("/appleLogin")}
-              >
-                <FontAwesome
-                  name="apple"
-                  size={20}
-                  color={Colors.darkMedGray}
-                  style={styles.buttonIcon}
-                />
-                <ThemedText style={styles.buttonText}>
-                  Continue with Apple
-                </ThemedText>
-              </Pressable> */}
-            </ThemedView>
-          </ThemedView>
-
-          {/* Footer */}
-          {/* <ThemedView style={styles.footer}>
-            <ThemedText style={styles.footerText}>
-              Don't have an account?{" "}
-              <ThemedText style={styles.signUpText}>Sign up</ThemedText>
+          {/* Welcome Text */}
+          <ThemedView style={styles.welcomeSection}>
+            <ThemedText type="title" style={styles.welcomeTitle}>
+              Welcome
             </ThemedText>
-          </ThemedView> */}
-        </ScrollView>
+            <ThemedText style={styles.welcomeText}>
+              Discover art collections, view your favorite artworks with
+              Augmented Reality, and go on an ArtQuest at the MET.
+            </ThemedText>
+          </ThemedView>
+        </ThemedView>
+
+        {/* Login Options - pinned to bottom */}
+        <ThemedView style={styles.loginOptions}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.loginButton,
+              pressed && styles.loginButtonPressed
+            ]}
+            onPress={() => router.push("/emailLogin")}
+          >
+            <ThemedView style={styles.buttonContent}>
+              <FontAwesome
+                name="envelope"
+                size={20}
+                color={Colors.darkMedGray}
+                style={styles.buttonIcon}
+              />
+              <ThemedText style={styles.buttonText}>
+                Continue with email
+              </ThemedText>
+            </ThemedView>
+            <FontAwesome
+              name="chevron-right"
+              size={16}
+              color={Colors.darkMedGray}
+            />
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.guestButton,
+              pressed && styles.loginButtonPressed
+            ]}
+            onPress={() => router.replace("/home")}
+          >
+            <ThemedText style={styles.guestButtonText}>
+              Browse as Guest
+            </ThemedText>
+          </Pressable>
+        </ThemedView>
+        </View>
       </SafeAreaView>
-    </>
+    </View>
   );
 }
 
+const BACKGROUND_COLOR = "#FFFEF9";
+
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    backgroundColor: BACKGROUND_COLOR,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#FFFEF9",
+    backgroundColor: BACKGROUND_COLOR,
   },
   contentContainer: {
-    flexGrow: 1,
+    flex: 1,
+    justifyContent: "space-between",
   },
   header: {
     paddingHorizontal: 20,
@@ -193,28 +160,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 12,
-    marginBottom: 24,
+    marginBottom: 16,
   },
   logo: {
     width: "100%",
-    height: 80,
+    height: 60,
     maxWidth: 400,
   },
   mainContent: {
     flex: 1,
     paddingHorizontal: 20,
-  },
-  imageContainer: {
-    marginBottom: 24,
-    alignItems: "center",
     justifyContent: "center",
   },
+  imageContainer: {
+    marginBottom: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: BACKGROUND_COLOR,
+  },
   backgroundImage: {
-    width: "85%",
-    aspectRatio: 1,
+    borderRadius: 12,
+    backgroundColor: BACKGROUND_COLOR,
   },
   welcomeSection: {
-    marginBottom: 36,
+    marginBottom: 16,
   },
   welcomeTitle: {
     marginBottom: 12,
@@ -223,7 +192,8 @@ const styles = StyleSheet.create({
     color: Colors.darkMedGray,
   },
   loginOptions: {
-    marginBottom: 16,
+    paddingHorizontal: 20,
+    paddingBottom: 24,
   },
   loginButton: {
     backgroundColor: Colors.medLightGray,
