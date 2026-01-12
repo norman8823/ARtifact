@@ -1,5 +1,4 @@
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
@@ -60,29 +59,29 @@ export default function LandingScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.contentContainer}>
         {/* Header */}
-        <ThemedView style={styles.header}>
-          <ThemedView style={styles.logoContainer}>
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
             <Image
               source={require("@/assets/images/Color logo - no background.png")}
               style={styles.logo}
               contentFit="contain"
             />
-          </ThemedView>
-        </ThemedView>
+          </View>
+        </View>
 
         {/* Main Content */}
-        <ThemedView style={styles.mainContent}>
+        <View style={styles.mainContent}>
           {/* Background Image */}
-          <ThemedView style={styles.imageContainer}>
+          <View style={styles.imageContainer}>
             <Image
               source={require("@/assets/images/RuthSpinning.gif")}
               style={[styles.backgroundImage, { width: imageSize, height: imageSize }]}
               contentFit="cover"
             />
-          </ThemedView>
+          </View>
 
           {/* Welcome Text */}
-          <ThemedView style={styles.welcomeSection}>
+          <View style={styles.welcomeSection}>
             <ThemedText type="title" style={styles.welcomeTitle}>
               Welcome
             </ThemedText>
@@ -90,11 +89,10 @@ export default function LandingScreen() {
               Discover art collections, view your favorite artworks with
               Augmented Reality, and go on an ArtQuest at the MET.
             </ThemedText>
-          </ThemedView>
-        </ThemedView>
+          </View>
 
-        {/* Login Options - pinned to bottom */}
-        <ThemedView style={styles.loginOptions}>
+          {/* Login Options */}
+          <View style={styles.loginOptions}>
           <Pressable
             style={({ pressed }) => [
               styles.loginButton,
@@ -102,7 +100,7 @@ export default function LandingScreen() {
             ]}
             onPress={() => router.push("/emailLogin")}
           >
-            <ThemedView style={styles.buttonContent}>
+            <View style={styles.buttonContent}>
               <FontAwesome
                 name="envelope"
                 size={20}
@@ -112,7 +110,7 @@ export default function LandingScreen() {
               <ThemedText style={styles.buttonText}>
                 Continue with email
               </ThemedText>
-            </ThemedView>
+            </View>
             <FontAwesome
               name="chevron-right"
               size={16}
@@ -131,14 +129,15 @@ export default function LandingScreen() {
               Browse as Guest
             </ThemedText>
           </Pressable>
-        </ThemedView>
+          </View>
+        </View>
         </View>
       </SafeAreaView>
     </View>
   );
 }
 
-const BACKGROUND_COLOR = "#FFFEF9";
+const BACKGROUND_COLOR = "#f9f6f3";
 
 const styles = StyleSheet.create({
   outerContainer: {
@@ -151,7 +150,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    justifyContent: "space-between",
   },
   header: {
     paddingHorizontal: 20,
@@ -159,21 +157,22 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 12,
-    marginBottom: 16,
+    paddingTop: 20,
+    marginBottom: 12,
   },
   logo: {
     width: "100%",
-    height: 60,
+    height: 75,
     maxWidth: 400,
   },
   mainContent: {
     flex: 1,
     paddingHorizontal: 20,
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    paddingTop: 8,
   },
   imageContainer: {
-    marginBottom: 16,
+    marginBottom: 24,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: BACKGROUND_COLOR,
@@ -183,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: BACKGROUND_COLOR,
   },
   welcomeSection: {
-    marginBottom: 16,
+    marginBottom: 24,
   },
   welcomeTitle: {
     marginBottom: 12,
@@ -192,8 +191,7 @@ const styles = StyleSheet.create({
     color: Colors.darkMedGray,
   },
   loginOptions: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
+    marginTop: 12,
   },
   loginButton: {
     backgroundColor: Colors.medLightGray,
@@ -221,7 +219,6 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
   buttonContent: {
-    backgroundColor: Colors.medLightGray,
     flexDirection: "row",
     alignItems: "center",
   },

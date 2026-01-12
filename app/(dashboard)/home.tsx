@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 24,
-    marginBottom: 12,
+    marginBottom: 24,
   },
   headerLogo: {
     width: "100%",
@@ -547,18 +547,18 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   section: {
-    marginTop: 36,
+    marginTop: 20,
     marginHorizontal: 20,
   },
   lastSection: {
     marginBottom: 80,
   },
   didYouKnowSection: {
-    marginTop: 56,
+    marginTop: 48,
     marginBottom: 36,
   },
   sectionTitle: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
   carouselContainer: {
     position: "relative",
@@ -581,16 +581,16 @@ const styles = StyleSheet.create({
   featuredImage: {
     width: "100%",
     height: 300,
-    borderRadius: 12,
+    borderRadius: 8,
   },
   artworkTitle: {
     fontSize: 18,
-    marginTop: 12,
+    marginTop: 10,
   },
   artistName: {
     fontSize: 14,
     color: Colors.darkMedGray,
-    marginTop: 6,
+    marginTop: 4,
   },
   paginationContainer: {
     flexDirection: "row",
@@ -621,7 +621,7 @@ const styles = StyleSheet.create({
   collectionImage: {
     width: "100%",
     height: 150,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   collectionTitle: {
     fontSize: 16,
