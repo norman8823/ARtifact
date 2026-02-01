@@ -3,7 +3,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -25,17 +25,56 @@ export default function ARViewerScreen() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const webViewRef = useRef<WebView>(null);
 
-  // Build AR URL - add https if needed
+  // Cleanup on unmount to release camera/WebGL resources
+  useEffect(() => {
+    return () => {
+      console.log("🧹 AR Viewer: Cleaning up WebView resources");
+      if (webViewRef.current) {
+        // Inject cleanup script to stop camera and release WebGL
+        webViewRef.current.injectJavaScript(`
+          (function() {
+            // Stop all media tracks (camera)
+            if (window.stream) {
+              window.stream.getTracks().forEach(track => track.stop());
+            }
+            // Try to stop any getUserMedia streams
+            navigator.mediaDevices?.getUserMedia({ video: true })
+              .then(stream => stream.getTracks().forEach(track => track.stop()))
+              .catch(() => {});
+            // Clear any WebGL contexts
+            document.querySelectorAll('canvas').forEach(canvas => {
+              const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
+              if (gl && gl.getExtension) {
+                const ext = gl.getExtension('WEBGL_lose_context');
+                if (ext) ext.loseContext();
+              }
+            });
+            console.log('🧹 AR cleanup complete');
+          })();
+          true;
+        `);
+      }
+    };
+  }, []);
+
+  // Build AR URL - add https if needed and cache bust to prevent stale state
   const buildARURL = (url: string): string => {
     if (!url) return "";
-    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-      return "https://" + url;
+    let finalURL = url;
+    if (!finalURL.startsWith("http://") && !finalURL.startsWith("https://")) {
+      finalURL = "https://" + finalURL;
     }
-    return url;
+    // Add cache-busting timestamp to prevent WebGL/8th Wall state conflicts
+    const separator = finalURL.includes("?") ? "&" : "?";
+    return `${finalURL}${separator}_t=${Date.now()}`;
   };
 
   const arURL = arImage ? buildARURL(arImage) : null;
+
+  // Unique key to force WebView remount between different AR experiences
+  const webViewKey = arURL ? `ar-webview-${arURL}` : "ar-webview-empty";
 
   // Debug logging
   console.log("🎯 AR Viewer - arImage:", arImage);
@@ -116,6 +155,8 @@ export default function ARViewerScreen() {
         ) : arURL ? (
           /* WebView - Let 8th Wall handle camera permissions internally */
           <WebView
+            ref={webViewRef}
+            key={webViewKey}
             source={{ uri: arURL }}
             style={styles.webview}
             allowsInlineMediaPlayback={true}
@@ -123,7 +164,8 @@ export default function ARViewerScreen() {
             allowsFullscreenVideo={true}
             javaScriptEnabled={true}
             domStorageEnabled={true}
-            cacheEnabled={true}
+            cacheEnabled={false}
+            incognito={true}
             startInLoadingState={true}
             onLoadStart={handleLoadStart}
             onLoadEnd={handleLoadEnd}
