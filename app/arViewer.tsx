@@ -3,7 +3,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -25,7 +25,12 @@ export default function ARViewerScreen() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [loadStatus, setLoadStatus] = useState<'loading' | 'retrying' | 'failed'>('loading');
   const webViewRef = useRef<WebView>(null);
+
+  const MAX_RETRIES = 2;
+  const LOAD_TIMEOUT = 5000;
 
   // Cleanup on unmount to release camera/WebGL resources
   useEffect(() => {
@@ -59,26 +64,59 @@ export default function ARViewerScreen() {
     };
   }, []);
 
-  // Build AR URL - add https if needed and cache bust to prevent stale state
+  // Reset retry count when artwork changes
+  useEffect(() => {
+    setRetryCount(0);
+    setLoadStatus('loading');
+  }, [arImage]);
+
+  // Auto-retry on timeout
+  useEffect(() => {
+    if (!isLoading) return;
+
+    const timeout = setTimeout(() => {
+      if (isLoading && retryCount < MAX_RETRIES) {
+        console.log(`🔄 AR timeout - retry ${retryCount + 1}/${MAX_RETRIES}`);
+        setLoadStatus('retrying');
+        setRetryCount(prev => prev + 1);
+      } else if (retryCount >= MAX_RETRIES) {
+        console.log('❌ AR failed after all retries');
+        setLoadStatus('failed');
+        setIsLoading(false);
+        setHasError(true);
+      }
+    }, LOAD_TIMEOUT);
+
+    return () => clearTimeout(timeout);
+  }, [isLoading, retryCount]);
+
+  // Build AR URL - add https if needed
   const buildARURL = (url: string): string => {
     if (!url) return "";
     let finalURL = url;
     if (!finalURL.startsWith("http://") && !finalURL.startsWith("https://")) {
       finalURL = "https://" + finalURL;
     }
-    // Add cache-busting timestamp to prevent WebGL/8th Wall state conflicts
-    const separator = finalURL.includes("?") ? "&" : "?";
-    return `${finalURL}${separator}_t=${Date.now()}`;
+    return finalURL;
   };
 
   const arURL = arImage ? buildARURL(arImage) : null;
 
-  // Unique key to force WebView remount between different AR experiences
-  const webViewKey = arURL ? `ar-webview-${arURL}` : "ar-webview-empty";
+  // Cache-bust URL with stable timestamp (only changes when arImage changes)
+  const arURLWithCacheBust = useMemo(() => {
+    if (!arURL) return null;
+    const separator = arURL.includes("?") ? "&" : "?";
+    return `${arURL}${separator}_t=${Date.now()}`;
+  }, [arURL]);
+
+  // Unique key to force WebView remount between different AR experiences or retries
+  const webViewKey = arURLWithCacheBust
+    ? `ar-webview-${arURLWithCacheBust}-${retryCount}`
+    : "ar-webview-empty";
 
   // Debug logging
   console.log("🎯 AR Viewer - arImage:", arImage);
-  console.log("🎯 AR Viewer - final arURL:", arURL);
+  console.log("🎯 AR Viewer - final arURL:", arURLWithCacheBust);
 
   const handleBack = () => {
     router.back();
@@ -90,20 +128,29 @@ export default function ARViewerScreen() {
   };
 
   const handleLoadEnd = () => {
+    console.log('✅ AR WebView loaded successfully');
     setIsLoading(false);
+    setLoadStatus('loading'); // Reset for next time
   };
 
   const handleError = () => {
-    setIsLoading(false);
-    setHasError(true);
-    Alert.alert(
-      "AR Error",
-      "Unable to load AR experience. Please check your internet connection and try again.",
-      [
-        { text: "Try Again", onPress: () => setHasError(false) },
-        { text: "Go Back", onPress: handleBack },
-      ]
-    );
+    // Let auto-retry handle it if we haven't exhausted retries
+    if (retryCount < MAX_RETRIES) {
+      console.log(`🔄 AR error - will retry (${retryCount + 1}/${MAX_RETRIES})`);
+      setLoadStatus('retrying');
+      setRetryCount(prev => prev + 1);
+    } else {
+      setIsLoading(false);
+      setHasError(true);
+      setLoadStatus('failed');
+    }
+  };
+
+  const handleManualRetry = () => {
+    setRetryCount(0);
+    setLoadStatus('loading');
+    setHasError(false);
+    setIsLoading(true);
   };
 
   return (
@@ -119,7 +166,9 @@ export default function ARViewerScreen() {
           <ThemedView style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={Colors.darkMedGray} />
             <ThemedText style={styles.loadingText}>
-              Loading AR Experience...
+              {loadStatus === 'retrying'
+                ? `Retrying... (${retryCount}/${MAX_RETRIES})`
+                : 'Loading AR Experience...'}
             </ThemedText>
             <ThemedText
               style={[styles.loadingText, { fontSize: 12, marginTop: 8 }]}
@@ -129,8 +178,8 @@ export default function ARViewerScreen() {
           </ThemedView>
         )}
 
-        {/* Error State */}
-        {hasError || !arURL ? (
+        {/* Error State - only show after all retries exhausted */}
+        {(loadStatus === 'failed' || !arURLWithCacheBust) ? (
           <ThemedView style={styles.errorContainer}>
             <FontAwesome
               name="exclamation-triangle"
@@ -141,31 +190,31 @@ export default function ARViewerScreen() {
               AR Experience Unavailable
             </ThemedText>
             <ThemedText style={styles.errorMessage}>
-              {!arURL
+              {!arURLWithCacheBust
                 ? "AR experience URL is missing or invalid."
                 : "Unable to load the AR experience. Please check your internet connection and try again."}
             </ThemedText>
             <Pressable
               style={styles.retryButton}
-              onPress={() => setHasError(false)}
+              onPress={handleManualRetry}
             >
               <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
             </Pressable>
           </ThemedView>
-        ) : arURL ? (
+        ) : arURLWithCacheBust ? (
           /* WebView - Let 8th Wall handle camera permissions internally */
           <WebView
             ref={webViewRef}
             key={webViewKey}
-            source={{ uri: arURL }}
+            source={{ uri: arURLWithCacheBust }}
             style={styles.webview}
             allowsInlineMediaPlayback={true}
             mediaPlaybackRequiresUserAction={false}
             allowsFullscreenVideo={true}
             javaScriptEnabled={true}
             domStorageEnabled={true}
-            cacheEnabled={false}
-            incognito={true}
+            // cacheEnabled={false}
+            // incognito={true}
             startInLoadingState={true}
             onLoadStart={handleLoadStart}
             onLoadEnd={handleLoadEnd}
