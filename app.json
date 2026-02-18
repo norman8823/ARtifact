@@ -1,8 +1,9 @@
 {
   "expo": {
+    "owner": "artifact-expo",
     "name": "ARtifact",
     "slug": "ARtifact",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "artifact",
@@ -11,7 +12,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.rauljiminian.ARtifact",
-      "buildNumber": "1.0.36",
+      "buildNumber": "1.0.37",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "This app uses the camera to scan artwork and provide AR experiences.",
