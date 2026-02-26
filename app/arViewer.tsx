@@ -27,6 +27,7 @@ export default function ARViewerScreen() {
   const [hasError, setHasError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [loadStatus, setLoadStatus] = useState<'loading' | 'retrying' | 'failed'>('loading');
+  const [arReady, setArReady] = useState(false);
   const webViewRef = useRef<WebView>(null);
 
   const MAX_RETRIES = 2;
@@ -64,22 +65,23 @@ export default function ARViewerScreen() {
     };
   }, []);
 
-  // Reset retry count when artwork changes
+  // Reset state when artwork changes
   useEffect(() => {
     setRetryCount(0);
     setLoadStatus('loading');
+    setArReady(false);
   }, [arImage]);
 
-  // Auto-retry on timeout
+  // Auto-retry on timeout - based on arReady, not isLoading
   useEffect(() => {
-    if (!isLoading) return;
+    if (arReady) return; // AR is working, no retry needed
 
     const timeout = setTimeout(() => {
-      if (isLoading && retryCount < MAX_RETRIES) {
+      if (!arReady && retryCount < MAX_RETRIES) {
         console.log(`🔄 AR timeout - retry ${retryCount + 1}/${MAX_RETRIES}`);
         setLoadStatus('retrying');
         setRetryCount(prev => prev + 1);
-      } else if (retryCount >= MAX_RETRIES) {
+      } else if (!arReady && retryCount >= MAX_RETRIES) {
         console.log('❌ AR failed after all retries');
         setLoadStatus('failed');
         setIsLoading(false);
@@ -88,7 +90,7 @@ export default function ARViewerScreen() {
     }, LOAD_TIMEOUT);
 
     return () => clearTimeout(timeout);
-  }, [isLoading, retryCount]);
+  }, [arReady, retryCount]);
 
   // Build AR URL - add https if needed
   const buildARURL = (url: string): string => {
@@ -128,9 +130,8 @@ export default function ARViewerScreen() {
   };
 
   const handleLoadEnd = () => {
-    console.log('✅ AR WebView loaded successfully');
-    setIsLoading(false);
-    setLoadStatus('loading'); // Reset for next time
+    // HTML loaded, but don't stop spinner - wait for 8th Wall to signal ready
+    console.log('📄 AR WebView HTML loaded, waiting for 8th Wall...');
   };
 
   const handleError = () => {
@@ -151,6 +152,24 @@ export default function ARViewerScreen() {
     setLoadStatus('loading');
     setHasError(false);
     setIsLoading(true);
+    setArReady(false);
+  };
+
+  const handleWebViewMessage = (event: { nativeEvent: { data: string } }) => {
+    try {
+      const message = JSON.parse(event.nativeEvent.data);
+      if (message.type === 'ar-ready') {
+        console.log('✅ 8th Wall AR is ready!');
+        setArReady(true);
+        setIsLoading(false);
+        setLoadStatus('loading');
+      } else if (message.type === 'ar-timeout') {
+        console.log('⏱️ 8th Wall detection timed out');
+        // Let the retry logic handle it
+      }
+    } catch (e) {
+      // Not a JSON message, ignore
+    }
   };
 
   return (
@@ -220,34 +239,35 @@ export default function ARViewerScreen() {
             onLoadEnd={handleLoadEnd}
             onError={handleError}
             onHttpError={handleError}
+            onMessage={handleWebViewMessage}
             // AR optimizations
             allowsAirPlayForMediaPlayback={false}
             allowsBackForwardNavigationGestures={false}
             // Security settings
             originWhitelist={["https://*"]}
             mixedContentMode="compatibility"
-            // Optimize camera permission handling
+            // Detect when 8th Wall AR is actually ready
             injectedJavaScript={`
-              console.log('🎯 AR Viewer: WebView initialized');
-              
-              // Track if we've already requested camera permissions
-              window.cameraPermissionRequested = false;
-              
-              // Wrap getUserMedia to prevent multiple permission requests
-              if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-                
-                navigator.mediaDevices.getUserMedia = function(constraints) {
-                  if (window.cameraPermissionRequested) {
-                    console.log('🎯 Camera permission already requested, reusing...');
-                  } else {
-                    console.log('🎯 Requesting camera permissions for the first time');
-                    window.cameraPermissionRequested = true;
+              (function() {
+                console.log('🎯 AR Viewer: WebView initialized, checking for 8th Wall...');
+
+                let checkCount = 0;
+                const checkReady = setInterval(() => {
+                  checkCount++;
+                  // 8th Wall sets XR8.isPaused() to false when camera is running
+                  if (window.XR8 && typeof window.XR8.isPaused === 'function' && !window.XR8.isPaused()) {
+                    console.log('✅ 8th Wall XR8 is running!');
+                    window.ReactNativeWebView.postMessage(JSON.stringify({type: 'ar-ready'}));
+                    clearInterval(checkReady);
                   }
-                  return originalGetUserMedia(constraints);
-                };
-              }
-              
+                  // Timeout after 5 seconds (50 * 100ms)
+                  if (checkCount > 50) {
+                    console.log('⏱️ 8th Wall detection timed out');
+                    window.ReactNativeWebView.postMessage(JSON.stringify({type: 'ar-timeout'}));
+                    clearInterval(checkReady);
+                  }
+                }, 100);
+              })();
               true;
             `}
           />
