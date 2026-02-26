@@ -104,12 +104,12 @@ export default function ARViewerScreen() {
 
   const arURL = arImage ? buildARURL(arImage) : null;
 
-  // Cache-bust URL with stable timestamp (only changes when arImage changes)
+  // Cache-bust URL with timestamp (recalculates on arURL or retryCount change)
   const arURLWithCacheBust = useMemo(() => {
     if (!arURL) return null;
     const separator = arURL.includes("?") ? "&" : "?";
     return `${arURL}${separator}_t=${Date.now()}`;
-  }, [arURL]);
+  }, [arURL, retryCount]);
 
   // Unique key to force WebView remount between different AR experiences or retries
   const webViewKey = arURLWithCacheBust
@@ -294,6 +294,24 @@ export default function ARViewerScreen() {
             <FontAwesome name="info" size={16} color={Colors.lightGray} />
           </Pressable>
         </View>
+        {/* Reload Button - always visible when WebView is showing */}
+        {arURLWithCacheBust && loadStatus !== 'failed' && (
+          <View style={styles.reloadButtonContainer}>
+            <Pressable
+              style={styles.reloadButton}
+              onPress={() => {
+                console.log('🔄 Manual reload triggered');
+                setRetryCount(prev => prev + 1);
+                setArReady(false);
+                setIsLoading(true);
+                setLoadStatus('loading');
+              }}
+            >
+              <FontAwesome name="refresh" size={14} color="white" />
+              <ThemedText style={styles.reloadButtonText}>Reload</ThemedText>
+            </Pressable>
+          </View>
+        )}
       </SafeAreaView>
     </>
   );
@@ -380,5 +398,26 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  reloadButtonContainer: {
+    position: "absolute",
+    bottom: 40,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  reloadButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    gap: 8,
+  },
+  reloadButtonText: {
+    color: "white",
+    fontSize: 14,
   },
 });
