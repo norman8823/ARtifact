@@ -58,6 +58,21 @@
           "project": "artifact-ios",
           "organization": "ra-coding-llc"
         }
+      ],
+      [
+        "@reactvision/react-viro",
+        {
+          "android": {
+            "xRMode": "AR"
+          },
+          "ios": {
+            "cameraUsagePermission": "ARtifact uses your camera for AR experiences.",
+            "microphoneUsagePermission": "ARtifact uses your microphone for AR experiences.",
+            "photosPermission": "ARtifact would like to read photos for AR experiences.",
+            "savephotosPermission": "ARtifact would like to save photos during AR experiences."
+          },
+          "provider": "reactvision"
+        }
       ]
     ],
     "experiments": {

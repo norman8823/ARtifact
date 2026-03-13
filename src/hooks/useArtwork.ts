@@ -39,6 +39,7 @@ export interface Artwork {
   isScannable: boolean | null;
   hasAR: boolean | null;
   arImage: string | null;
+  sceneId: string | null;
   objectDate: string | null;
   medium: string | null;
   dimensions: string | null;
@@ -108,6 +109,7 @@ export function useArtwork() {
         isScannable: artwork.isScannable,
         hasAR: artwork.hasAR,
         arImage: artwork.arImage,
+        sceneId: artwork.sceneId,
         objectDate: artwork.objectDate,
         medium: artwork.medium,
         dimensions: artwork.dimensions,
