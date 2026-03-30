@@ -1,18 +1,16 @@
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import ArtworkARScene from "@/components/ar-scenes/ArtworkARScene";
-import { useSceneModel } from "@/src/hooks/useSceneModel";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import React, { useState, useEffect } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  StyleSheet,
-  View,
-} from "react-native";
+import React, { useState } from "react";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
 import { ViroARSceneNavigator } from "@reactvision/react-viro";
+
+// --- Debug flag: set to true to bypass sceneId param and use a test scene ---
+const AR_TEST_MODE = false;
+const AR_TEST_SCENE_ID = "73f3603f-5579-4642-ad27-fccfc87922a3";
+// ---------------------------------------------------------------------------
 
 export default function ARViewerScreen() {
   const params = useLocalSearchParams();
@@ -23,38 +21,11 @@ export default function ARViewerScreen() {
     ? params.sceneId[0]
     : params.sceneId;
 
-  const {
-    getModelBySceneId,
-    isLoading: isLoadingModel,
-    error: modelError,
-  } = useSceneModel();
-  const [modelUrl, setModelUrl] = useState<string | null>(null);
-  const [modelType, setModelType] = useState<"GLB" | "GLTF" | "OBJ" | "VRX">(
-    "GLB"
-  );
-  const [modelScale, setModelScale] = useState<
-    [number, number, number] | undefined
-  >(undefined);
-  const [modelRotation, setModelRotation] = useState<
-    [number, number, number] | undefined
-  >(undefined);
+  const effectiveSceneId = AR_TEST_MODE ? AR_TEST_SCENE_ID : sceneId;
+
   const [arStatus, setArStatus] = useState("Initializing AR...");
   const [placeTrigger, setPlaceTrigger] = useState(0);
   const [isModelPlaced, setIsModelPlaced] = useState(false);
-
-  // Fetch model URL from sceneId
-  useEffect(() => {
-    if (sceneId) {
-      getModelBySceneId(sceneId).then((model) => {
-        if (model) {
-          setModelUrl(model.modelUrl);
-          setModelType(model.type);
-          if (model.scale) setModelScale(model.scale);
-          if (model.rotation) setModelRotation(model.rotation);
-        }
-      });
-    }
-  }, [sceneId, getModelBySceneId]);
 
   const handleBack = () => {
     router.back();
@@ -69,48 +40,8 @@ export default function ARViewerScreen() {
     setArStatus(status);
   };
 
-  // Loading state while fetching model
-  if (isLoadingModel) {
-    return (
-      <>
-        <Stack.Screen options={{ headerShown: false }} />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.darkMedGray} />
-          <ThemedText style={styles.loadingText}>
-            Loading AR Model...
-          </ThemedText>
-        </View>
-      </>
-    );
-  }
-
-  // Error state
-  if (modelError || (!isLoadingModel && !modelUrl && sceneId)) {
-    return (
-      <>
-        <Stack.Screen options={{ headerShown: false }} />
-        <View style={styles.errorContainer}>
-          <FontAwesome
-            name="exclamation-triangle"
-            size={48}
-            color={Colors.darkMedGray}
-          />
-          <ThemedText style={styles.errorTitle}>
-            AR Model Unavailable
-          </ThemedText>
-          <ThemedText style={styles.errorMessage}>
-            Unable to load the 3D model for this artwork.
-          </ThemedText>
-          <Pressable style={styles.retryButton} onPress={handleBack}>
-            <ThemedText style={styles.retryButtonText}>Go Back</ThemedText>
-          </Pressable>
-        </View>
-      </>
-    );
-  }
-
-  // No sceneId provided
-  if (!sceneId) {
+  // No sceneId provided (bypassed in test mode)
+  if (!effectiveSceneId) {
     return (
       <>
         <Stack.Screen options={{ headerShown: false }} />
@@ -141,10 +72,7 @@ export default function ARViewerScreen() {
           autofocus={true}
           initialScene={{ scene: ArtworkARScene as any }}
           viroAppProps={{
-            modelUrl,
-            modelType,
-            modelScale,
-            modelRotation,
+            sceneId: effectiveSceneId,
             onStatusChange: handleStatusChange,
             placeTrigger,
           }}
@@ -170,11 +98,7 @@ export default function ARViewerScreen() {
         {/* Back Button */}
         <View style={styles.backButtonContainer}>
           <Pressable style={styles.backButton} onPress={handleBack}>
-            <FontAwesome
-              name="arrow-left"
-              size={18}
-              color={Colors.lightGray}
-            />
+            <FontAwesome name="arrow-left" size={18} color={Colors.lightGray} />
             <ThemedText style={styles.backButtonText}>Back</ThemedText>
           </Pressable>
         </View>
@@ -201,7 +125,7 @@ export default function ARViewerScreen() {
               Alert.alert(
                 "AR Experience",
                 `Viewing AR content for: \n${artworkTitle}`,
-                [{ text: "OK" }]
+                [{ text: "OK" }],
               )
             }
           >
@@ -220,16 +144,6 @@ const styles = StyleSheet.create({
   },
   arNavigator: {
     flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.lightGray,
-    gap: 16,
-  },
-  loadingText: {
-    color: Colors.darkMedGray,
   },
   errorContainer: {
     flex: 1,

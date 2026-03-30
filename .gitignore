@@ -65,3 +65,5 @@ seed/
 scripts/
 
 .env.local
+/ios
+/android

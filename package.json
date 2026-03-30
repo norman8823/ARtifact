@@ -5,8 +5,8 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint"
   },
@@ -18,8 +18,8 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "2.6.2",
     "@react-navigation/native": "^7.1.6",
-    "@reactvision/react-viro": "^2.53.1",
-    "@sentry/react-native": "~6.14.0",
+    "@reactvision/react-viro": "file:../../Documents/ViroWorkspace/viro/reactvision-react-viro-2.53.1.tgz",
+    "@sentry/react-native": "^8.6.0",
     "aws-amplify": "6.15.5",
     "aws-sdk": "^2.1692.0",
     "dotenv": "^17.2.2",

@@ -375,6 +375,7 @@ export const getArtwork = /* GraphQL */ `query GetArtwork($id: ID!) {
     isScannable
     hasAudio
     hasAR
+    sceneId
     primaryImage
     primaryImageSmall
     additionalImages

@@ -18,7 +18,10 @@
         "NSCameraUsageDescription": "This app uses the camera to scan artwork and provide AR experiences.",
         "NSMotionUsageDescription": "This app uses motion sensors to provide immersive AR experiences.",
         "NSLocationWhenInUseUsageDescription": "This app may use location to enhance AR experiences.",
-        "NSMicrophoneUsageDescription": "This app may use the microphone for AR experiences."
+        "NSMicrophoneUsageDescription": "This app may use the microphone for AR experiences.",
+        "NSPhotoLibraryUsageDescription": "ARtifact would like to read photos for AR experiences.",
+        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location for AR experiences"
       }
     },
     "android": {
@@ -32,8 +35,14 @@
         "RECORD_AUDIO",
         "MODIFY_AUDIO_SETTINGS",
         "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "RECORD_AUDIO",
+        "MODIFY_AUDIO_SETTINGS",
+        "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
-      ]
+      ],
+      "package": "com.rauljiminian.ARtifact"
     },
     "web": {
       "bundler": "metro",
@@ -71,7 +80,9 @@
             "photosPermission": "ARtifact would like to read photos for AR experiences.",
             "savephotosPermission": "ARtifact would like to save photos during AR experiences."
           },
-          "provider": "reactvision"
+          "provider": "reactvision",
+          "rvApiKey": "rv_live_8fd77988d393f1cf2714dbb21b8f84c9a4e29d2aa4004c018c8122d0f5c376af",
+          "rvProjectId": "56b4872e-26e5-4a1a-be24-3dc603579d9c"
         }
       ]
     ],

@@ -128,6 +128,7 @@ export const updateArtwork = /* GraphQL */ `mutation UpdateArtwork(
     isScannable
     hasAudio
     hasAR
+    sceneId
     primaryImage
     primaryImageSmall
     additionalImages
