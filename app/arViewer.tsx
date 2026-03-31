@@ -24,16 +24,11 @@ export default function ARViewerScreen() {
   const effectiveSceneId = AR_TEST_MODE ? AR_TEST_SCENE_ID : sceneId;
 
   const [arStatus, setArStatus] = useState("Initializing AR...");
-  const [placeTrigger, setPlaceTrigger] = useState(0);
   const [isModelPlaced, setIsModelPlaced] = useState(false);
+  const [tapPoint, setTapPoint] = useState<{ x: number; y: number; seq: number } | null>(null);
 
   const handleBack = () => {
     router.back();
-  };
-
-  const handlePlace = () => {
-    setPlaceTrigger((prev) => prev + 1);
-    setIsModelPlaced(true);
   };
 
   const handleStatusChange = (status: string) => {
@@ -74,18 +69,23 @@ export default function ARViewerScreen() {
           viroAppProps={{
             sceneId: effectiveSceneId,
             onStatusChange: handleStatusChange,
-            placeTrigger,
+            onPlaced: () => setIsModelPlaced(true),
+            tapPoint,
           }}
           style={styles.arNavigator}
         />
 
-        {/* Crosshair at screen center */}
+        {/* Tap overlay — captures real screen coordinates before placement.
+            Removed after placement so drag/pinch/rotate reach Viro directly. */}
         {!isModelPlaced && (
-          <View style={styles.crosshairContainer} pointerEvents="none">
-            <View style={styles.crosshairLineH} />
-            <View style={styles.crosshairLineV} />
-            <View style={styles.crosshairDot} />
-          </View>
+          <View
+            style={StyleSheet.absoluteFillObject}
+            onStartShouldSetResponder={() => true}
+            onResponderGrant={(evt) => {
+              const { pageX, pageY } = evt.nativeEvent;
+              setTapPoint({ x: pageX, y: pageY, seq: Date.now() });
+            }}
+          />
         )}
 
         {/* Status bar */}
@@ -102,20 +102,6 @@ export default function ARViewerScreen() {
             <ThemedText style={styles.backButtonText}>Back</ThemedText>
           </Pressable>
         </View>
-
-        {/* Place Button */}
-        {!isModelPlaced && (
-          <View style={styles.placeButtonContainer}>
-            <Pressable style={styles.placeButton} onPress={handlePlace}>
-              <FontAwesome
-                name="crosshairs"
-                size={20}
-                color={Colors.lightGray}
-              />
-              <ThemedText style={styles.placeButtonText}>Place</ThemedText>
-            </Pressable>
-          </View>
-        )}
 
         {/* Info Button */}
         <View style={styles.infoButtonContainer}>
@@ -172,37 +158,6 @@ const styles = StyleSheet.create({
   retryButtonText: {
     color: Colors.lightGray,
   },
-  crosshairContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  crosshairLineH: {
-    position: "absolute",
-    width: 32,
-    height: 2,
-    backgroundColor: "#FFFFFF",
-    opacity: 0.6,
-  },
-  crosshairLineV: {
-    position: "absolute",
-    width: 2,
-    height: 32,
-    backgroundColor: "#FFFFFF",
-    opacity: 0.6,
-  },
-  crosshairDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.3)",
-  },
   statusContainer: {
     position: "absolute",
     bottom: 120,
@@ -238,33 +193,6 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     color: Colors.lightGray,
-  },
-  placeButtonContainer: {
-    position: "absolute",
-    bottom: 50,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  placeButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#22C55E",
-    paddingHorizontal: 28,
-    paddingVertical: 14,
-    borderRadius: 30,
-    gap: 10,
-    shadowColor: "#22C55E",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  placeButtonText: {
-    color: Colors.lightGray,
-    fontSize: 16,
-    fontWeight: "600",
   },
   infoButtonContainer: {
     position: "absolute",
