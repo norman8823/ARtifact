@@ -1,5 +1,5 @@
 /* tslint:disable */
- 
+/* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
 import * as APITypes from "../API";
@@ -375,7 +375,6 @@ export const getArtwork = /* GraphQL */ `query GetArtwork($id: ID!) {
     isScannable
     hasAudio
     hasAR
-    sceneId
     primaryImage
     primaryImageSmall
     additionalImages
@@ -396,6 +395,7 @@ export const getArtwork = /* GraphQL */ `query GetArtwork($id: ID!) {
     galleryNumber
     tags
     description
+    sceneId
     createdAt
     updatedAt
     __typename
@@ -438,6 +438,7 @@ export const listArtworks = /* GraphQL */ `query ListArtworks(
       galleryNumber
       tags
       description
+      sceneId
       createdAt
       updatedAt
       __typename

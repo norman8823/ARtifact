@@ -38,6 +38,15 @@ yarn-error.*
 
 app-example
 
+
+# Seed data and scripts (not needed in build)
+seed/
+scripts/
+
+.env.local
+/ios
+/android
+
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*
@@ -59,11 +68,3 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
-
-# Seed data and scripts (not needed in build)
-seed/
-scripts/
-
-.env.local
-/ios
-/android

@@ -32,7 +32,6 @@ type Artwork
   isScannable: Boolean
   hasAudio: Boolean
   hasAR: Boolean
-  sceneId: String
   primaryImage: String
   primaryImageSmall: String
   additionalImages: [String]
@@ -53,6 +52,7 @@ type Artwork
   galleryNumber: String
   tags: [String]
   description: String
+  sceneId: String
 }
 
 type Favorited @model @auth(rules: [{ allow: owner }]) {
