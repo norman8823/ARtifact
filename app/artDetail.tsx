@@ -529,6 +529,11 @@ export default function ArtDetailScreen() {
                   setAuthModalVisible(true);
                   return;
                 }
+                console.log("🎯 Navigating to AR - artwork:", {
+                  id: artwork.id,
+                  title: artwork.title,
+                  arImage: artwork.arImage,
+                });
                 router.push({
                   pathname: "/arViewer",
                   params: {
