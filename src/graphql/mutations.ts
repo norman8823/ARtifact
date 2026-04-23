@@ -1,5 +1,5 @@
 /* tslint:disable */
- 
+/* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
 import * as APITypes from "../API";
@@ -108,6 +108,7 @@ export const createArtwork = /* GraphQL */ `mutation CreateArtwork(
     galleryNumber
     tags
     description
+    sceneId
     createdAt
     updatedAt
     __typename
@@ -148,6 +149,7 @@ export const updateArtwork = /* GraphQL */ `mutation UpdateArtwork(
     galleryNumber
     tags
     description
+    sceneId
     createdAt
     updatedAt
     __typename
@@ -188,6 +190,7 @@ export const deleteArtwork = /* GraphQL */ `mutation DeleteArtwork(
     galleryNumber
     tags
     description
+    sceneId
     createdAt
     updatedAt
     __typename

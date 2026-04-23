@@ -539,7 +539,7 @@ export default function ArtDetailScreen() {
                   params: {
                     artworkId: artwork.id,
                     title: artwork.title,
-                    arImage: artwork.arImage,
+                    sceneId: artwork.sceneId,
                   },
                 });
               }}

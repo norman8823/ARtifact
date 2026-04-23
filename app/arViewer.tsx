@@ -1,109 +1,99 @@
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import ArtworkARScene from "@/components/ar-scenes/ArtworkARScene";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import React from "react";
-import {
-  Alert,
-  Linking,
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  View,
-} from "react-native";
+import React, { useState } from "react";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
+import { ViroARSceneNavigator } from "@reactvision/react-viro";
+
+// --- Debug flag: set to true to bypass sceneId param and use a test scene ---
+const AR_TEST_MODE = false;
+const AR_TEST_SCENE_ID = "73f3603f-5579-4642-ad27-fccfc87922a3";
+// ---------------------------------------------------------------------------
 
 export default function ARViewerScreen() {
   const params = useLocalSearchParams();
   const artworkTitle = Array.isArray(params.title)
     ? params.title[0]
     : params.title || "Artwork";
-  const arImage = Array.isArray(params.arImage)
-    ? params.arImage[0]
-    : params.arImage;
+  const sceneId = Array.isArray(params.sceneId)
+    ? params.sceneId[0]
+    : params.sceneId;
 
-  // Build AR URL - add https if needed
-  const buildARURL = (url: string): string => {
-    if (!url) return "";
-    let finalURL = url;
-    if (!finalURL.startsWith("http://") && !finalURL.startsWith("https://")) {
-      finalURL = "https://" + finalURL;
-    }
-    return finalURL;
-  };
+  const effectiveSceneId = AR_TEST_MODE ? AR_TEST_SCENE_ID : sceneId;
 
-  const arURL = arImage ? buildARURL(arImage) : null;
-
-  // Debug logging
-  console.log("🎯 AR Viewer - arImage:", arImage);
-  console.log("🎯 AR Viewer - final arURL:", arURL);
+  const [arStatus, setArStatus] = useState("Initializing AR...");
+  const [isModelPlaced, setIsModelPlaced] = useState(false);
+  const [tapPoint, setTapPoint] = useState<{ x: number; y: number; seq: number } | null>(null);
 
   const handleBack = () => {
     router.back();
   };
 
-  const handleOpenAR = async () => {
-    if (!arURL) return;
-
-    // Add cache-busting timestamp
-    const separator = arURL.includes("?") ? "&" : "?";
-    const urlWithCacheBust = `${arURL}${separator}_t=${Date.now()}`;
-
-    console.log("🚀 Opening AR in Safari:", urlWithCacheBust);
-
-    try {
-      const supported = await Linking.canOpenURL(urlWithCacheBust);
-      if (supported) {
-        await Linking.openURL(urlWithCacheBust);
-      } else {
-        Alert.alert("Error", "Unable to open AR experience URL.");
-      }
-    } catch (error) {
-      console.error("Error opening AR URL:", error);
-      Alert.alert("Error", "Failed to open AR experience.");
-    }
+  const handleStatusChange = (status: string) => {
+    setArStatus(status);
   };
+
+  // No sceneId provided (bypassed in test mode)
+  if (!effectiveSceneId) {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.errorContainer}>
+          <FontAwesome
+            name="exclamation-triangle"
+            size={48}
+            color={Colors.darkMedGray}
+          />
+          <ThemedText style={styles.errorTitle}>AR Not Available</ThemedText>
+          <ThemedText style={styles.errorMessage}>
+            No AR scene configured for this artwork.
+          </ThemedText>
+          <Pressable style={styles.retryButton} onPress={handleBack}>
+            <ThemedText style={styles.retryButtonText}>Go Back</ThemedText>
+          </Pressable>
+        </View>
+      </>
+    );
+  }
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
-      <SafeAreaView style={styles.container}>
-        {!arURL ? (
-          /* Error State - no URL */
-          <ThemedView style={styles.errorContainer}>
-            <FontAwesome
-              name="exclamation-triangle"
-              size={48}
-              color={Colors.darkMedGray}
-            />
-            <ThemedText style={styles.errorTitle}>
-              AR Experience Unavailable
-            </ThemedText>
-            <ThemedText style={styles.errorMessage}>
-              AR experience URL is missing or invalid.
-            </ThemedText>
-          </ThemedView>
-        ) : (
-          /* Main content - View in AR button */
-          <ThemedView style={styles.contentContainer}>
-            <FontAwesome name="cube" size={64} color={Colors.darkMedGray} />
-            <ThemedText style={styles.title}>{artworkTitle}</ThemedText>
-            <ThemedText style={styles.subtitle}>
-              Tap below to view this artwork in augmented reality
-            </ThemedText>
-            <Pressable style={styles.arButton} onPress={handleOpenAR}>
-              <FontAwesome name="camera" size={20} color="white" />
-              <ThemedText style={styles.arButtonText}>View in AR</ThemedText>
-            </Pressable>
-            <ThemedText style={styles.hint}>
-              Opens in Safari. Tap back to return to the app.
-            </ThemedText>
-          </ThemedView>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.container}>
+        {/* AR Scene Navigator */}
+        <ViroARSceneNavigator
+          autofocus={true}
+          initialScene={{ scene: ArtworkARScene as any }}
+          viroAppProps={{
+            sceneId: effectiveSceneId,
+            onStatusChange: handleStatusChange,
+            onPlaced: () => setIsModelPlaced(true),
+            tapPoint,
+          }}
+          style={styles.arNavigator}
+        />
+
+        {/* Tap overlay — captures real screen coordinates before placement.
+            Removed after placement so drag/pinch/rotate reach Viro directly. */}
+        {!isModelPlaced && (
+          <View
+            style={StyleSheet.absoluteFillObject}
+            onStartShouldSetResponder={() => true}
+            onResponderGrant={(evt) => {
+              const { pageX, pageY } = evt.nativeEvent;
+              setTapPoint({ x: pageX, y: pageY, seq: Date.now() });
+            }}
+          />
         )}
+
+        {/* Status bar */}
+        <View style={styles.statusContainer} pointerEvents="none">
+          <View style={styles.statusBadge}>
+            <ThemedText style={styles.statusText}>{arStatus}</ThemedText>
+          </View>
+        </View>
 
         {/* Back Button */}
         <View style={styles.backButtonContainer}>
@@ -112,7 +102,23 @@ export default function ARViewerScreen() {
             <ThemedText style={styles.backButtonText}>Back</ThemedText>
           </Pressable>
         </View>
-      </SafeAreaView>
+
+        {/* Info Button */}
+        <View style={styles.infoButtonContainer}>
+          <Pressable
+            style={styles.infoButton}
+            onPress={() =>
+              Alert.alert(
+                "AR Experience",
+                `Viewing AR content for: \n${artworkTitle}`,
+                [{ text: "OK" }],
+              )
+            }
+          >
+            <FontAwesome name="info" size={16} color={Colors.lightGray} />
+          </Pressable>
+        </View>
+      </View>
     </>
   );
 }
@@ -120,48 +126,10 @@ export default function ARViewerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: "#000",
   },
-  contentContainer: {
+  arNavigator: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-    gap: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "600",
-    textAlign: "center",
-    marginTop: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: Colors.darkMedGray,
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  arButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.darkMedGray,
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    borderRadius: 30,
-    gap: 12,
-    marginTop: 16,
-  },
-  arButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  hint: {
-    fontSize: 12,
-    color: Colors.darkMedGray,
-    textAlign: "center",
-    marginTop: 16,
-    fontStyle: "italic",
   },
   errorContainer: {
     flex: 1,
@@ -178,6 +146,34 @@ const styles = StyleSheet.create({
   errorMessage: {
     fontSize: 14,
     color: Colors.darkMedGray,
+    textAlign: "center",
+  },
+  retryButton: {
+    backgroundColor: Colors.darkMedGray,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  retryButtonText: {
+    color: Colors.lightGray,
+  },
+  statusContainer: {
+    position: "absolute",
+    bottom: 120,
+    left: 20,
+    right: 20,
+    alignItems: "center",
+  },
+  statusBadge: {
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  statusText: {
+    color: Colors.lightGray,
+    fontSize: 13,
     textAlign: "center",
   },
   backButtonContainer: {
@@ -197,5 +193,19 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     color: Colors.lightGray,
+  },
+  infoButtonContainer: {
+    position: "absolute",
+    top: 70,
+    right: 20,
+    zIndex: 1000,
+  },
+  infoButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 25,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

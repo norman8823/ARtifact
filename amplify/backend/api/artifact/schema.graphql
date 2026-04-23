@@ -52,6 +52,7 @@ type Artwork
   galleryNumber: String
   tags: [String]
   description: String
+  sceneId: String
 }
 
 type Favorited @model @auth(rules: [{ allow: owner }]) {
