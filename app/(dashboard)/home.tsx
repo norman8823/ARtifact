@@ -100,16 +100,8 @@ export default function HomeScreen() {
     if (allQuests.length === 0) return null;
 
     // Get completed quest IDs
-    // NOTE(perf/screen-load-caching): UserQuest has no `status` field (it uses
-    // `isCompleted`), so this filter has always matched nothing — completed
-    // quests are never excluded from featured selection. Preserving the
-    // existing (buggy) behavior here to avoid a behavior change in a perf
-    // commit; cast keeps it compiling now that userQuests is typed. Tracked
-    // for a separate fix.
     const completedQuestIds = new Set(
-      userQuests
-        .filter((uq) => (uq as { status?: string }).status === "completed")
-        .map((uq) => uq.questId)
+      userQuests.filter((uq) => uq.isCompleted).map((uq) => uq.questId)
     );
 
     // Filter available quests (not completed)
