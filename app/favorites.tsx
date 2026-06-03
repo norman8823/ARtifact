@@ -1,14 +1,11 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
-import {
-  type FavoriteArtwork,
-  useFavoriteArtworks,
-} from "@/src/hooks/useFavoriteArtworks";
+import { useFavoriteArtworksQuery } from "@/src/hooks/queries";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -22,20 +19,19 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const ARTWORK_WIDTH = (SCREEN_WIDTH - 64) / 2;
 
 export default function FavoritesScreen() {
-  const { getFavoriteArtworks, isLoading, error } = useFavoriteArtworks();
-  const [favoriteArtworks, setFavoriteArtworks] = useState<FavoriteArtwork[]>(
-    []
-  );
+  const {
+    data: favoriteArtworks = [],
+    isLoading,
+    error,
+    refetch,
+  } = useFavoriteArtworksQuery();
   const { lastRefreshTime } = useFavoritesContext();
 
+  // Re-fetch when a favorite is toggled elsewhere (FavoritesContext signal).
+  // The mount fetch and this refetch dedupe, so there's no double request.
   useEffect(() => {
-    const loadFavorites = async () => {
-      const artworks = await getFavoriteArtworks();
-      setFavoriteArtworks(artworks);
-    };
-
-    loadFavorites();
-  }, [getFavoriteArtworks, lastRefreshTime]);
+    refetch();
+  }, [lastRefreshTime, refetch]);
 
   if (isLoading) {
     return (

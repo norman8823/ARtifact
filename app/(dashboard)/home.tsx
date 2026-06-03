@@ -5,11 +5,15 @@ import { QuestArtworkThumbnails } from "@/components/QuestArtworkThumbnails";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
-import { useArtworks, type Artwork } from "@/src/hooks/useArtworks";
-import { useDepartments, type Department } from "@/src/hooks/useDepartments";
-import { useDidYouKnow } from "@/src/hooks/useDidYouKnow";
-import { useQuests, type Quest } from "@/src/hooks/useQuests";
-import { useUserQuests } from "@/src/hooks/useUserQuests";
+import { type Artwork } from "@/src/hooks/useArtworks";
+import { type Quest } from "@/src/hooks/useQuests";
+import {
+  useAllQuestsQuery,
+  useDepartmentsQuery,
+  useDidYouKnowQuery,
+  useFeaturedArtworksQuery,
+  useUserQuestsQuery,
+} from "@/src/hooks/queries";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router, useNavigation } from "expo-router";
@@ -30,44 +34,42 @@ export default function HomeScreen() {
   const { isAuthReady, isAuthenticated } = useAuthContext();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
   const [currentDate, setCurrentDate] = useState("");
   const [randomFact, setRandomFact] = useState<string>("");
   const [featuredQuest, setFeaturedQuest] = useState<Quest | null>(null);
-  const [allQuests, setAllQuests] = useState<Quest[]>([]);
-  const [userQuests, setUserQuests] = useState<any[]>([]);
   const [isFeaturedQuestPressed, setIsFeaturedQuestPressed] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   const navigation = useNavigation();
   const {
-    getFeaturedArtworks,
+    data: featuredData,
     isLoading: isLoadingArtworks,
     error: artworksError,
-  } = useArtworks();
+  } = useFeaturedArtworksQuery();
   const {
-    getAllDepartments,
+    data: departmentsData,
     isLoading: isLoadingDepartments,
     error: departmentsError,
-  } = useDepartments();
+  } = useDepartmentsQuery();
   const {
-    loadFacts,
-    getRandomFact,
+    data: factsData,
     isLoading: isLoadingFacts,
     error: factsError,
-  } = useDidYouKnow();
+  } = useDidYouKnowQuery();
   const {
-    getAllQuests,
+    data: allQuestsData,
     isLoading: isLoadingQuests,
     error: questsError,
-  } = useQuests();
-  const {
-    getUserQuests,
-    isLoading: isLoadingUserQuests,
-    error: userQuestsError,
-  } = useUserQuests();
+  } = useAllQuestsQuery();
+  const { data: userQuestsData } = useUserQuestsQuery();
+
+  // Derive directly from cached query data (stale-while-revalidate): the
+  // persisted cache paints instantly on a cold launch, then revalidates.
+  const featuredArtworks = featuredData ?? [];
+  const departments = departmentsData ?? [];
+  const allQuests = allQuestsData ?? [];
+  const userQuests = userQuestsData ?? [];
 
   // No longer redirect - allow guests to browse
 
@@ -82,80 +84,32 @@ export default function HomeScreen() {
     setCurrentDate(formattedDate);
   }, []);
 
-  // Fetch featured artworks - wait for auth first
+  // Pick a random fact once, when facts first load. Kept in state so it stays
+  // stable across background revalidations instead of re-randomizing each time.
   useEffect(() => {
-    if (!isAuthReady) return;
-
-    const loadArtworks = async () => {
-      const artworks = await getFeaturedArtworks();
-      setFeaturedArtworks(artworks);
-    };
-    loadArtworks();
-  }, [isAuthReady, getFeaturedArtworks]);
-
-  // Fetch departments - wait for auth first
-  useEffect(() => {
-    if (!isAuthReady) return;
-
-    const loadDepartments = async () => {
-      const fetchedDepartments = await getAllDepartments();
-      setDepartments(fetchedDepartments);
-    };
-    loadDepartments();
-  }, [isAuthReady, getAllDepartments]);
-
-  // Load facts - wait for auth first
-  useEffect(() => {
-    if (!isAuthReady) return;
-
-    const loadFactsAndSetRandom = async () => {
-      await loadFacts();
-    };
-    loadFactsAndSetRandom();
-  }, [isAuthReady, loadFacts]);
-
-  // Set random fact when facts are loaded
-  useEffect(() => {
-    if (randomFact === "") {
-      // Only set if we don't have a fact yet
-      const fact = getRandomFact();
+    if (randomFact === "" && factsData && factsData.length > 0) {
+      const fact = factsData[Math.floor(Math.random() * factsData.length)];
       if (fact) {
         setRandomFact(fact.fact);
       }
     }
-  }, [getRandomFact, randomFact]);
-
-  // Load quests data - wait for auth first
-  useEffect(() => {
-    if (!isAuthReady) return;
-
-    const loadQuestsData = async () => {
-      try {
-        const questsData = await getAllQuests();
-        setAllQuests(questsData);
-
-        // Only fetch user quests if authenticated
-        if (isAuthenticated) {
-          const userQuestsData = await getUserQuests();
-          setUserQuests(userQuestsData);
-        }
-      } catch (error) {
-        console.error("Error loading quests data:", error);
-      }
-    };
-
-    loadQuestsData();
-  }, [isAuthReady, isAuthenticated, getAllQuests, getUserQuests]);
+  }, [factsData, randomFact]);
 
   // Stable quest selection using useMemo
   const stableFeaturedQuest = useMemo(() => {
     if (allQuests.length === 0) return null;
 
     // Get completed quest IDs
+    // NOTE(perf/screen-load-caching): UserQuest has no `status` field (it uses
+    // `isCompleted`), so this filter has always matched nothing — completed
+    // quests are never excluded from featured selection. Preserving the
+    // existing (buggy) behavior here to avoid a behavior change in a perf
+    // commit; cast keeps it compiling now that userQuests is typed. Tracked
+    // for a separate fix.
     const completedQuestIds = new Set(
       userQuests
-        .filter(uq => uq.status === 'completed')
-        .map(uq => uq.questId)
+        .filter((uq) => (uq as { status?: string }).status === "completed")
+        .map((uq) => uq.questId)
     );
 
     // Filter available quests (not completed)

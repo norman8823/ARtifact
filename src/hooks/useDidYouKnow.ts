@@ -43,7 +43,7 @@ export function useDidYouKnow() {
       if (!("data" in result) || !result.data?.listDidYouKnows?.items) {
         console.log("No data in response");
         setFacts([]);
-        return;
+        return [] as DidYouKnowFact[];
       }
 
       // Map the DynamoDB items to our simplified DidYouKnowFact interface
@@ -62,6 +62,9 @@ export function useDidYouKnow() {
 
       // console.log("Fetched did you know facts:", didYouKnowFacts.length);
       setFacts(didYouKnowFacts);
+      // Also return the facts so this can be used directly as a react-query
+      // queryFn (callers that only want the side-effect can ignore the value).
+      return didYouKnowFacts;
     } catch (err) {
       console.error("Error loading did you know facts:", err);
       if (err instanceof Error) {
@@ -74,6 +77,7 @@ export function useDidYouKnow() {
       setError(
         err instanceof Error ? err : new Error("Unknown error occurred")
       );
+      return [] as DidYouKnowFact[];
     } finally {
       setIsLoading(false);
     }

@@ -86,6 +86,18 @@ export function useQuests() {
     }
   }, []);
   const getAllQuests = useCallback(async () => {
+    // TODO(perf/screen-load-caching): this AppSync cache-bypass (custom
+    // timestamped GetFreshQuests query + a fresh client) was added in dfc1d75
+    // ("revamped Art Quests display") and replaced a removed in-memory quest
+    // cache — its purpose was fresh quest DEFINITIONS (titles/thumbnails) during
+    // a quest-data migration, NOT quest completion (completion lives on
+    // UserQuest via getUserQuests). This getter is now used as a react-query
+    // queryFn (catalog, 5min SWR); react-query caches the RESULT by key
+    // regardless of this bypass, so the bypass is redundant-but-harmless here.
+    // Left intact deliberately (not reverting, to avoid reintroducing whatever
+    // it guarded). Completion freshness is handled separately by getUserQuests
+    // (staleTime 0). Safe to simplify back to the generated `listQuests` query
+    // once verified it doesn't regress definition freshness.
     // Force fresh data with timestamp to prevent caching
     const timestamp = Date.now();
     console.log(`🔄 Force refreshing quest data from database... [${timestamp}]`);

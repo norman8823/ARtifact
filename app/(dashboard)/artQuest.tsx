@@ -4,14 +4,20 @@ import { QuestArtworkThumbnails } from "@/components/QuestArtworkThumbnails";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
-import { type Quest as BaseQuest, useQuests } from "@/src/hooks/useQuests";
-import { type Rank, useRanks } from "@/src/hooks/useRanks";
-import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
-import { type UserXP, useUserXP } from "@/src/hooks/useUserXP";
+import {
+  useAllQuestsQuery,
+  useAllRanksQuery,
+  useUserQuestsQuery,
+  useUserXPQuery,
+} from "@/src/hooks/queries";
+import { type Quest as BaseQuest } from "@/src/hooks/useQuests";
+import { type Rank } from "@/src/hooks/useRanks";
+import { type UserQuest } from "@/src/hooks/useUserQuests";
+import { type UserXP } from "@/src/hooks/useUserXP";
 import { FontAwesome } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -201,33 +207,68 @@ const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => {
 export default function ArtQuestScreen() {
   const { isAuthReady, isAuthenticated } = useAuthContext();
   const {
-    getAllQuests,
+    data: allQuestsData,
     isLoading: isLoadingQuests,
     error: questsError,
-  } = useQuests();
+    refetch: refetchQuests,
+  } = useAllQuestsQuery();
   const {
-    getUserQuests,
+    data: userQuestsData,
     isLoading: isLoadingUserQuests,
     error: userQuestsError,
-  } = useUserQuests();
+    refetch: refetchUserQuests,
+  } = useUserQuestsQuery();
   const {
-    getUserXP,
+    data: xpData,
     isLoading: isLoadingUserXP,
     error: userXPError,
-  } = useUserXP();
+    refetch: refetchXP,
+  } = useUserXPQuery();
   const {
-    getRankByXP,
+    data: ranksData,
     isLoading: isLoadingRanks,
     error: ranksError,
-  } = useRanks();
+    refetch: refetchRanks,
+  } = useAllRanksQuery();
 
-  const [availableQuests, setAvailableQuests] = useState<BaseQuest[]>([]);
-  const [activeQuests, setActiveQuests] = useState<UserQuest[]>([]);
-  const [completedQuests, setCompletedQuests] = useState<UserQuest[]>([]);
-  const [userXP, setUserXP] = useState<UserXP | null>(null);
-  const [currentRank, setCurrentRank] = useState<Rank | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [questLookup, setQuestLookup] = useState<Map<string, BaseQuest>>(new Map());
+
+  const userXP: UserXP | null = xpData ?? null;
+
+  // Derive quest groupings + lookup from the cached quest data (was loadData).
+  const { availableQuests, activeQuests, completedQuests, questLookup } =
+    useMemo(() => {
+      const allQuests = allQuestsData ?? [];
+      const userQuests = userQuestsData ?? [];
+
+      const active = userQuests.filter((uq) => !uq.isCompleted);
+      const completed = userQuests.filter((uq) => uq.isCompleted);
+      const startedQuestIds = new Set(userQuests.map((uq) => uq.questId));
+      const available = allQuests.filter((q) => !startedQuestIds.has(q.id));
+
+      const lookup = new Map<string, BaseQuest>();
+      allQuests.forEach((q) => lookup.set(q.id, q));
+
+      return {
+        availableQuests: available,
+        activeQuests: active,
+        completedQuests: completed,
+        questLookup: lookup,
+      };
+    }, [allQuestsData, userQuestsData]);
+
+  // Derive current rank from XP + ranks (replaces the getRankByXP fetch).
+  const currentRank = useMemo<Rank | null>(() => {
+    const ranks = ranksData ?? [];
+    if (userXP && ranks.length > 0) {
+      return (
+        ranks.find(
+          (r) => userXP.xpPoints >= r.minXP && userXP.xpPoints <= r.maxXP
+        ) || ranks[0]
+      );
+    }
+    return null;
+  }, [userXP, ranksData]);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -237,77 +278,19 @@ export default function ArtQuestScreen() {
     }
   }, [isAuthReady, isAuthenticated]);
 
-  const loadData = useCallback(async () => {
-    console.log("🔍 ArtQuest Auth Check:", { isAuthReady, isAuthenticated });
-    if (!isAuthReady) {
-      console.warn("Auth not ready yet, waiting...");
-      return;
-    }
-
-    if (!isAuthenticated) {
-      console.warn("User not authenticated - isAuthenticated:", isAuthenticated);
-      return; // Don't retry, redirect will handle this
-    }
-
-    try {
-      console.log("Loading quest data for authenticated user...");
-      const [allQuests, userQuests, xp] = await Promise.all([
-        getAllQuests(),
-        getUserQuests(),
-        getUserXP(),
-      ]);
-
-      // Simple quest loading summary
-      console.log(`📋 Quest Page: Loaded ${allQuests.length} quests`);
-
-      // Separate user quests into active (in progress) and completed
-      const activeQuests = userQuests.filter((uq: UserQuest) => !uq.isCompleted);
-      const completedQuests = userQuests.filter((uq: UserQuest) => uq.isCompleted);
-
-      // Filter out quests that the user has already started (both active and completed)
-      const startedQuestIds = new Set(
-        userQuests.map((uq: UserQuest) => uq.questId)
-      );
-      const available = allQuests.filter(
-        (quest: BaseQuest) => !startedQuestIds.has(quest.id)
-      );
-
-      setAvailableQuests(available);
-      setActiveQuests(activeQuests);
-      setCompletedQuests(completedQuests);
-      setUserXP(xp);
-
-      // Create quest lookup map for accessing artwork thumbnails
-      const lookup = new Map<string, BaseQuest>();
-      allQuests.forEach(quest => {
-        lookup.set(quest.id, quest);
-      });
-      setQuestLookup(lookup);
-
-      // Simple quest summary
-      console.log(`🗂️ Quest summary: ${activeQuests.length} active, ${available.length} available, ${completedQuests.length} completed`);
-
-
-      // Get user's rank based on XP
-      if (xp) {
-        const rank = await getRankByXP(xp.xpPoints);
-        setCurrentRank(rank);
-      }
-
-      console.log("Quest data loaded successfully");
-    } catch (error) {
-      console.error("Failed to load quest data:", error);
-    }
-  }, [isAuthReady, isAuthenticated, getAllQuests, getUserQuests, getUserXP, getRankByXP]);
-
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      await loadData();
+      await Promise.all([
+        refetchQuests(),
+        refetchUserQuests(),
+        refetchXP(),
+        refetchRanks(),
+      ]);
     } finally {
       setIsRefreshing(false);
     }
-  }, [loadData]);
+  }, [refetchQuests, refetchUserQuests, refetchXP, refetchRanks]);
 
   // Prepare data for FlatList
   const flatListData: FlatListItem[] = [
@@ -439,11 +422,8 @@ export default function ArtQuestScreen() {
     }
   }, [questLookup]);
 
-  // Initial load
-  useEffect(() => {
-    if (!isAuthReady || !isAuthenticated) return; // Guard clause
-    loadData();
-  }, [isAuthReady, isAuthenticated, loadData]);
+  // Data fetches on mount via the query hooks (enabled once authenticated).
+  // No manual initial-load effect needed.
 
   // Removed useFocusEffect - no need to auto-refresh when returning from quest detail
   // Quest progress only changes when user scans artworks, which happens on quest detail page

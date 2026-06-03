@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { type Artwork, useArtworksByIds } from "@/src/hooks/useArtworksByIds";
-import { useVisited } from "@/src/hooks/useVisited";
+import { useVisitedArtworksQuery } from "@/src/hooks/queries";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, router } from "expo-router";
@@ -19,7 +19,11 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const ARTWORK_WIDTH = (SCREEN_WIDTH - 64) / 2;
 
 export default function ArtworksVisitedScreen() {
-  const { getVisitedArtworks, isLoading: isLoadingVisited } = useVisited();
+  // Visited records come from the shared cache (SWR). The dependent
+  // artwork-detail fetch (getArtworksByIds) stays a one-off per this commit's
+  // scope.
+  const { data: visited, isLoading: isLoadingVisited } =
+    useVisitedArtworksQuery();
   const {
     getArtworksByIds,
     isLoading: isLoadingArtworks,
@@ -28,13 +32,11 @@ export default function ArtworksVisitedScreen() {
   const [visitedArtworks, setVisitedArtworks] = useState<Artwork[]>([]);
 
   useEffect(() => {
+    if (!visited) return;
     const loadVisitedArtworks = async () => {
       try {
-        // Get visited records
-        const visited = await getVisitedArtworks();
-
-        // Sort by most recent first
-        const sortedVisited = visited.sort((a, b) => {
+        // Sort by most recent first. Spread first — never mutate cached data.
+        const sortedVisited = [...visited].sort((a, b) => {
           const dateA = new Date(a.timestamp);
           const dateB = new Date(b.timestamp);
           return dateB.getTime() - dateA.getTime();
@@ -50,7 +52,7 @@ export default function ArtworksVisitedScreen() {
     };
 
     loadVisitedArtworks();
-  }, [getVisitedArtworks, getArtworksByIds]);
+  }, [visited, getArtworksByIds]);
 
   // Show loading state
   if (isLoadingVisited || isLoadingArtworks) {
