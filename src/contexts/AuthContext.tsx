@@ -11,6 +11,8 @@ import React, {
   useState,
 } from "react";
 
+import { setAuthMode } from "@/src/aws/authMode";
+
 interface AuthTokens {
   accessToken: string;
   idToken: string;
@@ -38,13 +40,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [tokens, setTokens] = useState<AuthTokens | null>(null);
 
-  const initializeAuth = useCallback(async () => {
+  const initializeAuth = useCallback(async (isColdStart = false) => {
     try {
       console.log("🔐 AuthContext: Initializing authentication...");
 
-      // Give AsyncStorage adequate time to load tokens
-      // This prevents race conditions on cold app starts
-      await new Promise((resolve) => setTimeout(resolve, 250));
+      // Cold-start only: give AsyncStorage time to load persisted Cognito
+      // tokens, preventing a race on app launch. Skipped on warm re-auth
+      // (e.g. post-login refreshAuth) where tokens are already in memory.
+      // TODO(perf/screen-load-caching): this fixed 250ms delay was added to
+      // guard a cold-start token race; investigate the exact race so it can be
+      // replaced with a deterministic wait (or removed) rather than a guess.
+      if (isColdStart) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
 
       const currentUser = await getCurrentUser();
       console.log("✅ AuthContext: User found:", currentUser.username);
@@ -63,13 +71,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           accessToken: session.tokens.accessToken.toString(),
           idToken: session.tokens.idToken.toString(),
         });
+        setAuthMode("userPool");
         setIsAuthenticated(true);
       } else {
         console.log("⚠️ AuthContext: No valid tokens found");
+        setAuthMode("apiKey");
         setIsAuthenticated(false);
       }
     } catch (error) {
       console.log("ℹ️ AuthContext: No authenticated user found");
+      setAuthMode("apiKey");
       setIsAuthenticated(false);
       setUser(null);
       setTokens(null);
@@ -82,7 +93,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshAuth = useCallback(async () => {
     console.log("🔄 AuthContext: Refreshing authentication...");
     setIsAuthReady(false);
-    await initializeAuth();
+    // Warm re-auth (e.g. right after login): skip the cold-start delay.
+    await initializeAuth(false);
   }, [initializeAuth]);
 
   const signOut = useCallback(async () => {
@@ -92,6 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await amplifySignOut();
 
       // Clear local state after successful AWS sign out
+      setAuthMode("apiKey");
       setIsAuthenticated(false);
       setUser(null);
       setTokens(null);
@@ -101,6 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("❌ AuthContext: Error signing out:", error);
       // Even if AWS sign out fails, clear local state to prevent issues
+      setAuthMode("apiKey");
       setIsAuthenticated(false);
       setUser(null);
       setTokens(null);
@@ -109,7 +123,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    initializeAuth();
+    // Cold-start path: apply the AsyncStorage token-load delay once on launch.
+    initializeAuth(true);
   }, [initializeAuth]);
 
   const value: AuthContextType = {
