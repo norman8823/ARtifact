@@ -156,12 +156,12 @@ export default function ArtDetailScreen() {
           setArtwork(artworkResult);
           setSelectedImage(artworkResult.primaryImage);
 
-          // Check if the artwork is favorited
-          const favorite = await checkIfFavorited(id);
+          // Favorited + visited checks are independent — run them in parallel.
+          const [favorite, visitRecord] = await Promise.all([
+            checkIfFavorited(id),
+            checkIfArtworkVisited(id),
+          ]);
           setIsFavorited(!!favorite);
-
-          // Check if the artwork has been visited
-          const visitRecord = await checkIfArtworkVisited(id);
           setIsVisited(!!visitRecord);
         }
 
