@@ -428,15 +428,35 @@ export default function ArtQuestScreen() {
   // Removed useFocusEffect - no need to auto-refresh when returning from quest detail
   // Quest progress only changes when user scans artworks, which happens on quest detail page
 
-  // Show loading state
+  // Cold-launch paint: catalog quests hydrate from the persisted cache before
+  // auth resolves; user-state (progress/xp/ranks) fills in the moment auth
+  // resolves. Render as soon as anything is cached — only a first-ever launch
+  // (empty cache) sees the spinner. Do NOT gate on `isAuthReady` when there's
+  // cached data.
+  const hasCachedData =
+    (allQuestsData?.length ?? 0) > 0 ||
+    (userQuestsData?.length ?? 0) > 0 ||
+    xpData !== undefined ||
+    (ranksData?.length ?? 0) > 0;
+
   if (
-    !isAuthReady ||
-    !isAuthenticated ||
-    isLoadingQuests ||
-    isLoadingUserQuests ||
-    isLoadingUserXP ||
-    isLoadingRanks
+    !hasCachedData &&
+    (!isAuthReady ||
+      isLoadingQuests ||
+      isLoadingUserQuests ||
+      isLoadingUserXP ||
+      isLoadingRanks)
   ) {
+    return (
+      <ThemedView style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" />
+      </ThemedView>
+    );
+  }
+
+  // Resolved but not signed in: the redirect effect navigates away; hold the
+  // spinner during that brief transition.
+  if (isAuthReady && !isAuthenticated) {
     return (
       <ThemedView style={[styles.container, styles.loadingContainer]}>
         <ActivityIndicator size="large" />

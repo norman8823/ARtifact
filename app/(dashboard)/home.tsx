@@ -228,13 +228,24 @@ export default function HomeScreen() {
     );
   };
 
-  // Show loading state (including auth initialization)
+  // Cold-launch paint: the persisted cache hydrates catalog data (featured
+  // artworks/departments/facts/quests) before auth even resolves, so render it
+  // immediately. Only fall back to a spinner when there is genuinely nothing to
+  // show yet — i.e. a first-ever launch with an empty cache. Do NOT gate on
+  // `isAuthReady`: a returning user must never see a spinner on this screen.
+  const hasAnyContent =
+    featuredArtworks.length > 0 ||
+    departments.length > 0 ||
+    allQuests.length > 0 ||
+    randomFact !== "";
+
   if (
-    !isAuthReady ||
-    (isLoadingArtworks && featuredArtworks.length === 0) ||
-    (isLoadingDepartments && departments.length === 0) ||
-    (isLoadingFacts && randomFact === "") ||
-    (isLoadingQuests && allQuests.length === 0)
+    !hasAnyContent &&
+    (!isAuthReady ||
+      isLoadingArtworks ||
+      isLoadingDepartments ||
+      isLoadingFacts ||
+      isLoadingQuests)
   ) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>

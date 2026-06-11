@@ -168,13 +168,32 @@ export default function ProfileScreen() {
     }
   };
 
-  // Show loading state while auth is initializing or during logout
-  if (!isAuthReady || (isAuthReady && !isAuthenticated)) {
-    return (
-      <SafeAreaView style={[{ flex: 1, backgroundColor: Colors.lightGray }, { justifyContent: "center", alignItems: "center" }]}>
-        <ThemedText>Loading...</ThemedText>
-      </SafeAreaView>
-    );
+  // Cold-launch paint: user-state queries are keyed on userId, so their cached
+  // values hydrate as soon as auth resolves. Show the "Loading..." placeholder
+  // ONLY when nothing is cached yet (first-ever launch) — a returning user
+  // paints their cached stats instead of a spinner.
+  const hasCachedData =
+    favoriteData !== undefined ||
+    visitedData !== undefined ||
+    questsData !== undefined ||
+    xpData !== undefined ||
+    ranksData !== undefined;
+
+  const loadingPlaceholder = (
+    <SafeAreaView style={[{ flex: 1, backgroundColor: Colors.lightGray }, { justifyContent: "center", alignItems: "center" }]}>
+      <ThemedText>Loading...</ThemedText>
+    </SafeAreaView>
+  );
+
+  if (!isAuthReady && !hasCachedData) {
+    return loadingPlaceholder;
+  }
+
+  // Resolved but not signed in: the redirect effect navigates away; hold the
+  // placeholder (rather than flash another user's stale cache) during that
+  // brief transition.
+  if (isAuthReady && !isAuthenticated) {
+    return loadingPlaceholder;
   }
 
   return (

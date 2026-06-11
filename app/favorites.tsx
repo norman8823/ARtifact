@@ -20,8 +20,7 @@ const ARTWORK_WIDTH = (SCREEN_WIDTH - 64) / 2;
 
 export default function FavoritesScreen() {
   const {
-    data: favoriteArtworks = [],
-    isLoading,
+    data: favoriteArtworks,
     error,
     refetch,
   } = useFavoriteArtworksQuery();
@@ -33,7 +32,12 @@ export default function FavoritesScreen() {
     refetch();
   }, [lastRefreshTime, refetch]);
 
-  if (isLoading) {
+  // `data` is undefined until the query resolves OR hydrates from the persisted
+  // cache. A returning user paints the cached grid immediately; only a
+  // first-ever launch reaches this spinner. (Gating on `isLoading` here would
+  // wrongly flash the empty state during the pre-auth window, when the query is
+  // disabled and has no data yet.)
+  if (favoriteArtworks === undefined) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
         <ActivityIndicator size="large" color={Colors.darkGray} />

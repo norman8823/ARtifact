@@ -22,13 +22,8 @@ export default function ArtworksVisitedScreen() {
   // Visited records come from the shared cache (SWR). The dependent
   // artwork-detail fetch (getArtworksByIds) stays a one-off per this commit's
   // scope.
-  const { data: visited, isLoading: isLoadingVisited } =
-    useVisitedArtworksQuery();
-  const {
-    getArtworksByIds,
-    isLoading: isLoadingArtworks,
-    error,
-  } = useArtworksByIds();
+  const { data: visited } = useVisitedArtworksQuery();
+  const { getArtworksByIds, error } = useArtworksByIds();
   const [visitedArtworks, setVisitedArtworks] = useState<Artwork[]>([]);
 
   useEffect(() => {
@@ -54,8 +49,10 @@ export default function ArtworksVisitedScreen() {
     loadVisitedArtworks();
   }, [visited, getArtworksByIds]);
 
-  // Show loading state
-  if (isLoadingVisited || isLoadingArtworks) {
+  // `visited` hydrates from the persisted cache; until it's defined we haven't
+  // resolved the visited records yet (first launch / pre-auth) — show the
+  // spinner then. A returning user's records hydrate immediately.
+  if (visited === undefined) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
         <Stack.Screen
@@ -86,8 +83,9 @@ export default function ArtworksVisitedScreen() {
     );
   }
 
-  // Show empty state
-  if (visitedArtworks.length === 0) {
+  // Genuinely no visited records — distinct from "records cached but their
+  // artwork details are still loading" (handled by the spinner below).
+  if (visited.length === 0) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
         <Stack.Screen
@@ -105,6 +103,23 @@ export default function ArtworksVisitedScreen() {
             Start exploring the museum to build your collection!
           </ThemedText>
         </ThemedView>
+      </ThemedView>
+    );
+  }
+
+  // Records exist but their artwork details haven't resolved yet (this detail
+  // fetch is not cached across launches — see audit, deferred). Hold the
+  // spinner rather than render an empty grid.
+  if (visitedArtworks.length === 0) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <Stack.Screen
+          options={{
+            title: "Artworks Visited",
+            headerShadowVisible: false,
+          }}
+        />
+        <ActivityIndicator size="large" />
       </ThemedView>
     );
   }
