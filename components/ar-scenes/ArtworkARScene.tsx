@@ -92,9 +92,9 @@ const ArtworkARScene = (props: ArtworkARSceneProps) => {
     [onStatusChange],
   );
 
-  // Fetch scene assets immediately so the model download overlaps with
-  // ARKit warmup. The Viro3DObject mounts as soon as the asset resolves
-  // (parked + invisible) so its GLB starts downloading right away.
+  // Fetch scene asset metadata immediately (don't wait for AR tracking) so
+  // the "tap to place" prompt and asset details are ready by the time the
+  // user can tap. The model itself mounts on tap (mount-on-tap).
   useEffect(() => {
     const fetchAssets = async () => {
       updateStatus("Loading AR content...");
@@ -231,28 +231,23 @@ const ArtworkARScene = (props: ArtworkARSceneProps) => {
         castsShadow={true}
       />
 
-      {asset && (
+      {modelPlaced && modelPosition && asset && (
         <Viro3DObject
           ref={modelRef}
           source={{ uri: asset.fileUrl }}
-          // Parked far below origin until placement so an accidental
-          // visibility flip never renders the model in mid-air.
-          position={modelPlaced && modelPosition ? modelPosition : [0, -1000, 0]}
-          visible={modelPlaced && !!modelPosition}
+          position={modelPosition}
           scale={modelScale}
           rotation={modelRotation}
           type={inferModelType(asset)}
-          dragType={
-            modelPlaced && asset.isDraggable !== false ? "FixedToPlane" : undefined
-          }
+          dragType={asset.isDraggable !== false ? "FixedToPlane" : undefined}
           dragPlane={{
             planePoint: dragPlaneOrigin.current,
             planeNormal: [0, 1, 0],
             maxDistance: 10,
           }}
-          onDrag={modelPlaced ? handleDrag : undefined}
-          onRotate={modelPlaced ? handleRotate : undefined}
-          onPinch={modelPlaced ? handlePinch : undefined}
+          onDrag={handleDrag}
+          onRotate={handleRotate}
+          onPinch={handlePinch}
         />
       )}
     </ViroARScene>
