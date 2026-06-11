@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import {
   signOut as amplifySignOut,
   fetchAuthSession,
@@ -39,6 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [tokens, setTokens] = useState<AuthTokens | null>(null);
+  const queryClient = useQueryClient();
 
   const initializeAuth = useCallback(async (isColdStart = false) => {
     try {
@@ -108,6 +110,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAuthenticated(false);
       setUser(null);
       setTokens(null);
+      // Drop the react-query cache (in-memory + persisted) so the next user on
+      // this device can't inherit the previous user's state. Keys are already
+      // userId-scoped, but this also clears the at-rest AsyncStorage snapshot.
+      queryClient.clear();
 
       console.log("✅ AuthContext: Sign out complete, state cleared");
       console.log("✅ AuthContext: isAuthenticated is now:", false);
@@ -118,9 +124,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAuthenticated(false);
       setUser(null);
       setTokens(null);
+      queryClient.clear();
       console.log("✅ AuthContext: Local state cleared despite sign out error");
     }
-  }, []);
+  }, [queryClient]);
 
   useEffect(() => {
     // Cold-start path: apply the AsyncStorage token-load delay once on launch.
