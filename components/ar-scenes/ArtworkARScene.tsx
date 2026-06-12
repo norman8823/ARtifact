@@ -92,10 +92,9 @@ const ArtworkARScene = (props: ArtworkARSceneProps) => {
     [onStatusChange],
   );
 
-  // Fetch scene asset metadata immediately (don't wait for AR tracking) so
-  // the "tap to place" prompt and asset details are ready by the time the
-  // user can tap. The model itself mounts on tap (mount-on-tap).
+  // Fetch scene assets once AR tracking is ready
   useEffect(() => {
+    if (!isARReady) return;
     const fetchAssets = async () => {
       updateStatus("Loading AR content...");
       try {
@@ -115,7 +114,7 @@ const ArtworkARScene = (props: ArtworkARSceneProps) => {
     };
     fetchAssets();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sceneId]);
+  }, [sceneId, isARReady]);
 
   // Tap-to-place: hit-test at the exact screen pixel the user tapped.
   // Only accepted on real detected planes — FeaturePoint is intentionally
