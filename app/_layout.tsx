@@ -161,6 +161,15 @@ export default Sentry.wrap(function RootLayout() {
                 options={{
                   headerShown: false,
                   gestureEnabled: false,
+                  // Freeze the dashboard subtree while it's blurred (a detail
+                  // screen is pushed over it). On a cold launch, Home's first
+                  // query revalidations + cache-restore flip would otherwise
+                  // re-render the blurred screen mid-push-transition, desyncing
+                  // react-native-screens and dropping the first back press.
+                  // Freezing holds those updates until Home regains focus, so
+                  // the first back-navigation works. Cold-launch paint is
+                  // unaffected — Home is focused, never frozen, while painting.
+                  freezeOnBlur: true,
                 }}
               />
               <Stack.Screen
