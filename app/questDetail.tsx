@@ -47,17 +47,17 @@ export default function QuestDetailScreen() {
     if (!isAuthReady) return; // Wait for auth to be ready
 
     try {
-      // Get the quest data
-      const quests = await getAllQuests();
+      // Quest list and the user's progress are independent — fetch in parallel.
+      const [quests, userQuest] = await Promise.all([
+        getAllQuests(),
+        getUserQuestByQuestId(questId),
+      ]);
       const quest = quests.find((q: Quest) => q.id === questId);
       if (!quest) {
         throw new Error("Quest not found");
       }
 
-      // Get the user's progress on this quest
-      const userQuest = await getUserQuestByQuestId(questId);
-
-      // Get the artwork details
+      // Get the artwork details (depends on the resolved quest)
       const artworks = quest.requiredArtworks
         ? await getArtworksByIds(quest.requiredArtworks)
         : [];
