@@ -1,31 +1,11 @@
 import { type ListDidYouKnowsQuery } from "@/src/API";
 import { listDidYouKnows } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession } from "aws-amplify/auth";
+import { getAuthMode } from "@/src/aws/authMode";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
-
-// Helper to determine auth mode based on user session
-// Note: Guest access API key expires on Dec 6, 2026 at 04:00 GMT
-const GUEST_API_KEY_EXPIRY = new Date("2026-12-06T04:00:00Z");
-
-const getAuthMode = async (): Promise<"userPool" | "apiKey"> => {
-  try {
-    const session = await fetchAuthSession();
-    if (session.tokens?.accessToken) {
-      return "userPool";
-    }
-    // Check if guest API key has expired
-    if (new Date() > GUEST_API_KEY_EXPIRY) {
-      console.error("Guest access API key has expired (Dec 6, 2026 04:00 GMT). Please generate a new API key in AWS AppSync console.");
-    }
-    return "apiKey";
-  } catch {
-    return "apiKey";
-  }
-};
 
 export interface DidYouKnowFact {
   id: string;
@@ -42,7 +22,7 @@ export function useDidYouKnow() {
     setError(null);
     try {
       console.log("Fetching did you know facts from database...");
-      const authMode = await getAuthMode();
+      const authMode = getAuthMode();
       const result = await getClient().graphql<ListDidYouKnowsQuery>({
         query: listDidYouKnows,
         variables: {
@@ -63,7 +43,7 @@ export function useDidYouKnow() {
       if (!("data" in result) || !result.data?.listDidYouKnows?.items) {
         console.log("No data in response");
         setFacts([]);
-        return;
+        return [] as DidYouKnowFact[];
       }
 
       // Map the DynamoDB items to our simplified DidYouKnowFact interface
@@ -82,6 +62,9 @@ export function useDidYouKnow() {
 
       // console.log("Fetched did you know facts:", didYouKnowFacts.length);
       setFacts(didYouKnowFacts);
+      // Also return the facts so this can be used directly as a react-query
+      // queryFn (callers that only want the side-effect can ignore the value).
+      return didYouKnowFacts;
     } catch (err) {
       console.error("Error loading did you know facts:", err);
       if (err instanceof Error) {
@@ -94,6 +77,7 @@ export function useDidYouKnow() {
       setError(
         err instanceof Error ? err : new Error("Unknown error occurred")
       );
+      return [] as DidYouKnowFact[];
     } finally {
       setIsLoading(false);
     }

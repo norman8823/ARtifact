@@ -4,17 +4,20 @@ import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
+import {
+  useAllRanksQuery,
+  useFavoriteCountQuery,
+  useUserQuestsQuery,
+  useUserXPQuery,
+  useVisitedArtworksQuery,
+} from "@/src/hooks/queries";
 import { useAuth } from "@/src/hooks/useAuth";
-import { useFavoriteArtworks } from "@/src/hooks/useFavoriteArtworks";
-import { type Rank, useRanks } from "@/src/hooks/useRanks";
+import { type Rank } from "@/src/hooks/useRanks";
 import { useUserData } from "@/src/hooks/useUserData";
-import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
-import { type UserXP, useUserXP } from "@/src/hooks/useUserXP";
-import { useVisited } from "@/src/hooks/useVisited";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router, useFocusEffect } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -33,105 +36,94 @@ export default function ProfileScreen() {
   const { signOut: authHookSignOut, isLoading } = useAuth();
   const { isAuthReady, isAuthenticated, signOut: contextSignOut } = useAuthContext();
   const { currentUser, ensureUserInDB } = useUserData();
-  const { getFavoriteCount } = useFavoriteArtworks();
-  const { getVisitedArtworks } = useVisited();
-  const { getUserQuests } = useUserQuests();
-  const { getUserXP } = useUserXP();
-  const { getRankByXP, getAllRanks } = useRanks();
   const { lastRefreshTime } = useFavoritesContext();
 
-  const [favoriteCount, setFavoriteCount] = useState(0);
-  const [visitedCount, setVisitedCount] = useState(0);
-  const [completedQuestsCount, setCompletedQuestsCount] = useState(0);
-  const [userXP, setUserXP] = useState<UserXP | null>(null);
-  const [currentRank, setCurrentRank] = useState<Rank | null>(null);
-  const [nextRank, setNextRank] = useState<Rank | null>(null);
-  const [xpProgress, setXpProgress] = useState(0);
-  const [xpNeeded, setXpNeeded] = useState(0);
-  const [allRanks, setAllRanks] = useState<Rank[]>([]);
+  // Shared, cached user-state queries (stale-while-revalidate). Counts paint
+  // from the persisted cache instantly on a cold launch, then revalidate.
+  const { data: favoriteData, refetch: refetchFavorites } =
+    useFavoriteCountQuery();
+  const { data: visitedData, refetch: refetchVisited } =
+    useVisitedArtworksQuery();
+  const { data: questsData, refetch: refetchQuests } = useUserQuestsQuery();
+  const { data: xpData, refetch: refetchXP } = useUserXPQuery();
+  const { data: ranksData, refetch: refetchRanks } = useAllRanksQuery();
+
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Load user data and stats
-  const loadData = useCallback(async () => {
-    // Don't load data if not authenticated
-    if (!isAuthReady || !isAuthenticated) {
-      console.log("⚠️ Profile: Skipping data load - user not authenticated");
-      return;
-    }
+  // Derived stats
+  const favoriteCount = favoriteData ?? 0;
+  const visitedCount = visitedData?.length ?? 0;
+  const completedQuestsCount = (questsData ?? []).filter(
+    (q) => q.isCompleted
+  ).length;
+  const userXP = xpData ?? null;
+  const allRanks = ranksData ?? [];
 
-    try {
-      await ensureUserInDB();
-
-      // Load all data in parallel
-      const [favorites, visited, quests, xp, ranks] = await Promise.all([
-        getFavoriteCount(),
-        getVisitedArtworks(),
-        getUserQuests(),
-        getUserXP(),
-        getAllRanks(),
-      ]);
-
-      // Update counts
-      setFavoriteCount(favorites);
-      setVisitedCount(visited.length);
-      setCompletedQuestsCount(
-        quests.filter((q: UserQuest) => q.isCompleted).length
+  // Derive rank + progress from XP and ranks (same formula as before).
+  const { currentRank, nextRank, xpProgress, xpNeeded } = useMemo(() => {
+    if (userXP && allRanks.length > 0) {
+      const userRank = allRanks.find(
+        (rank) =>
+          userXP.xpPoints >= rank.minXP && userXP.xpPoints <= rank.maxXP
       );
-      setUserXP(xp);
-      setAllRanks(ranks);
+      const nextRankIndex =
+        allRanks.findIndex((r) => r.id === userRank?.id) + 1;
+      const nextUserRank =
+        nextRankIndex < allRanks.length ? allRanks[nextRankIndex] : null;
 
-      // Calculate rank progress
-      if (xp && ranks.length > 0) {
-        const userRank = ranks.find(
-          (rank: Rank) => xp.xpPoints >= rank.minXP && xp.xpPoints <= rank.maxXP
-        );
-        const nextRankIndex =
-          ranks.findIndex((r: Rank) => r.id === userRank?.id) + 1;
-        const nextUserRank =
-          nextRankIndex < ranks.length ? ranks[nextRankIndex] : null;
-
-        setCurrentRank(userRank || ranks[0]);
-        setNextRank(nextUserRank);
-
-        if (userRank && nextUserRank) {
-          const totalXPInLevel = nextUserRank.minXP - userRank.minXP;
-          const userXPInLevel = xp.xpPoints - userRank.minXP;
-          const progress = (userXPInLevel / totalXPInLevel) * 100;
-          const needed = nextUserRank.minXP - xp.xpPoints;
-
-          setXpProgress(progress);
-          setXpNeeded(needed);
-        }
+      let progress = 0;
+      let needed = 0;
+      if (userRank && nextUserRank) {
+        const totalXPInLevel = nextUserRank.minXP - userRank.minXP;
+        const userXPInLevel = userXP.xpPoints - userRank.minXP;
+        progress = (userXPInLevel / totalXPInLevel) * 100;
+        needed = nextUserRank.minXP - userXP.xpPoints;
       }
 
-      console.log("📊 Profile data refreshed:", {
-        visitedCount: visited.length,
-        xpPoints: xp?.xpPoints || 0,
-        favoriteCount: favorites,
-        completedQuests: quests.filter((q: UserQuest) => q.isCompleted).length,
-      });
-    } catch (error) {
-      console.error("Error loading data:", error);
+      return {
+        currentRank: userRank || allRanks[0],
+        nextRank: nextUserRank,
+        xpProgress: progress,
+        xpNeeded: needed,
+      };
     }
-  }, [
-    isAuthReady,
-    isAuthenticated,
-    ensureUserInDB,
-    getFavoriteCount,
-    getVisitedArtworks,
-    getUserQuests,
-    getUserXP,
-    getAllRanks,
-  ]);
+    return {
+      currentRank: null as Rank | null,
+      nextRank: null as Rank | null,
+      xpProgress: 0,
+      xpNeeded: 0,
+    };
+  }, [userXP, allRanks]);
+
+  const refetchAll = useCallback(() => {
+    refetchFavorites();
+    refetchVisited();
+    refetchQuests();
+    refetchXP();
+    refetchRanks();
+  }, [refetchFavorites, refetchVisited, refetchQuests, refetchXP, refetchRanks]);
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      await loadData();
+      await Promise.all([
+        refetchFavorites(),
+        refetchVisited(),
+        refetchQuests(),
+        refetchXP(),
+        refetchRanks(),
+      ]);
     } finally {
       setIsRefreshing(false);
     }
-  }, [loadData]);
+  }, [refetchFavorites, refetchVisited, refetchQuests, refetchXP, refetchRanks]);
+
+  // Ensure the user's DB row exists once authenticated (new users).
+  useEffect(() => {
+    if (isAuthReady && isAuthenticated) {
+      ensureUserInDB();
+    }
+  }, [isAuthReady, isAuthenticated, ensureUserInDB]);
 
   // Redirect to login if not authenticated (check this FIRST)
   useEffect(() => {
@@ -142,21 +134,22 @@ export default function ProfileScreen() {
     }
   }, [isAuthReady, isAuthenticated]);
 
-  // Load data when component mounts or favorites change (only if authenticated)
+  // Re-fetch when favorites change elsewhere (FavoritesContext signal). The
+  // queries also fetch on mount; these refetches dedupe with that.
   useEffect(() => {
     if (isAuthReady && isAuthenticated) {
-      loadData();
+      refetchAll();
     }
-  }, [loadData, lastRefreshTime, isAuthReady, isAuthenticated]);
+  }, [lastRefreshTime, isAuthReady, isAuthenticated, refetchAll]);
 
-  // Refresh data when screen comes into focus (e.g., after scanning)
+  // Refresh data when screen comes into focus (e.g., after scanning).
   useFocusEffect(
     useCallback(() => {
       if (isAuthReady && isAuthenticated) {
         console.log("🔄 Profile screen focused - refreshing data");
-        loadData();
+        refetchAll();
       }
-    }, [loadData, isAuthReady, isAuthenticated])
+    }, [isAuthReady, isAuthenticated, refetchAll])
   );
 
   const handleLogout = async () => {
@@ -175,13 +168,32 @@ export default function ProfileScreen() {
     }
   };
 
-  // Show loading state while auth is initializing or during logout
-  if (!isAuthReady || (isAuthReady && !isAuthenticated)) {
-    return (
-      <SafeAreaView style={[{ flex: 1, backgroundColor: Colors.lightGray }, { justifyContent: "center", alignItems: "center" }]}>
-        <ThemedText>Loading...</ThemedText>
-      </SafeAreaView>
-    );
+  // Cold-launch paint: user-state queries are keyed on userId, so their cached
+  // values hydrate as soon as auth resolves. Show the "Loading..." placeholder
+  // ONLY when nothing is cached yet (first-ever launch) — a returning user
+  // paints their cached stats instead of a spinner.
+  const hasCachedData =
+    favoriteData !== undefined ||
+    visitedData !== undefined ||
+    questsData !== undefined ||
+    xpData !== undefined ||
+    ranksData !== undefined;
+
+  const loadingPlaceholder = (
+    <SafeAreaView style={[{ flex: 1, backgroundColor: Colors.lightGray }, { justifyContent: "center", alignItems: "center" }]}>
+      <ThemedText>Loading...</ThemedText>
+    </SafeAreaView>
+  );
+
+  if (!isAuthReady && !hasCachedData) {
+    return loadingPlaceholder;
+  }
+
+  // Resolved but not signed in: the redirect effect navigates away; hold the
+  // placeholder (rather than flash another user's stale cache) during that
+  // brief transition.
+  if (isAuthReady && !isAuthenticated) {
+    return loadingPlaceholder;
   }
 
   return (

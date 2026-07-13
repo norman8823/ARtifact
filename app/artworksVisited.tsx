@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { type Artwork, useArtworksByIds } from "@/src/hooks/useArtworksByIds";
-import { useVisited } from "@/src/hooks/useVisited";
+import { useVisitedArtworksQuery } from "@/src/hooks/queries";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, router } from "expo-router";
@@ -19,22 +19,19 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const ARTWORK_WIDTH = (SCREEN_WIDTH - 64) / 2;
 
 export default function ArtworksVisitedScreen() {
-  const { getVisitedArtworks, isLoading: isLoadingVisited } = useVisited();
-  const {
-    getArtworksByIds,
-    isLoading: isLoadingArtworks,
-    error,
-  } = useArtworksByIds();
+  // Visited records come from the shared cache (SWR). The dependent
+  // artwork-detail fetch (getArtworksByIds) stays a one-off per this commit's
+  // scope.
+  const { data: visited } = useVisitedArtworksQuery();
+  const { getArtworksByIds, error } = useArtworksByIds();
   const [visitedArtworks, setVisitedArtworks] = useState<Artwork[]>([]);
 
   useEffect(() => {
+    if (!visited) return;
     const loadVisitedArtworks = async () => {
       try {
-        // Get visited records
-        const visited = await getVisitedArtworks();
-
-        // Sort by most recent first
-        const sortedVisited = visited.sort((a, b) => {
+        // Sort by most recent first. Spread first — never mutate cached data.
+        const sortedVisited = [...visited].sort((a, b) => {
           const dateA = new Date(a.timestamp);
           const dateB = new Date(b.timestamp);
           return dateB.getTime() - dateA.getTime();
@@ -50,10 +47,12 @@ export default function ArtworksVisitedScreen() {
     };
 
     loadVisitedArtworks();
-  }, [getVisitedArtworks, getArtworksByIds]);
+  }, [visited, getArtworksByIds]);
 
-  // Show loading state
-  if (isLoadingVisited || isLoadingArtworks) {
+  // `visited` hydrates from the persisted cache; until it's defined we haven't
+  // resolved the visited records yet (first launch / pre-auth) — show the
+  // spinner then. A returning user's records hydrate immediately.
+  if (visited === undefined) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
         <Stack.Screen
@@ -84,8 +83,9 @@ export default function ArtworksVisitedScreen() {
     );
   }
 
-  // Show empty state
-  if (visitedArtworks.length === 0) {
+  // Genuinely no visited records — distinct from "records cached but their
+  // artwork details are still loading" (handled by the spinner below).
+  if (visited.length === 0) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
         <Stack.Screen
@@ -103,6 +103,23 @@ export default function ArtworksVisitedScreen() {
             Start exploring the museum to build your collection!
           </ThemedText>
         </ThemedView>
+      </ThemedView>
+    );
+  }
+
+  // Records exist but their artwork details haven't resolved yet (this detail
+  // fetch is not cached across launches — see audit, deferred). Hold the
+  // spinner rather than render an empty grid.
+  if (visitedArtworks.length === 0) {
+    return (
+      <ThemedView style={[styles.container, styles.centerContent]}>
+        <Stack.Screen
+          options={{
+            title: "Artworks Visited",
+            headerShadowVisible: false,
+          }}
+        />
+        <ActivityIndicator size="large" />
       </ThemedView>
     );
   }

@@ -1,31 +1,11 @@
 import { type ListQuestsQuery, type GetArtworkQuery } from "@/src/API";
 import { listQuests, getArtwork } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
-import { fetchAuthSession } from "aws-amplify/auth";
+import { getAuthMode } from "@/src/aws/authMode";
 import { useCallback, useState } from "react";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
-
-// Helper to determine auth mode based on user session
-// Note: Guest access API key expires on Dec 6, 2026 at 04:00 GMT
-const GUEST_API_KEY_EXPIRY = new Date("2026-12-06T04:00:00Z");
-
-const getAuthMode = async (): Promise<"userPool" | "apiKey"> => {
-  try {
-    const session = await fetchAuthSession();
-    if (session.tokens?.accessToken) {
-      return "userPool";
-    }
-    // Check if guest API key has expired
-    if (new Date() > GUEST_API_KEY_EXPIRY) {
-      console.error("Guest access API key has expired (Dec 6, 2026 04:00 GMT). Please generate a new API key in AWS AppSync console.");
-    }
-    return "apiKey";
-  } catch {
-    return "apiKey";
-  }
-};
 
 export interface QuestArtworkThumbnail {
   id: string;
@@ -60,7 +40,7 @@ export function useQuests() {
       // Fetch all artworks in parallel
       const artworkPromises = artworkIds.map(async (id) => {
         try {
-          const artworkAuthMode = await getAuthMode();
+          const artworkAuthMode = getAuthMode();
           const result = await getClient().graphql<GetArtworkQuery>({
             query: getArtwork,
             variables: { id },
@@ -106,6 +86,18 @@ export function useQuests() {
     }
   }, []);
   const getAllQuests = useCallback(async () => {
+    // TODO(perf/screen-load-caching): this AppSync cache-bypass (custom
+    // timestamped GetFreshQuests query + a fresh client) was added in dfc1d75
+    // ("revamped Art Quests display") and replaced a removed in-memory quest
+    // cache — its purpose was fresh quest DEFINITIONS (titles/thumbnails) during
+    // a quest-data migration, NOT quest completion (completion lives on
+    // UserQuest via getUserQuests). This getter is now used as a react-query
+    // queryFn (catalog, 5min SWR); react-query caches the RESULT by key
+    // regardless of this bypass, so the bypass is redundant-but-harmless here.
+    // Left intact deliberately (not reverting, to avoid reintroducing whatever
+    // it guarded). Completion freshness is handled separately by getUserQuests
+    // (staleTime 0). Safe to simplify back to the generated `listQuests` query
+    // once verified it doesn't regress definition freshness.
     // Force fresh data with timestamp to prevent caching
     const timestamp = Date.now();
     console.log(`🔄 Force refreshing quest data from database... [${timestamp}]`);
@@ -142,7 +134,7 @@ export function useQuests() {
 
       // Create fresh client instance with custom query
       const freshClient = generateClient();
-      const authMode = await getAuthMode();
+      const authMode = getAuthMode();
       const result = await freshClient.graphql({
         query: timestampedQuery,
         authMode: authMode as any,
