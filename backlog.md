@@ -15,13 +15,15 @@
 jest-expo harness + GitHub Actions CI on PRs/pushes to `development`. Pure logic extracted to `src/utils/` (questProgress, rankUtils, scanAdapter) and unit-tested; hook signatures unchanged. Unit tests are the required CI gate; typecheck and lint run as **advisory** jobs because the pre-existing baseline fails (~29 tsc errors / 8 lint errors).
 
 ### 0.1b Fix the tsc + lint baseline, then make CI strict
-Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: string | null` vs `string | undefined` image props, implicit-any params in legacy hooks, GraphQL result narrowing) and the 8 lint errors, then remove `continue-on-error` from the typecheck/lint jobs in `.github/workflows/ci.yml`. Found while writing rank tests: XP above the top rank band falls back to the **lowest** rank (characterization-tested in `rankUtils.test.ts`) — check whether real seed data has an open-ended top band; fix alongside 0.3 if not.
+Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: string | null` vs `string | undefined` image props, implicit-any params in legacy hooks, GraphQL result narrowing) and the 8 lint errors, then remove `continue-on-error` from the typecheck/lint jobs in `.github/workflows/ci.yml`.
+
+~~Rank wrap quirk~~ **resolved**: top rank is now explicitly open-ended in `getRankForXP` ("minXP or greater", never wraps to lowest), and profile.tsx's duplicated inline calc now uses the shared function. Live rank data verified (2026-07-13): bands 0-900 / 901-1800 / 1801-3000 / 3001-4699 / 4700-999999; max earnable XP is exactly 4700 (47 scannable artworks × 100, identical to the union of all 12 quests' artworks).
 
 ### 0.2 Fix the XP read-modify-write race *(Gaps #6)*
 `awardXP` does read-then-write on a single `UserXP` record. Premium makes quests the headline feature; quest XP correctness matters more. Fix before adding quest-completion XP (0.3) so new XP paths are built on a safe primitive.
 
-### 0.3 Award quest `xpReward` on completion *(Gaps #5)*
-Currently displayed but never granted. Premium quests must actually pay out their advertised XP — this is the value prop being sold. Wire it in `updateQuestProgress` where `isCompleted` flips true (and decide the auto-complete-at-start case: recommend awarding there too, with the celebration UI). Depends on 0.2.
+### 0.3 Award quest `xpReward` on completion *(Gaps #5)* — ⚠️ design decision needed first
+Currently displayed but never granted. **Live-data finding (2026-07-13): every quest's `xpReward` equals exactly 100 × its artwork count (sum 4700 = the Art Legend threshold = 100 × all 47 scannable artworks).** So `xpReward` is *descriptive* of the scan XP you earn completing the quest, not a bonus. Wiring it as an additional completion award would double max XP to 9400 and break the rank-band design. Decide: (a) keep XP as scan-only and re-label the quest badge ("400 XP quest" = what you'll earn scanning), or (b) make it a true completion bonus and re-band the ranks. Recommend (a) — zero data migration. Depends on 0.2 only if (b).
 
 ### 0.4 One batched schema change + `amplify push`
 Batch all schema edits into a single push to avoid repeated regen churn:

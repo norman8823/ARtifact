@@ -14,6 +14,7 @@ import {
 import { useAuth } from "@/src/hooks/useAuth";
 import { type Rank } from "@/src/hooks/useRanks";
 import { useUserData } from "@/src/hooks/useUserData";
+import { getRankForXP } from "@/src/utils/rankUtils";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router, useFocusEffect } from "expo-router";
@@ -62,10 +63,7 @@ export default function ProfileScreen() {
   // Derive rank + progress from XP and ranks (same formula as before).
   const { currentRank, nextRank, xpProgress, xpNeeded } = useMemo(() => {
     if (userXP && allRanks.length > 0) {
-      const userRank = allRanks.find(
-        (rank) =>
-          userXP.xpPoints >= rank.minXP && userXP.xpPoints <= rank.maxXP
-      );
+      const userRank = getRankForXP(allRanks, userXP.xpPoints);
       const nextRankIndex =
         allRanks.findIndex((r) => r.id === userRank?.id) + 1;
       const nextUserRank =

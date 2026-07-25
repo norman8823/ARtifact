@@ -28,10 +28,11 @@ describe("getRankForXP", () => {
     expect(getRankForXP(gappyRanks, 150)?.title).toBe("Novice");
   });
 
-  it("falls back to the FIRST rank for XP above the top band (characterization)", () => {
-    // Pre-existing behavior preserved as-is: XP beyond the top band's maxXP
-    // resolves to the lowest rank, not the highest. Flagged in backlog P3.
-    expect(getRankForXP(ranks, 5000)?.title).toBe("Novice");
+  it("maps XP above the top band to the TOP rank (open-ended, never wraps)", () => {
+    // The top rank means "this XP or greater". Live data uses a 999999
+    // maxXP sentinel, but the code must not rely on it.
+    expect(getRankForXP(ranks, 5000)?.title).toBe("Curator");
+    expect(getRankForXP(ranks, 1_000_000)?.title).toBe("Curator");
   });
 
   it("returns undefined for an empty rank list", () => {
