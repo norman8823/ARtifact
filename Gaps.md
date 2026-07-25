@@ -23,8 +23,8 @@ There is not a single `*.test.*` file, no jest/vitest config, no `.github/workfl
 ### 5. Quest `xpReward` is never awarded — ✅ NOT A BUG (by design)
 Resolved 2026-07-13: the completion bonus was deliberately removed (it made XP tracking too hard). `xpReward` is descriptive — it equals 100 × the quest's artwork count, i.e. the scan XP you earn completing it. XP is scan-only (flat 100 in [useScanSuccess.ts](src/hooks/useScanSuccess.ts)); max earnable is 4700 = Art Legend threshold. Never wire a completion award — it would double-count.
 
-### 6. XP award has no idempotency or concurrency safety
-`awardXP` reads latest `UserXP` then writes `current + points` ([useUserXP.ts:126](src/hooks/useUserXP.ts#L126)) — a read-modify-write race. Interrupted scan flows can double-award; concurrent updates can drop XP. The `byUserXP` GSI (timestamp SK) suggests an append-only history design that was abandoned mid-flight — one record is updated in place instead.
+### 6. XP award has no idempotency or concurrency safety — ✅ FIXED (backlog 0.2)
+Resolved 2026-07-13: `awardXP` now does a conditional-update CAS loop with retry (`src/utils/xpAward.ts`), and new `UserXP`/`Visited` records use deterministic ids so duplicate creates collide instead of double-writing; `useScanSuccess` gates XP on the visit-create result. Residual note: the `byUserXP` GSI (timestamp SK) still hints at an abandoned append-only design — single-record-updated-in-place is now the settled pattern.
 
 ### 7. Retroactive quest credit is inconsistent
 `startQuest` seeds progress from already-visited artworks (retroactive credit at start time), but artworks visited *between* quest creation and later scans only count via `updateQuestProgress`. If a user visits artwork X, then starts a quest containing X, they get credit; the model works — but a quest can silently auto-complete at start, awarding the completion state with no celebration/XP moment.

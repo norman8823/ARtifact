@@ -19,8 +19,8 @@ Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: s
 
 ~~Rank wrap quirk~~ **resolved**: top rank is now explicitly open-ended in `getRankForXP` ("minXP or greater", never wraps to lowest), and profile.tsx's duplicated inline calc now uses the shared function. Live rank data verified (2026-07-13): bands 0-900 / 901-1800 / 1801-3000 / 3001-4699 / 4700-999999; max earnable XP is exactly 4700 (47 scannable artworks × 100, identical to the union of all 12 quests' artworks).
 
-### 0.2 Fix the XP read-modify-write race *(Gaps #6)*
-`awardXP` does read-then-write on a single `UserXP` record. Premium makes quests the headline feature; quest XP correctness matters more. Fix before adding quest-completion XP (0.3) so new XP paths are built on a safe primitive.
+### 0.2 Fix the XP read-modify-write race *(Gaps #6)* — ✅ DONE
+`awardXP` now uses a compare-and-swap loop (`src/utils/xpAward.ts`): conditional AppSync update on `xpPoints eq <read value>`, re-read + retry on conflict (max 3). New `UserXP` records use deterministic id `xp-<userId>` and new `Visited` records use `<userId>#<artworkId>`, so concurrent duplicate creates collide on the resolver's id-uniqueness condition instead of double-writing. `useScanSuccess` gates XP on the visit-create result (null = already visited → no award). Existing rows with random ids are unaffected (all reads go through userId filters/GSIs).
 
 ### 0.3 Quest `xpReward` — ✅ RESOLVED by decision (no completion bonus)
 **Decision (owner, 2026-07-13): there is no quest-completion bonus — it was removed deliberately because it made XP tracking too hard.** XP is scan-only: 100 per first-visit artwork, max 4700 (= 47 scannable artworks = union of all 12 quests = Art Legend threshold). `xpReward` on a quest is *descriptive*: it equals 100 × artwork count, i.e. what you earn by scanning the quest's artworks. Do NOT wire a completion award — that would double-count. Optional cosmetic follow-up: make the quest XP badge copy read as "earn up to N XP" if users misread it as a bonus.

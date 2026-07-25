@@ -8,6 +8,12 @@ import { createUserXP, updateUserXP } from "@/src/graphql/mutations";
 import { listUserXPS } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
+import {
+  awardXpWithRetry,
+  pickLatestXpRecord,
+  userXpRecordId,
+  type XpSnapshot,
+} from "../utils/xpAward";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
@@ -51,14 +57,15 @@ export function useUserXP() {
 
       const items = result.data?.listUserXPS?.items || [];
 
-      // Get the latest XP record for the user
-      const userXP = items
-        .filter((item): item is NonNullable<typeof item> => item !== null)
-        .sort((a, b) => {
-          const dateA = new Date(a.timestamp || a.createdAt);
-          const dateB = new Date(b.timestamp || b.createdAt);
-          return dateB.getTime() - dateA.getTime();
-        })[0];
+      // Get the latest XP record for the user (explicit type argument:
+      // the GraphQL result is untyped here, so inference has nothing to go on)
+      const userXP = pickLatestXpRecord<{
+        id: string;
+        userId: string;
+        xpPoints: number | null;
+        timestamp?: string | null;
+        createdAt: string;
+      }>(items);
 
       if (!userXP) {
         // Return default values if no XP record exists
@@ -73,7 +80,7 @@ export function useUserXP() {
       return {
         id: userXP.id,
         userId: userXP.userId,
-        xpPoints: userXP.xpPoints || 0,
+        xpPoints: userXP.xpPoints,
         timestamp: userXP.timestamp || userXP.createdAt,
       };
     } catch (err) {
@@ -87,6 +94,36 @@ export function useUserXP() {
     }
   }, [user]);
 
+  // Lean CAS read for awardXP: no loading-state churn, throws on failure
+  // (unlike getUserXP, which swallows errors — a swallowed read must never
+  // masquerade as "no record" or the create path would fork a duplicate).
+  const fetchXpSnapshot = useCallback(async (): Promise<XpSnapshot> => {
+    if (!user) {
+      throw new Error("No authenticated user");
+    }
+    const result = await getClient().graphql<ListUserXPSQuery>({
+      query: listUserXPS,
+      variables: {
+        filter: {
+          userId: { eq: user.userId },
+        },
+        limit: 1000,
+      },
+      authMode: "userPool",
+    });
+
+    if ("errors" in result && result.errors) {
+      throw new Error(
+        result.errors.map((e: { message: string }) => e.message).join(", ")
+      );
+    }
+
+    const latest = pickLatestXpRecord(result.data?.listUserXPS?.items || []);
+    return latest
+      ? { id: latest.id, xpPoints: latest.xpPoints }
+      : { id: null, xpPoints: 0 };
+  }, [user]);
+
   const awardXP = useCallback(
     async (points: number) => {
       if (!user) {
@@ -95,60 +132,65 @@ export function useUserXP() {
 
       setError(null);
       try {
-        const currentXP = await getUserXP();
-
-        if (!currentXP || currentXP.id === "default") {
-          // Create new XP record
-          const createInput: CreateUserXPInput = {
-            userId: user.userId,
-            xpPoints: points,
-            timestamp: new Date().toISOString(),
-          };
-
-          const result = await getClient().graphql({
-            query: createUserXP,
-            variables: { input: createInput },
-            authMode: "userPool",
-          });
-
-          if ("errors" in result && result.errors) {
-            throw new Error(
-              result.errors
-                .map((e: { message: string }) => e.message)
-                .join(", ")
-            );
-          }
-
-          console.log(`✅ Created XP record with ${points} points`);
-          return result.data?.createUserXP;
-        } else {
-          // Update existing XP record
-          const newXPTotal = currentXP.xpPoints + points;
-          const updateInput: UpdateUserXPInput = {
-            id: currentXP.id,
-            xpPoints: newXPTotal,
-            timestamp: new Date().toISOString(),
-          };
-
-          const result = await getClient().graphql({
-            query: updateUserXP,
-            variables: { input: updateInput },
-            authMode: "userPool",
-          });
-
-          if ("errors" in result && result.errors) {
-            throw new Error(
-              result.errors
-                .map((e: { message: string }) => e.message)
-                .join(", ")
-            );
-          }
-
-          console.log(
-            `✅ Updated XP: ${currentXP.xpPoints} + ${points} = ${newXPTotal}`
-          );
-          return result.data?.updateUserXP;
-        }
+        // Compare-and-swap with retry: the update is conditioned on
+        // xpPoints being unchanged since the read, and the first-ever
+        // create uses a deterministic id so concurrent creates collide
+        // instead of forking duplicate records.
+        return await awardXpWithRetry(
+          {
+            read: fetchXpSnapshot,
+            create: async (pts) => {
+              const createInput: CreateUserXPInput = {
+                id: userXpRecordId(user.userId),
+                userId: user.userId,
+                xpPoints: pts,
+                timestamp: new Date().toISOString(),
+              };
+              const result = await getClient().graphql({
+                query: createUserXP,
+                variables: { input: createInput },
+                authMode: "userPool",
+              });
+              if ("errors" in result && result.errors) {
+                throw new Error(
+                  result.errors
+                    .map((e: { message: string }) => e.message)
+                    .join(", ")
+                );
+              }
+              console.log(`✅ Created XP record with ${pts} points`);
+              return result.data?.createUserXP;
+            },
+            conditionalUpdate: async (id, expectedXp, pts) => {
+              const newXPTotal = expectedXp + pts;
+              const updateInput: UpdateUserXPInput = {
+                id,
+                xpPoints: newXPTotal,
+                timestamp: new Date().toISOString(),
+              };
+              const result = await getClient().graphql({
+                query: updateUserXP,
+                variables: {
+                  input: updateInput,
+                  condition: { xpPoints: { eq: expectedXp } },
+                },
+                authMode: "userPool",
+              });
+              if ("errors" in result && result.errors) {
+                throw new Error(
+                  result.errors
+                    .map((e: { message: string }) => e.message)
+                    .join(", ")
+                );
+              }
+              console.log(
+                `✅ Updated XP: ${expectedXp} + ${pts} = ${newXPTotal}`
+              );
+              return result.data?.updateUserXP;
+            },
+          },
+          points
+        );
       } catch (err) {
         console.error("Error awarding XP:", err);
         setError(
@@ -157,7 +199,7 @@ export function useUserXP() {
         throw err;
       }
     },
-    [getUserXP]
+    [user, fetchXpSnapshot]
   );
 
   return {

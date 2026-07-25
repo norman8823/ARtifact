@@ -4,6 +4,7 @@ import { createVisited } from "@/src/graphql/mutations";
 import { listVisiteds } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
+import { isConditionalCheckFailed, visitedRecordId } from "../utils/xpAward";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
@@ -133,6 +134,10 @@ export function useVisited() {
       setError(null);
       try {
         const createInput: CreateVisitedInput = {
+          // Deterministic id: a concurrent duplicate create fails the
+          // resolver's id-uniqueness condition instead of double-writing,
+          // which is what gates duplicate XP awards in useScanSuccess.
+          id: visitedRecordId(user.userId, artworkId),
           userId: user.userId,
           artworkId: artworkId,
           timestamp: new Date().toISOString(),
@@ -153,6 +158,12 @@ export function useVisited() {
         console.log("✅ Created visit record for artwork:", artworkId);
         return result.data?.createVisited;
       } catch (err) {
+        if (isConditionalCheckFailed(err)) {
+          // Visit already recorded (lost a race or stale pre-check) —
+          // not an error, but signal the caller that nothing new happened.
+          console.log("🔄 Visit record already exists for artwork:", artworkId);
+          return null;
+        }
         console.error("Error creating visit record:", err);
         setError(
           err instanceof Error ? err : new Error("Unknown error occurred")
