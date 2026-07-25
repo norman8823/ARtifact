@@ -32,8 +32,8 @@ Prep (2026-07-13) invalidated this item's premise. Three findings:
 2. **Removing `User.remainingFreeScans` from the schema is unsafe right now — do not push it.** The shipped App Store build (v1.0.1 / build 1.0.37) has the field baked into the *generated selection sets* of `getUser`, `listUsers`, `createUser`, `updateUser`, `deleteUser`. AppSync validates selection sets against the schema and fails the **whole operation** on an unknown field — and `listUsers`/`createUser` are what `ensureUserInDB` calls on every sign-in. Pushing the removal would break sign-in and user creation for every user who has not updated. **Done instead:** removed all *client-side* use (dropped from the `UserData` interface, stopped writing the default `3`) — zero risk, no push. Schema field retained with a comment explaining why.
 3. **The `Artwork.isFeatured` GSI is not implementable as written** — see 0.4b.
 
-### 0.4b (deferred) Retire the `remainingFreeScans` schema field
-Phase-2 cleanup, gated on adoption of a build that no longer requests the field. Requires either (a) waiting until old-build traffic is negligible, or (b) a forced-update floor. Purely hygienic — a nullable `Int` nobody reads costs effectively nothing in a schemaless store, so this may reasonably never happen. Do NOT bundle it with a release users can skip.
+### 0.4b Retire the `remainingFreeScans` schema field — ❌ WON'T DO
+**Decision (owner, 2026-07-13): keep the field permanently.** Removing it breaks sign-in for users on already-shipped builds (they request it in their generated selection sets; AppSync fails the whole operation on an unknown field). A nullable `Int` nobody reads costs effectively nothing in a schemaless store. The client no longer references it — that's the end state. Do not revisit.
 
 ---
 
@@ -41,8 +41,8 @@ Phase-2 cleanup, gated on adoption of a build that no longer requests the field.
 
 > **P1 is unblocked — no schema change or `amplify push` is required (see 0.4).**
 
-### 1.1 Entitlement architecture decision
-Recommendation: **RevenueCat** (`react-native-purchases`) over raw StoreKit — handles receipt validation, restore, sandbox, and entitlement state without us running a backend. Client SDK is the entitlement source of truth; mirror to `User.isPremium` in DynamoDB on app launch for display/analytics only (not enforcement). Note: there is deliberately no Lambda in the data path — do NOT build a webhook backend for v1; client-side gating is fine for content (this is a paywall, not a security boundary).
+### 1.1 Entitlement architecture decision — 📄 decision doc written, awaiting D1–D3
+See **[premium-tier.md](premium-tier.md)** for the full analysis. Blocked on three owner decisions: **D1** one-time unlock vs subscription (recommend one-time — episodic museum usage, far less code), **D2** library (recommend `expo-iap` if one-time, RevenueCat if subscription; note `react-native-iap` was archived 2026-04-26), **D3** which 3 quests are free. Architecture settled either way: StoreKit is the entitlement source of truth, `User.isPremium` is a display/analytics mirror only, no webhook backend (zero-Lambda preserved), fail to last-known-good offline.
 
 ### 1.2 Mark quest data
 Seed-script pass (`scripts/`): set `isPremium: true` on all quests except the 3 chosen free ones. Freshness propagates fast thanks to the `GetFreshQuests` cache-bypass — do not remove that workaround during this work (CLAUDE.md landmine #4).
