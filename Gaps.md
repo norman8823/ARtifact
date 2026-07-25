@@ -20,8 +20,8 @@ There is not a single `*.test.*` file, no jest/vitest config, no `.github/workfl
 
 ## Data / business-logic bugs
 
-### 5. Quest `xpReward` is never awarded
-`Quest.xpReward` is stored, displayed, and never consumed — completing a quest awards nothing. Only scanning awards XP (flat 100 in [useScanSuccess.ts](src/hooks/useScanSuccess.ts)). Either wire quest-completion XP or stop displaying the reward.
+### 5. Quest `xpReward` is never awarded — ✅ NOT A BUG (by design)
+Resolved 2026-07-13: the completion bonus was deliberately removed (it made XP tracking too hard). `xpReward` is descriptive — it equals 100 × the quest's artwork count, i.e. the scan XP you earn completing it. XP is scan-only (flat 100 in [useScanSuccess.ts](src/hooks/useScanSuccess.ts)); max earnable is 4700 = Art Legend threshold. Never wire a completion award — it would double-count.
 
 ### 6. XP award has no idempotency or concurrency safety
 `awardXP` reads latest `UserXP` then writes `current + points` ([useUserXP.ts:126](src/hooks/useUserXP.ts#L126)) — a read-modify-write race. Interrupted scan flows can double-award; concurrent updates can drop XP. The `byUserXP` GSI (timestamp SK) suggests an append-only history design that was abandoned mid-flight — one record is updated in place instead.

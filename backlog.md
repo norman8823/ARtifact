@@ -22,8 +22,8 @@ Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: s
 ### 0.2 Fix the XP read-modify-write race *(Gaps #6)*
 `awardXP` does read-then-write on a single `UserXP` record. Premium makes quests the headline feature; quest XP correctness matters more. Fix before adding quest-completion XP (0.3) so new XP paths are built on a safe primitive.
 
-### 0.3 Award quest `xpReward` on completion *(Gaps #5)* — ⚠️ design decision needed first
-Currently displayed but never granted. **Live-data finding (2026-07-13): every quest's `xpReward` equals exactly 100 × its artwork count (sum 4700 = the Art Legend threshold = 100 × all 47 scannable artworks).** So `xpReward` is *descriptive* of the scan XP you earn completing the quest, not a bonus. Wiring it as an additional completion award would double max XP to 9400 and break the rank-band design. Decide: (a) keep XP as scan-only and re-label the quest badge ("400 XP quest" = what you'll earn scanning), or (b) make it a true completion bonus and re-band the ranks. Recommend (a) — zero data migration. Depends on 0.2 only if (b).
+### 0.3 Quest `xpReward` — ✅ RESOLVED by decision (no completion bonus)
+**Decision (owner, 2026-07-13): there is no quest-completion bonus — it was removed deliberately because it made XP tracking too hard.** XP is scan-only: 100 per first-visit artwork, max 4700 (= 47 scannable artworks = union of all 12 quests = Art Legend threshold). `xpReward` on a quest is *descriptive*: it equals 100 × artwork count, i.e. what you earn by scanning the quest's artworks. Do NOT wire a completion award — that would double-count. Optional cosmetic follow-up: make the quest XP badge copy read as "earn up to N XP" if users misread it as a bonus.
 
 ### 0.4 One batched schema change + `amplify push`
 Batch all schema edits into a single push to avoid repeated regen churn:
