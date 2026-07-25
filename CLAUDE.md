@@ -7,7 +7,7 @@ ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan 
 ## Commands
 
 - **Run:** `npx expo run:ios` (requires `npx expo prebuild` after native config changes). **Expo Go does NOT work** — ReactVision needs native builds.
-- **Lint:** `npm run lint`. **Tests: none exist** (no jest config — don't look for them).
+- **Lint:** `npm run lint`. **Tests:** `npm test` (jest-expo; pure-logic units in `src/utils/__tests__/`). CI (`.github/workflows/ci.yml`) requires tests to pass; typecheck/lint are advisory until the pre-existing baseline is fixed (backlog P0.1b).
 - **Builds:** EAS (`eas.json`): development (simulator) / preview / production. Sentry source maps via `sentry.properties` (auth token from `SENTRY_AUTH_TOKEN` env).
 - **Backend:** `amplify push` from repo root regenerates `src/API.ts` + `src/graphql/*` after schema changes.
 - **Secrets:** AWS config from `EXPO_PUBLIC_*` env vars in `.env` (gitignored). Sentry DSN and ReactVision API key are committed (known issue, Gaps.md #2).

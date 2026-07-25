@@ -11,8 +11,11 @@
 
 ## P0 — Foundations (do these first; they de-risk the premium build)
 
-### 0.1 Minimal test harness + CI gate *(Gaps #1)*
-Jest + `tsc --noEmit` + lint in a GitHub Action on PRs to `development`. Unit-test only the pure logic we're about to touch for premium: quest-completion set math (`useUserQuests`), rank-from-XP lookup, the Flask→Rekognition scan adapter. No component/E2E tests yet — just enough that entitlement logic lands with tests instead of TestFlight roulette.
+### 0.1 Minimal test harness + CI gate *(Gaps #1)* — ✅ DONE
+jest-expo harness + GitHub Actions CI on PRs/pushes to `development`. Pure logic extracted to `src/utils/` (questProgress, rankUtils, scanAdapter) and unit-tested; hook signatures unchanged. Unit tests are the required CI gate; typecheck and lint run as **advisory** jobs because the pre-existing baseline fails (~29 tsc errors / 8 lint errors).
+
+### 0.1b Fix the tsc + lint baseline, then make CI strict
+Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: string | null` vs `string | undefined` image props, implicit-any params in legacy hooks, GraphQL result narrowing) and the 8 lint errors, then remove `continue-on-error` from the typecheck/lint jobs in `.github/workflows/ci.yml`. Found while writing rank tests: XP above the top rank band falls back to the **lowest** rank (characterization-tested in `rankUtils.test.ts`) — check whether real seed data has an open-ended top band; fix alongside 0.3 if not.
 
 ### 0.2 Fix the XP read-modify-write race *(Gaps #6)*
 `awardXP` does read-then-write on a single `UserXP` record. Premium makes quests the headline feature; quest XP correctness matters more. Fix before adding quest-completion XP (0.3) so new XP paths are built on a safe primitive.

@@ -2,6 +2,7 @@ import { type ListRanksQuery } from "@/src/API";
 import { listRanks } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
+import { getRankForXP } from "../utils/rankUtils";
 
 // Create the API client outside the hook to avoid recreating it on each render
 const getClient = () => generateClient();
@@ -65,11 +66,7 @@ export function useRanks() {
     async (xpPoints: number) => {
       try {
         const ranks = await getAllRanks();
-        return (
-          ranks.find(
-            (rank) => xpPoints >= rank.minXP && xpPoints <= rank.maxXP
-          ) || ranks[0]
-        );
+        return getRankForXP(ranks, xpPoints);
       } catch (err) {
         console.error("Error getting rank by XP:", err);
         return null;

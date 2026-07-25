@@ -3,6 +3,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useScanSuccess } from "@/src/hooks/useScanSuccess";
+import { adaptFlaskResponse } from "@/src/utils/scanAdapter";
 import { FontAwesome } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Haptics from "expo-haptics";
@@ -202,35 +203,14 @@ export default function ScanScreen() {
       console.log("🔍 Flask CNN Result:", flaskResult);
 
       // Transform Flask response to match expected format for useScanSuccess
-      let transformedResult;
+      const transformedResult = adaptFlaskResponse(flaskResult);
 
-      if (
-        flaskResult.success &&
-        flaskResult.prediction &&
-        flaskResult.prediction !== "Unknown"
-      ) {
-        // Successful prediction - transform to expected format
-        transformedResult = {
-          success: true,
-          labels: [
-            {
-              Name: flaskResult.prediction,
-              Confidence: flaskResult.confidence * 100, // Convert to percentage
-            },
-          ],
-          confidence: flaskResult.confidence * 100,
-        };
+      if (transformedResult.success) {
         console.log(
           "✅ Artwork identified by Flask CNN:",
           flaskResult.prediction
         );
       } else {
-        // Unsuccessful prediction or Unknown result
-        transformedResult = {
-          success: false,
-          labels: [],
-          confidence: flaskResult.confidence ? flaskResult.confidence * 100 : 0,
-        };
         console.log("❌ No confident artwork identification from Flask CNN");
       }
 
