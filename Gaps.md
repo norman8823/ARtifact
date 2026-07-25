@@ -40,8 +40,10 @@ The react-query layer ([queries.ts](src/hooks/queries.ts)) covers home/profile/a
 ### 10. Explore search/filter is client-side over the whole table
 [useInfiniteArtworks.ts](src/hooks/useInfiniteArtworks.ts) paginates 60 at a time but search + scannable/AR filters run client-side, with an auto-fetch loop that keeps pulling pages until ≥15 filtered results. Worst case (rare filter match) walks the entire ~6k-row table from the phone. Needs a `searchField` GSI or server-side filter.
 
-### 11. `Artwork.isFeatured` has no GSI
-Featured artworks = filtered DynamoDB *scan*, bounded to 5 pages/500 items ([useArtworks.ts](src/hooks/useArtworks.ts)). Works today because featured items are seeded early in the table; silently breaks if a featured artwork lands beyond the scan bound. A one-line `@index` fix plus data backfill.
+### 11. `Artwork.isFeatured` has no GSI — and cannot have one directly
+Featured artworks = filtered DynamoDB *scan*, bounded to 5 pages/500 items ([useArtworks.ts](src/hooks/useArtworks.ts)). Works today because featured items are seeded early in the table; silently breaks if a featured artwork lands beyond the scan bound.
+
+**Correction (2026-07-13): this is not a one-line `@index` fix.** DynamoDB key attributes must be String, Number, or Binary — **Boolean is not a valid key type**, so `@index` on `isFeatured: Boolean` cannot be deployed. (Consistent with the schema: all six existing `@index` directives are on `ID!` fields.) The real fix is a **sparse GSI on a String field**: add e.g. `featuredStatus: String @index(name: "byFeatured", sortKeyFields: ["id"])`, populate it with a constant like `"FEATURED"` **only** for featured artworks and leave it null elsewhere (items missing the key attribute are absent from the index, so the query reads only featured rows), backfill via `scripts/`, then switch `getFeaturedArtworks` to the generated index query. Estimate: schema + push + backfill script + query swap, not a one-liner.
 
 ### 12. Workarounds papering over unexplained races (each has a TODO)
 - **250ms cold-start auth delay** ([AuthContext.tsx:52](src/contexts/AuthContext.tsx#L52)) — guards a Cognito token-hydration race nobody has pinned down; it's a guessed constant on the critical launch path.

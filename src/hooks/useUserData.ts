@@ -14,7 +14,6 @@ export interface UserData {
   phone?: string | null;
   profileImage?: string | null;
   isPremium?: boolean | null;
-  remainingFreeScans?: number | null;
   xpPoints?: number | null;
   owner?: string | null;
 }
@@ -30,7 +29,11 @@ export function useUserData() {
           variables: {
             input: {
               ...userData,
-              remainingFreeScans: 3, // Default value for new users
+              // NOTE: remainingFreeScans is deliberately not set — scan
+              // gating was dropped (premium gates quests, not scans). The
+              // schema field is retained only so already-shipped builds,
+              // which request it in their generated selection sets, keep
+              // working; see backlog 0.4.
               xpPoints: 0, // Default value for new users
               isPremium: false, // Default value for new users
             },

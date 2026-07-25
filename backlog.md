@@ -25,15 +25,21 @@ Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: s
 ### 0.3 Quest `xpReward` — ✅ RESOLVED by decision (no completion bonus)
 **Decision (owner, 2026-07-13): there is no quest-completion bonus — it was removed deliberately because it made XP tracking too hard.** XP is scan-only: 100 per first-visit artwork, max 4700 (= 47 scannable artworks = union of all 12 quests = Art Legend threshold). `xpReward` on a quest is *descriptive*: it equals 100 × artwork count, i.e. what you earn by scanning the quest's artworks. Do NOT wire a completion award — that would double-count. Optional cosmetic follow-up: make the quest XP badge copy read as "earn up to N XP" if users misread it as a bonus.
 
-### 0.4 One batched schema change + `amplify push`
-Batch all schema edits into a single push to avoid repeated regen churn:
-- Remove `User.remainingFreeScans` (scan gating is dead by decision).
-- Keep `User.isPremium` and `Quest.isPremium` (they become load-bearing).
-- Optional while we're in there: add `@index` on `Artwork.isFeatured` *(Gaps #11)* — one line, removes the fragile bounded-scan.
+### 0.4 Schema change — ✅ DONE (and mostly cancelled; premium needs NO schema change)
+Prep (2026-07-13) invalidated this item's premise. Three findings:
+
+1. **Premium requires zero schema changes.** `User.isPremium` and `Quest.isPremium` already exist, and `useQuests` already selects and maps `isPremium` (`useQuests.ts:121,173`). `amplify push` is therefore **off the premium critical path** — P1 can start immediately.
+2. **Removing `User.remainingFreeScans` from the schema is unsafe right now — do not push it.** The shipped App Store build (v1.0.1 / build 1.0.37) has the field baked into the *generated selection sets* of `getUser`, `listUsers`, `createUser`, `updateUser`, `deleteUser`. AppSync validates selection sets against the schema and fails the **whole operation** on an unknown field — and `listUsers`/`createUser` are what `ensureUserInDB` calls on every sign-in. Pushing the removal would break sign-in and user creation for every user who has not updated. **Done instead:** removed all *client-side* use (dropped from the `UserData` interface, stopped writing the default `3`) — zero risk, no push. Schema field retained with a comment explaining why.
+3. **The `Artwork.isFeatured` GSI is not implementable as written** — see 0.4b.
+
+### 0.4b (deferred) Retire the `remainingFreeScans` schema field
+Phase-2 cleanup, gated on adoption of a build that no longer requests the field. Requires either (a) waiting until old-build traffic is negligible, or (b) a forced-update floor. Purely hygienic — a nullable `Int` nobody reads costs effectively nothing in a schemaless store, so this may reasonably never happen. Do NOT bundle it with a release users can skip.
 
 ---
 
 ## P1 — Premium tier (the epic)
+
+> **P1 is unblocked — no schema change or `amplify push` is required (see 0.4).**
 
 ### 1.1 Entitlement architecture decision
 Recommendation: **RevenueCat** (`react-native-purchases`) over raw StoreKit — handles receipt validation, restore, sandbox, and entitlement state without us running a backend. Client SDK is the entitlement source of truth; mirror to `User.isPremium` in DynamoDB on app launch for display/analytics only (not enforcement). Note: there is deliberately no Lambda in the data path — do NOT build a webhook backend for v1; client-side gating is fine for content (this is a paywall, not a security boundary).
