@@ -11,27 +11,38 @@
 
 ## P0 — Foundations (do these first; they de-risk the premium build)
 
-### 0.1 Minimal test harness + CI gate *(Gaps #1)*
-Jest + `tsc --noEmit` + lint in a GitHub Action on PRs to `development`. Unit-test only the pure logic we're about to touch for premium: quest-completion set math (`useUserQuests`), rank-from-XP lookup, the Flask→Rekognition scan adapter. No component/E2E tests yet — just enough that entitlement logic lands with tests instead of TestFlight roulette.
+### 0.1 Minimal test harness + CI gate *(Gaps #1)* — ✅ DONE
+jest-expo harness + GitHub Actions CI on PRs/pushes to `development`. Pure logic extracted to `src/utils/` (questProgress, rankUtils, scanAdapter) and unit-tested; hook signatures unchanged. Unit tests are the required CI gate; typecheck and lint run as **advisory** jobs because the pre-existing baseline fails (~29 tsc errors / 8 lint errors).
 
-### 0.2 Fix the XP read-modify-write race *(Gaps #6)*
-`awardXP` does read-then-write on a single `UserXP` record. Premium makes quests the headline feature; quest XP correctness matters more. Fix before adding quest-completion XP (0.3) so new XP paths are built on a safe primitive.
+### 0.1b Fix the tsc + lint baseline, then make CI strict
+Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: string | null` vs `string | undefined` image props, implicit-any params in legacy hooks, GraphQL result narrowing) and the 8 lint errors, then remove `continue-on-error` from the typecheck/lint jobs in `.github/workflows/ci.yml`.
 
-### 0.3 Award quest `xpReward` on completion *(Gaps #5)*
-Currently displayed but never granted. Premium quests must actually pay out their advertised XP — this is the value prop being sold. Wire it in `updateQuestProgress` where `isCompleted` flips true (and decide the auto-complete-at-start case: recommend awarding there too, with the celebration UI). Depends on 0.2.
+~~Rank wrap quirk~~ **resolved**: top rank is now explicitly open-ended in `getRankForXP` ("minXP or greater", never wraps to lowest), and profile.tsx's duplicated inline calc now uses the shared function. Live rank data verified (2026-07-13): bands 0-900 / 901-1800 / 1801-3000 / 3001-4699 / 4700-999999; max earnable XP is exactly 4700 (47 scannable artworks × 100, identical to the union of all 12 quests' artworks).
 
-### 0.4 One batched schema change + `amplify push`
-Batch all schema edits into a single push to avoid repeated regen churn:
-- Remove `User.remainingFreeScans` (scan gating is dead by decision).
-- Keep `User.isPremium` and `Quest.isPremium` (they become load-bearing).
-- Optional while we're in there: add `@index` on `Artwork.isFeatured` *(Gaps #11)* — one line, removes the fragile bounded-scan.
+### 0.2 Fix the XP read-modify-write race *(Gaps #6)* — ✅ DONE
+`awardXP` now uses a compare-and-swap loop (`src/utils/xpAward.ts`): conditional AppSync update on `xpPoints eq <read value>`, re-read + retry on conflict (max 3). New `UserXP` records use deterministic id `xp-<userId>` and new `Visited` records use `<userId>#<artworkId>`, so concurrent duplicate creates collide on the resolver's id-uniqueness condition instead of double-writing. `useScanSuccess` gates XP on the visit-create result (null = already visited → no award). Existing rows with random ids are unaffected (all reads go through userId filters/GSIs).
+
+### 0.3 Quest `xpReward` — ✅ RESOLVED by decision (no completion bonus)
+**Decision (owner, 2026-07-13): there is no quest-completion bonus — it was removed deliberately because it made XP tracking too hard.** XP is scan-only: 100 per first-visit artwork, max 4700 (= 47 scannable artworks = union of all 12 quests = Art Legend threshold). `xpReward` on a quest is *descriptive*: it equals 100 × artwork count, i.e. what you earn by scanning the quest's artworks. Do NOT wire a completion award — that would double-count. Optional cosmetic follow-up: make the quest XP badge copy read as "earn up to N XP" if users misread it as a bonus.
+
+### 0.4 Schema change — ✅ DONE (and mostly cancelled; premium needs NO schema change)
+Prep (2026-07-13) invalidated this item's premise. Three findings:
+
+1. **Premium requires zero schema changes.** `User.isPremium` and `Quest.isPremium` already exist, and `useQuests` already selects and maps `isPremium` (`useQuests.ts:121,173`). `amplify push` is therefore **off the premium critical path** — P1 can start immediately.
+2. **Removing `User.remainingFreeScans` from the schema is unsafe right now — do not push it.** The shipped App Store build (v1.0.1 / build 1.0.37) has the field baked into the *generated selection sets* of `getUser`, `listUsers`, `createUser`, `updateUser`, `deleteUser`. AppSync validates selection sets against the schema and fails the **whole operation** on an unknown field — and `listUsers`/`createUser` are what `ensureUserInDB` calls on every sign-in. Pushing the removal would break sign-in and user creation for every user who has not updated. **Done instead:** removed all *client-side* use (dropped from the `UserData` interface, stopped writing the default `3`) — zero risk, no push. Schema field retained with a comment explaining why.
+3. **The `Artwork.isFeatured` GSI is not implementable as written** — see 0.4b.
+
+### 0.4b Retire the `remainingFreeScans` schema field — ❌ WON'T DO
+**Decision (owner, 2026-07-13): keep the field permanently.** Removing it breaks sign-in for users on already-shipped builds (they request it in their generated selection sets; AppSync fails the whole operation on an unknown field). A nullable `Int` nobody reads costs effectively nothing in a schemaless store. The client no longer references it — that's the end state. Do not revisit.
 
 ---
 
 ## P1 — Premium tier (the epic)
 
-### 1.1 Entitlement architecture decision
-Recommendation: **RevenueCat** (`react-native-purchases`) over raw StoreKit — handles receipt validation, restore, sandbox, and entitlement state without us running a backend. Client SDK is the entitlement source of truth; mirror to `User.isPremium` in DynamoDB on app launch for display/analytics only (not enforcement). Note: there is deliberately no Lambda in the data path — do NOT build a webhook backend for v1; client-side gating is fine for content (this is a paywall, not a security boundary).
+> **P1 is unblocked — no schema change or `amplify push` is required (see 0.4).**
+
+### 1.1 Entitlement architecture decision — 📄 decision doc written, awaiting D1–D3
+See **[premium-tier.md](premium-tier.md)** for the full analysis. Blocked on three owner decisions: **D1** one-time unlock vs subscription (recommend one-time — episodic museum usage, far less code), **D2** library (recommend `expo-iap` if one-time, RevenueCat if subscription; note `react-native-iap` was archived 2026-04-26), **D3** which 3 quests are free. Architecture settled either way: StoreKit is the entitlement source of truth, `User.isPremium` is a display/analytics mirror only, no webhook backend (zero-Lambda preserved), fail to last-known-good offline.
 
 ### 1.2 Mark quest data
 Seed-script pass (`scripts/`): set `isPremium: true` on all quests except the 3 chosen free ones. Freshness propagates fast thanks to the `GetFreshQuests` cache-bypass — do not remove that workaround during this work (CLAUDE.md landmine #4).

@@ -60,7 +60,7 @@ export function useScanSuccess() {
 
         // Check if user has already visited this artwork
         const existingVisit = await checkIfArtworkVisited(artworkId);
-        const isNewVisit = !existingVisit;
+        let isNewVisit = !existingVisit;
 
         let xpAwarded = 0;
         let questsUpdated: ScanSuccessResult["questsUpdated"] = [];
@@ -70,14 +70,21 @@ export function useScanSuccess() {
             "🆕 New visit detected - creating visit record and awarding XP"
           );
 
-          // Create visit record
-          await createVisitRecord(artworkId);
+          // The created record (not the pre-check) is the XP gate: a null
+          // result means the visit already existed — e.g. a concurrent
+          // duplicate scan — so XP must not be awarded twice.
+          const visitRecord = await createVisitRecord(artworkId);
 
-          // Award 100 XP points
-          await awardXP(100);
-          xpAwarded = 100;
+          if (visitRecord) {
+            // Award 100 XP points
+            await awardXP(100);
+            xpAwarded = 100;
 
-          console.log("✅ Visit recorded and XP awarded");
+            console.log("✅ Visit recorded and XP awarded");
+          } else {
+            isNewVisit = false;
+            console.log("🔄 Visit was already recorded - no XP awarded");
+          }
         } else {
           console.log("🔄 User has already visited this artwork");
         }

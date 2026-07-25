@@ -20,11 +20,11 @@ There is not a single `*.test.*` file, no jest/vitest config, no `.github/workfl
 
 ## Data / business-logic bugs
 
-### 5. Quest `xpReward` is never awarded
-`Quest.xpReward` is stored, displayed, and never consumed — completing a quest awards nothing. Only scanning awards XP (flat 100 in [useScanSuccess.ts](src/hooks/useScanSuccess.ts)). Either wire quest-completion XP or stop displaying the reward.
+### 5. Quest `xpReward` is never awarded — ✅ NOT A BUG (by design)
+Resolved 2026-07-13: the completion bonus was deliberately removed (it made XP tracking too hard). `xpReward` is descriptive — it equals 100 × the quest's artwork count, i.e. the scan XP you earn completing it. XP is scan-only (flat 100 in [useScanSuccess.ts](src/hooks/useScanSuccess.ts)); max earnable is 4700 = Art Legend threshold. Never wire a completion award — it would double-count.
 
-### 6. XP award has no idempotency or concurrency safety
-`awardXP` reads latest `UserXP` then writes `current + points` ([useUserXP.ts:126](src/hooks/useUserXP.ts#L126)) — a read-modify-write race. Interrupted scan flows can double-award; concurrent updates can drop XP. The `byUserXP` GSI (timestamp SK) suggests an append-only history design that was abandoned mid-flight — one record is updated in place instead.
+### 6. XP award has no idempotency or concurrency safety — ✅ FIXED (backlog 0.2)
+Resolved 2026-07-13: `awardXP` now does a conditional-update CAS loop with retry (`src/utils/xpAward.ts`), and new `UserXP`/`Visited` records use deterministic ids so duplicate creates collide instead of double-writing; `useScanSuccess` gates XP on the visit-create result. Residual note: the `byUserXP` GSI (timestamp SK) still hints at an abandoned append-only design — single-record-updated-in-place is now the settled pattern.
 
 ### 7. Retroactive quest credit is inconsistent
 `startQuest` seeds progress from already-visited artworks (retroactive credit at start time), but artworks visited *between* quest creation and later scans only count via `updateQuestProgress`. If a user visits artwork X, then starts a quest containing X, they get credit; the model works — but a quest can silently auto-complete at start, awarding the completion state with no celebration/XP moment.
@@ -40,8 +40,10 @@ The react-query layer ([queries.ts](src/hooks/queries.ts)) covers home/profile/a
 ### 10. Explore search/filter is client-side over the whole table
 [useInfiniteArtworks.ts](src/hooks/useInfiniteArtworks.ts) paginates 60 at a time but search + scannable/AR filters run client-side, with an auto-fetch loop that keeps pulling pages until ≥15 filtered results. Worst case (rare filter match) walks the entire ~6k-row table from the phone. Needs a `searchField` GSI or server-side filter.
 
-### 11. `Artwork.isFeatured` has no GSI
-Featured artworks = filtered DynamoDB *scan*, bounded to 5 pages/500 items ([useArtworks.ts](src/hooks/useArtworks.ts)). Works today because featured items are seeded early in the table; silently breaks if a featured artwork lands beyond the scan bound. A one-line `@index` fix plus data backfill.
+### 11. `Artwork.isFeatured` has no GSI — and cannot have one directly
+Featured artworks = filtered DynamoDB *scan*, bounded to 5 pages/500 items ([useArtworks.ts](src/hooks/useArtworks.ts)). Works today because featured items are seeded early in the table; silently breaks if a featured artwork lands beyond the scan bound.
+
+**Correction (2026-07-13): this is not a one-line `@index` fix.** DynamoDB key attributes must be String, Number, or Binary — **Boolean is not a valid key type**, so `@index` on `isFeatured: Boolean` cannot be deployed. (Consistent with the schema: all six existing `@index` directives are on `ID!` fields.) The real fix is a **sparse GSI on a String field**: add e.g. `featuredStatus: String @index(name: "byFeatured", sortKeyFields: ["id"])`, populate it with a constant like `"FEATURED"` **only** for featured artworks and leave it null elsewhere (items missing the key attribute are absent from the index, so the query reads only featured rows), backfill via `scripts/`, then switch `getFeaturedArtworks` to the generated index query. Estimate: schema + push + backfill script + query swap, not a one-liner.
 
 ### 12. Workarounds papering over unexplained races (each has a TODO)
 - **250ms cold-start auth delay** ([AuthContext.tsx:52](src/contexts/AuthContext.tsx#L52)) — guards a Cognito token-hydration race nobody has pinned down; it's a guessed constant on the critical launch path.

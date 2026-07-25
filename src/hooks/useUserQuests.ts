@@ -4,6 +4,11 @@ import { createUserQuest, updateUserQuest } from "@/src/graphql/mutations";
 import { listUserQuests } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
+import {
+  applyArtworkVisit,
+  questRequiresArtwork,
+  seedQuestProgress,
+} from "../utils/questProgress";
 import { useVisited } from "./useVisited";
 
 // Create the API client outside the hook to avoid recreating it on each render
@@ -180,14 +185,9 @@ export function useUserQuests() {
         // Get all visited artwork IDs for the user
         const visitedArtworkIds = await getVisitedArtworkIds();
 
-        // Filter visited artworks that are required for this quest
-        const visitedQuestArtworks = quest.requiredArtworks.filter(
-          (artworkId) => visitedArtworkIds.includes(artworkId)
-        );
-
-        // Check if all required artworks have been visited
-        const isCompleted =
-          visitedQuestArtworks.length === quest.requiredArtworks.length;
+        // Retroactive credit for already-visited artworks
+        const { artworksVisited: visitedQuestArtworks, isCompleted } =
+          seedQuestProgress(quest.requiredArtworks, visitedArtworkIds);
 
         const userQuest = {
           userId: user.userId,
@@ -239,22 +239,22 @@ export function useUserQuests() {
         const userQuests = await getUserQuests();
 
         // Find quests that require this artwork
-        const questsToUpdate = userQuests.filter(
-          (quest) =>
-            quest.requiredArtworks.includes(artworkId) && !quest.isCompleted
+        const questsToUpdate = userQuests.filter((quest) =>
+          questRequiresArtwork(quest, artworkId)
         );
 
         const updatedQuests = [];
 
         for (const quest of questsToUpdate) {
-          // Check if artwork is already in artworksVisited
-          if (!quest.artworksVisited.includes(artworkId)) {
-            // Add artwork to visited list
-            const newArtworksVisited = [...quest.artworksVisited, artworkId];
-
-            // Check if quest is now completed
-            const isCompleted =
-              newArtworksVisited.length === quest.requiredArtworks.length;
+          const progress = applyArtworkVisit(
+            quest.requiredArtworks,
+            quest.artworksVisited,
+            artworkId
+          );
+          // null = artwork already counted, no write needed
+          if (progress) {
+            const { artworksVisited: newArtworksVisited, isCompleted } =
+              progress;
 
             const updateInput: UpdateUserQuestInput = {
               id: quest.id,
