@@ -261,6 +261,10 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 56,
     marginBottom: 16,
+    // Same shared shadow as the email button below it, so the two read as one
+    // stack. Note this sits on the RN wrapper around Apple's native button —
+    // the button itself is opaque, so the shadow renders off its own edges.
+    ...shadowStyle,
   },
   // footer: {
   //   paddingHorizontal: 24,
