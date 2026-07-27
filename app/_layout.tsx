@@ -13,6 +13,7 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { configureAmplify } from "@/src/aws/config";
 import { AuthProvider } from "@/src/contexts/AuthContext";
+import { EntitlementProvider } from "@/src/contexts/EntitlementContext";
 import { FavoritesProvider } from "@/src/contexts/FavoritesContext";
 import { QueryProvider } from "@/src/providers/QueryProvider";
 import * as Sentry from "@sentry/react-native";
@@ -132,111 +133,113 @@ export default Sentry.wrap(function RootLayout() {
     <ThemeProvider value={DefaultTheme}>
       <QueryProvider>
         <AuthProvider>
-          <FavoritesProvider>
-            <Stack
-              screenOptions={{
-                headerStyle: {
-                  backgroundColor: Colors.lightGray,
-                },
-                headerTintColor: Colors.darkGray,
-                headerBackButtonDisplayMode: "minimal",
-                headerBackButtonMenuEnabled: false,
-                gestureEnabled: true,
-                animation: "slide_from_right",
-              }}
-            >
-              <Stack.Screen
-                name="index"
-                options={{
-                  headerShown: false,
-                  gestureEnabled: false,
-                }}
-              />
-              <Stack.Screen name="googleLogin" options={{ headerShown: false }} />
-              <Stack.Screen name="appleLogin" options={{ headerShown: false }} />
-              <Stack.Screen name="phoneLogin" options={{ headerShown: false }} />
-              <Stack.Screen name="emailLogin" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="(dashboard)"
-                options={{
-                  headerShown: false,
-                  gestureEnabled: false,
-                  // Freeze the dashboard subtree while it's blurred (a detail
-                  // screen is pushed over it). On a cold launch, Home's first
-                  // query revalidations + cache-restore flip would otherwise
-                  // re-render the blurred screen mid-push-transition, desyncing
-                  // react-native-screens and dropping the first back press.
-                  // Freezing holds those updates until Home regains focus, so
-                  // the first back-navigation works. Cold-launch paint is
-                  // unaffected — Home is focused, never frozen, while painting.
-                  freezeOnBlur: true,
-                }}
-              />
-              <Stack.Screen
-                name="profileSettings"
-                options={{
-                  headerTitle: "Profile Settings",
+          <EntitlementProvider>
+            <FavoritesProvider>
+              <Stack
+                screenOptions={{
+                  headerStyle: {
+                    backgroundColor: Colors.lightGray,
+                  },
+                  headerTintColor: Colors.darkGray,
+                  headerBackButtonDisplayMode: "minimal",
+                  headerBackButtonMenuEnabled: false,
                   gestureEnabled: true,
                   animation: "slide_from_right",
                 }}
-              />
-              <Stack.Screen
-                name="artworksVisited"
-                options={{
-                  headerTitle: "Artworks Visited",
-                  gestureEnabled: true,
-                  animation: "slide_from_right",
-                }}
-              />
-              <Stack.Screen
-                name="favorites"
-                options={{
-                  headerTitle: "Favorites",
-                  gestureEnabled: true,
-                  animation: "slide_from_right",
-                }}
-              />
-              <Stack.Screen
-                name="questsCompleted"
-                options={{
-                  headerTitle: "Quests Completed",
-                  gestureEnabled: true,
-                  animation: "slide_from_right",
-                }}
-              />
-              <Stack.Screen
-                name="collection"
-                options={{
-                  headerTitle: "",
-                  gestureEnabled: true,
-                  animation: "slide_from_right",
-                }}
-              />
-              <Stack.Screen
-                name="artDetail"
-                options={{
-                  headerTitle: "",
-                  gestureEnabled: true,
-                  animation: "slide_from_right",
-                }}
-              />
-              <Stack.Screen
-                name="questDetail"
-                options={{
-                  headerTitle: "",
-                  gestureEnabled: true,
-                  animation: "slide_from_right",
-                }}
-              />
-              <Stack.Screen
-                name="arViewer"
-                options={{
-                  headerShown: false,
-                  gestureEnabled: true,
-                }}
-              />
-            </Stack>
-          </FavoritesProvider>
+              >
+                <Stack.Screen
+                  name="index"
+                  options={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                  }}
+                />
+                <Stack.Screen name="googleLogin" options={{ headerShown: false }} />
+                <Stack.Screen name="appleLogin" options={{ headerShown: false }} />
+                <Stack.Screen name="phoneLogin" options={{ headerShown: false }} />
+                <Stack.Screen name="emailLogin" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="(dashboard)"
+                  options={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                    // Freeze the dashboard subtree while it's blurred (a detail
+                    // screen is pushed over it). On a cold launch, Home's first
+                    // query revalidations + cache-restore flip would otherwise
+                    // re-render the blurred screen mid-push-transition, desyncing
+                    // react-native-screens and dropping the first back press.
+                    // Freezing holds those updates until Home regains focus, so
+                    // the first back-navigation works. Cold-launch paint is
+                    // unaffected — Home is focused, never frozen, while painting.
+                    freezeOnBlur: true,
+                  }}
+                />
+                <Stack.Screen
+                  name="profileSettings"
+                  options={{
+                    headerTitle: "Profile Settings",
+                    gestureEnabled: true,
+                    animation: "slide_from_right",
+                  }}
+                />
+                <Stack.Screen
+                  name="artworksVisited"
+                  options={{
+                    headerTitle: "Artworks Visited",
+                    gestureEnabled: true,
+                    animation: "slide_from_right",
+                  }}
+                />
+                <Stack.Screen
+                  name="favorites"
+                  options={{
+                    headerTitle: "Favorites",
+                    gestureEnabled: true,
+                    animation: "slide_from_right",
+                  }}
+                />
+                <Stack.Screen
+                  name="questsCompleted"
+                  options={{
+                    headerTitle: "Quests Completed",
+                    gestureEnabled: true,
+                    animation: "slide_from_right",
+                  }}
+                />
+                <Stack.Screen
+                  name="collection"
+                  options={{
+                    headerTitle: "",
+                    gestureEnabled: true,
+                    animation: "slide_from_right",
+                  }}
+                />
+                <Stack.Screen
+                  name="artDetail"
+                  options={{
+                    headerTitle: "",
+                    gestureEnabled: true,
+                    animation: "slide_from_right",
+                  }}
+                />
+                <Stack.Screen
+                  name="questDetail"
+                  options={{
+                    headerTitle: "",
+                    gestureEnabled: true,
+                    animation: "slide_from_right",
+                  }}
+                />
+                <Stack.Screen
+                  name="arViewer"
+                  options={{
+                    headerShown: false,
+                    gestureEnabled: true,
+                  }}
+                />
+              </Stack>
+            </FavoritesProvider>
+          </EntitlementProvider>
         </AuthProvider>
       </QueryProvider>
       <StatusBar style="auto" />
