@@ -85,6 +85,7 @@ Model: **one-time non-consumable $5.99 lifetime unlock** (not a subscription —
 ## Conventions
 
 - Match conventional-commit prefixes and keep commits scoped (see git log).
+- **No spaces in asset filenames.** Metro's dev server URL-encodes them and fails to resolve the asset, so the image silently vanishes on the Simulator while working fine in release builds on device (Gaps #13b).
 - Colors from `constants/Colors.ts` (`metRed` #E4012A is the brand color); shared shadows from `constants/Shadow.ts`.
 - Artwork IDs are MET Object IDs (strings). Quest progress = string-set intersection over artwork IDs.
 - Query keys: catalog `["artworks","featured"]`, `["departments"]`, `["didYouKnow"]`, `["quests","all"]`; user `[type, userId]`. New user-keyed queries must include `userId` in the key (cache-clear on sign-out depends on it).

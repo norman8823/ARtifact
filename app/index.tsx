@@ -62,7 +62,7 @@ export default function LandingScreen() {
         <View style={styles.header}>
           <View style={styles.logoContainer}>
             <Image
-              source={require("@/assets/images/Color logo - no background.png")}
+              source={require("@/assets/images/artifact-logo.png")}
               style={styles.logo}
               contentFit="contain"
             />

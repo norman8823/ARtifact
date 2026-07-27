@@ -286,7 +286,7 @@ export default function HomeScreen() {
           {/* Header */}
           <ThemedView style={styles.header}>
             <Image
-              source={require("@/assets/images/Color logo - no background.png")}
+              source={require("@/assets/images/artifact-logo.png")}
               style={styles.headerLogo}
               contentFit="contain"
             />

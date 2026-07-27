@@ -96,11 +96,11 @@ export const QuestArtworkThumbnails = memo(function QuestArtworkThumbnails({
                   !shouldShowVisited && styles.unvisitedOverlay
                 ]}
                 resizeMode="cover"
-                defaultSource={require("@/assets/images/Color logo - no background.png")}
+                defaultSource={require("@/assets/images/artifact-logo.png")}
               />
             ) : (
               <RNImage
-                source={require("@/assets/images/Color logo - no background.png")}
+                source={require("@/assets/images/artifact-logo.png")}
                 style={[
                   {
                     width: '100%',

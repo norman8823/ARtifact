@@ -94,6 +94,11 @@ ReactVision ships `ViroKit.framework` as a single **device-only** arm64 slice (`
 ### 13. AR scene ordering invariants are load-bearing and undocumented in code *(the FeaturePoint contradiction is backlog P3.10; the invariants themselves are CLAUDE.md landmine #1 — permanent, not a to-do)*
 Three release-build regressions came from reordering: (a) `Viro3DObject` must mount only after tap-to-place (`9feea4f` — invisible model), (b) asset fetch must gate on `isARReady` (`15b6d3e` — broken tap-to-place), (c) the tap overlay must unmount after placement or gestures never reach Viro. Also: the hit-test includes `FeaturePoint` ([ArtworkARScene.tsx:137](components/ar-scenes/ArtworkARScene.tsx#L137)) while MIGRATION_NOTES.md claims it's excluded to prevent mid-air floating — code and doc disagree.
 
+### 13b. Asset filenames with spaces break in the Metro dev server — ✅ **FIXED 2026-07-27**
+The ARtifact logo was invisible on the Simulator but fine on a physical device. Cause: the file was named `Color logo - no background.png`, and Metro's dev server URL-encodes the spaces when serving assets over HTTP, producing a path it can't resolve (`ENOENT: scandir '.%2Fassets%2Fimages'` — `%2F` being an encoded `/`). A release build inlines the asset and never goes through that URL, which is exactly why device and Simulator disagreed.
+
+Renamed to `artifact-logo.png` and updated all four references (`index.tsx`, `home.tsx`, `QuestArtworkThumbnails.tsx` ×2). **Standing rule: no spaces in asset filenames** — the failure is silent in dev and invisible in release, so it looks like a device-only rendering quirk. Worth noting the error had been in every Metro log for this whole session and was repeatedly dismissed as unrelated noise.
+
 ### 14. `AR_TEST_MODE` is a compile-time flag *(backlog P3.11)*
 [arViewer.tsx:11-12](app/arViewer.tsx#L11) — hardcoded boolean + hardcoded test sceneId. Flipping it to `true` and shipping would silently route every AR view to the test scene.
 
