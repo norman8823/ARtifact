@@ -122,6 +122,8 @@ Paying users will expect scan to work. Add fetch timeout + one retry + in-flight
 10. **Resolve the FeaturePoint contradiction** *(Gaps #13)* — `ArtworkARScene.tsx:137` includes `FeaturePoint` in the hit-test priority while `MIGRATION_NOTES.md:121` claims it's excluded so the model can't float in mid-air. One of them is wrong. Decide which behavior is intended, then fix the other. **Device-only to verify.**
 11. **Make `AR_TEST_MODE` non-shippable** *(Gaps #14)* — it's a source constant someone must remember to flip back; `true` in a commit would route every AR view to a hardcoded test scene. Replace with the `__DEV__ && process.env.EXPO_PUBLIC_*` pattern already used for the premium dev bypass in `EntitlementContext`, so it cannot ship enabled.
 
+12. **Observability for the core loop** *(Gaps #20)* — instrument scan success/failure rate, quest completion, and AR placement success, plus Sentry breadcrumbs around the scan network call and the AR asset fetch (the two flakiest flows). Paywall breadcrumbs already exist (1.6); this is everything else. Without it, a Railway outage or a drop in scan accuracy is invisible until users complain.
+
 ---
 
 ## Explicitly rejected / not doing

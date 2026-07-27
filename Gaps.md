@@ -5,6 +5,8 @@
 > **How this file relates to the others.** Gaps.md is the **permanent defect register**: entries are never deleted, only marked `✅ FIXED` / `✅ RESOLVED` / `✅ NOT A BUG` with a pointer to what changed. That is deliberate — [backlog.md](backlog.md) *deletes* items when they ship, so if Gaps deleted them too there would be no record that a known weakness was ever addressed. Numbering is stable and cited from backlog.md and CLAUDE.md.
 >
 > So: **is it broken?** → here. **What's left to do about it?** → backlog.md (each open item below names its backlog id). **What was actually built?** → CLAUDE.md § Project state.
+>
+> **Two invariants to preserve:** (1) every **numbered** item here is either marked `✅` or names a live backlog id — an entry pointing at a deleted backlog item is a docs bug; (2) **every entry must be numbered.** An un-numbered trailing section can't be cited, and one (`Missing observability`, now #20) was silently missed when Gaps items were mapped to the backlog.
 
 ## Critical
 
@@ -105,5 +107,5 @@ The button answered with *"contact support"*, which guideline 5.1.1(v) does not 
 ### 19. **High** — Amplify auth config diverges from the live Cognito pool
 [cli-inputs.json:44-46](amplify/backend/auth/ARtifactAuth/cli-inputs.json#L44) declares `"usernameAttributes": ["email, phone_number"]` — a single malformed string, not a legal `UsernameAttributes` value — while [backend-config.json:69](amplify/backend/backend-config.json#L69) says `["EMAIL","PHONE_NUMBER"]`. Neither is likely to match reality: if `phone_number` were genuinely a username attribute, the second tester to sign up with the shared dummy `+10000000000` ([useAuth.ts:99](src/hooks/useAuth.ts#L99)) would have hit `UsernameExistsException`. No CloudFormation is checked in under `amplify/backend/auth/ARtifactAuth/`, so the Gen 1 CLI regenerates the whole auth template from `cli-inputs.json` on every push — meaning the *next* `amplify update auth` (for any reason) will either fail CFN validation or attempt to modify the immutable `UsernameAttributes` and roll the auth stack back. The AppSync API `dependsOn` auth, so that rollback can cascade. Reconcile against `describe-user-pool` before touching auth infrastructure; scoped as backlog 1A.1.
 
-## Missing observability
-No analytics events (scan success rate, quest completion, AR placement success), no Sentry breadcrumbs around the two flakiest flows (scan network call, AR asset fetch). The Railway server's health is invisible to the client team.
+### 20. Missing observability outside the paywall *(backlog P3.12)*
+No analytics events for the core loop (scan success rate, quest completion, AR placement success), and no Sentry breadcrumbs around the two flakiest flows (scan network call, AR asset fetch). The Railway server's health is invisible to the client team. Paywall instrumentation now exists (backlog 1.6) — this is everything else. Numbered so it can be cited; it was previously an un-numbered trailing section and was therefore missed when Gaps items were mapped to the backlog.
