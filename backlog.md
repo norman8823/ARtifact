@@ -16,8 +16,15 @@
 
 ## P0 — App Store submission blockers (none of this is optional)
 
-### 0.6 Privacy policy + App Privacy questionnaire — **not previously tracked**
-A privacy-policy URL is a hard requirement in App Store Connect, and the App Privacy "nutrition label" must declare everything collected. This app collects more than it looks: account email (Cognito), camera images (scan uploads to Railway), and via Sentry `sendDefaultPii: true` the user's IP and identifiers. Nothing about this is written down anywhere yet. Needs: a hosted policy URL, the ASC questionnaire filled to match reality, and a check that the Railway endpoint's data handling is described.
+### 0.6 Reconcile the privacy policy with what the app actually does
+The policy is **live at https://artifactar.com/privacy/**, which clears the "no policy URL" blocker. What's left is that it and the binary disagree in four places — reviewers compare them, and the App Privacy questionnaire must match reality:
+
+1. **Sentry is not disclosed at all.** §4 lists only AWS and Railway. Sentry receives the user's IP and identifiers (`sendDefaultPii: true`) **and screen recordings** — `mobileReplayIntegration()` at 10% of sessions / 100% of error sessions. That makes it arguably the most privacy-significant third party in the app, and the only one omitted. Add it, or turn replay off (0.8).
+2. **"The App does not request or use your location" is true of the code but false of the binary.** Nothing imports `expo-location`, but `app.json` still declares two location usage strings, so iOS advertises the capability. Strip them (0.7) and the sentence becomes accurate.
+3. **"Images … are processed and stored securely" over-claims.** Verified 2026-07-27: the app stores **no** images. The only S3 `uploadData` call sits inside the commented-out dead Rekognition block (`scan.tsx:236`); the live path (`analyzeWithFlask`) POSTs the photo to Railway `/predict` and retains nothing beyond expo-camera's transient cache file. Owner intent is no storage at all, so the policy should say images are transmitted for matching and not retained — **pending confirmation that the Railway Flask service doesn't persist them** (server-side, outside this repo; check and document).
+4. **Purchases aren't mentioned.** Apple processes payment (no card data ever reaches us), but `User.isPremium` is stored. Worth one line.
+
+§5 (in-app deletion, no email required) is now accurate as of the deletion flow shipping — but it is still unverified against a real account, which is 0.9.
 
 ### 0.7 Remove declared-but-unused permissions
 `app.json` declares `NSLocationWhenInUseUsageDescription` **and** `NSLocationAlwaysAndWhenInUseUsageDescription`, and `expo-location@^19.0.7` is a dependency — but **nothing in the app imports it**. Apple rejects apps that request permissions they don't exercise, and each declared permission drags an App Privacy disclosure with it. Audit and strip: location certainly, plus `expo-web-browser` (no importers found) and the microphone string if ReactVision doesn't need it. Note `PrivacyInfo.xcprivacy` currently lives only in the gitignored `/ios`, so it is regenerated and uncontrolled — if it needs curating, drive it from `app.json` `privacyManifests`, the same lesson as 1A.2.

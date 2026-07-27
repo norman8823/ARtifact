@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -174,13 +175,14 @@ export function EntitlementProvider({
       const cached = await readCache();
       if (cancelled) return;
       cachedRef.current = cached;
-      setEntitlement(
-        resolveEntitlement({
-          store: "indeterminate",
-          cached,
-          productId: PREMIUM_PRODUCT_ID,
-        })
-      );
+      // Both setters in one batch: two separate updates here meant two extra
+      // renders of every consumer during the launch window.
+      const initial = resolveEntitlement({
+        store: "indeterminate",
+        cached,
+        productId: PREMIUM_PRODUCT_ID,
+      });
+      setEntitlement(initial);
       // Ready as soon as last-known-good is applied — prevents a lock flashing
       // at a paying user while StoreKit is still being asked.
       setIsEntitlementReady(true);
@@ -304,17 +306,35 @@ export function EntitlementProvider({
 
   const effective: Entitlement = devForced ? "entitled" : entitlement;
 
-  const value: EntitlementContextType = {
-    entitlement: effective,
-    isEntitled: effective === "entitled",
-    isEntitlementReady: isEntitlementReady || devForced,
-    priceLabel,
-    isPurchasing,
-    isRestoring,
-    purchase,
-    restore,
-    refresh,
-  };
+  // MUST stay memoized. Consumers include questDetail and two dashboard
+  // screens; a fresh object each render re-rendered all of them on every
+  // provider state change. Those updates are held by the dashboard's
+  // freezeOnBlur (landmine #2) and all flush during the back transition, which
+  // is exactly what desyncs react-native-screens and drops the back press.
+  const value = useMemo<EntitlementContextType>(
+    () => ({
+      entitlement: effective,
+      isEntitled: effective === "entitled",
+      isEntitlementReady: isEntitlementReady || devForced,
+      priceLabel,
+      isPurchasing,
+      isRestoring,
+      purchase,
+      restore,
+      refresh,
+    }),
+    [
+      effective,
+      isEntitlementReady,
+      devForced,
+      priceLabel,
+      isPurchasing,
+      isRestoring,
+      purchase,
+      restore,
+      refresh,
+    ]
+  );
 
   return (
     <EntitlementContext.Provider value={value}>
