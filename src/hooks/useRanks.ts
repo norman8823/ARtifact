@@ -1,5 +1,6 @@
 import { type ListRanksQuery } from "@/src/API";
 import { listRanks } from "@/src/graphql/queries";
+import { asQueryResult } from "@/src/aws/graphqlResult";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
 import { getRankForXP } from "../utils/rankUtils";
@@ -23,13 +24,15 @@ export function useRanks() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await getClient().graphql<ListRanksQuery>({
-        query: listRanks,
-        variables: {
-          limit: 1000,
-        },
-        authMode: "userPool",
-      });
+      const result = asQueryResult<ListRanksQuery>(
+        await getClient().graphql<ListRanksQuery>({
+          query: listRanks,
+          variables: {
+            limit: 1000,
+          },
+          authMode: "userPool",
+        })
+      );
 
       if ("errors" in result && result.errors) {
         throw new Error(
@@ -42,13 +45,17 @@ export function useRanks() {
       // Map and sort ranks by minXP
       return items
         .filter((item): item is NonNullable<typeof item> => item !== null)
-        .map((rank) => ({
+        // The generated types make these optional (`icon?: string | null`), so
+        // normalise nullish to null here rather than widening the Rank
+        // interface — the boundary between GraphQL shapes and app types is the
+        // right place to do it.
+        .map((rank): Rank => ({
           id: rank.id,
           title: rank.title,
-          minXP: rank.minXP || 0,
-          maxXP: rank.maxXP || 0,
-          icon: rank.icon,
-          description: rank.description,
+          minXP: rank.minXP ?? 0,
+          maxXP: rank.maxXP ?? 0,
+          icon: rank.icon ?? null,
+          description: rank.description ?? null,
         }))
         .sort((a, b) => a.minXP - b.minXP);
     } catch (err) {

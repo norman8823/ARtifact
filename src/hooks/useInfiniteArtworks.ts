@@ -1,3 +1,4 @@
+import { asQueryResult } from "@/src/aws/graphqlResult";
 import { type ListArtworksQuery } from "../API";
 import { listArtworks } from "../graphql/queries";
 import { generateClient } from "aws-amplify/api";
@@ -17,38 +18,13 @@ export interface Artwork {
   medium: string | null;
   dimensions: string | null;
   culture: string | null;
-  period: string | null;
-  dynasty: string | null;
-  reign: string | null;
-  portfolio: string | null;
-  constituents: (string | null)[] | null;
   classification: string | null;
   objectType: string | null;
   objectDate: string | null;
-  objectBeginDate: number | null;
-  objectEndDate: number | null;
-  accessionYear: string | null;
-  isHighlight: boolean | null;
-  accessionNumber: string | null;
-  creditLine: string | null;
   department: string | null;
   tags: (string | null)[] | null;
-  objectWikidata_URL: string | null;
-  isTimelineWork: boolean | null;
   galleryNumber: string | null;
   objectURL: string | null;
-  repository: string | null;
-  rightsAndReproduction: string | null;
-  linkResource: string | null;
-  metadataDate: string | null;
-  country: string | null;
-  region: string | null;
-  subregion: string | null;
-  locale: string | null;
-  locus: string | null;
-  excavation: string | null;
-  river: string | null;
-  city: string | null;
   description: string | null;
   isCurated: boolean | null;
   isFeatured: boolean | null;
@@ -110,14 +86,16 @@ export function useInfiniteArtworks(config: UseInfiniteArtworksConfig = {}) {
         console.log(`Fetching artworks with nextToken: ${nextToken}, limit: ${limit}`);
 
         const authMode = getAuthMode();
-        const result = await getClient().graphql<ListArtworksQuery>({
-          query: listArtworks,
-          variables: {
-            limit,
-            nextToken,
-          },
-          authMode: authMode as any,
-        });
+        const result = asQueryResult<ListArtworksQuery>(
+          await getClient().graphql<ListArtworksQuery>({
+            query: listArtworks,
+            variables: {
+              limit,
+              nextToken,
+            },
+            authMode,
+          })
+        );
 
         if ("errors" in result && result.errors) {
           throw new Error(
@@ -137,59 +115,39 @@ export function useInfiniteArtworks(config: UseInfiniteArtworksConfig = {}) {
         }
 
         const newArtworks = result.data.listArtworks.items
-          .filter((item: any): item is NonNullable<typeof item> => item !== null)
-          .map((item: NonNullable<typeof item>) => ({
+          // Previously annotated `(item: NonNullable<typeof item>)`, which
+          // referenced the parameter inside its own type (TS2502). The filter
+          // already narrows out null, so let inference do the work.
+          .filter((item) => item !== null)
+          .map((item): Artwork => ({
             id: item.id,
             title: item.title,
-            artistDisplayName: item.artistDisplayName,
-            primaryImage: item.primaryImage,
-            primaryImageSmall: item.primaryImageSmall,
-            additionalImages: item.additionalImages,
-            medium: item.medium,
-            dimensions: item.dimensions,
-            culture: item.culture,
-            period: item.period,
-            dynasty: item.dynasty,
-            reign: item.reign,
-            portfolio: item.portfolio,
-            constituents: item.constituents,
-            classification: item.classification,
-            objectType: item.objectType,
-            objectDate: item.objectDate,
-            objectBeginDate: item.objectBeginDate,
-            objectEndDate: item.objectEndDate,
-            accessionYear: item.accessionYear,
-            isHighlight: item.isHighlight,
-            accessionNumber: item.accessionNumber,
-            creditLine: item.creditLine,
-            department: item.department,
-            tags: item.tags,
-            objectWikidata_URL: item.objectWikidata_URL,
-            isTimelineWork: item.isTimelineWork,
-            galleryNumber: item.galleryNumber,
-            objectURL: item.objectURL,
-            repository: item.repository,
-            rightsAndReproduction: item.rightsAndReproduction,
-            linkResource: item.linkResource,
-            metadataDate: item.metadataDate,
-            country: item.country,
-            region: item.region,
-            subregion: item.subregion,
-            locale: item.locale,
-            locus: item.locus,
-            excavation: item.excavation,
-            river: item.river,
-            city: item.city,
-            description: item.description,
-            isCurated: item.isCurated,
-            isFeatured: item.isFeatured,
-            isScannable: item.isScannable,
-            hasAudio: item.hasAudio,
-            hasAR: item.hasAR,
-            arImage: item.arImage,
+            artistDisplayName: item.artistDisplayName ?? null,
+            primaryImage: item.primaryImage ?? null,
+            primaryImageSmall: item.primaryImageSmall ?? null,
+            additionalImages: item.additionalImages ?? null,
+            medium: item.medium ?? null,
+            dimensions: item.dimensions ?? null,
+            culture: item.culture ?? null,
+            classification: item.classification ?? null,
+            objectType: item.objectType ?? null,
+            objectDate: item.objectDate ?? null,
+            department: item.department ?? null,
+            tags: item.tags ?? null,
+            galleryNumber: item.galleryNumber ?? null,
+            objectURL: item.objectURL ?? null,
+            description: item.description ?? null,
+            isCurated: item.isCurated ?? null,
+            isFeatured: item.isFeatured ?? null,
+            isScannable: item.isScannable ?? null,
+            hasAudio: item.hasAudio ?? null,
+            hasAR: item.hasAR ?? null,
+            arImage: item.arImage ?? null,
           }));
 
-        const newNextToken = result.data.listArtworks.nextToken;
+        // Generated as `nextToken?: string | null`; normalise to null so it
+        // matches PaginationState.
+        const newNextToken = result.data.listArtworks.nextToken ?? null;
 
         console.log(`Fetched ${newArtworks.length} artworks, nextToken: ${newNextToken}`);
 

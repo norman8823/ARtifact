@@ -155,7 +155,10 @@ export default function ArtworksVisitedScreen() {
               <ThemedView style={styles.imageContainer}>
                 <Image
                   source={{
-                    uri: artwork.primaryImageSmall || artwork.primaryImage,
+                    uri:
+                      artwork.primaryImageSmall ??
+                      artwork.primaryImage ??
+                      undefined,
                   }}
                   style={styles.image}
                   contentFit="cover"

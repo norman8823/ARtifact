@@ -6,6 +6,7 @@ import {
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { createUserXP, updateUserXP } from "@/src/graphql/mutations";
 import { listUserXPS } from "@/src/graphql/queries";
+import { asQueryResult } from "@/src/aws/graphqlResult";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
 import {
@@ -38,16 +39,18 @@ export function useUserXP() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await getClient().graphql<ListUserXPSQuery>({
-        query: listUserXPS,
-        variables: {
-          filter: {
-            userId: { eq: user.userId },
+      const result = asQueryResult<ListUserXPSQuery>(
+        await getClient().graphql<ListUserXPSQuery>({
+          query: listUserXPS,
+          variables: {
+            filter: {
+              userId: { eq: user.userId },
+            },
+            limit: 1000,
           },
-          limit: 1000,
-        },
-        authMode: "userPool",
-      });
+          authMode: "userPool",
+        })
+      );
 
       if ("errors" in result && result.errors) {
         throw new Error(
@@ -57,15 +60,10 @@ export function useUserXP() {
 
       const items = result.data?.listUserXPS?.items || [];
 
-      // Get the latest XP record for the user (explicit type argument:
-      // the GraphQL result is untyped here, so inference has nothing to go on)
-      const userXP = pickLatestXpRecord<{
-        id: string;
-        userId: string;
-        xpPoints: number | null;
-        timestamp?: string | null;
-        createdAt: string;
-      }>(items);
+      // Get the latest XP record for the user. The explicit type argument this
+      // used to carry is gone: asQueryResult now narrows the GraphQL result, so
+      // `items` is properly typed and inference handles it.
+      const userXP = pickLatestXpRecord(items);
 
       if (!userXP) {
         // Return default values if no XP record exists
@@ -101,16 +99,18 @@ export function useUserXP() {
     if (!user) {
       throw new Error("No authenticated user");
     }
-    const result = await getClient().graphql<ListUserXPSQuery>({
-      query: listUserXPS,
-      variables: {
-        filter: {
-          userId: { eq: user.userId },
+    const result = asQueryResult<ListUserXPSQuery>(
+      await getClient().graphql<ListUserXPSQuery>({
+        query: listUserXPS,
+        variables: {
+          filter: {
+            userId: { eq: user.userId },
+          },
+          limit: 1000,
         },
-        limit: 1000,
-      },
-      authMode: "userPool",
-    });
+        authMode: "userPool",
+      })
+    );
 
     if ("errors" in result && result.errors) {
       throw new Error(

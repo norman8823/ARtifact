@@ -64,7 +64,7 @@ const deduplicateGalleries = (galleryMap: string | null): string => {
 };
 
 // Memoized components for better performance
-const UserStatsHeader = React.memo(({ userXP, currentRank }: { userXP: UserXP | null; currentRank: Rank | null }) => (
+const UserStatsHeader = React.memo(function UserStatsHeader({ userXP, currentRank }: { userXP: UserXP | null; currentRank: Rank | null }) { return (
   <ThemedView style={styles.statsSection}>
     <ThemedView>
       <ThemedText type="title" style={styles.pageTitle}>
@@ -78,9 +78,9 @@ const UserStatsHeader = React.memo(({ userXP, currentRank }: { userXP: UserXP | 
       </ThemedView>
     </ThemedView>
   </ThemedView>
-));
+); });
 
-const ActiveQuestItem = React.memo(({ quest, questLookup, isCompleted = false }: { quest: UserQuest; questLookup: Map<string, BaseQuest>; isCompleted?: boolean }) => {
+const ActiveQuestItem = React.memo(function ActiveQuestItem({ quest, questLookup, isCompleted = false }: { quest: UserQuest; questLookup: Map<string, BaseQuest>; isCompleted?: boolean }) {
   const [isPressed, setIsPressed] = useState(false);
   // Get artwork thumbnails from the base quest data
   const baseQuest = questLookup.get(quest.questId);
@@ -167,7 +167,7 @@ const ActiveQuestItem = React.memo(({ quest, questLookup, isCompleted = false }:
 // entitlement change. Purely cosmetic: the gate lives in questDetail, and the
 // tap still navigates (seeing the quest contents is the ad).
 const AvailableQuestItem = React.memo(
-  ({ quest, lockState }: { quest: BaseQuest; lockState: QuestLockState }) => {
+  function AvailableQuestItem({ quest, lockState }: { quest: BaseQuest; lockState: QuestLockState }) {
   const [isPressed, setIsPressed] = useState(false);
 
   return (

@@ -1,3 +1,4 @@
+import { asQueryResult } from "@/src/aws/graphqlResult";
 import { type CreateVisitedInput, type ListVisitedsQuery } from "@/src/API";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { createVisited } from "@/src/graphql/mutations";
@@ -31,16 +32,18 @@ export function useVisited() {
     setError(null);
     try {
       console.log("Fetching visited artworks for user:", user.userId);
-      const result = await getClient().graphql<ListVisitedsQuery>({
-        query: listVisiteds,
-        variables: {
-          filter: {
-            userId: { eq: user.userId },
+      const result = asQueryResult<ListVisitedsQuery>(
+        await getClient().graphql<ListVisitedsQuery>({
+          query: listVisiteds,
+          variables: {
+            filter: {
+              userId: { eq: user.userId },
+            },
+            limit: 1000,
           },
-          limit: 1000,
-        },
-        authMode: "userPool",
-      });
+          authMode: "userPool",
+        })
+      );
 
       if ("errors" in result && result.errors) {
         console.error("GraphQL Errors:", result.errors);
@@ -55,15 +58,15 @@ export function useVisited() {
       }
 
       const visitedArtworks = result.data.listVisiteds.items
-        .filter((item: any): item is NonNullable<typeof item> => item !== null)
+        .filter((item) => item !== null)
         .map(
-          (
-            item: NonNullable<(typeof result.data.listVisiteds.items)[number]>
-          ) => ({
+          (item): Visited => ({
             id: item.id,
             userId: item.userId,
             artworkId: item.artworkId,
-            timestamp: item.timestamp,
+            // Generated as `timestamp?: AWSDateTime | null`; normalise here so
+            // the Visited interface can keep it required.
+            timestamp: item.timestamp ?? "",
           })
         );
 
@@ -93,18 +96,20 @@ export function useVisited() {
 
       setError(null);
       try {
-        const result = await getClient().graphql<ListVisitedsQuery>({
-          query: listVisiteds,
-          variables: {
-            filter: {
-              and: [
-                { userId: { eq: user.userId } },
-                { artworkId: { eq: artworkId } },
-              ],
+        const result = asQueryResult<ListVisitedsQuery>(
+          await getClient().graphql<ListVisitedsQuery>({
+            query: listVisiteds,
+            variables: {
+              filter: {
+                and: [
+                  { userId: { eq: user.userId } },
+                  { artworkId: { eq: artworkId } },
+                ],
+              },
             },
-          },
-          authMode: "userPool",
-        });
+            authMode: "userPool",
+          })
+        );
 
         if ("errors" in result && result.errors) {
           throw new Error(

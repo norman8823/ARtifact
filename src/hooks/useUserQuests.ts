@@ -1,3 +1,4 @@
+import { asQueryResult } from "@/src/aws/graphqlResult";
 import { type ListUserQuestsQuery, type UpdateUserQuestInput } from "@/src/API";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { createUserQuest, updateUserQuest } from "@/src/graphql/mutations";
@@ -29,6 +30,46 @@ export interface UserQuest {
   timestamp: string;
 }
 
+/**
+ * Normalise a raw AppSync UserQuest item to the app's UserQuest.
+ *
+ * The generated type makes most fields optional (`description?: string | null`),
+ * so nullish values are coerced here rather than widening the interface — the
+ * GraphQL/app boundary is the right place for it. Shared by getUserQuests and
+ * getUserQuestByQuestId so the two can't drift.
+ */
+function toUserQuest(item: {
+  id: string;
+  userId: string;
+  questId: string;
+  title: string;
+  description?: string | null;
+  icon?: string | null;
+  xpReward?: number | null;
+  requiredArtworks?: (string | null)[] | null;
+  artworksVisited?: (string | null)[] | null;
+  galleryMap?: string | null;
+  isCompleted?: boolean | null;
+  timestamp?: string | null;
+}): UserQuest {
+  const strings = (list: (string | null)[] | null | undefined): string[] =>
+    (list ?? []).filter((v): v is string => v !== null);
+  return {
+    id: item.id,
+    userId: item.userId,
+    questId: item.questId,
+    title: item.title,
+    description: item.description ?? "",
+    icon: item.icon ?? null,
+    xpReward: item.xpReward ?? 0,
+    requiredArtworks: strings(item.requiredArtworks),
+    artworksVisited: strings(item.artworksVisited),
+    galleryMap: item.galleryMap ?? null,
+    isCompleted: item.isCompleted ?? false,
+    timestamp: item.timestamp ?? "",
+  };
+}
+
 export function useUserQuests() {
   const { user } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
@@ -44,16 +85,18 @@ export function useUserQuests() {
     setError(null);
     try {
       console.log("Fetching user quests for user:", user.userId);
-      const result = await getClient().graphql<ListUserQuestsQuery>({
-        query: listUserQuests,
-        variables: {
-          filter: {
-            userId: { eq: user.userId },
+      const result = asQueryResult<ListUserQuestsQuery>(
+        await getClient().graphql<ListUserQuestsQuery>({
+          query: listUserQuests,
+          variables: {
+            filter: {
+              userId: { eq: user.userId },
+            },
+            limit: 1000,
           },
-          limit: 1000,
-        },
-        authMode: "userPool",
-      });
+          authMode: "userPool",
+        })
+      );
 
       if ("errors" in result && result.errors) {
         console.error("GraphQL Errors:", result.errors);
@@ -68,25 +111,8 @@ export function useUserQuests() {
       }
 
       const userQuests = result.data.listUserQuests.items
-        .filter((item: any): item is NonNullable<typeof item> => item !== null)
-        .map(
-          (
-            item: NonNullable<(typeof result.data.listUserQuests.items)[number]>
-          ) => ({
-            id: item.id,
-            userId: item.userId,
-            questId: item.questId,
-            title: item.title,
-            description: item.description,
-            icon: item.icon,
-            xpReward: item.xpReward,
-            requiredArtworks: item.requiredArtworks,
-            artworksVisited: item.artworksVisited,
-            galleryMap: item.galleryMap,
-            isCompleted: item.isCompleted,
-            timestamp: item.timestamp,
-          })
-        );
+        .filter((item) => item !== null)
+        .map(toUserQuest);
 
       return userQuests;
     } catch (err) {
@@ -113,18 +139,20 @@ export function useUserQuests() {
         console.log(
           `Fetching user quest for user ${user.userId} and quest ${questId}`
         );
-        const result = await getClient().graphql<ListUserQuestsQuery>({
-          query: listUserQuests,
-          variables: {
-            filter: {
-              and: [
-                { userId: { eq: user.userId } },
-                { questId: { eq: questId } },
-              ],
+        const result = asQueryResult<ListUserQuestsQuery>(
+          await getClient().graphql<ListUserQuestsQuery>({
+            query: listUserQuests,
+            variables: {
+              filter: {
+                and: [
+                  { userId: { eq: user.userId } },
+                  { questId: { eq: questId } },
+                ],
+              },
             },
-          },
-          authMode: "userPool",
-        });
+            authMode: "userPool",
+          })
+        );
 
         if ("errors" in result && result.errors) {
           throw new Error(
@@ -138,20 +166,10 @@ export function useUserQuests() {
         }
 
         const userQuest = items[0];
-        return {
-          id: userQuest.id,
-          userId: userQuest.userId,
-          questId: userQuest.questId,
-          title: userQuest.title,
-          description: userQuest.description,
-          icon: userQuest.icon,
-          xpReward: userQuest.xpReward,
-          requiredArtworks: userQuest.requiredArtworks,
-          artworksVisited: userQuest.artworksVisited,
-          galleryMap: userQuest.galleryMap,
-          isCompleted: userQuest.isCompleted,
-          timestamp: userQuest.timestamp,
-        };
+        if (!userQuest) {
+          return null;
+        }
+        return toUserQuest(userQuest);
       } catch (err) {
         console.error("Error fetching user quest:", err);
         setError(

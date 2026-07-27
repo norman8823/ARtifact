@@ -59,7 +59,12 @@ export interface XpSnapshot {
 
 export interface XpRecordLike {
   id: string;
-  xpPoints: number | null;
+  /**
+   * Optional, not just nullable: the generated GraphQL types declare
+   * `xpPoints?: number | null`, so a raw AppSync item can omit the key
+   * entirely. `pickLatestXpRecord` normalises it to a number on the way out.
+   */
+  xpPoints?: number | null;
   timestamp?: string | null;
   createdAt?: string | null;
 }

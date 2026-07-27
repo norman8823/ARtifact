@@ -26,8 +26,9 @@ export const QuestArtworkThumbnails = memo(function QuestArtworkThumbnails({
   const displayArtworks = artworks.slice(0, 5);
 
   // Use stable cache-busting based on artwork ID only
-  const getCacheBustedUrl = (artwork: any) => {
-    if (!artwork.primaryImageSmall) return null;
+  const getCacheBustedUrl = (artwork: QuestArtworkThumbnail): string | undefined => {
+    // undefined, not null: an image `source.uri` accepts string | undefined.
+    if (!artwork.primaryImageSmall) return undefined;
 
     // Use artwork ID as stable cache buster - won't change on re-renders
     const separator = artwork.primaryImageSmall.includes('?') ? '&' : '?';

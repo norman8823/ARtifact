@@ -10,10 +10,10 @@
 
 ## Critical
 
-### 1. Zero tests, zero CI — ✅ **mostly resolved** (see CLAUDE.md § Project state)
-~~There is not a single `*.test.*` file, no jest/vitest config, no `.github/workflows`.~~ A jest-expo harness and [ci.yml](.github/workflows/ci.yml) now run on PRs/pushes to `development`, with pure logic extracted to `src/utils/` (`questProgress`, `rankUtils`, `scanAdapter`, `xpAward`) and unit-tested.
+### 1. Zero tests, zero CI — ✅ **RESOLVED** (see CLAUDE.md § Project state)
+~~There is not a single `*.test.*` file, no jest/vitest config, no `.github/workflows`.~~ A jest-expo harness and [ci.yml](.github/workflows/ci.yml) run on PRs/pushes to `development`, with pure logic extracted to `src/utils/` and unit-tested (78 tests). As of 2026-07-27 **all three CI jobs are required** — tests, `tsc --noEmit`, and lint — after the pre-existing baseline (27 type errors, 8 lint errors) was cleared.
 
-**Still open:** the tsc + lint jobs are `continue-on-error` because the pre-existing baseline fails (~29 `tsc --noEmit` errors across 14 files, 8 lint errors). Until that's cleaned up, type errors still only surface at build time — CI is a test gate, not a type gate. Tracked as backlog 0.1b. Coverage is also still unit-only: no component or E2E tests, so the release-only AR regressions remain uncaught by CI.
+**Residual, not tracked as a defect:** coverage is unit-only. There are no component or E2E tests, so the release-only AR regressions (#13) still can't be caught by CI — only by a device build.
 
 ### 2. Live ReactVision API key committed in `app.json`
 `rvApiKey: "rv_live_8fd77..."` sits in [app.json](app.json) plugin config (with `rvProjectId`). It ships in the binary anyway, but being in git history means it can't be rotated by config alone. Move to an EAS secret / env-substituted config (`app.config.js`) and rotate the key.
@@ -51,6 +51,13 @@ Featured artworks = filtered DynamoDB *scan*, bounded to 5 pages/500 items ([use
 
 *Tracked as backlog **P3.8**.* **Correction (2026-07-13): this is not a one-line `@index` fix.** DynamoDB key attributes must be String, Number, or Binary — **Boolean is not a valid key type**, so `@index` on `isFeatured: Boolean` cannot be deployed. (Consistent with the schema: all six existing `@index` directives are on `ID!` fields.) The real fix is a **sparse GSI on a String field**: add e.g. `featuredStatus: String @index(name: "byFeatured", sortKeyFields: ["id"])`, populate it with a constant like `"FEATURED"` **only** for featured artworks and leave it null elsewhere (items missing the key attribute are absent from the index, so the query reads only featured rows), backfill via `scripts/`, then switch `getFeaturedArtworks` to the generated index query. Estimate: schema + push + backfill script + query swap, not a one-liner.
 
+### 11b. Hooks mapping fields that don't exist on the schema — ✅ **FIXED 2026-07-27**
+Found while clearing the type baseline (backlog 0.1b), and only findable once `result.data` was properly narrowed — the untyped GraphQL result had been masking it:
+- `src/hooks/useUserQuest.ts` (singular) mapped `visitedArtworks`, `totalArtworks`, `startedAt`, `completedAt` — **none** exist on `UserQuest` (the real fields are `artworksVisited`, `requiredArtworks`, `isCompleted`, `timestamp`). It also built `id` as `${userId}#${questId}` when real ids are AppSync UUIDs, so it could never have matched a record. Unused by any screen; **deleted**.
+- `src/hooks/useInfiniteArtworks.ts` mapped **25 fields that don't exist** on `Artwork` (`period`, `dynasty`, `reign`, `objectBeginDate`, `accessionYear`, `isHighlight`, `creditLine`, `country`, `city`, …) — MET Museum API fields never added to the Amplify schema, so every one silently resolved to `undefined`. Verified nothing read them, then stripped from both the mapping and the local interface.
+
+**Prevention:** this class of bug is exactly what the now-required typecheck job catches. Note `useDepartmentDetail` *deliberately* aliases `period: item.objectDate` — that one is intentional, not phantom.
+
 ### 12. Workarounds papering over unexplained races (each has a TODO)
 - **250ms cold-start auth delay** ([AuthContext.tsx:52](src/contexts/AuthContext.tsx#L52)) — guards a Cognito token-hydration race nobody has pinned down; it's a guessed constant on the critical launch path.
 - **`freezeOnBlur` on the dashboard** ([_layout.tsx:172](app/_layout.tsx#L172)) — masks a react-native-screens desync triggered by cache-hydration re-renders mid-transition. Correct fix is understanding the re-render storm.
@@ -68,6 +75,8 @@ Featured artworks = filtered DynamoDB *scan*, bounded to 5 pages/500 items ([use
 | `useSceneModel` | [src/hooks/useSceneModel.ts](src/hooks/useSceneModel.ts) | Stub with empty hardcoded map; ArtworkARScene uses `rvGetSceneAssets` instead |
 | `arImage` field/param | schema + [artDetail.tsx](app/artDetail.tsx) logging | Replaced by `sceneId` |
 | Apple/Google login screens | `app/appleLogin.tsx`, `app/googleLogin.tsx` | Non-functional UI stubs, unreachable in normal flow. Both are deleted as part of backlog 1A.5 — `appleLogin` is superseded by the real native Sign in with Apple flow, `googleLogin` is out of scope (iOS-only app) |
+| 4 unused Expo template components | ~~`Collapsible`, `ParallaxScrollView`, `HelloWave`, `ExternalLink`~~ | Deleted 2026-07-27 — zero importers, and they carried 4 of the type errors |
+| `useUserQuest.ts` (singular) | ~~`src/hooks/useUserQuest.ts`~~ | Deleted 2026-07-27 — unused AND written against a schema that no longer exists (see #11b) |
 | `phoneLogin` route | [_layout.tsx:157](app/_layout.tsx#L157) | Screen registered; file doesn't exist |
 
 ## Fragile edges

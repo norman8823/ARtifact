@@ -1,3 +1,4 @@
+import { asQueryResult } from "@/src/aws/graphqlResult";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
 import { type GetArtworkQuery } from "../API";
@@ -39,8 +40,9 @@ export function useArtworksByIds() {
 
       // Process all results
       const artworks = results
-        .map((result, index) => {
+        .map((rawResult, index) => {
           const artworkId = artworkIds[index];
+          const result = asQueryResult<GetArtworkQuery>(rawResult);
           if ("errors" in result && result.errors) {
             console.error(
               `GraphQL Errors for artwork ${artworkId}:`,

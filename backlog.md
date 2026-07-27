@@ -14,11 +14,6 @@
 
 ---
 
-## P0 — Foundations (must land before any release)
-
-### 0.1b Fix the tsc + lint baseline, then make CI strict
-Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: string | null` vs `string | undefined` image props, implicit-any params in legacy hooks, GraphQL result narrowing) and the 8 lint errors, then remove `continue-on-error` from the typecheck/lint jobs in `.github/workflows/ci.yml`. Until this lands, CI is a test gate but not a type gate.
-
 ## P1 — Premium tier (the epic)
 
 > **No schema change or `amplify push` is required.** The entitlement plumbing (StoreKit adapter, `EntitlementContext`, pure rules in `src/utils/premiumAccess.ts`) is already built — see CLAUDE.md § Project state. What remains is the UI and the data.

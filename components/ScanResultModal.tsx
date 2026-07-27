@@ -157,15 +157,15 @@ export function ScanResultModal({
 
       {/* Message */}
       <ThemedText style={styles.wrongArtworkMessage}>
-        Hmm, that doesn't look like the right artwork.
+        Hmm, that doesn&apos;t look like the right artwork.
       </ThemedText>
 
       <ThemedText style={styles.wrongArtworkHint}>
-        You're looking for{" "}
+        You&apos;re looking for{" "}
         <ThemedText style={styles.expectedTitle}>
           {expectedArtworkTitle}
         </ThemedText>
-        . Make sure you're scanning the correct artwork!
+        . Make sure you&apos;re scanning the correct artwork!
       </ThemedText>
 
       {/* Action Button */}
@@ -189,7 +189,7 @@ export function ScanResultModal({
 
       {/* Message */}
       <ThemedText style={styles.failureMessage}>
-        We couldn't identify this artwork. Try getting closer or adjusting the
+        We couldn&apos;t identify this artwork. Try getting closer or adjusting the
         angle for a better view.
       </ThemedText>
 

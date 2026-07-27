@@ -12,7 +12,7 @@ export default function NotFoundScreen() {
       <ThemedView style={styles.container}>
         <ThemedText type="title">This screen does not exist.</ThemedText>
         <Link href="/" style={styles.link}>
-          <ThemedText type="link">Go to home screen!</ThemedText>
+          <ThemedText style={styles.linkText}>Go to home screen!</ThemedText>
         </Link>
       </ThemedView>
     </>
@@ -30,5 +30,9 @@ const styles = StyleSheet.create({
   link: {
     marginTop: 15,
     paddingVertical: 15,
+  },
+  linkText: {
+    color: Colors.metRed,
+    textDecorationLine: "underline",
   },
 });

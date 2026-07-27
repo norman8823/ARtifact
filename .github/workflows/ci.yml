@@ -20,11 +20,8 @@ jobs:
       - run: npm test
 
   typecheck:
-    # Non-blocking until the pre-existing tsc baseline is fixed (backlog P0.1b:
-    # ~29 errors across 14 files). Flip continue-on-error off once clean.
-    name: Typecheck (advisory)
+    name: Typecheck (required)
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,11 +32,8 @@ jobs:
       - run: npx tsc --noEmit
 
   lint:
-    # Non-blocking until the pre-existing lint baseline is fixed (backlog
-    # P0.1b: 8 errors). Flip continue-on-error off once clean.
-    name: Lint (advisory)
+    name: Lint (required)
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

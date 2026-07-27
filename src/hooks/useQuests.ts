@@ -1,4 +1,5 @@
 import { type ListQuestsQuery, type GetArtworkQuery } from "@/src/API";
+import { asQueryResult } from "@/src/aws/graphqlResult";
 import { listQuests, getArtwork } from "@/src/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 import { getAuthMode } from "@/src/aws/authMode";
@@ -11,6 +12,23 @@ export interface QuestArtworkThumbnail {
   id: string;
   title: string;
   primaryImageSmall: string | null;
+}
+
+/**
+ * Shape of one item from the runtime-built `GetFreshQuests` document. It mirrors
+ * the generated `Quest` type but is declared locally because the document is
+ * assembled at runtime to bypass the AppSync cache (landmine #4), so codegen
+ * never sees it. Keep in sync with the selection set above.
+ */
+interface QuestQueryItem {
+  id: string;
+  title: string;
+  description: string;
+  xpReward: number;
+  icon?: string | null;
+  requiredArtworks?: (string | null)[] | null;
+  isPremium?: boolean | null;
+  galleryMap?: string | null;
 }
 
 export interface Quest {
@@ -135,10 +153,16 @@ export function useQuests() {
       // Create fresh client instance with custom query
       const freshClient = generateClient();
       const authMode = getAuthMode();
-      const result = await freshClient.graphql({
-        query: timestampedQuery,
-        authMode: authMode as any,
-      });
+      // The document is built at runtime (cache-bypass, landmine #4), so there
+      // is no generated type to key off — hence the explicit shape here.
+      const result = asQueryResult<{
+        listQuests?: { items?: (QuestQueryItem | null)[] | null } | null;
+      }>(
+        await freshClient.graphql({
+          query: timestampedQuery,
+          authMode,
+        })
+      );
 
       // Debug: Simple API response summary
       console.log(`✅ Fetched ${result.data?.listQuests?.items?.length || 0} quests from GraphQL`);
@@ -159,21 +183,21 @@ export function useQuests() {
 
       // Map the DynamoDB items to our simplified Quest interface
       const basicQuests = result.data.listQuests.items
-        .filter((item: any): item is NonNullable<typeof item> => item !== null)
-        .map(
-          (
-            item: NonNullable<(typeof result.data.listQuests.items)[number]>
-          ) => ({
-            id: item.id,
-            title: item.title,
-            description: item.description,
-            xpReward: item.xpReward,
-            icon: item.icon,
-            requiredArtworks: item.requiredArtworks,
-            isPremium: item.isPremium,
-            galleryMap: item.galleryMap,
-          })
-        );
+        .filter((item): item is QuestQueryItem => item !== null)
+        .map((item) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          xpReward: item.xpReward,
+          icon: item.icon ?? null,
+          // Nullable entries can't occur in practice, but the generated shape
+          // allows them; drop them so the app type stays string[].
+          requiredArtworks:
+            item.requiredArtworks?.filter((a): a is string => a !== null) ??
+            null,
+          isPremium: item.isPremium ?? null,
+          galleryMap: item.galleryMap ?? null,
+        }));
 
       console.log("Fetched basic quests:", basicQuests.length);
 
@@ -184,7 +208,7 @@ export function useQuests() {
 
       // Fetch artwork thumbnails for each quest
       const questsWithThumbnails = await Promise.all(
-        basicQuests.map(async (quest) => {
+        basicQuests.map(async (quest): Promise<Quest> => {
           if (quest.requiredArtworks && quest.requiredArtworks.length > 0) {
             const artworkThumbnails = await fetchArtworkThumbnails(quest.requiredArtworks);
             return {

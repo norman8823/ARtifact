@@ -117,7 +117,7 @@ export default function GoogleLoginScreen() {
         {/* Information Box */}
         <ThemedView style={styles.infoBox}>
           <ThemedText style={styles.infoText}>
-            By continuing, you'll allow ARtifact to access your Google account
+            By continuing, you&apos;ll allow ARtifact to access your Google account
             information in accordance with our privacy policy.
           </ThemedText>
         </ThemedView>
