@@ -42,7 +42,6 @@
     "expo-iap": "^4.7.1",
     "expo-image": "~3.0.11",
     "expo-linking": "~8.0.11",
-    "expo-location": "^19.0.7",
     "expo-router": "~6.0.23",
     "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.9",

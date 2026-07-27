@@ -17,11 +17,9 @@
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "This app uses the camera to scan artwork and provide AR experiences.",
         "NSMotionUsageDescription": "This app uses motion sensors to provide immersive AR experiences.",
-        "NSLocationWhenInUseUsageDescription": "This app may use location to enhance AR experiences.",
         "NSMicrophoneUsageDescription": "This app may use the microphone for AR experiences.",
         "NSPhotoLibraryUsageDescription": "ARtifact would like to read photos for AR experiences.",
-        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location for AR experiences"
+        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
       }
     },
     "android": {

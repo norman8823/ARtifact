@@ -26,8 +26,13 @@ The policy is **live at https://artifactar.com/privacy/**, which clears the "no 
 
 §5 (in-app deletion, no email required) is now accurate as of the deletion flow shipping — but it is still unverified against a real account, which is 0.9.
 
-### 0.7 Remove declared-but-unused permissions
-`app.json` declares `NSLocationWhenInUseUsageDescription` **and** `NSLocationAlwaysAndWhenInUseUsageDescription`, and `expo-location@^19.0.7` is a dependency — but **nothing in the app imports it**. Apple rejects apps that request permissions they don't exercise, and each declared permission drags an App Privacy disclosure with it. Audit and strip: location certainly, plus `expo-web-browser` (no importers found) and the microphone string if ReactVision doesn't need it. Note `PrivacyInfo.xcprivacy` currently lives only in the gitignored `/ios`, so it is regenerated and uncontrolled — if it needs curating, drive it from `app.json` `privacyManifests`, the same lesson as 1A.2.
+### 0.7 Remove declared-but-unused permissions — ⚠️ location done, three left to audit
+**Done 2026-07-27:** both location usage strings removed from `app.json` and `expo-location` uninstalled — verified nothing imported it and no package depended on it. The privacy policy's "does not request or use your location" is now true of the binary as well as the code. Takes effect on the next `prebuild`/EAS build, since `/ios` is regenerated.
+
+**Still to audit** — each one still declared, and each drags an App Privacy obligation:
+- `NSMicrophoneUsageDescription` and `NSPhotoLibraryUsageDescription` / `NSPhotoLibraryAddUsageDescription` come from the ReactVision plugin block in `app.json`. Confirm Viro actually needs mic and photo-library access for the AR scenes as used here; if it only renders a model, drop them from the plugin config.
+- `expo-web-browser` is still a dependency with no importers found — remove unless something pulls it in indirectly.
+- `PrivacyInfo.xcprivacy` still lives only in the gitignored `/ios`, so it is regenerated and uncontrolled. If it needs curating, drive it from `app.json` `privacyManifests` — same lesson as 1A.2.
 
 ### 0.8 Decide on Sentry session replay before shipping paid
 `app/_layout.tsx` enables `mobileReplayIntegration()` with `replaysSessionSampleRate: 0.1` and `replaysOnErrorSampleRate: 1` — i.e. **10% of sessions and 100% of error sessions are screen-recorded**, alongside `sendDefaultPii: true`. That is defensible for a beta but it must be disclosed in App Privacy (0.6), and it deserves a deliberate decision now that real payments are involved: keep it with disclosure and masking, or reduce the sample rate. Also gates 0.6's answers.
