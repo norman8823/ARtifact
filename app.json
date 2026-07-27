@@ -16,10 +16,7 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "This app uses the camera to scan artwork and provide AR experiences.",
-        "NSMotionUsageDescription": "This app uses motion sensors to provide immersive AR experiences.",
-        "NSMicrophoneUsageDescription": "This app may use the microphone for AR experiences.",
-        "NSPhotoLibraryUsageDescription": "ARtifact would like to read photos for AR experiences.",
-        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
+        "NSMotionUsageDescription": "This app uses motion sensors to provide immersive AR experiences."
       }
     },
     "android": {
@@ -73,10 +70,7 @@
             "xRMode": "AR"
           },
           "ios": {
-            "cameraUsagePermission": "ARtifact uses your camera for AR experiences.",
-            "microphoneUsagePermission": "ARtifact uses your microphone for AR experiences.",
-            "photosPermission": "ARtifact would like to read photos for AR experiences.",
-            "savephotosPermission": "ARtifact would like to save photos during AR experiences."
+            "cameraUsagePermission": "ARtifact uses your camera for AR experiences."
           },
           "provider": "reactvision",
           "rvApiKey": "rv_live_8fd77988d393f1cf2714dbb21b8f84c9a4e29d2aa4004c018c8122d0f5c376af",

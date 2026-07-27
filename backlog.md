@@ -19,23 +19,24 @@
 ### 0.6 Reconcile the privacy policy with what the app actually does
 The policy is **live at https://artifactar.com/privacy/**, which clears the "no policy URL" blocker. What's left is that it and the binary disagree in four places — reviewers compare them, and the App Privacy questionnaire must match reality:
 
-1. **Sentry is not disclosed at all.** §4 lists only AWS and Railway. Sentry receives the user's IP and identifiers (`sendDefaultPii: true`) **and screen recordings** — `mobileReplayIntegration()` at 10% of sessions / 100% of error sessions. That makes it arguably the most privacy-significant third party in the app, and the only one omitted. Add it, or turn replay off (0.8).
-2. **"The App does not request or use your location" is true of the code but false of the binary.** Nothing imports `expo-location`, but `app.json` still declares two location usage strings, so iOS advertises the capability. Strip them (0.7) and the sentence becomes accurate.
-3. **"Images … are processed and stored securely" over-claims.** Verified 2026-07-27: the app stores **no** images. The only S3 `uploadData` call sits inside the commented-out dead Rekognition block (`scan.tsx:236`); the live path (`analyzeWithFlask`) POSTs the photo to Railway `/predict` and retains nothing beyond expo-camera's transient cache file. Owner intent is no storage at all, so the policy should say images are transmitted for matching and not retained — **pending confirmation that the Railway Flask service doesn't persist them** (server-side, outside this repo; check and document).
+1. **Sentry is still not disclosed** — §4 lists only AWS and Railway. Screen recording is now off (0.8), so the disclosure needed is much smaller: Sentry receives error reports plus IP and device identifiers via `sendDefaultPii: true`. Draft wording was supplied; **owner to publish.**
+2. ~~Location contradiction~~ — **resolved**: the permissions are gone (0.7), so "does not request or use your location" is now true of the binary too. No policy edit needed for this line.
+3. **"Images … are processed and stored securely" over-claims — owner confirmed no storage is wanted or needed.** Verified 2026-07-27: the app stores **no** images. The only S3 `uploadData` call sits inside the commented-out dead Rekognition block (`scan.tsx:236`); the live path (`analyzeWithFlask`) POSTs the photo to Railway `/predict` and retains nothing beyond expo-camera's transient cache file. Owner intent is no storage at all, so the policy should say images are transmitted for matching and not retained — **pending confirmation that the Railway Flask service doesn't persist them** (server-side, outside this repo; check and document).
 4. **Purchases aren't mentioned.** Apple processes payment (no card data ever reaches us), but `User.isPremium` is stored. Worth one line.
 
 §5 (in-app deletion, no email required) is now accurate as of the deletion flow shipping — but it is still unverified against a real account, which is 0.9.
 
-### 0.7 Remove declared-but-unused permissions — ⚠️ location done, three left to audit
-**Done 2026-07-27:** both location usage strings removed from `app.json` and `expo-location` uninstalled — verified nothing imported it and no package depended on it. The privacy policy's "does not request or use your location" is now true of the binary as well as the code. Takes effect on the next `prebuild`/EAS build, since `/ios` is regenerated.
+### 0.7 Remove declared-but-unused permissions — ✅ DONE 2026-07-27
+Removed, verified against actual usage: **location** (both usage strings + the `expo-location` dependency — nothing imported it, no package depended on it), and **microphone + photo-library** (owner confirmed Viro neither records audio nor writes to the camera roll). The mic/photos keys had to come out of the **ReactVision plugin block as well as `infoPlist`** — the plugin injects them on prebuild, so removing them from one place alone would have silently restored them.
 
-**Still to audit** — each one still declared, and each drags an App Privacy obligation:
-- `NSMicrophoneUsageDescription` and `NSPhotoLibraryUsageDescription` / `NSPhotoLibraryAddUsageDescription` come from the ReactVision plugin block in `app.json`. Confirm Viro actually needs mic and photo-library access for the AR scenes as used here; if it only renders a model, drop them from the plugin config.
-- `expo-web-browser` is still a dependency with no importers found — remove unless something pulls it in indirectly.
-- `PrivacyInfo.xcprivacy` still lives only in the gitignored `/ios`, so it is regenerated and uncontrolled. If it needs curating, drive it from `app.json` `privacyManifests` — same lesson as 1A.2.
+Remaining declared: `NSCameraUsageDescription` and `NSMotionUsageDescription` only, both genuinely used (scan + ARKit). Takes effect on the next `prebuild`/EAS build.
 
-### 0.8 Decide on Sentry session replay before shipping paid
-`app/_layout.tsx` enables `mobileReplayIntegration()` with `replaysSessionSampleRate: 0.1` and `replaysOnErrorSampleRate: 1` — i.e. **10% of sessions and 100% of error sessions are screen-recorded**, alongside `sendDefaultPii: true`. That is defensible for a beta but it must be disclosed in App Privacy (0.6), and it deserves a deliberate decision now that real payments are involved: keep it with disclosure and masking, or reduce the sample rate. Also gates 0.6's answers.
+Still open, minor: `expo-web-browser` is a dependency with no importers found — remove unless something pulls it in indirectly. And `PrivacyInfo.xcprivacy` lives only in the gitignored `/ios`, so it is regenerated and uncontrolled; if it needs curating, drive it from `app.json` `privacyManifests` (same lesson as 1A.2).
+
+### 0.8 Sentry session replay — ✅ DISABLED 2026-07-27
+`mobileReplayIntegration()` and both `replays*SampleRate` options are removed from `Sentry.init`. It had been recording 10% of all sessions and 100% of error sessions — real users' screens — which is a disclosure burden not worth carrying for a paid, signed-in app. Crash and error reporting are unaffected.
+
+`sendDefaultPii: true` **remains**, so Sentry still receives IP and device identifiers and must still be disclosed in the policy (0.6) — just a far smaller disclosure than screen recording. Turning that off too is a one-line option if you'd rather drop the Sentry mention to the bare minimum. **If replay is ever re-enabled, the policy and App Privacy label must be updated first** — there's a comment in `_layout.tsx` saying so.
 
 ### 0.9 Device QA the account-deletion flow
 The flow shipped (`useAccountDeletion`) but has **never run against a real account** — it can't be tested in the Simulator without signing in, and the ordering is unforgiving: if it deletes the Cognito identity while rows remain, those rows become permanently unreadable. Test on a throwaway account, confirm all five models are emptied, then confirm sign-out. Guideline 5.1.1(v) is checked by reviewers, and a deletion button that half-works is worse than the old stub.

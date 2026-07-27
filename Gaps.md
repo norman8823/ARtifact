@@ -119,7 +119,7 @@ The button answered with *"contact support"*, which guideline 5.1.1(v) does not 
 ### 21. Privacy policy and the binary disagree *(backlog 0.6)*
 A policy is live at https://artifactar.com/privacy/, so the missing-URL blocker is closed. But it and the app disagree: **Sentry is not disclosed at all** despite receiving IP, identifiers and *screen recordings*; the policy says location is never requested while `app.json` still declares two location strings; and it claims images are "stored securely" when the app stores none (verified — the only S3 upload is in the commented-out dead Rekognition block at `scan.tsx:236`; the live path POSTs to Railway and retains nothing). The App Privacy questionnaire has also never been filled.
 
-### 22. Declared-but-unused permissions, and Sentry records screens *(backlog 0.7, 0.8)*
+### 22. Declared-but-unused permissions, and Sentry records screens — ✅ **FIXED 2026-07-27** *(policy text still to publish: backlog 0.6)*
 **Location resolved 2026-07-27** — both usage strings removed and `expo-location` uninstalled. ~~`app.json` declares two location usage strings and ships `expo-location`, but nothing imports it;~~ Remaining: `expo-web-browser` appears unused too. Apple rejects unused permission requests, and each one adds an App Privacy obligation. Separately, `mobileReplayIntegration()` is active at a 10% session / 100% error sample rate, so real user screens are being recorded — fine for a beta, but undisclosed and worth an explicit decision before taking payments. `PrivacyInfo.xcprivacy` exists only under the gitignored `/ios`, so it is regenerated and effectively uncontrolled.
 
 ### 20. Missing observability outside the paywall *(backlog P3.12)*

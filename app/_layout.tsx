@@ -25,10 +25,12 @@ Sentry.init({
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
 
-  // Configure Session Replay
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration()],
+  // Session Replay is deliberately OFF. It previously recorded 10% of all
+  // sessions and 100% of error sessions (mobileReplayIntegration), i.e. real
+  // users' screens, which is a disclosure burden we chose not to carry for a
+  // paid, signed-in app. Crash and error reporting are unaffected. If it is
+  // ever re-enabled it MUST be disclosed in the privacy policy and the App
+  // Privacy label first (backlog 0.6).
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: __DEV__,
