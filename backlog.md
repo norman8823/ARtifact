@@ -1,6 +1,8 @@
 # Backlog
 
-*A **to-do list** — open work only. Completed work and current state live in **[CLAUDE.md § Project state](CLAUDE.md)**; known defects live in **[Gaps.md](Gaps.md)**. When an item ships, delete it here and record it there rather than marking it ✅.*
+*A **to-do list** — open work only. When an item ships, **delete it here**; the record of it lives elsewhere.*
+
+> **Where completed work is recorded.** Deleting a shipped item from this file is safe because nothing is lost: **[CLAUDE.md § Project state](CLAUDE.md)** says what was built, and **[Gaps.md](Gaps.md)** is a permanent register that keeps every defect entry forever and only marks it `✅ FIXED`. So a Gaps item never disappears when its backlog item does — to see which known weaknesses have been addressed, read Gaps.md, not this file. Item ids here are stable and cited from both other docs; gaps in the numbering mean that item shipped.*
 
 *Ordered by priority AND order of operations — items within a phase are sequenced so earlier ones de-risk later ones. Item ids are stable and are cited from other docs: gaps in the numbering mean that item shipped, not that it's missing. Driving goal: ship the premium tier (premium-gated quests, first 3 quests free, no scan limits).*
 
@@ -116,6 +118,11 @@ Paying users will expect scan to work. Add fetch timeout + one retry + in-flight
 6. **Sentry env split** *(Gaps #17)* + broader analytics beyond the paywall.
 7. **Wire up `src/utils/featuredQuest.ts`** — the daily featured-quest selection was extracted and unit-tested (87 lines of tests), but `app/(dashboard)/home.tsx` still runs its own inline copy and never imports the util. Two implementations of the same hash is exactly the drift risk the extraction was meant to remove. Swap home.tsx over to the util; the hash was preserved byte-for-byte (including the `a & a` coercion) so today's featured pick will not change.
 8. **Retroactive quest credit UX** *(Gaps #7)* — a quest that auto-completes at start should still get a celebration moment. **Celebration only, no XP** — XP is scan-only and there is never a completion award (CLAUDE.md § Settled decisions), so the user has already been paid for those artworks; awarding again would double-count.
+
+9. **Sparse GSI for `Artwork.isFeatured`** *(Gaps #11)* — the featured fetch is a bounded 5-page scan that silently breaks if a featured artwork lands past the bound. A direct `@index` is impossible (Boolean isn't a valid DynamoDB key type), so: add `featuredStatus: String @index(...)`, populate it with a constant **only** on featured rows so the index stays sparse, backfill via `scripts/`, then switch `getFeaturedArtworks` to the index query. Needs `amplify push`.
+10. **Auth guard for pushed routes** *(Gaps #12c)* — `app.json` registers `scheme: "artifact"` and pushed routes check only `isAuthReady`, so `artifact://questDetail?id=X` and `artifact://profileSettings` render for a guest (the latter throws `UserUnAuthenticatedException` from `ensureUserInDB` on mount). The premium gate handles its own case explicitly, but a shared guard would close the class rather than patching each screen.
+11. **Resolve the FeaturePoint contradiction** *(Gaps #13)* — `ArtworkARScene.tsx:137` includes `FeaturePoint` in the hit-test priority while `MIGRATION_NOTES.md:121` claims it's excluded so the model can't float in mid-air. One of them is wrong. Decide which behavior is intended, then fix the other. **Device-only to verify.**
+12. **Make `AR_TEST_MODE` non-shippable** *(Gaps #14)* — it's a source constant someone must remember to flip back; `true` in a commit would route every AR view to a hardcoded test scene. Replace with the `__DEV__ && process.env.EXPO_PUBLIC_*` pattern already used for the premium dev bypass in `EntitlementContext`, so it cannot ship enabled.
 
 ---
 

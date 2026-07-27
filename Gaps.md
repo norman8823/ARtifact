@@ -2,6 +2,10 @@
 
 *Audit of the codebase, July 2026. Ordered roughly by severity.*
 
+> **How this file relates to the others.** Gaps.md is the **permanent defect register**: entries are never deleted, only marked `✅ FIXED` / `✅ RESOLVED` / `✅ NOT A BUG` with a pointer to what changed. That is deliberate — [backlog.md](backlog.md) *deletes* items when they ship, so if Gaps deleted them too there would be no record that a known weakness was ever addressed. Numbering is stable and cited from backlog.md and CLAUDE.md.
+>
+> So: **is it broken?** → here. **What's left to do about it?** → backlog.md (each open item below names its backlog id). **What was actually built?** → CLAUDE.md § Project state.
+
 ## Critical
 
 ### 1. Zero tests, zero CI — ✅ **mostly resolved** (see CLAUDE.md § Project state)
@@ -43,7 +47,7 @@ The react-query layer ([queries.ts](src/hooks/queries.ts)) covers home/profile/a
 ### 11. `Artwork.isFeatured` has no GSI — and cannot have one directly
 Featured artworks = filtered DynamoDB *scan*, bounded to 5 pages/500 items ([useArtworks.ts](src/hooks/useArtworks.ts)). Works today because featured items are seeded early in the table; silently breaks if a featured artwork lands beyond the scan bound.
 
-**Correction (2026-07-13): this is not a one-line `@index` fix.** DynamoDB key attributes must be String, Number, or Binary — **Boolean is not a valid key type**, so `@index` on `isFeatured: Boolean` cannot be deployed. (Consistent with the schema: all six existing `@index` directives are on `ID!` fields.) The real fix is a **sparse GSI on a String field**: add e.g. `featuredStatus: String @index(name: "byFeatured", sortKeyFields: ["id"])`, populate it with a constant like `"FEATURED"` **only** for featured artworks and leave it null elsewhere (items missing the key attribute are absent from the index, so the query reads only featured rows), backfill via `scripts/`, then switch `getFeaturedArtworks` to the generated index query. Estimate: schema + push + backfill script + query swap, not a one-liner.
+*Tracked as backlog **P3.9**.* **Correction (2026-07-13): this is not a one-line `@index` fix.** DynamoDB key attributes must be String, Number, or Binary — **Boolean is not a valid key type**, so `@index` on `isFeatured: Boolean` cannot be deployed. (Consistent with the schema: all six existing `@index` directives are on `ID!` fields.) The real fix is a **sparse GSI on a String field**: add e.g. `featuredStatus: String @index(name: "byFeatured", sortKeyFields: ["id"])`, populate it with a constant like `"FEATURED"` **only** for featured artworks and leave it null elsewhere (items missing the key attribute are absent from the index, so the query reads only featured rows), backfill via `scripts/`, then switch `getFeaturedArtworks` to the generated index query. Estimate: schema + push + backfill script + query swap, not a one-liner.
 
 ### 12. Workarounds papering over unexplained races (each has a TODO)
 - **250ms cold-start auth delay** ([AuthContext.tsx:52](src/contexts/AuthContext.tsx#L52)) — guards a Cognito token-hydration race nobody has pinned down; it's a guessed constant on the critical launch path.
@@ -73,13 +77,13 @@ ReactVision ships `ViroKit.framework` as a single **device-only** arm64 slice (`
 
 **Standing constraint:** never add a module-scope Viro import anywhere under `app/`, or the whole app breaks on the Simulator again. Opening the AR screen itself still requires a physical device.
 
-### 12c. Pushed routes have no auth guards, and the app registers a deep-link scheme
+### 12c. Pushed routes have no auth guards, and the app registers a deep-link scheme *(backlog P3.10)*
 `app.json` sets `"scheme": "artifact"`, and pushed routes don't check `isAuthenticated` — only `isAuthReady`. So `artifact://questDetail?id=X` and `artifact://profileSettings` both render for a guest (verified 2026-07-27). questDetail used to fail safe only because `startQuest` throws; the premium gate now checks auth explicitly *before* premium so a guest gets a sign-in prompt rather than a paywall. profileSettings still throws `UserUnAuthenticatedException` from `ensureUserInDB` on mount for a guest — harmless but noisy, and it means the screen half-renders. A shared auth guard on pushed routes would close the whole class.
 
-### 13. AR scene ordering invariants are load-bearing and undocumented in code
+### 13. AR scene ordering invariants are load-bearing and undocumented in code *(the FeaturePoint contradiction is backlog P3.11; the invariants themselves are CLAUDE.md landmine #1 — permanent, not a to-do)*
 Three release-build regressions came from reordering: (a) `Viro3DObject` must mount only after tap-to-place (`9feea4f` — invisible model), (b) asset fetch must gate on `isARReady` (`15b6d3e` — broken tap-to-place), (c) the tap overlay must unmount after placement or gestures never reach Viro. Also: the hit-test includes `FeaturePoint` ([ArtworkARScene.tsx:137](components/ar-scenes/ArtworkARScene.tsx#L137)) while MIGRATION_NOTES.md claims it's excluded to prevent mid-air floating — code and doc disagree.
 
-### 14. `AR_TEST_MODE` is a compile-time flag
+### 14. `AR_TEST_MODE` is a compile-time flag *(backlog P3.12)*
 [arViewer.tsx:11-12](app/arViewer.tsx#L11) — hardcoded boolean + hardcoded test sceneId. Flipping it to `true` and shipping would silently route every AR view to the test scene.
 
 ### 15. Scan flow is `any`-typed end to end
@@ -95,8 +99,8 @@ README still documents Expo SDK 53, 8th Wall WebView AR, Lambda/Rekognition/API 
 
 *Numbering continues from above so existing `*(Gaps #N)*` references in [backlog.md](backlog.md) stay valid. Severity is noted per item rather than by section.*
 
-### 18. **Critical** — "Delete Account" is a non-functional stub
-[profileSettings.tsx:376-378](app/profileSettings.tsx#L376) answers the Delete Account button with an alert: *"This feature is not yet implemented. Please contact support."* App Store guideline 5.1.1(v) requires **in-app** account deletion for any app that supports account creation — a support email does not satisfy it. This is a standing rejection risk on the next submission, independent of any new feature. Scoped as backlog **0.5** — it gates any submission, so it sits in P0 rather than behind the Apple work. Adding Sign in with Apple later adds one step (revoking the user's tokens at `POST https://appleid.apple.com/auth/revoke`, backlog 1A.6), it does not gate the deletion flow itself.
+### 18. "Delete Account" was a non-functional stub — ✅ **FIXED 2026-07-27**
+The button answered with *"contact support"*, which guideline 5.1.1(v) does not accept. Now real: `src/hooks/useAccountDeletion.ts` + `src/utils/accountDeletion.ts`. Owned rows are deleted before the Cognito identity and `canDeleteIdentity()` aborts if any row failed — see CLAUDE.md § Project state for why that ordering is load-bearing. **Still owed:** device QA against a throwaway account, and Apple token revocation once Sign in with Apple ships (backlog 1A.6).
 
 ### 19. **High** — Amplify auth config diverges from the live Cognito pool
 [cli-inputs.json:44-46](amplify/backend/auth/ARtifactAuth/cli-inputs.json#L44) declares `"usernameAttributes": ["email, phone_number"]` — a single malformed string, not a legal `UsernameAttributes` value — while [backend-config.json:69](amplify/backend/backend-config.json#L69) says `["EMAIL","PHONE_NUMBER"]`. Neither is likely to match reality: if `phone_number` were genuinely a username attribute, the second tester to sign up with the shared dummy `+10000000000` ([useAuth.ts:99](src/hooks/useAuth.ts#L99)) would have hit `UsernameExistsException`. No CloudFormation is checked in under `amplify/backend/auth/ARtifactAuth/`, so the Gen 1 CLI regenerates the whole auth template from `cli-inputs.json` on every push — meaning the *next* `amplify update auth` (for any reason) will either fail CFN validation or attempt to modify the immutable `UsernameAttributes` and roll the auth stack back. The AppSync API `dependsOn` auth, so that rollback can cascade. Reconcile against `describe-user-pool` before touching auth infrastructure; scoped as backlog 1A.1.

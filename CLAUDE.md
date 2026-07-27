@@ -47,9 +47,14 @@ ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan 
 - Permanently unimplemented by decision: `remainingFreeScans`, quest `xpReward` as a completion bonus (see Settled decisions). `User.isPremium` is now written, but as a mirror only — **never read it to gate anything**; gate on `EntitlementContext`.
 - `Artwork.isFeatured` has **no GSI** — featured fetch is a bounded scan (5 pages max). Adding featured artworks deep in the table silently breaks it.
 
-## Project state — *this section is the tracker; keep it current*
+## Project state — **the ultimate source of truth for project status**
 
-**`backlog.md` is a to-do list, not a status board.** What is *done* lives here. What is *left* lives there. What is *broken* lives in `Gaps.md`.
+*Keep this current — it is the first thing read each session, and it outranks the other docs if they ever disagree.*
+
+**The three-file split:**
+- **CLAUDE.md (this file) — status.** What has actually been built, and every decision/landmine that constrains future work. Authoritative.
+- **[backlog.md](backlog.md) — to-do only.** Items are **deleted** when they ship. Never a status board; if it disagrees with this file, this file wins.
+- **[Gaps.md](Gaps.md) — permanent defect register.** Every known weakness, kept forever and marked `✅ FIXED` rather than deleted, so there is always a record that a weakness existed and was addressed. Each open item names its backlog id.
 
 *Last updated 2026-07-27.*
 
