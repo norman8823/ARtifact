@@ -29,8 +29,8 @@ Resolved 2026-07-13: `awardXP` now does a conditional-update CAS loop with retry
 ### 7. Retroactive quest credit is inconsistent
 `startQuest` seeds progress from already-visited artworks (retroactive credit at start time), but artworks visited *between* quest creation and later scans only count via `updateQuestProgress`. If a user visits artwork X, then starts a quest containing X, they get credit; the model works — but a quest can silently auto-complete at start, flipping to the completion state with no celebration moment. **Celebration only** — per #5 there is no completion XP to award, and the scan XP was already granted at visit time.
 
-### 8. `remainingFreeScans` / `isPremium` are dead schema
-`User.remainingFreeScans`, `User.isPremium`, `Quest.isPremium` exist in [schema.graphql](amplify/backend/api/artifact/schema.graphql) but no code enforces scan limits or premium gating. Premium was designed, never built.
+### 8. `remainingFreeScans` / `isPremium` were dead schema — ✅ RESOLVED
+`Quest.isPremium` is now enforced (gate in `questDetail`, rules in `src/utils/premiumAccess.ts`) and `User.isPremium` is written as a display/analytics mirror only — never read for gating. `User.remainingFreeScans` is permanently retained but unused client-side by decision (removing it breaks sign-in for already-shipped builds; see CLAUDE.md § Settled decisions).
 
 ## Architecture debt
 
@@ -72,6 +72,9 @@ ReactVision ships `ViroKit.framework` as a single **device-only** arm64 slice (`
 **Fix:** the Viro imports moved into `components/ar-scenes/ARSceneNavigator.tsx`, which `app/arViewer.tsx` now `require()`s at render time instead of importing at module scope. A synchronous require, not `React.lazy`, so the navigator still mounts in the same commit as the tap overlay — device behavior and all three AR ordering invariants (#13) are unchanged, and `ArtworkARScene.tsx` is byte-identical. Verified on the Simulator: boots, navigates guest → home, loads live AppSync data.
 
 **Standing constraint:** never add a module-scope Viro import anywhere under `app/`, or the whole app breaks on the Simulator again. Opening the AR screen itself still requires a physical device.
+
+### 12c. Pushed routes have no auth guards, and the app registers a deep-link scheme
+`app.json` sets `"scheme": "artifact"`, and pushed routes don't check `isAuthenticated` — only `isAuthReady`. So `artifact://questDetail?id=X` and `artifact://profileSettings` both render for a guest (verified 2026-07-27). questDetail used to fail safe only because `startQuest` throws; the premium gate now checks auth explicitly *before* premium so a guest gets a sign-in prompt rather than a paywall. profileSettings still throws `UserUnAuthenticatedException` from `ensureUserInDB` on mount for a guest — harmless but noisy, and it means the screen half-renders. A shared auth guard on pushed routes would close the whole class.
 
 ### 13. AR scene ordering invariants are load-bearing and undocumented in code
 Three release-build regressions came from reordering: (a) `Viro3DObject` must mount only after tap-to-place (`9feea4f` — invisible model), (b) asset fetch must gate on `isARReady` (`15b6d3e` — broken tap-to-place), (c) the tap overlay must unmount after placement or gestures never reach Viro. Also: the hit-test includes `FeaturePoint` ([ArtworkARScene.tsx:137](components/ar-scenes/ArtworkARScene.tsx#L137)) while MIGRATION_NOTES.md claims it's excluded to prevent mid-air floating — code and doc disagree.

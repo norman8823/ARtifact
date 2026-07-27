@@ -8,7 +8,7 @@
 - Premium gates **quests only**. Scan count is NOT gated — `remainingFreeScans` is dead client-side (the schema field stays forever — see CLAUDE.md § Settled decisions).
 - Premium is a **one-time lifetime unlock**, not a subscription. Bought via `expo-iap`; StoreKit is the source of truth. Rationale in [premium-tier.md](premium-tier.md).
 - First 3 quests free, the rest premium. Mechanism: the existing `Quest.isPremium` flag (already in schema, already fetched, already renders a badge in artQuest) — mark all but the 3 chosen free quests as premium in data. No "ordering" concept needed.
-- **Only open product decision: which 3 quests are free** (pick beginner-friendly ones with high-traffic galleries) — blocks 1.2.
+- **Free quests: Art Essentials, Bronze Legacy, Sacred Animals** (10 of 47 artworks). All other 9 quests are premium.
 
 ---
 
@@ -17,36 +17,24 @@
 ### 0.1b Fix the tsc + lint baseline, then make CI strict
 Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: string | null` vs `string | undefined` image props, implicit-any params in legacy hooks, GraphQL result narrowing) and the 8 lint errors, then remove `continue-on-error` from the typecheck/lint jobs in `.github/workflows/ci.yml`. Until this lands, CI is a test gate but not a type gate.
 
-### 0.5 Real in-app account deletion *(Gaps #18)* — **blocks any App Store submission**
-`profileSettings.tsx:372-392` renders a "Delete Account" button whose handler is an alert: *"This feature is not yet implemented. Please contact support to delete your account."* App Store guideline 5.1.1(v) requires in-app deletion for any app that supports account creation, and explicitly does not accept "contact support" as a substitute. A shipped button that promises deletion and doesn't deliver is the version reviewers catch fastest. This gates the premium release independently of everything else in this backlog — it is **not** a P1A dependency; P1A only adds a step to it.
-- Destructive-confirmation UX (irreversible; type-to-confirm or two-step).
-- Delete the Cognito user. Try Amplify v6's client-side `deleteUser()` first — it self-deletes the signed-in user with no backend. Fall back to an `AdminDeleteUser` Lambda only if the client path can't work.
-- **Cascade-delete the DynamoDB rows**: `User`, `Favorited`, `Visited`, `UserQuest`, `UserXP`. Orphaned rows after the Cognito identity is gone are a privacy problem, not just untidiness — once the owner sub is unrecoverable nothing can ever read or delete them again. Delete the data *before* the Cognito user, or the owner-auth resolvers lock you out mid-flight.
-- Sign out and clear the react-query cache on success (`queryClient.clear()` already runs in `AuthContext.signOut`).
-- Once P1A ships, this flow gains the Apple token-revocation step — see 1A.6.
-
----
-
 ## P1 — Premium tier (the epic)
 
 > **No schema change or `amplify push` is required.** The entitlement plumbing (StoreKit adapter, `EntitlementContext`, pure rules in `src/utils/premiumAccess.ts`) is already built — see CLAUDE.md § Project state. What remains is the UI and the data.
 
-### 1.2 Mark quest data *(carries the last open product decision)*
-**Open: which 3 quests are free.** Then a seed-script pass (`scripts/`): set `isPremium: true` on all quests except those 3. Freshness propagates fast thanks to the `GetFreshQuests` cache-bypass — do not remove that workaround during this work (CLAUDE.md landmine #4).
+### 1.2 Mark quest data — script written, not yet run
+Free quests are decided: **Art Essentials, Bronze Legacy, Sacred Animals** (10 of 47 artworks); the other 9 are premium. `scripts/markPremiumQuests.js` does it, **dry-run by default** (`--apply` to write), and aborts unless all three titles match exactly.
 
-### 1.3 Gating UI — **in progress**
-- Build `PaywallModal` on the `AuthPromptModal` pattern (guest → auth prompt first; signed-in free user → paywall).
-- Gate points, all calling `isQuestAccessible` / `questLockState` from `src/utils/premiumAccess.ts`: `startQuest` in questDetail (the enforcement point), quest cards in artQuest (lock affordance), featured-quest card on home.
-- Premium badge already renders in home/artQuest — restyle to the four `QuestLockState` values, and render the `indeterminate` state neutrally so a paying user never sees a lock flash during the cold-launch cache read.
+Two prerequisites before running:
+1. `.env` needs `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (absent today) — run without `--apply` first.
+2. **Timing:** apply only once the gating build is reaching users. Already-shipped builds render a "Premium" badge with no gate, so marking early shows a badge on quests users can still start free. Bump the react-query `buster` in `QueryProvider.tsx` from `"v1"` to `"v2"` in that release so no device paints pre-premium cached quest data.
 
-### 1.4 Purchase flow — UI only
-`purchase()` and `restore()` already exist on `EntitlementContext`, including the `User.isPremium` mirror. What's left is presentation: the paywall's buy button with loading/failure states, and a **Restore Purchases** entry in profileSettings (App Store review requirement — a one-time non-consumable *must* be restorable).
+Do not remove the `GetFreshQuests` cache-bypass while doing this (CLAUDE.md landmine #4).
 
 ### 1.5 App Store Connect setup *(user task, can parallelize with 1.3–1.4)*
 Create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetime` (the id in `src/iap/products.ts` must match exactly), set pricing, complete App Store agreements/tax/banking, add sandbox testers. Not a subscription — no subscription group needed.
 
-### 1.6 Paywall analytics *(pull-forward from Gaps "observability")*
-Ship WITH launch, not after: paywall views, purchase starts/completions/restores, quest-start blocked events. Sentry breadcrumbs are now the whole story — there is no RevenueCat dashboard to fall back on, so anything not instrumented here is invisible. Without it we can't tune the free/premium split.
+### 1.6 Paywall analytics — breadcrumbs shipped, funnel unreviewed
+Sentry breadcrumbs are in place for paywall shown / purchase started / purchase error / restore result / quest-start blocked, plus an `isPremium` tag. What's left is confirming they actually arrive in Sentry from a real device and that the funnel is readable. Originally: paywall views, purchase starts/completions/restores, quest-start blocked events. Sentry breadcrumbs are now the whole story — there is no RevenueCat dashboard to fall back on, so anything not instrumented here is invisible. Without it we can't tune the free/premium split.
 
 ### 1.7 TestFlight QA pass
 IAP sandbox testing; explicitly re-test the AR landmines (release-only regressions) since premium touches quest/home/detail screens. The Simulator now runs everything except the AR screen itself (`3cf0386`), so most of this pass can be done locally — but AR and StoreKit sandbox still need a device.

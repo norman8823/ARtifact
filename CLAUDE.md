@@ -44,9 +44,8 @@ ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan 
 ## Known-stale / dead things (don't be misled)
 
 - Dead: `analyzeImage` Lambda, `rekognitionApi` API Gateway, commented Rekognition block in scan.tsx, `ARPrewarmManager.tsx` + `ARPermissionManager.ts` (8th Wall remnants), `useSceneModel.ts`, `arImage` field (replaced by `sceneId`), `appleLogin`/`googleLogin` stubs, `phoneLogin` route (no file), `aws-sdk` v2 app dependency.
-- Permanently unimplemented by decision: `remainingFreeScans`, quest `xpReward` as a completion bonus (see Settled decisions). `User.isPremium` is now written, but as a mirror only — never read it to gate anything.
+- Permanently unimplemented by decision: `remainingFreeScans`, quest `xpReward` as a completion bonus (see Settled decisions). `User.isPremium` is now written, but as a mirror only — **never read it to gate anything**; gate on `EntitlementContext`.
 - `Artwork.isFeatured` has **no GSI** — featured fetch is a bounded scan (5 pages max). Adding featured artworks deep in the table silently breaks it.
-- `src/utils/featuredQuest.ts` is extracted and tested but **not yet imported** — `home.tsx` still runs its own inline copy of the same hash (backlog P3.7).
 
 ## Project state — *this section is the tracker; keep it current*
 
@@ -66,7 +65,7 @@ Model: **one-time non-consumable $5.99 lifetime unlock** (not a subscription —
 - *Blocked on the user:* (1) **App Store Connect** — create the non-consumable `com.rauljiminian.ARtifact.premium.lifetime` and finish the Paid Apps agreement + tax/banking, or `fetchProducts` returns an empty array; (2) add `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`/`AWS_REGION` to `.env` so `markPremiumQuests.js` can run (dry-run first); (3) **TestFlight/device QA** of purchase, restore and refund — IAP does not work in the Simulator, and the paywall needs a signed-in account.
 - *Apply the quest flags late:* already-shipped builds render a "Premium" badge with no gate, so marking early shows a badge on quests users can still start free. Bump the react-query `buster` in `QueryProvider.tsx` to `"v2"` in the release that ships the gate.
 
-**Blocks any App Store submission:** backlog 0.5 — the "Delete Account" button in `profileSettings.tsx` only shows a "contact support" alert. Guideline 5.1.1(v) requires real in-app deletion.
+**Account deletion — shipped (guideline 5.1.1(v) unblocked).** `src/hooks/useAccountDeletion.ts` + `src/utils/accountDeletion.ts`. **Ordering is load-bearing:** every owned row (`Favorited`, `Visited`, `UserQuest`, `UserXP`, `User`) is deleted BEFORE the Cognito identity, and `canDeleteIdentity()` aborts the whole thing if any row failed — all user models are `@auth(allow: owner)`, so killing the identity with rows left behind makes them permanently unreadable and undeletable. Identity deletion uses Amplify v6's client-side `deleteUser()` — no admin IAM, no Lambda. UI is a single red-button warning modal (a typed-DELETE step was built then removed as redundant). Still owed: device QA against a throwaway account, and Apple token revocation once Sign in with Apple ships (backlog 1A.6).
 
 **Planned, not started:** P1A Sign in with Apple (native sheet + Cognito CUSTOM_AUTH triggers). Fully designed in `backlog.md`; do 1A.1 first — the Amplify auth config diverges from the live pool and the next `amplify update auth` can roll back the stack.
 

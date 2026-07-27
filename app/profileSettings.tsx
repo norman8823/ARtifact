@@ -3,7 +3,9 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { PaywallModal } from "@/components/PaywallModal";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useEntitlementContext } from "@/src/contexts/EntitlementContext";
+import { useAccountDeletion } from "@/src/hooks/useAccountDeletion";
 import { useProfileUpdate } from "@/src/hooks/useProfileUpdate";
 import { useUserData } from "@/src/hooks/useUserData";
 import { FontAwesome } from "@expo/vector-icons";
@@ -31,6 +33,35 @@ export default function ProfileSettingsScreen() {
     restore,
   } = useEntitlementContext();
   const [showPaywall, setShowPaywall] = useState(false);
+  const { signOut } = useAuthContext();
+  const { deleteAccount, isDeleting } = useAccountDeletion();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleConfirmDelete = async () => {
+    const result = await deleteAccount();
+    setShowDeleteModal(false);
+
+    if (result.ok) {
+      // The Cognito user is gone; drop local session + cached data. The auth
+      // state change navigates away on its own.
+      await signOut();
+      Alert.alert(
+        "Account Deleted",
+        "Your account and all associated data have been permanently deleted."
+      );
+      return;
+    }
+
+    // Deliberately reassuring: on a data failure we kept the account, so
+    // nothing was lost and retrying is safe.
+    Alert.alert(
+      result.reason === "data-incomplete"
+        ? "Account Not Deleted"
+        : "Deletion Failed",
+      result.message
+    );
+  };
+
 
   // App Review tests Restore and rejects a silent no-op, so every outcome gets
   // a distinct, plain-language alert.
@@ -456,14 +487,8 @@ export default function ProfileSettingsScreen() {
 
         <Pressable
           style={styles.deleteButton}
-          onPress={() => {
-            Alert.alert(
-              "Delete Account",
-              "This feature is not yet implemented. Please contact support to delete your account.",
-              [{ text: "OK" }]
-            );
-          }}
-          disabled={isUpdating}
+          onPress={() => setShowDeleteModal(true)}
+          disabled={isUpdating || isDeleting}
         >
           <FontAwesome
             name="trash"
@@ -583,6 +608,55 @@ export default function ProfileSettingsScreen() {
         </Pressable>
       </Modal>
 
+
+      {/* Step 2 of 2: type-to-confirm. An irreversible action shouldn't be one
+          mistap away, and Apple requires deletion to be deliberate. */}
+      <Modal
+        visible={showDeleteModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDeleteModal(false)}
+      >
+        <ThemedView style={styles.deleteModalOverlay}>
+          <ThemedView style={styles.deleteModalCard}>
+            <ThemedText type="subtitle" style={styles.deleteModalTitle}>
+              Permanently delete account?
+            </ThemedText>
+            <ThemedText style={styles.deleteModalBody}>
+              This erases your XP, rank, favorites, visited artworks and quest
+              progress. It cannot be undone.
+            </ThemedText>
+            <ThemedView style={styles.deleteModalButtons}>
+              <Pressable
+                style={styles.deleteModalCancel}
+                onPress={() => setShowDeleteModal(false)}
+                disabled={isDeleting}
+              >
+                <ThemedText style={styles.deleteModalCancelText}>
+                  Cancel
+                </ThemedText>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.deleteModalConfirm,
+                  isDeleting && styles.disabledButton,
+                ]}
+                onPress={handleConfirmDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <ActivityIndicator color={Colors.lightGray} />
+                ) : (
+                  <ThemedText style={styles.deleteModalConfirmText}>
+                    Delete Account
+                  </ThemedText>
+                )}
+              </Pressable>
+            </ThemedView>
+          </ThemedView>
+        </ThemedView>
+      </Modal>
+
       <PaywallModal
         visible={showPaywall}
         onClose={() => setShowPaywall(false)}
@@ -665,6 +739,57 @@ const styles = StyleSheet.create({
   },
   readOnlyText: {
     color: Colors.darkMedGray,
+  },
+  deleteModalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  deleteModalCard: {
+    width: "100%",
+    borderRadius: 20,
+    backgroundColor: Colors.lightGray,
+    padding: 24,
+  },
+  deleteModalTitle: {
+    fontSize: 18,
+    marginBottom: 12,
+  },
+  deleteModalBody: {
+    fontSize: 14,
+    color: Colors.darkMedGray,
+    marginBottom: 12,
+  },
+  deleteModalButtons: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  deleteModalCancel: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: Colors.darkMedGray,
+    alignItems: "center",
+  },
+  deleteModalCancelText: {
+    color: Colors.darkMedGray,
+    fontSize: 16,
+  },
+  deleteModalConfirm: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 14,
+    backgroundColor: Colors.metRed,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 48,
+  },
+  deleteModalConfirmText: {
+    color: Colors.lightGray,
+    fontSize: 16,
   },
   purchaseRow: {
     flexDirection: "row",
