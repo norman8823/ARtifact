@@ -47,7 +47,7 @@ The react-query layer ([queries.ts](src/hooks/queries.ts)) covers home/profile/a
 ### 11. `Artwork.isFeatured` has no GSI — and cannot have one directly
 Featured artworks = filtered DynamoDB *scan*, bounded to 5 pages/500 items ([useArtworks.ts](src/hooks/useArtworks.ts)). Works today because featured items are seeded early in the table; silently breaks if a featured artwork lands beyond the scan bound.
 
-*Tracked as backlog **P3.9**.* **Correction (2026-07-13): this is not a one-line `@index` fix.** DynamoDB key attributes must be String, Number, or Binary — **Boolean is not a valid key type**, so `@index` on `isFeatured: Boolean` cannot be deployed. (Consistent with the schema: all six existing `@index` directives are on `ID!` fields.) The real fix is a **sparse GSI on a String field**: add e.g. `featuredStatus: String @index(name: "byFeatured", sortKeyFields: ["id"])`, populate it with a constant like `"FEATURED"` **only** for featured artworks and leave it null elsewhere (items missing the key attribute are absent from the index, so the query reads only featured rows), backfill via `scripts/`, then switch `getFeaturedArtworks` to the generated index query. Estimate: schema + push + backfill script + query swap, not a one-liner.
+*Tracked as backlog **P3.8**.* **Correction (2026-07-13): this is not a one-line `@index` fix.** DynamoDB key attributes must be String, Number, or Binary — **Boolean is not a valid key type**, so `@index` on `isFeatured: Boolean` cannot be deployed. (Consistent with the schema: all six existing `@index` directives are on `ID!` fields.) The real fix is a **sparse GSI on a String field**: add e.g. `featuredStatus: String @index(name: "byFeatured", sortKeyFields: ["id"])`, populate it with a constant like `"FEATURED"` **only** for featured artworks and leave it null elsewhere (items missing the key attribute are absent from the index, so the query reads only featured rows), backfill via `scripts/`, then switch `getFeaturedArtworks` to the generated index query. Estimate: schema + push + backfill script + query swap, not a one-liner.
 
 ### 12. Workarounds papering over unexplained races (each has a TODO)
 - **250ms cold-start auth delay** ([AuthContext.tsx:52](src/contexts/AuthContext.tsx#L52)) — guards a Cognito token-hydration race nobody has pinned down; it's a guessed constant on the critical launch path.
@@ -77,13 +77,13 @@ ReactVision ships `ViroKit.framework` as a single **device-only** arm64 slice (`
 
 **Standing constraint:** never add a module-scope Viro import anywhere under `app/`, or the whole app breaks on the Simulator again. Opening the AR screen itself still requires a physical device.
 
-### 12c. Pushed routes have no auth guards, and the app registers a deep-link scheme *(backlog P3.10)*
+### 12c. Pushed routes have no auth guards, and the app registers a deep-link scheme *(backlog P3.9)*
 `app.json` sets `"scheme": "artifact"`, and pushed routes don't check `isAuthenticated` — only `isAuthReady`. So `artifact://questDetail?id=X` and `artifact://profileSettings` both render for a guest (verified 2026-07-27). questDetail used to fail safe only because `startQuest` throws; the premium gate now checks auth explicitly *before* premium so a guest gets a sign-in prompt rather than a paywall. profileSettings still throws `UserUnAuthenticatedException` from `ensureUserInDB` on mount for a guest — harmless but noisy, and it means the screen half-renders. A shared auth guard on pushed routes would close the whole class.
 
-### 13. AR scene ordering invariants are load-bearing and undocumented in code *(the FeaturePoint contradiction is backlog P3.11; the invariants themselves are CLAUDE.md landmine #1 — permanent, not a to-do)*
+### 13. AR scene ordering invariants are load-bearing and undocumented in code *(the FeaturePoint contradiction is backlog P3.10; the invariants themselves are CLAUDE.md landmine #1 — permanent, not a to-do)*
 Three release-build regressions came from reordering: (a) `Viro3DObject` must mount only after tap-to-place (`9feea4f` — invisible model), (b) asset fetch must gate on `isARReady` (`15b6d3e` — broken tap-to-place), (c) the tap overlay must unmount after placement or gestures never reach Viro. Also: the hit-test includes `FeaturePoint` ([ArtworkARScene.tsx:137](components/ar-scenes/ArtworkARScene.tsx#L137)) while MIGRATION_NOTES.md claims it's excluded to prevent mid-air floating — code and doc disagree.
 
-### 14. `AR_TEST_MODE` is a compile-time flag *(backlog P3.12)*
+### 14. `AR_TEST_MODE` is a compile-time flag *(backlog P3.11)*
 [arViewer.tsx:11-12](app/arViewer.tsx#L11) — hardcoded boolean + hardcoded test sceneId. Flipping it to `true` and shipping would silently route every AR view to the test scene.
 
 ### 15. Scan flow is `any`-typed end to end
