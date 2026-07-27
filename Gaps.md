@@ -59,7 +59,7 @@ Featured artworks = filtered DynamoDB *scan*, bounded to 5 pages/500 items ([use
 | 8th Wall prewarm | `src/components/ARPrewarmManager.tsx`, `src/utils/ARPermissionManager.ts` | 8th Wall is gone; nothing imports ARPrewarmManager |
 | `useSceneModel` | [src/hooks/useSceneModel.ts](src/hooks/useSceneModel.ts) | Stub with empty hardcoded map; ArtworkARScene uses `rvGetSceneAssets` instead |
 | `arImage` field/param | schema + [artDetail.tsx](app/artDetail.tsx) logging | Replaced by `sceneId` |
-| Apple/Google login screens | `app/appleLogin.tsx`, `app/googleLogin.tsx` | Non-functional UI stubs, unreachable in normal flow |
+| Apple/Google login screens | `app/appleLogin.tsx`, `app/googleLogin.tsx` | Non-functional UI stubs, unreachable in normal flow. Both are deleted as part of backlog 1A.5 — `appleLogin` is superseded by the real native Sign in with Apple flow, `googleLogin` is out of scope (iOS-only app) |
 | `phoneLogin` route | [_layout.tsx:157](app/_layout.tsx#L157) | Screen registered; file doesn't exist |
 
 ## Fragile edges
@@ -78,6 +78,16 @@ README still documents Expo SDK 53, 8th Wall WebView AR, Lambda/Rekognition/API 
 
 ### 17. Sentry DSN hardcoded
 [_layout.tsx:21](app/_layout.tsx#L21). Acceptable for a client DSN, but combined with no environment split, dev sessions pollute production Sentry.
+
+## Added after the initial audit
+
+*Numbering continues from above so existing `*(Gaps #N)*` references in [backlog.md](backlog.md) stay valid. Severity is noted per item rather than by section.*
+
+### 18. **Critical** — "Delete Account" is a non-functional stub
+[profileSettings.tsx:376-378](app/profileSettings.tsx#L376) answers the Delete Account button with an alert: *"This feature is not yet implemented. Please contact support."* App Store guideline 5.1.1(v) requires **in-app** account deletion for any app that supports account creation — a support email does not satisfy it. This is a standing rejection risk on the next submission, independent of any new feature. Scoped as backlog **0.5** — it gates any submission, so it sits in P0 rather than behind the Apple work. Adding Sign in with Apple later adds one step (revoking the user's tokens at `POST https://appleid.apple.com/auth/revoke`, backlog 1A.6), it does not gate the deletion flow itself.
+
+### 19. **High** — Amplify auth config diverges from the live Cognito pool
+[cli-inputs.json:44-46](amplify/backend/auth/ARtifactAuth/cli-inputs.json#L44) declares `"usernameAttributes": ["email, phone_number"]` — a single malformed string, not a legal `UsernameAttributes` value — while [backend-config.json:69](amplify/backend/backend-config.json#L69) says `["EMAIL","PHONE_NUMBER"]`. Neither is likely to match reality: if `phone_number` were genuinely a username attribute, the second tester to sign up with the shared dummy `+10000000000` ([useAuth.ts:99](src/hooks/useAuth.ts#L99)) would have hit `UsernameExistsException`. No CloudFormation is checked in under `amplify/backend/auth/ARtifactAuth/`, so the Gen 1 CLI regenerates the whole auth template from `cli-inputs.json` on every push — meaning the *next* `amplify update auth` (for any reason) will either fail CFN validation or attempt to modify the immutable `UsernameAttributes` and roll the auth stack back. The AppSync API `dependsOn` auth, so that rollback can cascade. Reconcile against `describe-user-pool` before touching auth infrastructure; scoped as backlog 1A.1.
 
 ## Missing observability
 No analytics events (scan success rate, quest completion, AR placement success), no Sentry breadcrumbs around the two flakiest flows (scan network call, AR asset fetch). The Railway server's health is invisible to the client team.
