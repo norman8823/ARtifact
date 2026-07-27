@@ -60,10 +60,11 @@ ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan 
 - **XP concurrency fix** — `awardXP` is a CAS loop with deterministic record ids (`src/utils/xpAward.ts`).
 - **Simulator unblocked** (`3cf0386`) — Viro loads lazily, so the app runs on the Simulator; only the AR screen needs a device.
 
-**In flight — P1 premium tier:**
-- *Done:* `expo-iap` 4.7.1 wired, `src/iap/storeKit.ts`, `src/contexts/EntitlementContext.tsx` (provider in `app/_layout.tsx`), pure gating rules + tests in `src/utils/premiumAccess.ts`.
-- *Now:* the gating UI — `components/PaywallModal.tsx`, `questDetail` enforcement, lock affordances on quest cards. Nothing consumed `isQuestAccessible`/`questLockState` until this.
-- *Then:* mark quest data (blocked on picking the 3 free quests), Restore Purchases in profileSettings, paywall analytics.
+**P1 premium tier — code complete, unverified against a real purchase.**
+Model: **one-time non-consumable $5.99 lifetime unlock** (not a subscription — finite content, episodic museum usage; see `premium-tier.md`). Library: `expo-iap` 4.7.1 (note `request.apple`, not the deprecated `request.ios`). Free quests: **Art Essentials, Bronze Legacy, Sacred Animals** (10 of 47 artworks).
+- *Built:* `src/iap/{products,storeKit}.ts` (the only importers of expo-iap), `src/contexts/EntitlementContext.tsx` (provider in `app/_layout.tsx`), pure rules + 30 tests in `src/utils/premiumAccess.ts`, `components/PaywallModal.tsx`, the gate in `questDetail.tsx`, lock badges on `artQuest`/`home`, Purchases + Restore in `profileSettings.tsx`, Sentry paywall breadcrumbs, and `scripts/markPremiumQuests.js`.
+- *Blocked on the user:* (1) **App Store Connect** — create the non-consumable `com.rauljiminian.ARtifact.premium.lifetime` and finish the Paid Apps agreement + tax/banking, or `fetchProducts` returns an empty array; (2) add `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`/`AWS_REGION` to `.env` so `markPremiumQuests.js` can run (dry-run first); (3) **TestFlight/device QA** of purchase, restore and refund — IAP does not work in the Simulator, and the paywall needs a signed-in account.
+- *Apply the quest flags late:* already-shipped builds render a "Premium" badge with no gate, so marking early shows a badge on quests users can still start free. Bump the react-query `buster` in `QueryProvider.tsx` to `"v2"` in the release that ships the gate.
 
 **Blocks any App Store submission:** backlog 0.5 — the "Delete Account" button in `profileSettings.tsx` only shows a "contact support" alert. Guideline 5.1.1(v) requires real in-app deletion.
 
