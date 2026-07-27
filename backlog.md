@@ -147,10 +147,10 @@ Paying users will expect scan to work. Add fetch timeout + one retry + in-flight
 4. **Server-side explore search** *(Gaps #10)* — GSI or search field; stops client-side full-table walks.
 5. **Retire workarounds behind their TODOs** *(Gaps #12)* — 250ms auth delay → deterministic wait; understand the freezeOnBlur desync; document/solve the AppSync quest staleness. Low urgency; don't destabilize around launch.
 6. **Sentry env split** *(Gaps #17)* + broader analytics beyond the paywall.
-7. **Retroactive quest credit UX** *(Gaps #7)* — auto-complete-at-start should still celebrate + award (partially addressed by 0.3).
+7. **Retroactive quest credit UX** *(Gaps #7)* — a quest that auto-completes at start should still get a celebration moment. **Celebration only, no XP** — 0.3 settled that there is never a completion award; XP is scan-only, so the user has already been paid for those artworks and awarding again would double-count.
 
 ---
 
 ## Explicitly rejected / not doing
-- **Scan-count gating** — `remainingFreeScans` removed (P0.4). Premium = quest access only.
+- **Scan-count gating** — dead by decision. Premium = quest access only. Note the *schema field* `User.remainingFreeScans` is retained permanently (0.4b); only the client-side usage was removed.
 - **Webhook/server-side entitlement enforcement for v1** — client-gated content is acceptable; revisit only if abuse appears.

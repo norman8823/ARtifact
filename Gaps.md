@@ -4,10 +4,10 @@
 
 ## Critical
 
-### 1. Zero tests, zero CI
-There is not a single `*.test.*` file, no jest/vitest config, no `.github/workflows`. Every regression so far (invisible AR model in release, dropped back press, wrong featured-quest filter) was caught manually in TestFlight. Highest-leverage additions, in order:
-- Unit tests for pure logic: `useScanSuccess` orchestration, quest-completion set math ([useUserQuests.ts](src/hooks/useUserQuests.ts)), rank-from-XP lookup, the Flask→Rekognition response adapter ([scan.tsx:164-254](app/scan.tsx#L164)).
-- A CI lint + `tsc --noEmit` gate — currently even type errors only surface at build time.
+### 1. Zero tests, zero CI — ✅ **mostly resolved** (backlog 0.1)
+~~There is not a single `*.test.*` file, no jest/vitest config, no `.github/workflows`.~~ A jest-expo harness and [ci.yml](.github/workflows/ci.yml) now run on PRs/pushes to `development`, with pure logic extracted to `src/utils/` (`questProgress`, `rankUtils`, `scanAdapter`, `xpAward`) and unit-tested.
+
+**Still open:** the tsc + lint jobs are `continue-on-error` because the pre-existing baseline fails (~29 `tsc --noEmit` errors across 14 files, 8 lint errors). Until that's cleaned up, type errors still only surface at build time — CI is a test gate, not a type gate. Tracked as backlog 0.1b. Coverage is also still unit-only: no component or E2E tests, so the release-only AR regressions remain uncaught by CI.
 
 ### 2. Live ReactVision API key committed in `app.json`
 `rvApiKey: "rv_live_8fd77..."` sits in [app.json](app.json) plugin config (with `rvProjectId`). It ships in the binary anyway, but being in git history means it can't be rotated by config alone. Move to an EAS secret / env-substituted config (`app.config.js`) and rotate the key.
@@ -27,7 +27,7 @@ Resolved 2026-07-13: the completion bonus was deliberately removed (it made XP t
 Resolved 2026-07-13: `awardXP` now does a conditional-update CAS loop with retry (`src/utils/xpAward.ts`), and new `UserXP`/`Visited` records use deterministic ids so duplicate creates collide instead of double-writing; `useScanSuccess` gates XP on the visit-create result. Residual note: the `byUserXP` GSI (timestamp SK) still hints at an abandoned append-only design — single-record-updated-in-place is now the settled pattern.
 
 ### 7. Retroactive quest credit is inconsistent
-`startQuest` seeds progress from already-visited artworks (retroactive credit at start time), but artworks visited *between* quest creation and later scans only count via `updateQuestProgress`. If a user visits artwork X, then starts a quest containing X, they get credit; the model works — but a quest can silently auto-complete at start, awarding the completion state with no celebration/XP moment.
+`startQuest` seeds progress from already-visited artworks (retroactive credit at start time), but artworks visited *between* quest creation and later scans only count via `updateQuestProgress`. If a user visits artwork X, then starts a quest containing X, they get credit; the model works — but a quest can silently auto-complete at start, flipping to the completion state with no celebration moment. **Celebration only** — per #5 there is no completion XP to award, and the scan XP was already granted at visit time.
 
 ### 8. `remainingFreeScans` / `isPremium` are dead schema
 `User.remainingFreeScans`, `User.isPremium`, `Quest.isPremium` exist in [schema.graphql](amplify/backend/api/artifact/schema.graphql) but no code enforces scan limits or premium gating. Premium was designed, never built.
