@@ -66,6 +66,11 @@ Featured artworks = filtered DynamoDB *scan*, bounded to 5 pages/500 items ([use
 
 ## Fragile edges
 
+### 12b. The iOS Simulator cannot run this app at all *(verified 2026-07-27)*
+ReactVision ships `ViroKit.framework` as a single **device-only** arm64 slice (`LC_BUILD_VERSION platform IOS`; no simulator slice, no `.xcframework`). The app compiles (0 errors) and the binary launches, but the JS bundle dies at module load — `ArtworkARScene.tsx:3` → `arViewer.tsx:3`, `Cannot read property 'setJSAnimations' of null` — because the Viro native modules are null. Since expo-router eagerly loads the `arViewer` route, this fires on every launch regardless of navigation, and the red box is not dismissible.
+
+**Impact:** there is no local UI feedback loop for *any* feature, not just AR. Every runtime check requires a physical device or TestFlight, which is a major tax on iteration and is why release-only regressions keep slipping through (#13). Two possible mitigations worth investigating: lazy-load the Viro imports inside `ArtworkARScene` so the module graph doesn't touch native at import time, or stub the Viro modules when `!Device.isDevice`. Either would unlock simulator development for the ~95% of the app that isn't AR.
+
 ### 13. AR scene ordering invariants are load-bearing and undocumented in code
 Three release-build regressions came from reordering: (a) `Viro3DObject` must mount only after tap-to-place (`9feea4f` — invisible model), (b) asset fetch must gate on `isARReady` (`15b6d3e` — broken tap-to-place), (c) the tap overlay must unmount after placement or gestures never reach Viro. Also: the hit-test includes `FeaturePoint` ([ArtworkARScene.tsx:137](components/ar-scenes/ArtworkARScene.tsx#L137)) while MIGRATION_NOTES.md claims it's excluded to prevent mid-air floating — code and doc disagree.
 

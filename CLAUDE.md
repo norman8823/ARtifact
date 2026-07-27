@@ -6,7 +6,9 @@ ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan 
 
 ## Commands
 
-- **Run:** `npx expo run:ios` (requires `npx expo prebuild` after native config changes). **Expo Go does NOT work** — ReactVision needs native builds.
+- **Run:** `npx expo run:ios --device "<name>"` on a **physical iPhone** (requires `npx expo prebuild` after native config changes). **Expo Go does NOT work** — ReactVision needs native builds.
+- **⚠️ The iOS Simulator does not work at all** (verified 2026-07-27). ReactVision ships `ViroKit.framework` as a single **device-only** arm64 slice (`LC_BUILD_VERSION platform IOS`, no simulator slice, no xcframework). The binary builds and launches, Metro bundles, then JS dies at module load: `ArtworkARScene.tsx:3` → `arViewer.tsx:3` with `Cannot read property 'setJSAnimations' of null`. expo-router eagerly loads the `arViewer` route, so this fires on **every** launch regardless of navigation, and the red box is not dismissible. Consequence: **all runtime verification needs a real device or TestFlight.** Don't waste time debugging the simulator.
+- If `pod install` fails with `Unicode Normalization not appropriate for ASCII-8BIT`, the shell has no UTF-8 locale — prefix with `LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8`.
 - **Lint:** `npm run lint`. **Tests:** `npm test` (jest-expo; pure-logic units in `src/utils/__tests__/`). CI (`.github/workflows/ci.yml`) requires tests to pass; typecheck/lint are advisory until the pre-existing baseline is fixed (backlog P0.1b).
 - **Builds:** EAS (`eas.json`): development (simulator) / preview / production. Sentry source maps via `sentry.properties` (auth token from `SENTRY_AUTH_TOKEN` env).
 - **Backend:** `amplify push` from repo root regenerates `src/API.ts` + `src/graphql/*` after schema changes.
