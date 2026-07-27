@@ -1,16 +1,36 @@
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
-import ArtworkARScene from "@/components/ar-scenes/ArtworkARScene";
+import type { ARSceneNavigatorProps } from "@/components/ar-scenes/ARSceneNavigator";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
-import { ViroARSceneNavigator } from "@reactvision/react-viro";
 
 // --- Debug flag: set to true to bypass sceneId param and use a test scene ---
 const AR_TEST_MODE = false;
 const AR_TEST_SCENE_ID = "73f3603f-5579-4642-ad27-fccfc87922a3";
 // ---------------------------------------------------------------------------
+
+// ReactVision is loaded lazily, on first render of this screen, NOT at module
+// scope. expo-router eagerly requires every route module, and importing Viro
+// executes native-touching module code that throws on the iOS Simulator
+// (ViroKit is a device-only framework) — a static import here crashed the
+// whole app on launch, even for users who never opened AR. See Gaps.md #12b.
+//
+// This is a synchronous require, not React.lazy, so the navigator still mounts
+// in the SAME commit as the tap overlay below. Device behavior is unchanged;
+// no new async window opens between the overlay appearing and the scene
+// existing. The type-only import above is erased at compile time.
+let cachedNavigator: React.ComponentType<ARSceneNavigatorProps> | null = null;
+function loadARSceneNavigator(): React.ComponentType<ARSceneNavigatorProps> {
+  if (!cachedNavigator) {
+    // Deferring to render time is the whole point here; a static import would
+    // crash launch on the Simulator.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    cachedNavigator = require("@/components/ar-scenes/ARSceneNavigator").default;
+  }
+  return cachedNavigator!;
+}
 
 export default function ARViewerScreen() {
   const params = useLocalSearchParams();
@@ -58,14 +78,16 @@ export default function ARViewerScreen() {
     );
   }
 
+  // Resolved here, past the no-sceneId early return, so the Viro graph is only
+  // evaluated when an AR scene is actually going to render.
+  const ARSceneNavigator = loadARSceneNavigator();
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         {/* AR Scene Navigator */}
-        <ViroARSceneNavigator
-          autofocus={true}
-          initialScene={{ scene: ArtworkARScene as any }}
+        <ARSceneNavigator
           viroAppProps={{
             sceneId: effectiveSceneId,
             onStatusChange: handleStatusChange,
