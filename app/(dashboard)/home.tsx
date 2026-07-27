@@ -5,6 +5,9 @@ import { QuestArtworkThumbnails } from "@/components/QuestArtworkThumbnails";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
+import { useEntitlementContext } from "@/src/contexts/EntitlementContext";
+import { pickFeaturedQuest } from "@/src/utils/featuredQuest";
+import { questLockState } from "@/src/utils/premiumAccess";
 import { type Artwork } from "@/src/hooks/useArtworks";
 import { type Quest } from "@/src/hooks/useQuests";
 import {
@@ -32,6 +35,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function HomeScreen() {
   const { isAuthReady, isAuthenticated } = useAuthContext();
+  const { entitlement, isEntitlementReady } = useEntitlementContext();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [currentDate, setCurrentDate] = useState("");
@@ -95,35 +99,27 @@ export default function HomeScreen() {
     }
   }, [factsData, randomFact]);
 
-  // Stable quest selection using useMemo
+  // Deterministic per-day pick, extracted to src/utils/featuredQuest.ts so it
+  // is unit-tested. Premium quests stay eligible on purpose — the card shows
+  // them locked, which advertises the tier on the highest-traffic surface.
   const stableFeaturedQuest = useMemo(() => {
-    if (allQuests.length === 0) return null;
-
-    // Get completed quest IDs
     const completedQuestIds = new Set(
       userQuests.filter((uq) => uq.isCompleted).map((uq) => uq.questId)
     );
-
-    // Filter available quests (not completed)
-    const availableQuests = allQuests.filter(
-      quest => !completedQuestIds.has(quest.id)
+    return pickFeaturedQuest(
+      allQuests,
+      completedQuestIds,
+      new Date().toDateString()
     );
-
-    // Select a quest, prioritizing available ones
-    const questsToChooseFrom = availableQuests.length > 0 ? availableQuests : allQuests;
-    if (questsToChooseFrom.length > 0) {
-      // Use a deterministic selection based on the current date
-      // This will give a different quest each day but remain stable during the day
-      const today = new Date().toDateString();
-      const seed = today.split('').reduce((a, b) => {
-        a = ((a << 5) - a) + b.charCodeAt(0);
-        return a & a;
-      }, 0);
-      const index = Math.abs(seed) % questsToChooseFrom.length;
-      return questsToChooseFrom[index];
-    }
-    return null;
   }, [allQuests, userQuests]);
+
+  // Cosmetic lock state for the featured card. The gate is in questDetail;
+  // this only picks which icon the badge shows.
+  const featuredQuestLockState = questLockState({
+    isPremiumQuest: featuredQuest?.isPremium,
+    entitlement,
+    isEntitlementReady,
+  });
 
   // Update featured quest when stable selection changes
   useEffect(() => {
@@ -418,6 +414,14 @@ export default function HomeScreen() {
                       </ThemedText>
                       {featuredQuest.isPremium && (
                         <ThemedView style={styles.premiumBadge}>
+                          {/* No icon while entitlement is unresolved, so a
+                              paying user never sees a lock flash on launch. */}
+                          {featuredQuestLockState === "locked" && (
+                            <FontAwesome name="lock" size={11} color={Colors.darkYellow} />
+                          )}
+                          {featuredQuestLockState === "owned" && (
+                            <FontAwesome name="unlock" size={11} color={Colors.darkYellow} />
+                          )}
                           <ThemedText style={styles.premiumText}>Premium</ThemedText>
                         </ThemedView>
                       )}

@@ -4,6 +4,7 @@ import { QuestArtworkThumbnails } from "@/components/QuestArtworkThumbnails";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
+import { useEntitlementContext } from "@/src/contexts/EntitlementContext";
 import {
   useAllQuestsQuery,
   useAllRanksQuery,
@@ -12,6 +13,7 @@ import {
 } from "@/src/hooks/queries";
 import { type Quest as BaseQuest } from "@/src/hooks/useQuests";
 import { type Rank } from "@/src/hooks/useRanks";
+import { questLockState, type QuestLockState } from "@/src/utils/premiumAccess";
 import { type UserQuest } from "@/src/hooks/useUserQuests";
 import { type UserXP } from "@/src/hooks/useUserXP";
 import { FontAwesome } from "@expo/vector-icons";
@@ -160,12 +162,21 @@ const ActiveQuestItem = React.memo(({ quest, questLookup, isCompleted = false }:
   );
 });
 
-const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => {
+// lockState arrives as a PROP, not from useEntitlementContext() — this
+// component is memo'd, and a context read here would re-render every row on any
+// entitlement change. Purely cosmetic: the gate lives in questDetail, and the
+// tap still navigates (seeing the quest contents is the ad).
+const AvailableQuestItem = React.memo(
+  ({ quest, lockState }: { quest: BaseQuest; lockState: QuestLockState }) => {
   const [isPressed, setIsPressed] = useState(false);
 
   return (
     <Pressable
-      style={[styles.questCard, isPressed && styles.questCardPressed]}
+      style={[
+        styles.questCard,
+        isPressed && styles.questCardPressed,
+        lockState === "locked" && styles.questCardLocked,
+      ]}
       onPress={() => router.push(`/questDetail?id=${quest.id}`)}
       onPressIn={() => setIsPressed(true)}
       onPressOut={() => setIsPressed(false)}
@@ -178,6 +189,23 @@ const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => {
           </ThemedText>
           {quest.isPremium && (
             <ThemedView style={styles.premiumBadge}>
+              {/* "indeterminate" renders no icon: entitlement hasn't resolved
+                  yet, and flashing a lock at a paying user on cold launch is
+                  worse than showing a plain badge for a moment. */}
+              {lockState === "locked" && (
+                <FontAwesome
+                  name="lock"
+                  size={11}
+                  color={Colors.darkYellow}
+                />
+              )}
+              {lockState === "owned" && (
+                <FontAwesome
+                  name="unlock"
+                  size={11}
+                  color={Colors.darkYellow}
+                />
+              )}
               <ThemedText style={styles.premiumText}>Premium</ThemedText>
             </ThemedView>
           )}
@@ -202,7 +230,8 @@ const AvailableQuestItem = React.memo(({ quest }: { quest: BaseQuest }) => {
     )}
   </Pressable>
   );
-});
+  }
+);
 
 export default function ArtQuestScreen() {
   const { isAuthReady, isAuthenticated } = useAuthContext();
@@ -234,6 +263,8 @@ export default function ArtQuestScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const userXP: UserXP | null = xpData ?? null;
+
+  const { entitlement, isEntitlementReady } = useEntitlementContext();
 
   // Derive quest groupings + lookup from the cached quest data (was loadData).
   const { availableQuests, activeQuests, completedQuests, questLookup } =
@@ -413,7 +444,14 @@ export default function ArtQuestScreen() {
       case 'availableQuest':
         return (
           <ThemedView style={[styles.section, { paddingTop: 0 }]}>
-            <AvailableQuestItem quest={item.data} />
+            <AvailableQuestItem
+              quest={item.data}
+              lockState={questLockState({
+                isPremiumQuest: item.data.isPremium,
+                entitlement,
+                isEntitlementReady,
+              })}
+            />
           </ThemedView>
         );
 
@@ -571,6 +609,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     ...shadowStyle,
   },
+  questCardLocked: {
+    opacity: 0.75,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.darkYellow,
+  },
   questCardPressed: {
     shadowOpacity: 0.4,
     shadowRadius: 2,
@@ -665,6 +708,9 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   premiumText: {
     color: Colors.darkYellow,
