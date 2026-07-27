@@ -3,9 +3,10 @@
 *Ordered by priority AND order of operations — items within a phase are sequenced so earlier ones de-risk later ones. Driving goal: ship the premium tier (premium-gated quests, first 3 quests free, no scan limits).*
 
 **Product decisions locked in:**
-- Premium gates **quests only**. Scan count is NOT gated — `remainingFreeScans` is officially dead.
+- Premium gates **quests only**. Scan count is NOT gated — `remainingFreeScans` is dead client-side (the schema field stays forever, see 0.4b).
+- Premium is a **one-time lifetime unlock**, not a subscription (D1, see 1.1). Bought via `expo-iap`; StoreKit is the source of truth.
 - First 3 quests free, the rest premium. Mechanism: the existing `Quest.isPremium` flag (already in schema, already fetched, already renders a badge in artQuest) — mark all but the 3 chosen free quests as premium in data. No "ordering" concept needed.
-- Open decision: **which** 3 quests are free (pick beginner-friendly ones with high-traffic galleries).
+- **Only open product decision: which 3 quests are free** (pick beginner-friendly ones with high-traffic galleries) — blocks 1.2.
 
 ---
 
@@ -49,28 +50,38 @@ Prep (2026-07-13) invalidated this item's premise. Three findings:
 
 > **P1 is unblocked — no schema change or `amplify push` is required (see 0.4).**
 
-### 1.1 Entitlement architecture decision — 📄 decision doc written, awaiting D1–D3
-See **[premium-tier.md](premium-tier.md)** for the full analysis. Blocked on three owner decisions: **D1** one-time unlock vs subscription (recommend one-time — episodic museum usage, far less code), **D2** library (recommend `expo-iap` if one-time, RevenueCat if subscription; note `react-native-iap` was archived 2026-04-26), **D3** which 3 quests are free. Architecture settled either way: StoreKit is the entitlement source of truth, `User.isPremium` is a display/analytics mirror only, no webhook backend (zero-Lambda preserved), fail to last-known-good offline.
+### 1.1 Entitlement architecture decision — ✅ DONE (D1, D2 decided; D3 moved to 1.2)
+See **[premium-tier.md](premium-tier.md)**. **D1: one-time lifetime unlock, not a subscription** — the quest catalog is finite, so there is no recurring value to deliver. **D2: `expo-iap` 4.7.1** (`react-native-iap` was archived 2026-04-26; RevenueCat is unnecessary without a subscription to manage). Product id `com.rauljiminian.ARtifact.premium.lifetime`, non-consumable, `$5.99` fallback price (`src/iap/products.ts`). Architecture as planned: StoreKit is the source of truth, `User.isPremium` is a display/analytics mirror never consulted for gating, no webhook backend (zero-Lambda preserved), offline falls back to last-known-good. **D3 (which 3 quests are free) is still open** — tracked in 1.2.
 
-### 1.2 Mark quest data
-Seed-script pass (`scripts/`): set `isPremium: true` on all quests except the 3 chosen free ones. Freshness propagates fast thanks to the `GetFreshQuests` cache-bypass — do not remove that workaround during this work (CLAUDE.md landmine #4).
+### 1.1b Entitlement plumbing — ✅ DONE
+Everything between StoreKit and the UI exists and is unit-tested (69 tests green):
+- `src/iap/storeKit.ts` — `initStore`, `fetchPremiumPrice`, `queryEntitlement`, `buyPremium`, `restoreAndQuery`, `finishPremiumTransaction`, plus the purchase listeners.
+- `src/contexts/EntitlementContext.tsx` — provider wired into `app/_layout.tsx:136`; exposes `isEntitled`, `isEntitlementReady`, `priceLabel`, `purchase()`, `restore()`, `refresh()`.
+- `src/utils/premiumAccess.ts` — pure rules: `resolveEntitlement` (indeterminate → cached last-known-good with **no TTL**, so a paying user in a museum basement keeps access), `isQuestAccessible` (an already-started quest stays playable regardless of entitlement; `isPremiumQuest !== true` so legacy null rows aren't locked), `questLockState`.
+- **Nothing in the UI consumes these yet** — that's 1.3.
 
-### 1.3 Gating UI
-- Extend the existing `AuthPromptModal` pattern into a `PaywallModal` (guest → auth prompt first; signed-in free user → paywall).
-- Gate points: `startQuest` in questDetail (the enforcement point), quest cards in artQuest (lock affordance on premium quests), featured-quest card on home.
-- Premium badge already renders — restyle to lock/unlock state.
+### 1.2 Mark quest data *(carries open decision D3)*
+**Open: which 3 quests are free.** Then a seed-script pass (`scripts/`): set `isPremium: true` on all quests except those 3. Freshness propagates fast thanks to the `GetFreshQuests` cache-bypass — do not remove that workaround during this work (CLAUDE.md landmine #4).
 
-### 1.4 Purchase flow
-RevenueCat purchase + **Restore Purchases** (App Store review requirement — put it in profileSettings), loading/failure states, entitlement refresh on foreground. Mirror entitlement to `User.isPremium` post-purchase.
+### 1.3 Gating UI — the remaining work; helpers are ready and unconsumed
+- Build `PaywallModal` on the `AuthPromptModal` pattern (guest → auth prompt first; signed-in free user → paywall). Nothing exists in `components/` yet.
+- Gate points, all calling `isQuestAccessible` / `questLockState` from `src/utils/premiumAccess.ts`: `startQuest` in questDetail (the enforcement point), quest cards in artQuest (lock affordance), featured-quest card on home.
+- Premium badge already renders in home/artQuest — restyle to the four `QuestLockState` values, and render the `indeterminate` state neutrally so a paying user never sees a lock flash during the cold-launch cache read.
+
+### 1.4 Purchase flow — logic done, UI outstanding
+`purchase()` and `restore()` already exist on `EntitlementContext` (1.1b), including the `User.isPremium` mirror. What's left is presentation: the paywall's buy button with loading/failure states, and a **Restore Purchases** entry in profileSettings (App Store review requirement — a one-time non-consumable *must* be restorable).
 
 ### 1.5 App Store Connect setup *(user task, can parallelize with 1.3–1.4)*
-Subscription product(s), pricing, App Store agreements/tax/banking, sandbox testers.
+Create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetime` (the id in `src/iap/products.ts` must match exactly), set pricing, complete App Store agreements/tax/banking, add sandbox testers. Not a subscription — no subscription group needed.
 
 ### 1.6 Paywall analytics *(pull-forward from Gaps "observability")*
-Ship WITH launch, not after: paywall views, purchase starts/completions/restores, quest-start blocked events. Minimum: Sentry breadcrumbs + RevenueCat's built-in charts. Without this we can't tune the free/premium split.
+Ship WITH launch, not after: paywall views, purchase starts/completions/restores, quest-start blocked events. Sentry breadcrumbs are now the whole story — there is no RevenueCat dashboard to fall back on, so anything not instrumented here is invisible. Without it we can't tune the free/premium split.
 
 ### 1.7 TestFlight QA pass
-IAP sandbox testing; explicitly re-test the AR landmines (release-only regressions) since premium touches quest/home/detail screens.
+IAP sandbox testing; explicitly re-test the AR landmines (release-only regressions) since premium touches quest/home/detail screens. **Note the simulator is not an option** — see 1.8; every check here is device or TestFlight.
+
+### 1.8 Unblock the simulator *(Gaps #12b — discovered 2026-07-27, not premium-specific)*
+ReactVision ships `ViroKit.framework` device-only, and expo-router eagerly loads the `arViewer` route, so the JS bundle dies at module load on **every** simulator launch with a non-dismissible red box. There is currently **no local UI feedback loop for any feature**, premium included — which is a direct cause of the release-only regressions in Gaps #13. Investigate lazy-loading the Viro imports inside `ArtworkARScene`, or stubbing the Viro modules when `!Device.isDevice`. Either would unlock simulator development for the ~95% of the app that isn't AR. Worth doing *before* 1.3, since the gating UI is exactly the kind of work that needs fast visual iteration.
 
 ---
 
@@ -147,7 +158,8 @@ Paying users will expect scan to work. Add fetch timeout + one retry + in-flight
 4. **Server-side explore search** *(Gaps #10)* — GSI or search field; stops client-side full-table walks.
 5. **Retire workarounds behind their TODOs** *(Gaps #12)* — 250ms auth delay → deterministic wait; understand the freezeOnBlur desync; document/solve the AppSync quest staleness. Low urgency; don't destabilize around launch.
 6. **Sentry env split** *(Gaps #17)* + broader analytics beyond the paywall.
-7. **Retroactive quest credit UX** *(Gaps #7)* — a quest that auto-completes at start should still get a celebration moment. **Celebration only, no XP** — 0.3 settled that there is never a completion award; XP is scan-only, so the user has already been paid for those artworks and awarding again would double-count.
+7. **Wire up `src/utils/featuredQuest.ts`** — the daily featured-quest selection was extracted and unit-tested (87 lines of tests), but `app/(dashboard)/home.tsx` still runs its own inline copy and never imports the util. Two implementations of the same hash is exactly the drift risk the extraction was meant to remove. Swap home.tsx over to the util; the hash was preserved byte-for-byte (including the `a & a` coercion) so today's featured pick will not change.
+8. **Retroactive quest credit UX** *(Gaps #7)* — a quest that auto-completes at start should still get a celebration moment. **Celebration only, no XP** — 0.3 settled that there is never a completion award; XP is scan-only, so the user has already been paid for those artworks and awarding again would double-count.
 
 ---
 
