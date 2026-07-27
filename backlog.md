@@ -76,6 +76,7 @@ IAP sandbox testing; explicitly re-test the AR landmines (release-only regressio
 - Run `amplify push` and confirm **zero** resource changes. If CFN wants to modify `UsernameAttributes` or `Schema`, stop and re-reconcile rather than pushing through.
 
 ### 1A.2 Native capability only — no auth logic *(ship this to TestFlight on its own)*
+> **Partly done (2026-07-27): the button is wired visually.** `expo-apple-authentication` is installed and `AppleAuthenticationButton` renders on `app/index.tsx` above "Continue with email", gated on `isAvailableAsync()`, with an `onPress` that only logs. Verified rendering in the Simulator. The **"or" divider was dropped by product decision** — the orphaned `divider`/`dividerLine`/`dividerText`/`socialButton` styles were deleted rather than used. **`ios.usesAppleSignIn` was deliberately NOT set** — that adds the entitlement, which needs the Sign in with Apple capability on the App ID, which needs the org developer enrollment to complete. So what remains below is the entitlement + EAS verification, not the button itself.
 `/ios` is gitignored, so anything set by hand in Xcode or in `ARtifact.entitlements` is discarded when EAS regenerates the native project. The entitlement must come from config.
 - Add `expo-apple-authentication`; add it to `app.json` `plugins` **and** set `ios.usesAppleSignIn: true`.
 - `npx expo prebuild`, then an EAS dev-client build; verify "Sign In with Apple" appears in the capability-sync log and the entitlement exists in the **EAS-generated** project, not just locally.

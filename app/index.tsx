@@ -3,9 +3,10 @@ import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { FontAwesome } from "@expo/vector-icons";
+import * as AppleAuthentication from "expo-apple-authentication";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -18,6 +19,19 @@ import {
 export default function LandingScreen() {
   const router = useRouter();
   const { isAuthReady, isAuthenticated } = useAuthContext();
+
+  // VISUAL PREVIEW ONLY — the button renders but is not wired to any auth flow
+  // yet. The real implementation is backlog P1A: it needs the Sign in with
+  // Apple capability on the App ID (blocked on the org developer enrollment)
+  // and a Cognito CUSTOM_AUTH challenge flow, and 1A.1 (reconciling the
+  // Amplify auth config) must land first or `amplify push` can roll back the
+  // auth stack. Do not ship this to users as-is.
+  const [isAppleAvailable, setIsAppleAvailable] = useState(false);
+  useEffect(() => {
+    AppleAuthentication.isAvailableAsync()
+      .then(setIsAppleAvailable)
+      .catch(() => setIsAppleAvailable(false));
+  }, []);
 
   // Redirect to home if user is already authenticated
   useEffect(() => {
@@ -93,6 +107,23 @@ export default function LandingScreen() {
 
           {/* Login Options */}
           <View style={styles.loginOptions}>
+          {isAppleAvailable && (
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={
+                AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+              }
+              buttonStyle={
+                AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+              }
+              // Matches the 12px radius of the neighbouring buttons.
+              cornerRadius={12}
+              style={styles.appleButton}
+              onPress={() => {
+                console.log("Sign in with Apple tapped — not wired yet (P1A)");
+              }}
+            />
+          )}
+
           <Pressable
             style={({ pressed }) => [
               styles.loginButton,
@@ -226,30 +257,10 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   buttonText: {},
-  divider: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 4,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.medGray,
-  },
-  dividerText: {
-    marginHorizontal: 16,
-    color: Colors.darkMedGray,
-    fontSize: 14,
-  },
-  socialButton: {
-    backgroundColor: Colors.medLightGray,
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    ...shadowStyle,
+  appleButton: {
+    width: "100%",
+    height: 56,
+    marginBottom: 16,
   },
   // footer: {
   //   paddingHorizontal: 24,
