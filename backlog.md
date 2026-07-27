@@ -19,24 +19,17 @@
 ### 0.6 Reconcile the privacy policy with what the app actually does
 The policy is **live at https://artifactar.com/privacy/**, which clears the "no policy URL" blocker. What's left is that it and the binary disagree in four places — reviewers compare them, and the App Privacy questionnaire must match reality:
 
-1. **Sentry is still not disclosed** — §4 lists only AWS and Railway. Screen recording is now off (0.8), so the disclosure needed is much smaller: Sentry receives error reports plus IP and device identifiers via `sendDefaultPii: true`. Draft wording was supplied; **owner to publish.**
+1. **Sentry is still not disclosed** — §4 lists only AWS and Railway. Screen recording is now off, so the disclosure needed is much smaller: Sentry receives error reports plus IP and device identifiers via `sendDefaultPii: true`. Draft wording was supplied; **owner to publish.**
 2. ~~Location contradiction~~ — **resolved**: the permissions are gone (0.7), so "does not request or use your location" is now true of the binary too. No policy edit needed for this line.
 3. **"Images … are processed and stored securely" over-claims — owner confirmed no storage is wanted or needed.** Verified 2026-07-27: the app stores **no** images. The only S3 `uploadData` call sits inside the commented-out dead Rekognition block (`scan.tsx:236`); the live path (`analyzeWithFlask`) POSTs the photo to Railway `/predict` and retains nothing beyond expo-camera's transient cache file. Owner intent is no storage at all, so the policy should say images are transmitted for matching and not retained — **pending confirmation that the Railway Flask service doesn't persist them** (server-side, outside this repo; check and document).
 4. **Purchases aren't mentioned.** Apple processes payment (no card data ever reaches us), but `User.isPremium` is stored. Worth one line.
 
 §5 (in-app deletion, no email required) is now accurate as of the deletion flow shipping — but it is still unverified against a real account, which is 0.9.
 
-### 0.7 Remove declared-but-unused permissions — ✅ DONE 2026-07-27
-Removed, verified against actual usage: **location** (both usage strings + the `expo-location` dependency — nothing imported it, no package depended on it), and **microphone + photo-library** (owner confirmed Viro neither records audio nor writes to the camera roll). The mic/photos keys had to come out of the **ReactVision plugin block as well as `infoPlist`** — the plugin injects them on prebuild, so removing them from one place alone would have silently restored them.
-
-Remaining declared: `NSCameraUsageDescription` and `NSMotionUsageDescription` only, both genuinely used (scan + ARKit). Takes effect on the next `prebuild`/EAS build.
-
-Still open, minor: `expo-web-browser` is a dependency with no importers found — remove unless something pulls it in indirectly. And `PrivacyInfo.xcprivacy` lives only in the gitignored `/ios`, so it is regenerated and uncontrolled; if it needs curating, drive it from `app.json` `privacyManifests` (same lesson as 1A.2).
-
-### 0.8 Sentry session replay — ✅ DISABLED 2026-07-27
-`mobileReplayIntegration()` and both `replays*SampleRate` options are removed from `Sentry.init`. It had been recording 10% of all sessions and 100% of error sessions — real users' screens — which is a disclosure burden not worth carrying for a paid, signed-in app. Crash and error reporting are unaffected.
-
-`sendDefaultPii: true` **remains**, so Sentry still receives IP and device identifiers and must still be disclosed in the policy (0.6) — just a far smaller disclosure than screen recording. Turning that off too is a one-line option if you'd rather drop the Sentry mention to the bare minimum. **If replay is ever re-enabled, the policy and App Privacy label must be updated first** — there's a comment in `_layout.tsx` saying so.
+### 0.7 Two loose ends from the permissions pass
+The permission removals and the Sentry replay decision shipped — see CLAUDE.md § Project state. What's left is minor:
+- `expo-web-browser` is a dependency with no importers found. Remove unless something pulls it in indirectly.
+- `PrivacyInfo.xcprivacy` lives only in the gitignored `/ios`, so it is regenerated and uncontrolled. If it ever needs curating, drive it from `app.json` `privacyManifests` — the same lesson as 1A.2.
 
 ### 0.9 Device QA the account-deletion flow
 The flow shipped (`useAccountDeletion`) but has **never run against a real account** — it can't be tested in the Simulator without signing in, and the ordering is unforgiving: if it deletes the Cognito identity while rows remain, those rows become permanently unreadable. Test on a throwaway account, confirm all five models are emptied, then confirm sign-out. Guideline 5.1.1(v) is checked by reviewers, and a deletion button that half-works is worse than the old stub.
@@ -143,7 +136,6 @@ Paying users will expect scan to work. Add fetch timeout + one retry + in-flight
 9. **Auth guard for pushed routes** *(Gaps #12c)* — `app.json` registers `scheme: "artifact"` and pushed routes check only `isAuthReady`, so `artifact://questDetail?id=X` and `artifact://profileSettings` render for a guest (the latter throws `UserUnAuthenticatedException` from `ensureUserInDB` on mount). The premium gate handles its own case explicitly, but a shared guard would close the class rather than patching each screen.
 10. **Resolve the FeaturePoint contradiction** *(Gaps #13)* — `ArtworkARScene.tsx:137` includes `FeaturePoint` in the hit-test priority while `MIGRATION_NOTES.md:121` claims it's excluded so the model can't float in mid-air. One of them is wrong. Decide which behavior is intended, then fix the other. **Device-only to verify.**
 11. **Make `AR_TEST_MODE` non-shippable** *(Gaps #14)* — it's a source constant someone must remember to flip back; `true` in a commit would route every AR view to a hardcoded test scene. Replace with the `__DEV__ && process.env.EXPO_PUBLIC_*` pattern already used for the premium dev bypass in `EntitlementContext`, so it cannot ship enabled.
-
 12. **Observability for the core loop** *(Gaps #20)* — instrument scan success/failure rate, quest completion, and AR placement success, plus Sentry breadcrumbs around the scan network call and the AR asset fetch (the two flakiest flows). Paywall breadcrumbs already exist (1.6); this is everything else. Without it, a Railway outage or a drop in scan accuracy is invisible until users complain.
 
 ---
