@@ -14,6 +14,20 @@
 
 ---
 
+## P0 — App Store submission blockers (none of this is optional)
+
+### 0.6 Privacy policy + App Privacy questionnaire — **not previously tracked**
+A privacy-policy URL is a hard requirement in App Store Connect, and the App Privacy "nutrition label" must declare everything collected. This app collects more than it looks: account email (Cognito), camera images (scan uploads to Railway), and via Sentry `sendDefaultPii: true` the user's IP and identifiers. Nothing about this is written down anywhere yet. Needs: a hosted policy URL, the ASC questionnaire filled to match reality, and a check that the Railway endpoint's data handling is described.
+
+### 0.7 Remove declared-but-unused permissions
+`app.json` declares `NSLocationWhenInUseUsageDescription` **and** `NSLocationAlwaysAndWhenInUseUsageDescription`, and `expo-location@^19.0.7` is a dependency — but **nothing in the app imports it**. Apple rejects apps that request permissions they don't exercise, and each declared permission drags an App Privacy disclosure with it. Audit and strip: location certainly, plus `expo-web-browser` (no importers found) and the microphone string if ReactVision doesn't need it. Note `PrivacyInfo.xcprivacy` currently lives only in the gitignored `/ios`, so it is regenerated and uncontrolled — if it needs curating, drive it from `app.json` `privacyManifests`, the same lesson as 1A.2.
+
+### 0.8 Decide on Sentry session replay before shipping paid
+`app/_layout.tsx` enables `mobileReplayIntegration()` with `replaysSessionSampleRate: 0.1` and `replaysOnErrorSampleRate: 1` — i.e. **10% of sessions and 100% of error sessions are screen-recorded**, alongside `sendDefaultPii: true`. That is defensible for a beta but it must be disclosed in App Privacy (0.6), and it deserves a deliberate decision now that real payments are involved: keep it with disclosure and masking, or reduce the sample rate. Also gates 0.6's answers.
+
+### 0.9 Device QA the account-deletion flow
+The flow shipped (`useAccountDeletion`) but has **never run against a real account** — it can't be tested in the Simulator without signing in, and the ordering is unforgiving: if it deletes the Cognito identity while rows remain, those rows become permanently unreadable. Test on a throwaway account, confirm all five models are emptied, then confirm sign-out. Guideline 5.1.1(v) is checked by reviewers, and a deletion button that half-works is worse than the old stub.
+
 ## P1 — Premium tier (the epic)
 
 > **No schema change or `amplify push` is required.** The entitlement plumbing (StoreKit adapter, `EntitlementContext`, pure rules in `src/utils/premiumAccess.ts`) is already built — see CLAUDE.md § Project state. What remains is the UI and the data.
