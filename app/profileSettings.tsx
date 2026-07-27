@@ -2,6 +2,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useEntitlementContext } from "@/src/contexts/EntitlementContext";
 import { useProfileUpdate } from "@/src/hooks/useProfileUpdate";
 import { useUserData } from "@/src/hooks/useUserData";
 import { FontAwesome } from "@expo/vector-icons";
@@ -19,6 +21,36 @@ import {
 } from "react-native";
 
 export default function ProfileSettingsScreen() {
+  const {
+    isEntitled,
+    priceLabel,
+    isPurchasing,
+    isRestoring,
+    entitlement,
+    purchase,
+    restore,
+  } = useEntitlementContext();
+  const [showPaywall, setShowPaywall] = useState(false);
+
+  // App Review tests Restore and rejects a silent no-op, so every outcome gets
+  // a distinct, plain-language alert.
+  const handleRestore = async () => {
+    const outcome = await restore();
+    if (outcome === "restored") {
+      Alert.alert("Purchase Restored", "ARtifact Premium is active on this device.");
+    } else if (outcome === "nothing-to-restore") {
+      Alert.alert(
+        "Nothing to Restore",
+        "No previous purchase was found for this Apple ID."
+      );
+    } else {
+      Alert.alert(
+        "App Store Unavailable",
+        "Couldn't reach the App Store. Check your connection and try again."
+      );
+    }
+  };
+
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -346,6 +378,59 @@ export default function ProfileSettingsScreen() {
           </ThemedView>
         </ThemedView>
 
+        {/* Purchases */}
+        <ThemedView style={styles.passwordSection}>
+          <ThemedText style={styles.sectionTitle}>Purchases</ThemedText>
+
+          <ThemedView style={styles.purchaseRow}>
+            <ThemedText style={styles.purchaseLabel}>ARtifact Premium</ThemedText>
+            <ThemedView
+              style={[
+                styles.purchaseBadge,
+                isEntitled ? styles.purchaseBadgeActive : styles.purchaseBadgeInactive,
+              ]}
+            >
+              <ThemedText
+                style={[
+                  styles.purchaseBadgeText,
+                  isEntitled
+                    ? styles.purchaseBadgeTextActive
+                    : styles.purchaseBadgeTextInactive,
+                ]}
+              >
+                {isEntitled ? "Active" : "Not purchased"}
+              </ThemedText>
+            </ThemedView>
+          </ThemedView>
+
+          {!isEntitled && (
+            <Pressable
+              style={styles.purchaseButton}
+              onPress={() => setShowPaywall(true)}
+              disabled={isPurchasing || isRestoring}
+            >
+              <ThemedText style={styles.purchaseButtonText}>
+                Unlock All Quests
+                {priceLabel ? ` \u00b7 ${priceLabel}` : ""}
+              </ThemedText>
+            </Pressable>
+          )}
+
+          <Pressable
+            style={styles.purchaseButton}
+            onPress={handleRestore}
+            disabled={isRestoring || isPurchasing}
+          >
+            {isRestoring ? (
+              <ActivityIndicator color={Colors.darkMedGray} />
+            ) : (
+              <ThemedText style={styles.purchaseButtonText}>
+                Restore Purchases
+              </ThemedText>
+            )}
+          </Pressable>
+        </ThemedView>
+
         {/* Buttons */}
         <Pressable
           style={[styles.saveButton, isUpdating && styles.disabledButton]}
@@ -497,6 +582,22 @@ export default function ProfileSettingsScreen() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      <PaywallModal
+        visible={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        context="quest-locked"
+        priceLabel={priceLabel}
+        isPurchasing={isPurchasing}
+        isRestoring={isRestoring}
+        canPurchase={entitlement !== "unknown" || priceLabel !== null}
+        onUnlock={() => {
+          void purchase().catch(() => {
+            // Surfaced by the purchase error listener.
+          });
+        }}
+        onRestore={handleRestore}
+      />
     </ThemedView>
   );
 }
@@ -564,6 +665,49 @@ const styles = StyleSheet.create({
   },
   readOnlyText: {
     color: Colors.darkMedGray,
+  },
+  purchaseRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  purchaseLabel: {
+    fontSize: 15,
+  },
+  purchaseBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  purchaseBadgeActive: {
+    backgroundColor: Colors.lightGreen,
+  },
+  purchaseBadgeInactive: {
+    backgroundColor: Colors.medLightGray,
+  },
+  purchaseBadgeText: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  purchaseBadgeTextActive: {
+    color: Colors.darkGreen,
+  },
+  purchaseBadgeTextInactive: {
+    color: Colors.darkMedGray,
+  },
+  purchaseButton: {
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.medGray,
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  purchaseButtonText: {
+    color: Colors.darkGray,
+    fontSize: 15,
   },
   passwordSection: {
     marginBottom: 24,
