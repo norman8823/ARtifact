@@ -4,7 +4,7 @@
 
 ## Critical
 
-### 1. Zero tests, zero CI — ✅ **mostly resolved** (backlog 0.1)
+### 1. Zero tests, zero CI — ✅ **mostly resolved** (see CLAUDE.md § Project state)
 ~~There is not a single `*.test.*` file, no jest/vitest config, no `.github/workflows`.~~ A jest-expo harness and [ci.yml](.github/workflows/ci.yml) now run on PRs/pushes to `development`, with pure logic extracted to `src/utils/` (`questProgress`, `rankUtils`, `scanAdapter`, `xpAward`) and unit-tested.
 
 **Still open:** the tsc + lint jobs are `continue-on-error` because the pre-existing baseline fails (~29 `tsc --noEmit` errors across 14 files, 8 lint errors). Until that's cleaned up, type errors still only surface at build time — CI is a test gate, not a type gate. Tracked as backlog 0.1b. Coverage is also still unit-only: no component or E2E tests, so the release-only AR regressions remain uncaught by CI.
@@ -23,7 +23,7 @@
 ### 5. Quest `xpReward` is never awarded — ✅ NOT A BUG (by design)
 Resolved 2026-07-13: the completion bonus was deliberately removed (it made XP tracking too hard). `xpReward` is descriptive — it equals 100 × the quest's artwork count, i.e. the scan XP you earn completing it. XP is scan-only (flat 100 in [useScanSuccess.ts](src/hooks/useScanSuccess.ts)); max earnable is 4700 = Art Legend threshold. Never wire a completion award — it would double-count.
 
-### 6. XP award has no idempotency or concurrency safety — ✅ FIXED (backlog 0.2)
+### 6. XP award has no idempotency or concurrency safety — ✅ FIXED (see CLAUDE.md § Project state)
 Resolved 2026-07-13: `awardXP` now does a conditional-update CAS loop with retry (`src/utils/xpAward.ts`), and new `UserXP`/`Visited` records use deterministic ids so duplicate creates collide instead of double-writing; `useScanSuccess` gates XP on the visit-create result. Residual note: the `byUserXP` GSI (timestamp SK) still hints at an abandoned append-only design — single-record-updated-in-place is now the settled pattern.
 
 ### 7. Retroactive quest credit is inconsistent

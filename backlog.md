@@ -1,40 +1,21 @@
 # Backlog
 
-*Ordered by priority AND order of operations — items within a phase are sequenced so earlier ones de-risk later ones. Driving goal: ship the premium tier (premium-gated quests, first 3 quests free, no scan limits).*
+*A **to-do list** — open work only. Completed work and current state live in **[CLAUDE.md § Project state](CLAUDE.md)**; known defects live in **[Gaps.md](Gaps.md)**. When an item ships, delete it here and record it there rather than marking it ✅.*
+
+*Ordered by priority AND order of operations — items within a phase are sequenced so earlier ones de-risk later ones. Item ids are stable and are cited from other docs: gaps in the numbering mean that item shipped, not that it's missing. Driving goal: ship the premium tier (premium-gated quests, first 3 quests free, no scan limits).*
 
 **Product decisions locked in:**
-- Premium gates **quests only**. Scan count is NOT gated — `remainingFreeScans` is dead client-side (the schema field stays forever, see 0.4b).
-- Premium is a **one-time lifetime unlock**, not a subscription (D1, see 1.1). Bought via `expo-iap`; StoreKit is the source of truth.
+- Premium gates **quests only**. Scan count is NOT gated — `remainingFreeScans` is dead client-side (the schema field stays forever — see CLAUDE.md § Settled decisions).
+- Premium is a **one-time lifetime unlock**, not a subscription. Bought via `expo-iap`; StoreKit is the source of truth. Rationale in [premium-tier.md](premium-tier.md).
 - First 3 quests free, the rest premium. Mechanism: the existing `Quest.isPremium` flag (already in schema, already fetched, already renders a badge in artQuest) — mark all but the 3 chosen free quests as premium in data. No "ordering" concept needed.
 - **Only open product decision: which 3 quests are free** (pick beginner-friendly ones with high-traffic galleries) — blocks 1.2.
 
 ---
 
-## P0 — Foundations (do these first; they de-risk the premium build)
-
-### 0.1 Minimal test harness + CI gate *(Gaps #1)* — ✅ DONE
-jest-expo harness + GitHub Actions CI on PRs/pushes to `development`. Pure logic extracted to `src/utils/` (questProgress, rankUtils, scanAdapter) and unit-tested; hook signatures unchanged. Unit tests are the required CI gate; typecheck and lint run as **advisory** jobs because the pre-existing baseline fails (~29 tsc errors / 8 lint errors).
+## P0 — Foundations (must land before any release)
 
 ### 0.1b Fix the tsc + lint baseline, then make CI strict
-Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: string | null` vs `string | undefined` image props, implicit-any params in legacy hooks, GraphQL result narrowing) and the 8 lint errors, then remove `continue-on-error` from the typecheck/lint jobs in `.github/workflows/ci.yml`.
-
-~~Rank wrap quirk~~ **resolved**: top rank is now explicitly open-ended in `getRankForXP` ("minXP or greater", never wraps to lowest), and profile.tsx's duplicated inline calc now uses the shared function. Live rank data verified (2026-07-13): bands 0-900 / 901-1800 / 1801-3000 / 3001-4699 / 4700-999999; max earnable XP is exactly 4700 (47 scannable artworks × 100, identical to the union of all 12 quests' artworks).
-
-### 0.2 Fix the XP read-modify-write race *(Gaps #6)* — ✅ DONE
-`awardXP` now uses a compare-and-swap loop (`src/utils/xpAward.ts`): conditional AppSync update on `xpPoints eq <read value>`, re-read + retry on conflict (max 3). New `UserXP` records use deterministic id `xp-<userId>` and new `Visited` records use `<userId>#<artworkId>`, so concurrent duplicate creates collide on the resolver's id-uniqueness condition instead of double-writing. `useScanSuccess` gates XP on the visit-create result (null = already visited → no award). Existing rows with random ids are unaffected (all reads go through userId filters/GSIs).
-
-### 0.3 Quest `xpReward` — ✅ RESOLVED by decision (no completion bonus)
-**Decision (owner, 2026-07-13): there is no quest-completion bonus — it was removed deliberately because it made XP tracking too hard.** XP is scan-only: 100 per first-visit artwork, max 4700 (= 47 scannable artworks = union of all 12 quests = Art Legend threshold). `xpReward` on a quest is *descriptive*: it equals 100 × artwork count, i.e. what you earn by scanning the quest's artworks. Do NOT wire a completion award — that would double-count. Optional cosmetic follow-up: make the quest XP badge copy read as "earn up to N XP" if users misread it as a bonus.
-
-### 0.4 Schema change — ✅ DONE (and mostly cancelled; premium needs NO schema change)
-Prep (2026-07-13) invalidated this item's premise. Three findings:
-
-1. **Premium requires zero schema changes.** `User.isPremium` and `Quest.isPremium` already exist, and `useQuests` already selects and maps `isPremium` (`useQuests.ts:121,173`). `amplify push` is therefore **off the premium critical path** — P1 can start immediately.
-2. **Removing `User.remainingFreeScans` from the schema is unsafe right now — do not push it.** The shipped App Store build (v1.0.1 / build 1.0.37) has the field baked into the *generated selection sets* of `getUser`, `listUsers`, `createUser`, `updateUser`, `deleteUser`. AppSync validates selection sets against the schema and fails the **whole operation** on an unknown field — and `listUsers`/`createUser` are what `ensureUserInDB` calls on every sign-in. Pushing the removal would break sign-in and user creation for every user who has not updated. **Done instead:** removed all *client-side* use (dropped from the `UserData` interface, stopped writing the default `3`) — zero risk, no push. Schema field retained with a comment explaining why.
-3. **The `Artwork.isFeatured` GSI is not implementable as written** — see 0.4b.
-
-### 0.4b Retire the `remainingFreeScans` schema field — ❌ WON'T DO
-**Decision (owner, 2026-07-13): keep the field permanently.** Removing it breaks sign-in for users on already-shipped builds (they request it in their generated selection sets; AppSync fails the whole operation on an unknown field). A nullable `Int` nobody reads costs effectively nothing in a schemaless store. The client no longer references it — that's the end state. Do not revisit.
+Clean up the ~29 pre-existing `tsc --noEmit` errors (14 files — mostly `uri: string | null` vs `string | undefined` image props, implicit-any params in legacy hooks, GraphQL result narrowing) and the 8 lint errors, then remove `continue-on-error` from the typecheck/lint jobs in `.github/workflows/ci.yml`. Until this lands, CI is a test gate but not a type gate.
 
 ### 0.5 Real in-app account deletion *(Gaps #18)* — **blocks any App Store submission**
 `profileSettings.tsx:372-392` renders a "Delete Account" button whose handler is an alert: *"This feature is not yet implemented. Please contact support to delete your account."* App Store guideline 5.1.1(v) requires in-app deletion for any app that supports account creation, and explicitly does not accept "contact support" as a substitute. A shipped button that promises deletion and doesn't deliver is the version reviewers catch fastest. This gates the premium release independently of everything else in this backlog — it is **not** a P1A dependency; P1A only adds a step to it.
@@ -48,28 +29,18 @@ Prep (2026-07-13) invalidated this item's premise. Three findings:
 
 ## P1 — Premium tier (the epic)
 
-> **P1 is unblocked — no schema change or `amplify push` is required (see 0.4).**
+> **No schema change or `amplify push` is required.** The entitlement plumbing (StoreKit adapter, `EntitlementContext`, pure rules in `src/utils/premiumAccess.ts`) is already built — see CLAUDE.md § Project state. What remains is the UI and the data.
 
-### 1.1 Entitlement architecture decision — ✅ DONE (D1, D2 decided; D3 moved to 1.2)
-See **[premium-tier.md](premium-tier.md)**. **D1: one-time lifetime unlock, not a subscription** — the quest catalog is finite, so there is no recurring value to deliver. **D2: `expo-iap` 4.7.1** (`react-native-iap` was archived 2026-04-26; RevenueCat is unnecessary without a subscription to manage). Product id `com.rauljiminian.ARtifact.premium.lifetime`, non-consumable, `$5.99` fallback price (`src/iap/products.ts`). Architecture as planned: StoreKit is the source of truth, `User.isPremium` is a display/analytics mirror never consulted for gating, no webhook backend (zero-Lambda preserved), offline falls back to last-known-good. **D3 (which 3 quests are free) is still open** — tracked in 1.2.
-
-### 1.1b Entitlement plumbing — ✅ DONE
-Everything between StoreKit and the UI exists and is unit-tested (69 tests green):
-- `src/iap/storeKit.ts` — `initStore`, `fetchPremiumPrice`, `queryEntitlement`, `buyPremium`, `restoreAndQuery`, `finishPremiumTransaction`, plus the purchase listeners.
-- `src/contexts/EntitlementContext.tsx` — provider wired into `app/_layout.tsx:136`; exposes `isEntitled`, `isEntitlementReady`, `priceLabel`, `purchase()`, `restore()`, `refresh()`.
-- `src/utils/premiumAccess.ts` — pure rules: `resolveEntitlement` (indeterminate → cached last-known-good with **no TTL**, so a paying user in a museum basement keeps access), `isQuestAccessible` (an already-started quest stays playable regardless of entitlement; `isPremiumQuest !== true` so legacy null rows aren't locked), `questLockState`.
-- **Nothing in the UI consumes these yet** — that's 1.3.
-
-### 1.2 Mark quest data *(carries open decision D3)*
+### 1.2 Mark quest data *(carries the last open product decision)*
 **Open: which 3 quests are free.** Then a seed-script pass (`scripts/`): set `isPremium: true` on all quests except those 3. Freshness propagates fast thanks to the `GetFreshQuests` cache-bypass — do not remove that workaround during this work (CLAUDE.md landmine #4).
 
-### 1.3 Gating UI — the remaining work; helpers are ready and unconsumed
-- Build `PaywallModal` on the `AuthPromptModal` pattern (guest → auth prompt first; signed-in free user → paywall). Nothing exists in `components/` yet.
+### 1.3 Gating UI — **in progress**
+- Build `PaywallModal` on the `AuthPromptModal` pattern (guest → auth prompt first; signed-in free user → paywall).
 - Gate points, all calling `isQuestAccessible` / `questLockState` from `src/utils/premiumAccess.ts`: `startQuest` in questDetail (the enforcement point), quest cards in artQuest (lock affordance), featured-quest card on home.
 - Premium badge already renders in home/artQuest — restyle to the four `QuestLockState` values, and render the `indeterminate` state neutrally so a paying user never sees a lock flash during the cold-launch cache read.
 
-### 1.4 Purchase flow — logic done, UI outstanding
-`purchase()` and `restore()` already exist on `EntitlementContext` (1.1b), including the `User.isPremium` mirror. What's left is presentation: the paywall's buy button with loading/failure states, and a **Restore Purchases** entry in profileSettings (App Store review requirement — a one-time non-consumable *must* be restorable).
+### 1.4 Purchase flow — UI only
+`purchase()` and `restore()` already exist on `EntitlementContext`, including the `User.isPremium` mirror. What's left is presentation: the paywall's buy button with loading/failure states, and a **Restore Purchases** entry in profileSettings (App Store review requirement — a one-time non-consumable *must* be restorable).
 
 ### 1.5 App Store Connect setup *(user task, can parallelize with 1.3–1.4)*
 Create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetime` (the id in `src/iap/products.ts` must match exactly), set pricing, complete App Store agreements/tax/banking, add sandbox testers. Not a subscription — no subscription group needed.
@@ -78,10 +49,7 @@ Create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetim
 Ship WITH launch, not after: paywall views, purchase starts/completions/restores, quest-start blocked events. Sentry breadcrumbs are now the whole story — there is no RevenueCat dashboard to fall back on, so anything not instrumented here is invisible. Without it we can't tune the free/premium split.
 
 ### 1.7 TestFlight QA pass
-IAP sandbox testing; explicitly re-test the AR landmines (release-only regressions) since premium touches quest/home/detail screens. **Note the simulator is not an option** — see 1.8; every check here is device or TestFlight.
-
-### 1.8 Unblock the simulator *(Gaps #12b — discovered 2026-07-27, not premium-specific)*
-ReactVision ships `ViroKit.framework` device-only, and expo-router eagerly loads the `arViewer` route, so the JS bundle dies at module load on **every** simulator launch with a non-dismissible red box. There is currently **no local UI feedback loop for any feature**, premium included — which is a direct cause of the release-only regressions in Gaps #13. Investigate lazy-loading the Viro imports inside `ArtworkARScene`, or stubbing the Viro modules when `!Device.isDevice`. Either would unlock simulator development for the ~95% of the app that isn't AR. Worth doing *before* 1.3, since the gating UI is exactly the kind of work that needs fast visual iteration.
+IAP sandbox testing; explicitly re-test the AR landmines (release-only regressions) since premium touches quest/home/detail screens. The Simulator now runs everything except the AR screen itself (`3cf0386`), so most of this pass can be done locally — but AR and StoreKit sandbox still need a device.
 
 ---
 
@@ -159,10 +127,14 @@ Paying users will expect scan to work. Add fetch timeout + one retry + in-flight
 5. **Retire workarounds behind their TODOs** *(Gaps #12)* — 250ms auth delay → deterministic wait; understand the freezeOnBlur desync; document/solve the AppSync quest staleness. Low urgency; don't destabilize around launch.
 6. **Sentry env split** *(Gaps #17)* + broader analytics beyond the paywall.
 7. **Wire up `src/utils/featuredQuest.ts`** — the daily featured-quest selection was extracted and unit-tested (87 lines of tests), but `app/(dashboard)/home.tsx` still runs its own inline copy and never imports the util. Two implementations of the same hash is exactly the drift risk the extraction was meant to remove. Swap home.tsx over to the util; the hash was preserved byte-for-byte (including the `a & a` coercion) so today's featured pick will not change.
-8. **Retroactive quest credit UX** *(Gaps #7)* — a quest that auto-completes at start should still get a celebration moment. **Celebration only, no XP** — 0.3 settled that there is never a completion award; XP is scan-only, so the user has already been paid for those artworks and awarding again would double-count.
+8. **Retroactive quest credit UX** *(Gaps #7)* — a quest that auto-completes at start should still get a celebration moment. **Celebration only, no XP** — XP is scan-only and there is never a completion award (CLAUDE.md § Settled decisions), so the user has already been paid for those artworks; awarding again would double-count.
 
 ---
 
 ## Explicitly rejected / not doing
-- **Scan-count gating** — dead by decision. Premium = quest access only. Note the *schema field* `User.remainingFreeScans` is retained permanently (0.4b); only the client-side usage was removed.
+*The reasoning for each lives in [CLAUDE.md § Settled decisions](CLAUDE.md).*
+- **Scan-count gating** — premium gates quests only. The `User.remainingFreeScans` *schema field* is kept permanently (removing it breaks sign-in on shipped builds); only client-side usage was removed.
+- **Quest-completion XP bonus** — XP is scan-only. `xpReward` is descriptive; awarding it on completion would double-count.
+- **Subscription pricing** — premium is a one-time non-consumable lifetime unlock.
 - **Webhook/server-side entitlement enforcement for v1** — client-gated content is acceptable; revisit only if abuse appears.
+- **A direct `@index` on `Artwork.isFeatured`** — Boolean isn't a valid DynamoDB key type. Needs a sparse String field instead (Gaps #11).

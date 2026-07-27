@@ -1,10 +1,12 @@
 # Premium Tier — Decision Doc (P1.1)
 
-*Drafted 2026-07-13. Facts about third-party options verified against live sources on that date (see Sources). **Status: awaiting decisions D1–D3 below.***
+*Drafted 2026-07-13. Facts about third-party options verified against live sources on that date (see Sources).*
+
+> **Status (2026-07-27): decided and implemented.** **D1 → one-time lifetime unlock**, not a subscription. **D2 → `expo-iap` 4.7.1.** Product `com.rauljiminian.ARtifact.premium.lifetime`, non-consumable, `$5.99` fallback price (`src/iap/products.ts`). The adapter, `EntitlementContext` and the pure gating rules are built; see [CLAUDE.md § Project state](CLAUDE.md). **D3 — which 3 quests are free — is the one decision still open** and blocks backlog 1.2. This doc is now historical rationale; it is not the source of truth for status.
 
 ## Goal
 
-Gate quests behind a premium purchase. **First 3 quests free, remaining 9 premium.** Scan count is explicitly NOT gated (decided — see [backlog.md](backlog.md) 0.3 and the XP design note).
+Gate quests behind a premium purchase. **First 3 quests free, remaining 9 premium.** Scan count is explicitly NOT gated (decided — see CLAUDE.md § Settled decisions).
 
 ## What already exists (verified in code)
 

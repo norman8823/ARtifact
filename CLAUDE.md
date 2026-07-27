@@ -44,12 +44,37 @@ ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan 
 ## Known-stale / dead things (don't be misled)
 
 - Dead: `analyzeImage` Lambda, `rekognitionApi` API Gateway, commented Rekognition block in scan.tsx, `ARPrewarmManager.tsx` + `ARPermissionManager.ts` (8th Wall remnants), `useSceneModel.ts`, `arImage` field (replaced by `sceneId`), `appleLogin`/`googleLogin` stubs, `phoneLogin` route (no file), `aws-sdk` v2 app dependency.
-- Unimplemented-by-design: `User.isPremium`, `remainingFreeScans`, quest `xpReward` (displayed, never awarded).
+- Permanently unimplemented by decision: `remainingFreeScans`, quest `xpReward` as a completion bonus (see Settled decisions). `User.isPremium` is now written, but as a mirror only — never read it to gate anything.
 - `Artwork.isFeatured` has **no GSI** — featured fetch is a bounded scan (5 pages max). Adding featured artworks deep in the table silently breaks it.
+- `src/utils/featuredQuest.ts` is extracted and tested but **not yet imported** — `home.tsx` still runs its own inline copy of the same hash (backlog P3.7).
 
-## Current workstream (July 2026)
+## Project state — *this section is the tracker; keep it current*
 
-Branch `perf/screen-load-caching` → PR #3 into `development`. Fixed "first screen of the day = 3–5s spinner": auth-mode singleton, react-query SWR layer, cache-paint before auth, bounded featured fetch, parallelized detail fetches, plus AR/nav regression fixes. **Pending:** TestFlight before/after measurement (user runs it). Skipped deliberately: `primaryImageSmall` image swap (needs live-table verification that the field is populated).
+**`backlog.md` is a to-do list, not a status board.** What is *done* lives here. What is *left* lives there. What is *broken* lives in `Gaps.md`.
+
+*Last updated 2026-07-27.*
+
+**Shipped (on `development`, not yet released):**
+- **Perf** — "first screen of the day = 3–5s spinner" fixed: auth-mode singleton, react-query SWR layer, cache-paint before auth, bounded featured fetch, parallelized detail fetches (PR #3). *TestFlight before/after measurement still never ran.*
+- **Test harness + CI** — jest-expo, pure logic in `src/utils/` (`questProgress`, `rankUtils`, `scanAdapter`, `xpAward`, `premiumAccess`, `featuredQuest`), GitHub Actions on PRs to `development`. Tests gate; typecheck/lint advisory (backlog 0.1b).
+- **XP concurrency fix** — `awardXP` is a CAS loop with deterministic record ids (`src/utils/xpAward.ts`).
+- **Simulator unblocked** (`3cf0386`) — Viro loads lazily, so the app runs on the Simulator; only the AR screen needs a device.
+
+**In flight — P1 premium tier:**
+- *Done:* `expo-iap` 4.7.1 wired, `src/iap/storeKit.ts`, `src/contexts/EntitlementContext.tsx` (provider in `app/_layout.tsx`), pure gating rules + tests in `src/utils/premiumAccess.ts`.
+- *Now:* the gating UI — `components/PaywallModal.tsx`, `questDetail` enforcement, lock affordances on quest cards. Nothing consumed `isQuestAccessible`/`questLockState` until this.
+- *Then:* mark quest data (blocked on picking the 3 free quests), Restore Purchases in profileSettings, paywall analytics.
+
+**Blocks any App Store submission:** backlog 0.5 — the "Delete Account" button in `profileSettings.tsx` only shows a "contact support" alert. Guideline 5.1.1(v) requires real in-app deletion.
+
+**Planned, not started:** P1A Sign in with Apple (native sheet + Cognito CUSTOM_AUTH triggers). Fully designed in `backlog.md`; do 1A.1 first — the Amplify auth config diverges from the live pool and the next `amplify update auth` can roll back the stack.
+
+## Settled decisions — don't relitigate these
+
+- **XP is scan-only.** 100 per first-visit artwork, max 4700 (= 47 scannable artworks = top rank threshold). Quest `xpReward` is *descriptive* (100 × artwork count), never awarded on completion — doing so would double-count.
+- **`User.remainingFreeScans` stays in the schema permanently.** Shipped builds request it in their generated selection sets; AppSync fails the *whole operation* on an unknown field, so removing it breaks sign-in for anyone who hasn't updated. Client-side usage is already gone — that's the end state.
+- **Premium is a one-time non-consumable lifetime unlock**, not a subscription. StoreKit is the source of truth; `User.isPremium` in DynamoDB is a display/analytics mirror and must never be used as a gate. No webhook backend (preserves zero-Lambda).
+- **`Artwork.isFeatured` cannot take a GSI directly** — DynamoDB key attributes must be String/Number/Binary, and it's a Boolean. Needs a sparse String field instead (Gaps #11).
 
 ## Conventions
 
