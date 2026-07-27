@@ -1,16 +1,22 @@
+import { AuthPromptModal } from "@/components/AuthPromptModal";
+import { PaywallModal } from "@/components/PaywallModal";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
+import { useEntitlementContext } from "@/src/contexts/EntitlementContext";
 import { type Artwork, useArtworksByIds } from "@/src/hooks/useArtworksByIds";
 import { type Quest, useQuests } from "@/src/hooks/useQuests";
 import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
+import { isQuestAccessible } from "@/src/utils/premiumAccess";
+import * as Sentry from "@sentry/react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Pressable,
   RefreshControl,
@@ -25,7 +31,16 @@ interface QuestDetail {
 }
 
 export default function QuestDetailScreen() {
-  const { isAuthReady } = useAuthContext();
+  const { isAuthReady, isAuthenticated } = useAuthContext();
+  const {
+    entitlement,
+    isEntitled,
+    priceLabel,
+    isPurchasing,
+    isRestoring,
+    purchase,
+    restore,
+  } = useEntitlementContext();
   const params = useLocalSearchParams();
   const questId = Array.isArray(params.id) ? params.id[0] : params.id;
 
@@ -42,6 +57,8 @@ export default function QuestDetailScreen() {
   const [isStarting, setIsStarting] = useState(false);
   const [pressedArtworkId, setPressedArtworkId] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const loadQuestDetail = useCallback(async () => {
     if (!isAuthReady) return; // Wait for auth to be ready
@@ -88,7 +105,14 @@ export default function QuestDetailScreen() {
     }
   }, [questId, isAuthReady, loadQuestDetail]);
 
-  const handleStartQuest = async () => {
+  /**
+   * The single premium enforcement point for the whole app: startQuest has
+   * exactly one call site, right here. The badges on artQuest/home are
+   * cosmetic. Note this screen uses the legacy useQuests() rather than the
+   * cached react-query wrapper, so it always reads fresh isPremium — stale
+   * cache can only ever affect a badge, never the gate.
+   */
+  const runStartQuest = async () => {
     if (!questDetail?.quest) return;
 
     const { quest } = questDetail;
@@ -128,6 +152,76 @@ export default function QuestDetailScreen() {
       setIsStarting(false);
     }
   };
+
+  const handleStartQuest = async () => {
+    const quest = questDetail?.quest;
+    if (!quest) return;
+
+    // Auth is checked BEFORE premium, deliberately. This screen has no auth
+    // guard and the app registers a deep-link scheme, so a guest can land here
+    // via artifact://questDetail?id=X. Without this ordering they'd be shown a
+    // paywall instead of a sign-in prompt.
+    if (!isAuthenticated) {
+      setShowAuthPrompt(true);
+      return;
+    }
+
+    if (
+      !isQuestAccessible({
+        isPremiumQuest: quest.isPremium,
+        entitlement,
+        hasStarted: !!questDetail?.userQuest,
+      })
+    ) {
+      Sentry.addBreadcrumb({
+        category: "paywall",
+        message: "quest_start_blocked",
+        data: { questId: quest.id },
+      });
+      setShowPaywall(true);
+      return;
+    }
+
+    await runStartQuest();
+  };
+
+  const handleUnlock = async () => {
+    try {
+      await purchase();
+    } catch {
+      // Surfaced by the purchase error listener; leave the paywall open so the
+      // user can retry or restore.
+    }
+  };
+
+  const handleRestore = async () => {
+    const outcome = await restore();
+    if (outcome === "restored") {
+      setShowPaywall(false);
+      await runStartQuest();
+    } else if (outcome === "nothing-to-restore") {
+      Alert.alert(
+        "Nothing to Restore",
+        "No previous purchase was found for this Apple ID."
+      );
+    } else {
+      Alert.alert(
+        "App Store Unavailable",
+        "Couldn't reach the App Store. Check your connection and try again."
+      );
+    }
+  };
+
+  // A purchase can complete while the paywall is open (including via
+  // Ask-to-Buy, minutes later). When entitlement lands, close and continue
+  // what the user was trying to do.
+  useEffect(() => {
+    if (showPaywall && isEntitled) {
+      setShowPaywall(false);
+      void runStartQuest();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEntitled, showPaywall]);
 
   // Show loading state
   if (
@@ -175,6 +269,16 @@ export default function QuestDetailScreen() {
   };
 
   const questStatus = getQuestStatus();
+
+  // Cosmetic: drives the Start button label. Enforcement lives in
+  // handleStartQuest, which re-checks rather than trusting this.
+  const isQuestLocked =
+    !!questDetail?.quest &&
+    !isQuestAccessible({
+      isPremiumQuest: questDetail.quest.isPremium,
+      entitlement,
+      hasStarted: !!questDetail.userQuest,
+    });
 
   return (
     <ThemedView style={styles.container}>
@@ -274,7 +378,9 @@ export default function QuestDetailScreen() {
             </ThemedView>
           )}
 
-          {/* Start Quest Button */}
+          {/* Start Quest Button — one onPress path whether locked or not, so
+              there is no reachable state where an unlocked-looking button
+              starts a premium quest. */}
           {!userQuest && (
             <Pressable
               style={[
@@ -286,6 +392,13 @@ export default function QuestDetailScreen() {
             >
               {isStarting ? (
                 <ActivityIndicator color={Colors.lightGray} />
+              ) : isQuestLocked ? (
+                <ThemedView style={styles.startButtonLockedRow}>
+                  <FontAwesome name="lock" size={14} color={Colors.lightGray} />
+                  <ThemedText style={styles.startButtonText}>
+                    Unlock to Start
+                  </ThemedText>
+                </ThemedView>
               ) : (
                 <ThemedText style={styles.startButtonText}>
                   Start Quest
@@ -451,6 +564,30 @@ export default function QuestDetailScreen() {
           ))}
         </ThemedView>
       </ScrollView>
+
+      {/* Guest reached here via deep link and tried to start a quest. */}
+      <AuthPromptModal
+        visible={showAuthPrompt}
+        onClose={() => setShowAuthPrompt(false)}
+        context="quest"
+      />
+
+      {/* Signed-in free user tried to start a premium quest. */}
+      <PaywallModal
+        visible={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        context="quest-start"
+        questTitle={questDetail?.quest?.title}
+        priceLabel={priceLabel}
+        isPurchasing={isPurchasing}
+        isRestoring={isRestoring}
+        // Don't gate the CTA on fetchProducts succeeding — requestPurchase
+        // doesn't need the product object, and an empty product list is
+        // usually an App Store Connect state, not a device problem.
+        canPurchase={entitlement !== "unknown" || priceLabel !== null}
+        onUnlock={handleUnlock}
+        onRestore={handleRestore}
+      />
     </ThemedView>
   );
 }
@@ -710,6 +847,12 @@ const styles = StyleSheet.create({
   },
   startButtonDisabled: {
     backgroundColor: Colors.medGray,
+  },
+  startButtonLockedRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "transparent",
   },
   startButtonText: {
     color: Colors.lightGray,
