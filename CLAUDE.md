@@ -56,7 +56,13 @@ ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan 
 - **[backlog.md](backlog.md) — to-do only.** Items are **deleted** when they ship. Never a status board; if it disagrees with this file, this file wins.
 - **[Gaps.md](Gaps.md) — permanent defect register.** Every known weakness, kept forever and marked `✅ FIXED` rather than deleted, so there is always a record that a weakness existed and was addressed. Each open item names its backlog id.
 
-*Last updated 2026-07-27.*
+*Last updated 2026-08-03.*
+
+**🚚 CURRENT PRIORITY — app transfer to Artifact Technologies LLC (backlog § PT).** The app is moving from the partner's developer account to the company account, and this now outranks shipping premium. Two hard consequences for anything you do:
+1. **Do not submit a build** until the transfer completes — the app can't transfer while in review or pending release.
+2. **Do not start Sign in with Apple** (P1A). SIWA identifiers are scoped per developer team, so shipping it first forces a per-user transfer-identifier migration through Apple's user-migration endpoint. Transferring first makes that work not exist.
+
+The bundle ID `com.rauljiminian.ARtifact` is permanent and survives the transfer — it can't be changed once a build is uploaded, and a new one would mean a new App Store record and losing all ratings/reviews/users. Settled; don't revisit.
 
 **Shipped (on `development`, not yet released):**
 - **Perf** — "first screen of the day = 3–5s spinner" fixed: auth-mode singleton, react-query SWR layer, cache-paint before auth, bounded featured fetch, parallelized detail fetches (PR #3). *TestFlight before/after measurement still never ran.*
@@ -75,7 +81,7 @@ Model: **one-time non-consumable $5.99 lifetime unlock** (not a subscription —
 
 **Account deletion — shipped (guideline 5.1.1(v) unblocked).** `src/hooks/useAccountDeletion.ts` + `src/utils/accountDeletion.ts`. **Ordering is load-bearing:** every owned row (`Favorited`, `Visited`, `UserQuest`, `UserXP`, `User`) is deleted BEFORE the Cognito identity, and `canDeleteIdentity()` aborts the whole thing if any row failed — all user models are `@auth(allow: owner)`, so killing the identity with rows left behind makes them permanently unreadable and undeletable. Identity deletion uses Amplify v6's client-side `deleteUser()` — no admin IAM, no Lambda. UI is a single red-button warning modal (a typed-DELETE step was built then removed as redundant). Still owed: device QA against a throwaway account, and Apple token revocation once Sign in with Apple ships (backlog 1A.6).
 
-**Planned, not started:** P1A Sign in with Apple (native sheet + Cognito CUSTOM_AUTH triggers). Fully designed in `backlog.md`; do 1A.1 first — the Amplify auth config diverges from the live pool and the next `amplify update auth` can roll back the stack.
+**Planned, blocked on the transfer:** P1A Sign in with Apple (native sheet + Cognito CUSTOM_AUTH triggers). Fully designed in `backlog.md` and **must not start until PT completes** (see the priority note above). When it does start, do 1A.1 first — the Amplify auth config diverges from the live pool and the next `amplify update auth` can roll back the stack.
 
 ## Settled decisions — don't relitigate these
 

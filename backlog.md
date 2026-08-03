@@ -4,7 +4,9 @@
 
 > **Where completed work is recorded.** Deleting a shipped item from this file is safe because nothing is lost: **[CLAUDE.md § Project state](CLAUDE.md)** says what was built, and **[Gaps.md](Gaps.md)** is a permanent register that keeps every defect entry forever and only marks it `✅ FIXED`. So a Gaps item never disappears when its backlog item does — to see which known weaknesses have been addressed, read Gaps.md, not this file. Item ids here are stable and cited from both other docs; gaps in the numbering mean that item shipped.*
 
-*Ordered by priority AND order of operations — items within a phase are sequenced so earlier ones de-risk later ones. Driving goal: ship the premium tier.*
+*Ordered by priority AND order of operations — items within a phase are sequenced so earlier ones de-risk later ones.*
+
+> **Driving goal changed 2026-08-03: transfer the app to Artifact Technologies LLC first, then ship premium from that account.** Premium revenue belongs to the LLC, the IAP product should be created once in its final home, and Sign in with Apple gets dramatically harder if shipped before the transfer (see P1A). **PT outranks everything below it.**
 
 **Product decisions locked in:**
 - Premium gates **quests only**. Scan count is NOT gated — `remainingFreeScans` is dead client-side (the schema field stays forever — see CLAUDE.md § Settled decisions).
@@ -14,7 +16,44 @@
 
 ---
 
+## PT — App transfer to Artifact Technologies LLC ⟵ **today**
+
+*Moving the app from the partner's developer account to the company account. Everything here is App Store Connect work, not code. Ordered so the partner-gated items come first (he is only available today) and the slowest item starts earliest.*
+
+**Eligibility — already satisfied, verified against [Apple's criteria](https://developer.apple.com/help/app-store-connect/transfer-an-app/app-transfer-criteria/):**
+- ✅ At least one version released to the App Store (v1.0.1 / build 1.0.37).
+- ✅ No push notifications, Apple Pay, CloudKit, Game Center or Apple Arcade — none of the hard complications apply (verified: no such deps in `package.json`).
+- ✅ No IAP products exist yet, so there can be no product-id collision in the receiving account.
+
+**Two things that would break eligibility if done today — do neither until the transfer completes:**
+- **Do not submit a build.** The app cannot transfer while in Processing for Distribution, Waiting for Review, In Review, Accepted, Pending Developer Release or Pending Apple Release. Submitting the premium build blocks the transfer until it clears.
+- **Do not ship Sign in with Apple.** See P1A — it is now explicitly gated behind this section.
+
+### PT.1 Verify eligibility in the partner's account — **needs the partner, do first**
+Confirm in his App Store Connect: the app is in none of the blocking statuses above; it is not available for pre-order in any country; both accounts have accepted the latest paid *and* free agreements; neither account is in a pending or changing state. Capture his **Apple Team ID** and confirm the ASC app id `6749166223` (already in `eas.json:35`).
+
+### PT.2 Clear TestFlight and Xcode Cloud — **needs the partner**
+Apple requires TestFlight beta testing turned off before initiating: remove **all builds and all testers**. Any Xcode Cloud data attached to the app must also be removed. Do this before PT.4, not during.
+
+### PT.3 Finish the Artifact Technologies LLC account — **the long pole, start it now**
+The receiving account must not be in a pending or changing state, and must have accepted the latest agreements. Complete enrollment, accept the **Paid Apps agreement**, and enter tax + banking. Banking verification takes days and gates **both** the transfer and any in-app purchase — if only one thing gets started today, make it this.
+
+### PT.4 Initiate and accept the transfer
+Partner initiates from his account; accept from the LLC account. Freeze all build submissions from initiation until completion.
+
+**The bundle ID does not change.** `com.rauljiminian.ARtifact` is permanent — it cannot be changed once a build has been uploaded, and a transfer preserves it. Getting a company-branded bundle id would require a brand-new App Store record, losing all ratings, reviews and existing users. Not worth it; the id is not user-visible. Decided — do not revisit.
+
+### PT.5 Re-issue credentials after the transfer
+The app moves, the signing identity does not. Expect to regenerate EAS credentials (distribution cert + provisioning profile) against the new team, and update the Apple team in the EAS submit config. `ascAppId` stays the same. Do a throwaway build immediately after the transfer to shake this out rather than discovering it at submission.
+
+### PT.6 Update the seller-facing metadata
+After transfer the App Store listing shows Artifact Technologies LLC as seller. Check the privacy policy at artifactar.com/privacy names the LLC as the data controller (folds into 0.6), and review the support/marketing URLs and copyright line for the partner's name.
+
+---
+
 ## P0 — App Store submission blockers (none of this is optional)
+
+*Not gated on the transfer — all of this can proceed in parallel, and none of it requires the partner.*
 
 ### 0.6 Reconcile the privacy policy with what the app actually does
 The policy is **live at https://artifactar.com/privacy/**, which clears the "no policy URL" blocker. What's left is that it and the binary disagree in four places — reviewers compare them, and the App Privacy questionnaire must match reality:
@@ -47,8 +86,10 @@ Two prerequisites before running:
 
 Do not remove the `GetFreshQuests` cache-bypass while doing this (CLAUDE.md landmine #4).
 
-### 1.5 App Store Connect setup — **user task, and the long pole**
-Nothing about premium can be tested for real until this is done — `fetchProducts` returns an empty array until the Paid Apps agreement is active. Create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetime` (the id in `src/iap/products.ts` must match exactly), set pricing, complete App Store agreements/tax/banking, add sandbox testers. Not a subscription — no subscription group needed.
+### 1.5 App Store Connect setup — **do this in the LLC account, after PT**
+> **Re-scoped 2026-08-03: do NOT create the IAP product in the partner's account.** Products do transfer with the app, but creating it in the new account instead means revenue lands in the LLC from the first sale, avoids a product in an ineligible status stalling the transfer, and skips duplicating the agreements. The Paid Apps agreement half of this is PT.3 and should be started **today**.
+
+Once the transfer completes: create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetime` (the id in `src/iap/products.ts` must match exactly), set pricing, add sandbox testers. Not a subscription — no subscription group needed. Nothing about premium can be tested for real until this is done: `fetchProducts` returns an empty array until the Paid Apps agreement is active.
 
 ### 1.6 Paywall analytics — breadcrumbs shipped, funnel unreviewed
 Sentry breadcrumbs are in place for paywall shown / purchase started / purchase error / restore result / quest-start blocked, plus an `isPremium` tag. What's left is confirming they actually arrive in Sentry from a real device and that the funnel is readable. Originally: paywall views, purchase starts/completions/restores, quest-start blocked events. Sentry breadcrumbs are now the whole story — there is no RevenueCat dashboard to fall back on, so anything not instrumented here is invisible. Without it we can't tune the free/premium split.
@@ -60,7 +101,12 @@ IAP sandbox testing; explicitly re-test the AR landmines (release-only regressio
 
 ## P1A — Sign in with Apple (iOS-only)
 
-*Rationale: email + password + a 6-digit code is the highest-friction path to a paying user, and the paywall lands right behind it. Apple only — the app is iOS-only, so Google is out of scope (and adding it later would pull in App Store guideline 4.8, which does not apply today). Can be pulled ahead of P1 if signup friction turns out to be the bigger conversion problem.*
+> ## ⛔ BLOCKED until PT completes — do not start this before the transfer
+> Apple scopes Sign in with Apple user identifiers **per developer team**. Ship SIWA first and every user's `sub` changes at transfer: you would have to generate a **transfer identifier for every user in the database** before initiating, then correlate them through Apple's user-migration endpoint during a 60-day window where ID tokens carry both the old and new identifiers ([TN3159](https://developer.apple.com/documentation/technotes/tn3159-migrating-sign-in-with-apple-users-for-an-app-transfer)). On top of that, a Services ID transfers with the app unless explicitly disassociated, and grouped apps must be ungrouped first.
+>
+> The linking design below (1A.4) matches Cognito accounts by verified email — that layer would need its own migration pass on top of Apple's. **Doing the transfer first makes all of this not exist.** No exceptions: this is the single largest avoidable cost in the backlog.
+
+*Rationale: email + password + a 6-digit code is the highest-friction path to a paying user, and the paywall lands right behind it. Apple only — the app is iOS-only, so Google is out of scope (and adding it later would pull in App Store guideline 4.8, which does not apply today).*
 
 **Design decisions locked in:**
 - **Native Apple sheet** via `expo-apple-authentication` — not the Cognito Hosted UI web sheet.
