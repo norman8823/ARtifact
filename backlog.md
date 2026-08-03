@@ -49,17 +49,17 @@ The receiving account must not be in a pending or changing state, and must have 
 ### PT.3b Have the acceptance-form answers ready
 Accepting the transfer requires filling in, on the spot: Support URL, Marketing URL, **Privacy policy URL** (`https://artifactar.com/privacy/`), App Review contact info, App Store contact info, and whether all team members or only Admin/Finance get access. The form also surfaces the **App Privacy disclosures inherited from the partner's account** — those are the ones 0.6 says are wrong (Sentry undisclosed, image-storage over-claim), so fix them there rather than carrying the error over. Expect up to 2 business days of "Processing App Transfer" after accepting.
 
-### PT.4 Accept the transfer — **initiated 2026-08-03, awaiting our acceptance**
-Partner has completed PT.1/PT.2 and initiated. App Store Connect shows *"App Transfer Request Pending Acceptance"* — **valid 60 days, then auto-cancelled.** Accept as Account Holder via **Business → Agreements → App Transfers → Review**.
+### PT.4 Accept the transfer — ✅ **accepted 2026-08-03, processing**
+Partner completed PT.1/PT.2 and initiated; we accepted the same day. Apple reports the transfer agreement is available and the move takes **up to three hours**. Confirmed along the way: acceptance was **not** blocked by the Paid Apps agreement sitting at Pending User Info — banking gates in-app purchase, not the transfer, and the app is free with no IAP.
 
-Not blocked on PT.3 banking: banking gates in-app purchase, not the transfer, and the app is currently free with no IAP. If acceptance *is* refused on agreement status (Paid Apps sits at Pending User Info), that makes banking urgent again — but try first.
+Inherited App Privacy responses were **kept**, not cleared — they are editable later, and clearing would have left the section incomplete and blocked the next submission. They are known to be wrong (0.6), so they must be corrected before the first submission from this account.
 
-Build-submission freeze stays in force until "Processing App Transfer" clears (up to 2 business days after acceptance). While pending, the partner also cannot edit metadata, pricing, availability or IAP.
+**Build-submission freeze holds until the app appears in the LLC account.** On arrival verify: listed under Artifact Technologies LLC, bundle id still `com.rauljiminian.ARtifact`, ratings and reviews carried over. Save the transfer agreement PDF, and pull anything wanted from the partner's App Analytics before his access ends.
 
 **The bundle ID does not change.** `com.rauljiminian.ARtifact` is permanent — it cannot be changed once a build has been uploaded, and a transfer preserves it. Getting a company-branded bundle id would require a brand-new App Store record, losing all ratings, reviews and existing users. Not worth it; the id is not user-visible. Decided — do not revisit.
 
-### PT.5 Re-issue credentials after the transfer
-The app moves, the signing identity does not. Expect to regenerate EAS credentials (distribution cert + provisioning profile) against the new team, and update the Apple team in the EAS submit config. `ascAppId` stays the same. Do a throwaway build immediately after the transfer to shake this out rather than discovering it at submission.
+### PT.5 Re-issue credentials — **the active item once processing completes**
+The app moves, the signing identity does not. Run `eas credentials`, remove the old distribution certificate and provisioning profile, and generate fresh ones against the Artifact Technologies LLC team. `ascAppId` (`eas.json:35`, `6749166223`) is unchanged — the Apple team behind it is not. **Do a throwaway build immediately** rather than discovering a signing failure at submission; that is the entire reason this is its own step.
 
 ### PT.6 Update the seller-facing metadata — **includes publicly visible contact details**
 After transfer the App Store listing shows Artifact Technologies LLC as seller. Check the privacy policy at artifactar.com/privacy names the LLC as the data controller (folds into 0.6), and review the support/marketing URLs and copyright line for the partner's name.
