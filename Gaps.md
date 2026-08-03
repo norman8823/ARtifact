@@ -21,7 +21,9 @@
 ### 3. Guest API key hard-expires 2026-12-06
 [authMode.ts:13](src/aws/authMode.ts#L13) hardcodes `GUEST_API_KEY_EXPIRY = 2026-12-06`. When the AppSync API key is rotated, the app needs a client update or guest mode dies. ~5 months away as of this audit. There is no server-driven config to extend it remotely.
 
-### 4. Single point of failure: Railway scan endpoint
+### 4. Single point of failure: Railway scan endpoint — **and it is not owned by the app's owner**
+**Escalated 2026-08-03:** after the App Store transfer to Artifact Technologies LLC, the app is owned by the LLC but this service is not — it lives in a separate repo on the former partner's side, deployed to his Railway project. It is now a single point of *control* as well as of failure, and the "images are not retained" claim about to be published in the privacy policy depends on code the LLC can neither see nor freeze. Ownership needs settling (backlog PT.7). Original finding follows.
+
 [scan.tsx:185](app/scan.tsx#L185) hardcodes `https://artifact-server-production.up.railway.app/predict`. No timeout, no retry, no failover, no request deduplication (rapid shutter taps fire concurrent requests). Railway free-tier scales to zero → first scan of the day eats a server cold start with no user-facing "warming up" state.
 
 ## Data / business-logic bugs
