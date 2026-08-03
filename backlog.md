@@ -30,13 +30,24 @@
 - **Do not ship Sign in with Apple.** See P1A — it is now explicitly gated behind this section.
 
 ### PT.1 Verify eligibility in the partner's account — **needs the partner, do first**
-Confirm in his App Store Connect: the app is in none of the blocking statuses above; it is not available for pre-order in any country; both accounts have accepted the latest paid *and* free agreements; neither account is in a pending or changing state. Capture his **Apple Team ID** and confirm the ASC app id `6749166223` (already in `eas.json:35`).
+Confirm in his App Store Connect: the app is in none of the blocking statuses above; it is not available for pre-order in any country; both accounts have accepted the latest paid *and* free agreements; neither account is in a pending or changing state. He must be the **Account Holder** — no other role can initiate a transfer.
+
+**The identifiers flow toward him, not from him.** To initiate, he enters *our* **Apple Account email (the LLC's Account Holder)** and *our* **Team ID** — so PT.3 has to be far enough along for those to exist before PT.4 can run. His own Team ID is worth capturing anyway for PT.5 (EAS credentials), but it is not needed for the transfer itself.
 
 ### PT.2 Clear TestFlight and Xcode Cloud — **needs the partner**
 Apple requires TestFlight beta testing turned off before initiating: remove **all builds and all testers**. Any Xcode Cloud data attached to the app must also be removed. Do this before PT.4, not during.
 
-### PT.3 Finish the Artifact Technologies LLC account — **the long pole, start it now**
-The receiving account must not be in a pending or changing state, and must have accepted the latest agreements. Complete enrollment, accept the **Paid Apps agreement**, and enter tax + banking. Banking verification takes days and gates **both** the transfer and any in-app purchase — if only one thing gets started today, make it this.
+### PT.3 Finish the Artifact Technologies LLC account — **the long pole**
+The receiving account must not be in a pending or changing state, and must have accepted the latest agreements.
+
+**Done:** organization enrollment as Artifact Technologies LLC, Team ID issued, Developer Program License Agreement accepted 2026-07-28 (that's the *free* agreement — it does not cover paid apps), Account Holder role held. Paid Apps Agreement signed and W-9 filed.
+
+**Remaining: banking.** The sequence is forced — sign Paid Apps → submit tax forms → *only then* can banking be entered. Agreement status runs **Pending User Info → Processing → Active**; it must reach **Active**, because Apple's transfer criteria require both accounts to have accepted their latest paid *and* free agreements and to not be in a pending or changing state.
+
+**The bank account must be the LLC's, not personal.** Apple's field is for "the bank account number of the legal entity … enrolled in the Apple Developer Program", and the account-holder name must match the entity name exactly or payments are rejected. Independently of Apple: commingling revenue into a personal account undermines the corporate veil the LLC exists to provide, and mismatches whatever TIN the W-9 was filed under. **If no business checking account is open yet, that — not Apple — is the actual critical path** (banks typically want the EIN letter, articles of organization, and often an operating agreement).
+
+### PT.3b Have the acceptance-form answers ready
+Accepting the transfer requires filling in, on the spot: Support URL, Marketing URL, **Privacy policy URL** (`https://artifactar.com/privacy/`), App Review contact info, App Store contact info, and whether all team members or only Admin/Finance get access. The form also surfaces the **App Privacy disclosures inherited from the partner's account** — those are the ones 0.6 says are wrong (Sentry undisclosed, image-storage over-claim), so fix them there rather than carrying the error over. Expect up to 2 business days of "Processing App Transfer" after accepting.
 
 ### PT.4 Initiate and accept the transfer
 Partner initiates from his account; accept from the LLC account. Freeze all build submissions from initiation until completion.
