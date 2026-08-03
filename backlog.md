@@ -16,63 +16,27 @@
 
 ---
 
-## PT — App transfer to Artifact Technologies LLC ⟵ **today**
+## PT — Post-transfer follow-through
 
-*Moving the app from the partner's developer account to the company account. Everything here is App Store Connect work, not code. Ordered so the partner-gated items come first (he is only available today) and the slowest item starts earliest.*
+> **The transfer completed 2026-08-03.** ARtifact Museum (Apple ID `6749166223`) now belongs to Artifact Technologies LLC. The build-submission freeze is **lifted**, and P1A Sign in with Apple is **unblocked**. What's left below is cleanup the transfer did not do for us.
 
-**Eligibility — already satisfied, verified against [Apple's criteria](https://developer.apple.com/help/app-store-connect/transfer-an-app/app-transfer-criteria/):**
-- ✅ At least one version released to the App Store (v1.0.1 / build 1.0.37).
-- ✅ No push notifications, Apple Pay, CloudKit, Game Center or Apple Arcade — none of the hard complications apply (verified: no such deps in `package.json`).
-- ✅ No IAP products exist yet, so there can be no product-id collision in the receiving account.
+### PT.3 Add the LLC bank account to App Store Connect — **gates premium only**
+**Done:** organization enrollment, Team ID, Developer Program License Agreement (2026-07-28), Account Holder role, Paid Apps Agreement signed, W-9 filed.
 
-**Two things that would break eligibility if done today — do neither until the transfer completes:**
-- **Do not submit a build.** The app cannot transfer while in Processing for Distribution, Waiting for Review, In Review, Accepted, Pending Developer Release or Pending Apple Release. Submitting the premium build blocks the transfer until it clears.
-- **Do not ship Sign in with Apple.** See P1A — it is now explicitly gated behind this section.
+**Remaining: banking.** The sequence is forced — sign Paid Apps → submit tax forms → *only then* can banking be entered. Agreement status runs **Pending User Info → Processing → Active**; it must reach **Active** before in-app purchase works (`fetchProducts` returns an empty array otherwise).
 
-### PT.1 Verify eligibility in the partner's account — **needs the partner, do first**
-Confirm in his App Store Connect: the app is in none of the blocking statuses above; it is not available for pre-order in any country; both accounts have accepted the latest paid *and* free agreements; neither account is in a pending or changing state. He must be the **Account Holder** — no other role can initiate a transfer.
+**Blocked on the EIN document.** Mercury accepts CP 575, a 147C letter, an IRS-stamped SS-4, or a screenshot of the IRS site showing the EIN. The paper IRS letter is at home; owner to scan and upload. Fallback if it can't be found: request a 147C on **800-829-4933**, faxed same-day. **This never blocked the transfer** — it gates P1 premium and nothing else.
 
-**The identifiers flow toward him, not from him.** To initiate, he enters *our* **Apple Account email (the LLC's Account Holder)** and *our* **Team ID** — so PT.3 has to be far enough along for those to exist before PT.4 can run. His own Team ID is worth capturing anyway for PT.5 (EAS credentials), but it is not needed for the transfer itself.
+**The bank account must be the LLC's, not personal.** Apple's field is for "the bank account number of the legal entity … enrolled in the Apple Developer Program", and the account-holder name must match the entity name exactly or payments are rejected. Independently of Apple: commingling revenue into a personal account undermines the corporate veil the LLC exists to provide.
 
-### PT.2 Clear TestFlight and Xcode Cloud — **needs the partner**
-Apple requires TestFlight beta testing turned off before initiating: remove **all builds and all testers**. Any Xcode Cloud data attached to the app must also be removed. Do this before PT.4, not during.
+### PT.5 Re-issue signing credentials — **do this first, before any build**
+The app moved; the signing identity did not. Run `eas credentials`, remove the old distribution certificate and provisioning profile, and generate fresh ones against the Artifact Technologies LLC team. `ascAppId` (`eas.json:35`, `6749166223`) is unchanged — the Apple team behind it is not. **Do a throwaway build immediately** rather than discovering a signing failure at submission.
 
-### PT.3 Finish the Artifact Technologies LLC account — **the long pole**
-The receiving account must not be in a pending or changing state, and must have accepted the latest agreements.
-
-**Done:** organization enrollment as Artifact Technologies LLC, Team ID issued, Developer Program License Agreement accepted 2026-07-28 (that's the *free* agreement — it does not cover paid apps), Account Holder role held. Paid Apps Agreement signed and W-9 filed.
-
-**Remaining: banking.** The sequence is forced — sign Paid Apps → submit tax forms → *only then* can banking be entered. Agreement status runs **Pending User Info → Processing → Active**; it must reach **Active**, because Apple's transfer criteria require both accounts to have accepted their latest paid *and* free agreements and to not be in a pending or changing state.
-
-**Status 2026-08-03: blocked on the EIN document.** Mercury requires proof of EIN — CP 575, 147C letter, IRS-stamped SS-4, or a screenshot of the IRS site showing the EIN. The paper IRS letter is at home; owner to scan and upload. **This no longer blocks the transfer** (PT.4 completed without it) — it blocks in-app purchase, so it gates P1 premium only. Fallback if the paper can't be found: 147C by phone on 800-829-4933, faxed same-day.
-
-**The bank account must be the LLC's, not personal.** Apple's field is for "the bank account number of the legal entity … enrolled in the Apple Developer Program", and the account-holder name must match the entity name exactly or payments are rejected. Independently of Apple: commingling revenue into a personal account undermines the corporate veil the LLC exists to provide, and mismatches whatever TIN the W-9 was filed under. **If no business checking account is open yet, that — not Apple — is the actual critical path** (banks typically want the EIN letter, articles of organization, and often an operating agreement).
-
-### PT.3b Have the acceptance-form answers ready
-Accepting the transfer requires filling in, on the spot: Support URL, Marketing URL, **Privacy policy URL** (`https://artifactar.com/privacy/`), App Review contact info, App Store contact info, and whether all team members or only Admin/Finance get access. The form also surfaces the **App Privacy disclosures inherited from the partner's account** — those are the ones 0.6 says are wrong (Sentry undisclosed, image-storage over-claim), so fix them there rather than carrying the error over. Expect up to 2 business days of "Processing App Transfer" after accepting.
-
-### PT.4 Accept the transfer — ✅ **accepted 2026-08-03, processing**
-Partner completed PT.1/PT.2 and initiated; we accepted the same day. Apple reports the transfer agreement is available and the move takes **up to three hours**. Confirmed along the way: acceptance was **not** blocked by the Paid Apps agreement sitting at Pending User Info — banking gates in-app purchase, not the transfer, and the app is free with no IAP.
-
-Inherited App Privacy responses were **kept**, not cleared — they are editable later, and clearing would have left the section incomplete and blocked the next submission. They are known to be wrong (0.6), so they must be corrected before the first submission from this account.
-
-**Build-submission freeze holds until the app appears in the LLC account.** On arrival verify: listed under Artifact Technologies LLC, bundle id still `com.rauljiminian.ARtifact`, ratings and reviews carried over. Save the transfer agreement PDF, and pull anything wanted from the partner's App Analytics before his access ends.
-
-**The bundle ID does not change.** `com.rauljiminian.ARtifact` is permanent — it cannot be changed once a build has been uploaded, and a transfer preserves it. Getting a company-branded bundle id would require a brand-new App Store record, losing all ratings, reviews and existing users. Not worth it; the id is not user-visible. Decided — do not revisit.
-
-### PT.5 Re-issue credentials — **the active item once processing completes**
-The app moves, the signing identity does not. Run `eas credentials`, remove the old distribution certificate and provisioning profile, and generate fresh ones against the Artifact Technologies LLC team. `ascAppId` (`eas.json:35`, `6749166223`) is unchanged — the Apple team behind it is not. **Do a throwaway build immediately** rather than discovering a signing failure at submission; that is the entire reason this is its own step.
-
-### PT.6 Update the seller-facing metadata — **includes publicly visible contact details**
-After transfer the App Store listing shows Artifact Technologies LLC as seller. Check the privacy policy at artifactar.com/privacy names the LLC as the data controller (folds into 0.6), and review the support/marketing URLs and copyright line for the partner's name.
-
-**Nothing here is publicly visible today.** **App Review Contact Information is private to Apple's review team** — real name, phone and email are appropriate there and are never shown on the product page.
-
-**The app is not available in the EU** (confirmed by owner 2026-08-03) and there is no plan to change that. Adding EU territories is **a compliance workstream, not a checkbox** — treat it as its own project if it ever comes up:
-- **DSA trader status** — declare and verify; Apple then **publicly displays** the trader's business name, physical address, phone and email on the product page. Apps without trader status are removed from EU storefronts. Use a business address (registered agent or virtual office; some jurisdictions reject a bare PO box) and a forwarding phone/email — never a personal cell or home address, since the listing is scraped and indexed and later edits don't un-publish it.
-- **GDPR** as data controller — lawful basis, data-subject requests, and likely an Article 27 EU representative given no EU establishment.
-- **European Accessibility Act** — in force since 2025-06-28 for consumer digital products/services; likely the largest engineering lift for an AR app. There is a microenterprise carve-out a single-member LLC may fall under — get advice rather than assuming.
-- Consumer withdrawal-right rules for digital purchases.
+### PT.6 Metadata and inherited settings
+- **App Privacy responses were inherited from the partner's account and kept** (clearing them would have blocked the next submission). They are known wrong — see 0.6 — and **must be corrected before the first submission from this account.**
+- Check the privacy policy at artifactar.com/privacy names the LLC as data controller (folds into 0.6); review support/marketing URLs and the copyright line for the partner's name. *(**App Review Contact Information** is private to Apple's review team — real name, phone and email are appropriate there and are never shown on the product page.)*
+- Verify on arrival: listed under Artifact Technologies LLC, bundle id still `com.rauljiminian.ARtifact`, ratings and reviews carried over. Save the transfer agreement PDF.
+- **The app is not available in the EU** (confirmed 2026-08-03) and there is no plan to change that. Adding EU territories is **a compliance workstream, not a checkbox** — treat it as its own project: DSA trader status (whose business name, address, phone and email Apple then **publicly displays** on the product page), GDPR controller obligations including a likely Article 27 EU representative, the European Accessibility Act (in force 2025-06-28, with a microenterprise carve-out worth real advice), and consumer withdrawal rights.
 
 ---
 
@@ -111,10 +75,10 @@ Two prerequisites before running:
 
 Do not remove the `GetFreshQuests` cache-bypass while doing this (CLAUDE.md landmine #4).
 
-### 1.5 App Store Connect setup — **do this in the LLC account, after PT**
-> **Re-scoped 2026-08-03: do NOT create the IAP product in the partner's account.** Products do transfer with the app, but creating it in the new account instead means revenue lands in the LLC from the first sale, avoids a product in an ineligible status stalling the transfer, and skips duplicating the agreements. The Paid Apps agreement half of this is PT.3 and should be started **today**.
+### 1.5 App Store Connect setup — **now doable; blocked only on PT.3 banking**
+> The transfer completed before any IAP product was created, which is exactly what we wanted — the product gets created once, in the LLC account, and revenue lands there from the first sale.
 
-Once the transfer completes: create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetime` (the id in `src/iap/products.ts` must match exactly), set pricing, add sandbox testers. Not a subscription — no subscription group needed. Nothing about premium can be tested for real until this is done: `fetchProducts` returns an empty array until the Paid Apps agreement is active.
+Create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetime` (the id in `src/iap/products.ts` must match exactly), set pricing, add sandbox testers. Not a subscription — no subscription group needed. Nothing about premium can be tested for real until this is done: `fetchProducts` returns an empty array until the Paid Apps agreement is active.
 
 ### 1.6 Paywall analytics — breadcrumbs shipped, funnel unreviewed
 Sentry breadcrumbs are in place for paywall shown / purchase started / purchase error / restore result / quest-start blocked, plus an `isPremium` tag. What's left is confirming they actually arrive in Sentry from a real device and that the funnel is readable. Originally: paywall views, purchase starts/completions/restores, quest-start blocked events. Sentry breadcrumbs are now the whole story — there is no RevenueCat dashboard to fall back on, so anything not instrumented here is invisible. Without it we can't tune the free/premium split.
@@ -126,10 +90,7 @@ IAP sandbox testing; explicitly re-test the AR landmines (release-only regressio
 
 ## P1A — Sign in with Apple (iOS-only)
 
-> ## ⛔ BLOCKED until PT completes — do not start this before the transfer
-> Apple scopes Sign in with Apple user identifiers **per developer team**. Ship SIWA first and every user's `sub` changes at transfer: you would have to generate a **transfer identifier for every user in the database** before initiating, then correlate them through Apple's user-migration endpoint during a 60-day window where ID tokens carry both the old and new identifiers ([TN3159](https://developer.apple.com/documentation/technotes/tn3159-migrating-sign-in-with-apple-users-for-an-app-transfer)). On top of that, a Services ID transfers with the app unless explicitly disassociated, and grouped apps must be ungrouped first.
->
-> The linking design below (1A.4) matches Cognito accounts by verified email — that layer would need its own migration pass on top of Apple's. **Doing the transfer first makes all of this not exist.** No exceptions: this is the single largest avoidable cost in the backlog.
+> **✅ Unblocked 2026-08-03 by the transfer completing.** This was deliberately held until then: Apple scopes Sign in with Apple identifiers **per developer team**, so shipping it before the transfer would have forced generating a transfer identifier for every user and correlating them through Apple's user-migration endpoint across a 60-day dual-identifier window ([TN3159](https://developer.apple.com/documentation/technotes/tn3159-migrating-sign-in-with-apple-users-for-an-app-transfer)) — plus a migration for the email-based Cognito linking in 1A.4. Building it now on the LLC's team means none of that exists. Any *future* account transfer would reintroduce it, so don't plan one.
 
 *Rationale: email + password + a 6-digit code is the highest-friction path to a paying user, and the paywall lands right behind it. Apple only — the app is iOS-only, so Google is out of scope (and adding it later would pull in App Store guideline 4.8, which does not apply today).*
 
