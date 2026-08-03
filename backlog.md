@@ -49,8 +49,12 @@ The receiving account must not be in a pending or changing state, and must have 
 ### PT.3b Have the acceptance-form answers ready
 Accepting the transfer requires filling in, on the spot: Support URL, Marketing URL, **Privacy policy URL** (`https://artifactar.com/privacy/`), App Review contact info, App Store contact info, and whether all team members or only Admin/Finance get access. The form also surfaces the **App Privacy disclosures inherited from the partner's account** — those are the ones 0.6 says are wrong (Sentry undisclosed, image-storage over-claim), so fix them there rather than carrying the error over. Expect up to 2 business days of "Processing App Transfer" after accepting.
 
-### PT.4 Initiate and accept the transfer
-Partner initiates from his account; accept from the LLC account. Freeze all build submissions from initiation until completion.
+### PT.4 Accept the transfer — **initiated 2026-08-03, awaiting our acceptance**
+Partner has completed PT.1/PT.2 and initiated. App Store Connect shows *"App Transfer Request Pending Acceptance"* — **valid 60 days, then auto-cancelled.** Accept as Account Holder via **Business → Agreements → App Transfers → Review**.
+
+Not blocked on PT.3 banking: banking gates in-app purchase, not the transfer, and the app is currently free with no IAP. If acceptance *is* refused on agreement status (Paid Apps sits at Pending User Info), that makes banking urgent again — but try first.
+
+Build-submission freeze stays in force until "Processing App Transfer" clears (up to 2 business days after acceptance). While pending, the partner also cannot edit metadata, pricing, availability or IAP.
 
 **The bundle ID does not change.** `com.rauljiminian.ARtifact` is permanent — it cannot be changed once a build has been uploaded, and a transfer preserves it. Getting a company-branded bundle id would require a brand-new App Store record, losing all ratings, reviews and existing users. Not worth it; the id is not user-visible. Decided — do not revisit.
 
