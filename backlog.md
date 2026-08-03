@@ -64,9 +64,9 @@ The app moves, the signing identity does not. Expect to regenerate EAS credentia
 ### PT.6 Update the seller-facing metadata — **includes publicly visible contact details**
 After transfer the App Store listing shows Artifact Technologies LLC as seller. Check the privacy policy at artifactar.com/privacy names the LLC as the data controller (folds into 0.6), and review the support/marketing URLs and copyright line for the partner's name.
 
-**EU DSA trader contact — this one is public and does not update itself.** Under DSA Articles 30–31 Apple verifies and **displays the trader's business name, physical address, phone number and email directly on the App Store product page** for apps distributed in the EU. The app is live in the EU, so trader status was already declared using **the partner's details**, and they will still be on the public listing after the transfer. Update to the LLC: business address (registered agent or virtual office — some jurisdictions reject a bare PO box) and a forwarding phone/email, never a personal cell or home address. Once published it is scraped and indexed; changing it later does not un-publish it.
+**Nothing here is publicly visible today.** **App Review Contact Information is private to Apple's review team** — real name, phone and email are appropriate there and are never shown on the product page.
 
-*Not to be confused with **App Review Contact Information**, which is private to Apple's review team — real name, phone and email are appropriate there.*
+*Conditional, only if EU availability is ever turned on:* under DSA Articles 30–31 Apple verifies and **publicly displays the trader's business name, physical address, phone number and email on the App Store product page** for apps distributed in the EU. **The app is not currently available in the EU** (confirmed by owner 2026-08-03), so this does not apply. If EU territories are ever added, use a business address (registered agent or virtual office — some jurisdictions reject a bare PO box) and a forwarding phone/email, never a personal cell or home address; once published it is scraped and indexed, and changing it later does not un-publish it.
 
 ---
 
