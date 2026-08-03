@@ -49,7 +49,14 @@ Settle: who owns the repo, who owns the Railway project and its billing, and whe
 
 **If he does hand over the compute:** transfer the Railway *project* rather than recreating it from source — a project transfer carries the generated domain with it and nobody notices, whereas a fresh deploy strands existing installs.
 
-**Source:** collaborator access + an immediate clone covers the near term. If ownership moves, put it in a **separate repo under the LLC org, not this one** — CI here requires jest + `tsc --noEmit` + lint to all pass, and adding a Python service means reworking those jobs or adding path filters for no present benefit; Railway also deploys from a repo root. Check the CNN weights' size and whether they're committed first — large `.h5`/`.keras`/`.pt` blobs in git history turn this into a Git LFS exercise.
+**Source: [`RaulJiminian/ARtifact-server`](https://github.com/RaulJiminian/ARtifact-server)** (private; owner already a collaborator). **Verified 2026-08-03 — it is fully self-contained**, so a clone is a deployable service:
+- `mobilenet_artwork_recognition.keras` (**48.7 MB**) is committed as a normal git blob — no LFS, comfortably under GitHub's 100 MB cap.
+- `app.py:34` reads `MODEL_PATH` but **defaults to the committed filename**, so no runtime fetch from anyone's bucket. `class_names.json` (the artwork-ID label map) loads from disk at `:40`, with an output-shape/label-count sanity check at `:45`.
+- `requirements.txt`, `Pipfile.lock` and `Procfile` are all present. Repo is **~58 MB total, last pushed 2025-09-24** — effectively dormant, which is also why the 0.6 retention finding is stable.
+
+**Action: clone it and push a copy to the LLC org now.** Two minutes, needs nothing from the partner, and removes the delete/revoke risk. Tell him rather than doing it quietly. Keep it a **separate repo, not merged into this one** — CI here requires jest + `tsc --noEmit` + lint to all pass, and adding a Python service means reworking those jobs or adding path filters for no present benefit; Railway also deploys from a repo root.
+
+*Observation, not a defect:* `app.py:11` imports `efficientnet_v2.preprocess_input` while the weights file is named `mobilenet_…`. Those architectures preprocess differently. Almost certainly a stale filename after a retrain — the service works — but it is the first place to look if scan accuracy is ever questioned *(relates to Gaps #15)*.
 
 **Longer term option, explicitly not now:** fold inference into the AWS account already being paid for (App Runner / ECS Fargate), giving one vendor and one bill. Real migration work; do not attempt it during the premium launch.
 
