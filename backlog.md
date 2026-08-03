@@ -44,6 +44,8 @@ The receiving account must not be in a pending or changing state, and must have 
 
 **Remaining: banking.** The sequence is forced — sign Paid Apps → submit tax forms → *only then* can banking be entered. Agreement status runs **Pending User Info → Processing → Active**; it must reach **Active**, because Apple's transfer criteria require both accounts to have accepted their latest paid *and* free agreements and to not be in a pending or changing state.
 
+**Status 2026-08-03: blocked on the EIN document.** Mercury requires proof of EIN — CP 575, 147C letter, IRS-stamped SS-4, or a screenshot of the IRS site showing the EIN. The paper IRS letter is at home; owner to scan and upload. **This no longer blocks the transfer** (PT.4 completed without it) — it blocks in-app purchase, so it gates P1 premium only. Fallback if the paper can't be found: 147C by phone on 800-829-4933, faxed same-day.
+
 **The bank account must be the LLC's, not personal.** Apple's field is for "the bank account number of the legal entity … enrolled in the Apple Developer Program", and the account-holder name must match the entity name exactly or payments are rejected. Independently of Apple: commingling revenue into a personal account undermines the corporate veil the LLC exists to provide, and mismatches whatever TIN the W-9 was filed under. **If no business checking account is open yet, that — not Apple — is the actual critical path** (banks typically want the EIN letter, articles of organization, and often an operating agreement).
 
 ### PT.3b Have the acceptance-form answers ready

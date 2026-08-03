@@ -40,6 +40,7 @@ ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan 
 5. **Screens gate on `data === undefined`, not `isLoading`** (favorites, artworksVisited) — `isLoading` is false pre-auth and caused empty-state flashes. Keep this pattern when touching migrated screens.
 6. **The two-paradigm data layer is intentional**: react-query wrappers (home/profile/artQuest/favorites/artworksVisited) over untouched legacy hooks (artDetail/questDetail/collection/explore). Rollback strategy = delete `queries.ts` + revert screens. Don't refactor the legacy hooks' signatures casually — they're the queryFns.
 7. **`AR_TEST_MODE`** in `arViewer.tsx:11` must stay `false` in commits — `true` hardwires a test scene.
+8. **Never change `ios.bundleIdentifier`.** `com.rauljiminian.ARtifact` in `app.json` carries a former partner's name and is permanent — it cannot be changed once a build has been uploaded, and it survived the 2026-08-03 transfer to Artifact Technologies LLC by design (that is what preserved existing installs, ratings and reviews). "Rebranding" it to a company-owned id would not rename the app: every future build would be a *different* app that no longer matches the App Store record, EAS submit would reject it, and shipping it as a new listing would lose every user, rating and review. It is not visible to users anywhere.
 
 ## Known-stale / dead things (don't be misled)
 
