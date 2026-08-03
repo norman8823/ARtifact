@@ -66,7 +66,11 @@ After transfer the App Store listing shows Artifact Technologies LLC as seller. 
 
 **Nothing here is publicly visible today.** **App Review Contact Information is private to Apple's review team** — real name, phone and email are appropriate there and are never shown on the product page.
 
-*Conditional, only if EU availability is ever turned on:* under DSA Articles 30–31 Apple verifies and **publicly displays the trader's business name, physical address, phone number and email on the App Store product page** for apps distributed in the EU. **The app is not currently available in the EU** (confirmed by owner 2026-08-03), so this does not apply. If EU territories are ever added, use a business address (registered agent or virtual office — some jurisdictions reject a bare PO box) and a forwarding phone/email, never a personal cell or home address; once published it is scraped and indexed, and changing it later does not un-publish it.
+**The app is not available in the EU** (confirmed by owner 2026-08-03) and there is no plan to change that. Adding EU territories is **a compliance workstream, not a checkbox** — treat it as its own project if it ever comes up:
+- **DSA trader status** — declare and verify; Apple then **publicly displays** the trader's business name, physical address, phone and email on the product page. Apps without trader status are removed from EU storefronts. Use a business address (registered agent or virtual office; some jurisdictions reject a bare PO box) and a forwarding phone/email — never a personal cell or home address, since the listing is scraped and indexed and later edits don't un-publish it.
+- **GDPR** as data controller — lawful basis, data-subject requests, and likely an Article 27 EU representative given no EU establishment.
+- **European Accessibility Act** — in force since 2025-06-28 for consumer digital products/services; likely the largest engineering lift for an AR app. There is a microenterprise carve-out a single-member LLC may fall under — get advice rather than assuming.
+- Consumer withdrawal-right rules for digital purchases.
 
 ---
 
