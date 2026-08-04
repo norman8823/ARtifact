@@ -20,11 +20,6 @@
 
 > **The transfer completed 2026-08-03.** ARtifact Museum (Apple ID `6749166223`) now belongs to Artifact Technologies LLC. The build-submission freeze is **lifted**, and P1A Sign in with Apple is **unblocked**. What's left below is cleanup the transfer did not do for us.
 
-### PT.3 LLC account setup — ✅ **complete 2026-08-04, pending agreement activation**
-Organization enrollment, Team ID, Developer Program License Agreement (2026-07-28), Account Holder role, Paid Apps Agreement, W-9, and the Mercury LLC business account are all done; **bank details are entered in App Store Connect.**
-
-**One thing left to observe, not do:** the Paid Apps agreement moves **Pending User Info → Processing → Active** on Apple's schedule (usually hours). Until it reads **Active** in Business → Agreements, `fetchProducts` returns an empty array and nothing about premium is testable. Check back rather than blocking on it.
-
 ### PT.5 Re-issue signing credentials — ✅ **credentials done 2026-08-04; build still to run**
 All three EAS-held credentials regenerated against **`S3UAQ48824` — Artifact Technologies LLC (Company/Organization)**, valid to 2027-08-04: distribution certificate, provisioning profile, and the **App Store Connect API Key**. That third one is easy to miss and is what `eas submit` authenticates with — leaving it on the old team means the build succeeds and the upload doesn't.
 
@@ -131,12 +126,12 @@ Two prerequisites before running:
 
 Do not remove the `GetFreshQuests` cache-bypass while doing this (CLAUDE.md landmine #4).
 
-### 1.5 App Store Connect setup — **unblocked; do this next in App Store Connect**
-> Banking landed 2026-08-04 (PT.3). The transfer completed before any IAP product was created, which is exactly what we wanted — the product gets created once, in the LLC account, and revenue lands there from the first sale.
+### 1.5 App Store Connect setup — **fully unblocked; this is the next thing to do in App Store Connect**
+> **Paid Apps agreement is Active and the bank account is linked (2026-08-04).** That was the last gate — `fetchProducts` will now return real products once one exists, so premium becomes testable for the first time. The transfer completed before any IAP product was created, which is exactly what we wanted: the product gets created once, in the LLC account, and revenue lands there from the first sale.
 
 The product ID must match `src/iap/products.ts` **character for character** — a typo surfaces as an empty product list with no error, which is miserable to debug. Add **sandbox testers** (Users and Access → Sandbox) in the same sitting. The product will sit at *Ready to Submit*; non-consumables are reviewed alongside the first build that uses them.
 
-Create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetime` (the id in `src/iap/products.ts` must match exactly), set pricing, add sandbox testers. Not a subscription — no subscription group needed. Nothing about premium can be tested for real until this is done: `fetchProducts` returns an empty array until the Paid Apps agreement is active.
+Create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetime` (the id in `src/iap/products.ts` must match exactly), set pricing, add sandbox testers. Not a subscription — no subscription group needed. **This is now the only thing standing between the built premium code and a real sandbox purchase** — everything else it depended on is done.
 
 ### 1.6 Paywall analytics — breadcrumbs shipped, funnel unreviewed
 Sentry breadcrumbs are in place for paywall shown / purchase started / purchase error / restore result / quest-start blocked, plus an `isPremium` tag. What's left is confirming they actually arrive in Sentry from a real device and that the funnel is readable. Originally: paywall views, purchase starts/completions/restores, quest-start blocked events. Sentry breadcrumbs are now the whole story — there is no RevenueCat dashboard to fall back on, so anything not instrumented here is invisible. Without it we can't tune the free/premium split.
