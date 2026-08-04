@@ -25,7 +25,7 @@
 
 **Remaining: banking.** The sequence is forced — sign Paid Apps → submit tax forms → *only then* can banking be entered. Agreement status runs **Pending User Info → Processing → Active**; it must reach **Active** before in-app purchase works (`fetchProducts` returns an empty array otherwise).
 
-**Blocked on the EIN document.** Mercury accepts CP 575, a 147C letter, an IRS-stamped SS-4, or a screenshot of the IRS site showing the EIN. The paper IRS letter is at home; owner to scan and upload. Fallback if it can't be found: request a 147C on **800-829-4933**, faxed same-day. **This never blocked the transfer** — it gates P1 premium and nothing else.
+**Status 2026-08-04: Mercury account approved** (EIN documentation cleared). Remaining step is an **initial deposit to activate** — Mercury withholds the account and routing numbers until the account is funded. That's activation, not a minimum-balance requirement. Fund it (Plaid link is instant; micro-deposit verification costs a couple of days), then take the account + routing numbers to App Store Connect. Record the transfer from personal funds as a **capital contribution** — that direction is fine; paying personal expenses *out of* the business account is what causes commingling problems. **None of this ever blocked the transfer** — it gates P1 premium and nothing else.
 
 **The bank account must be the LLC's, not personal.** Apple's field is for "the bank account number of the legal entity … enrolled in the Apple Developer Program", and the account-holder name must match the entity name exactly or payments are rejected. Independently of Apple: commingling revenue into a personal account undermines the corporate veil the LLC exists to provide.
 
