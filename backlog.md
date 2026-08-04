@@ -30,9 +30,11 @@ All three EAS-held credentials regenerated against **`S3UAQ48824` — Artifact T
 
 Two findings worth keeping: the old certificate and profile had **already expired on 2026-07-25**, so this build was going to fail regardless of the transfer; and the old team was `CNQY33V8YV (Raul Jiminian (Individual))` — an *Individual* team, so "Organization" in the summary is the quick confirmation that a regeneration actually landed on the right account. The old API key `BX25HH65QC` was left in place rather than deleted: it lives in the partner's account and we no longer have the access to revoke it. It is simply unused now.
 
-**Build 1.0.50 uploaded 2026-08-04** and processing in App Store Connect. Signed clean on the new team.
+**Build 1.0.50 uploaded 2026-08-04** and processing in App Store Connect. Signed clean on the new team. **1.0.51 is the build now on TestFlight and installed on a real device (2026-08-04) — launches and runs fine.**
 
 **Upload warning 90076 — "Potential Loss of Keychain Access" — assessed and benign, do not re-panic.** Apple flags it because keychain access groups are Team-ID-prefixed, so `CNQY33V8YV.com.rauljiminian.ARtifact` → `S3UAQ48824.com.rauljiminian.ARtifact` means the new build cannot read keychain items the old one wrote. **This app never wrote any.** Nothing in `src/`, `app/` or `components/` imports `react-native-keychain` (a declared but unused dependency) or `SecureStore`; Cognito tokens go to **AsyncStorage** via `cognitoUserPoolsTokenProvider.setKeyValueStorage(AsyncStorage)` (`config.ts:135`), and the entitlement cache uses AsyncStorage too. AsyncStorage is app-container storage and is unaffected by the team prefix, so **no user is signed out by the transfer.** Had tokens been in the keychain, this warning would have meant a silent sign-out of every user on update.
+
+**✅ Confirmed on device 2026-08-04 — this is no longer an assessment.** Build 1.0.51 (new team `S3UAQ48824`) was installed over an April build, 1.0.44, that had been signed on the old `CNQY33V8YV` team. **The session survived — no re-login.** That exercises the team-prefix change end to end against a real signed-in account, so 90076 can be dismissed on future uploads without re-litigating it.
 
 *Note for later:* if Sign in with Apple (P1A) or anything else ever moves credentials into the keychain or SecureStore, this warning stops being benign.
 
@@ -67,8 +69,10 @@ Settle: who owns the repo, who owns the Railway project and its billing, and whe
 **Longer term option, explicitly not now:** fold inference into the AWS account already being paid for (App Runner / ECS Fargate), giving one vendor and one bill. Real migration work; do not attempt it during the premium launch.
 
 ### PT.6 Metadata and inherited settings
-- **App Privacy responses were inherited from the partner's account and kept** (clearing them would have blocked the next submission). They are known wrong — see 0.6 — and **must be corrected before the first submission from this account.**
-- Check the privacy policy at artifactar.com/privacy names the LLC as data controller (folds into 0.6); review support/marketing URLs and the copyright line for the partner's name. *(**App Review Contact Information** is private to Apple's review team — real name, phone and email are appropriate there and are never shown on the product page.)*
+- **⚠️ The app is REMOVED FROM SALE** (observed in App Store Connect 2026-08-04 — a pre-transfer state, not something the transfer did). Approving a new version does **not** switch availability back on by itself: set it in **Pricing and Availability** or the release passes review and still never appears on the store. Put this on the release checklist, not the backlog tail.
+- **Create the new version record early, not at submission time.** It is the prerequisite for editing both App Privacy and the Privacy Policy URL (see 0.6), and creating it submits nothing. **Next version must exceed 1.0.51** — note Apple compares components numerically, so `1.0.4` would be *rejected as lower* than `1.0.44`. Use **`1.1`** and sidestep the arithmetic.
+- **App Privacy responses were inherited from the partner's account and kept** (clearing them would have blocked the next submission). They are known wrong — answers and open checks are in **0.6** — and **must be corrected before the first submission from this account.**
+- ~~Privacy policy names the LLC as data controller~~ — **done 2026-08-04** (0.6). Website carries no partner name and the footer entity line is clean; **still to review: support/marketing URLs in App Store Connect metadata.** *(**App Review Contact Information** is private to Apple's review team — real name, phone and email are appropriate there and are never shown on the product page.)*
 - Verify on arrival: listed under Artifact Technologies LLC, bundle id still `com.rauljiminian.ARtifact`, ratings and reviews carried over. Save the transfer agreement PDF.
 - **The app is not available in the EU** (confirmed 2026-08-03) and there is no plan to change that. Adding EU territories is **a compliance workstream, not a checkbox** — treat it as its own project: DSA trader status (whose business name, address, phone and email Apple then **publicly displays** on the product page), GDPR controller obligations including a likely Article 27 EU representative, the European Accessibility Act (in force 2025-06-28, with a microenterprise carve-out worth real advice), and consumer withdrawal rights.
 
@@ -78,19 +82,33 @@ Settle: who owns the repo, who owns the Railway project and its billing, and whe
 
 *Not gated on the transfer — all of this can proceed in parallel, and none of it requires the partner.*
 
-### 0.6 Reconcile the privacy policy with what the app actually does
-The policy is **live at https://artifactar.com/privacy/**, which clears the "no policy URL" blocker. What's left is that it and the binary disagree in four places — reviewers compare them, and the App Privacy questionnaire must match reality:
+### 0.6 Correct the App Privacy questionnaire
+> **The policy half shipped 2026-08-04.** https://artifactar.com/privacy/ now discloses Sentry (diagnostics, device model/OS, IP, account identifier), replaces the "images … stored securely" over-claim with *transmitted for matching, not retained*, adds the one-time purchase and the `isPremium` entitlement flag, names **Artifact Technologies LLC** as data controller, and carries the Railway request-logging line. Source is `src/content/privacy-policy.md` in the **ARtifact-website** repo (commit `3afefc1`), rendered verbatim at `/privacy`. The stale duplicate at `assets/privacy-policy.md` was deleted in the same commit.
 
-1. **Sentry is still not disclosed** — §4 lists only AWS and Railway. Screen recording is now off, so the disclosure needed is much smaller: Sentry receives error reports plus IP and device identifiers via `sendDefaultPii: true`. Draft wording was supplied; **owner to publish.**
-2. ~~Location contradiction~~ — **resolved**: the permissions are gone (0.7), so "does not request or use your location" is now true of the binary too. No policy edit needed for this line.
-3. **"Images … are processed and stored securely" over-claims — owner confirmed no storage is wanted or needed.** Verified 2026-07-27: the app stores **no** images. The only S3 `uploadData` call sits inside the commented-out dead Rekognition block (`scan.tsx:236`); the live path (`analyzeWithFlask`) POSTs the photo to Railway `/predict` and retains nothing beyond expo-camera's transient cache file. **✅ Resolved 2026-08-03 — the Railway service retains nothing.** Verified against that repo's source by the partner: `/predict` reads the upload straight into `io.BytesIO` (`app.py:94-95`) and never touches `open()`, `tempfile` or any disk path, so no temp file exists to leak. Every derivative (`img_array`, the preprocessed tensor, `predictions`) is a local that goes out of scope on return — no database, no S3 client, no volume write anywhere. The only logging is `app.logger.error` on the exception message (`app.py:137`) plus three startup lines; no error-tracker SDK in `requirements.txt`, and the Procfile runs bare gunicorn with no `--access-logfile`. No retraining/debug dump path, and zero outbound HTTP calls — consistent with the service's purpose of replacing Rekognition with self-hosted inference.
+What's left is the **App Privacy questionnaire**, which still holds the partner's inherited answers. Declare exactly these six — all **Linked to the user = Yes**, **Used for tracking = No**, purpose **App Functionality** unless noted:
 
-**Therefore images are not "collected"** under Apple's definition (transmitting off-device "in a way that allows you … to access it for a period longer than what is necessary to service the transmitted request in real time"). App Privacy should **not** declare photos as collected, and the policy line becomes *transmitted for matching, not retained*.
+| Category | Data type |
+|---|---|
+| Contact Info | Email Address |
+| Identifiers | User ID |
+| Purchases | Purchase History |
+| Usage Data | Product Interaction (favorites, visits, quest progress, XP) |
+| Diagnostics | Crash Data — App Functionality **and** Analytics |
+| Diagnostics | Other Diagnostic Data — covers the IP and device context Sentry receives |
 
-**One residual, low-stakes:** Railway's own platform-level request logging (source IP, path, status) and its retention are a dashboard setting, not visible in that repo. Check Railway → Observability/Logs. Standard infrastructure logging generally isn't declarable in App Privacy when it isn't linked to a user or used for analytics — but it deserves a line in the privacy policy, which folds into the IP disclosure already owed for client-side Sentry (`sendDefaultPii: true`).
-4. **Purchases aren't mentioned.** Apple processes payment (no card data ever reaches us), but `User.isPremium` is stored. Worth one line.
+Declare **nothing else**, and un-declare whatever the partner left checked. Specifically **not**: Phone Number (the dummy `+10000000000` constant at `useAuth.ts:99` is never a real number), Photos or Videos (not retained — the finding below), Location (permissions removed in 0.7), Payment Info (Apple processes payment), Advertising Data (no ads, no ad SDKs). Overall tracking question: **No**.
 
-§5 (in-app deletion, no email required) is now accurate as of the deletion flow shipping — but it is still unverified against a real account, which is 0.9.
+**Why photos are not declared** — Apple defines collection as transmitting off-device "in a way that allows you … to access it for a period longer than what is necessary to service the transmitted request in real time." Verified 2026-08-03 against the Flask service's source: `/predict` reads the upload straight into `io.BytesIO` (`app.py:94-95`) and never touches `open()`, `tempfile` or any disk path; every derivative goes out of scope on return; no database, S3 client or volume write; only `app.logger.error` on the exception message (`app.py:137`); bare gunicorn with no `--access-logfile`; no retraining store and zero outbound HTTP. **This finding depends on code the LLC does not control — see PT.7.**
+
+**Two open checks before saving:**
+- **Does `sendDefaultPii: true` send a stable device identifier as well as an IP?** If yes, add **Identifiers → Device ID**. Over-declaring is a mismatch too, so check rather than guess in either direction.
+- **Railway → Observability** — platform-level request logging (source IP, path, status) and its retention are a dashboard setting, not visible in that repo. The policy line as written already covers standard request logging; this only needs revisiting if retention turns out to be non-standard. Not declarable in App Privacy when not linked to a user.
+
+**Procedural findings, 2026-08-04:** App Privacy would not open for editing while the app had no editable version record — create the new version first (PT.6) and it should unlock; if it still won't, check the account role under Users and Access. Questionnaire answers **publish immediately** once saved: no build, no review. The **Privacy Policy URL field** is the one exception — changing that string requires a new version, but the *content* served at the URL is ours to change freely, which is why the edits above are already live without a submission.
+
+Full audit and draft wording: `privacy-updates.md`. **Delete that file once the questionnaire is saved.**
+
+§5 (in-app deletion, no email required) is accurate as of the deletion flow shipping — but still unverified against a real account, which is 0.9.
 
 ### 0.7 Two loose ends from the permissions pass
 The permission removals and the Sentry replay decision shipped — see CLAUDE.md § Project state. What's left is minor:

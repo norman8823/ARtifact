@@ -12,7 +12,7 @@
 
 Audited from the code 2026-08-04. Both artifacts below derive from this table.
 
-| Data | Where it goes | Linked to identity | Notes |
+| Data | Where it goes | Linked to identity | Notes | 
 |---|---|---|---|
 | Email address | Cognito + `User.email` | Yes | Sign-up and sign-in |
 | Username / display name | `User.username` | Yes | User-chosen |
