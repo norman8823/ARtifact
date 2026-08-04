@@ -14,7 +14,7 @@ import { AppState, type AppStateStatus } from "react-native";
 import { PREMIUM_PRODUCT_ID } from "@/src/iap/products";
 import {
   buyPremium,
-  fetchPremiumPrice,
+  fetchPremiumProduct,
   finishPremiumTransaction,
   initStore,
   purchaseErrorListener,
@@ -25,7 +25,9 @@ import {
 import {
   type CachedEntitlement,
   type Entitlement,
+  type ProductAvailability,
   resolveEntitlement,
+  shouldOfferPurchase,
   type StoreResult,
 } from "@/src/utils/premiumAccess";
 import { useAuthContext } from "./AuthContext";
@@ -52,6 +54,12 @@ interface EntitlementContextType {
   isEntitlementReady: boolean;
   /** Localized price, or null if the store never answered. */
   priceLabel: string | null;
+  /**
+   * Whether to show a buy affordance. False only when the store answered and
+   * had nothing to sell (product not created / Paid Apps agreement not Active)
+   * — never merely because the store was unreachable.
+   */
+  isPurchaseOffered: boolean;
   isPurchasing: boolean;
   isRestoring: boolean;
   purchase: () => Promise<void>;
@@ -100,6 +108,8 @@ export function EntitlementProvider({
   const [entitlement, setEntitlement] = useState<Entitlement>("unknown");
   const [isEntitlementReady, setIsEntitlementReady] = useState(false);
   const [priceLabel, setPriceLabel] = useState<string | null>(null);
+  const [availability, setAvailability] =
+    useState<ProductAvailability>("unknown");
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
 
@@ -190,8 +200,10 @@ export function EntitlementProvider({
       const ok = await initStore();
       if (cancelled || !ok) return;
 
-      void fetchPremiumPrice().then((price) => {
-        if (!cancelled && price) setPriceLabel(price);
+      void fetchPremiumProduct().then(({ availability: a, price }) => {
+        if (cancelled) return;
+        setAvailability(a);
+        if (price) setPriceLabel(price);
       });
       await refresh();
     })();
@@ -317,6 +329,10 @@ export function EntitlementProvider({
       isEntitled: effective === "entitled",
       isEntitlementReady: isEntitlementReady || devForced,
       priceLabel,
+      isPurchaseOffered: shouldOfferPurchase({
+        availability,
+        isEntitled: effective === "entitled",
+      }),
       isPurchasing,
       isRestoring,
       purchase,
@@ -328,6 +344,7 @@ export function EntitlementProvider({
       isEntitlementReady,
       devForced,
       priceLabel,
+      availability,
       isPurchasing,
       isRestoring,
       purchase,

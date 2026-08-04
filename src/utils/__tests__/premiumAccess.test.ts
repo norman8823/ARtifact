@@ -1,4 +1,5 @@
 import {
+  shouldOfferPurchase,
   type CachedEntitlement,
   type Entitlement,
   isQuestAccessible,
@@ -274,5 +275,35 @@ describe("resolve → access integration", () => {
 
   it("fresh purchase → access", () => {
     expect(scenario("entitled", null)).toBe(true);
+  });
+});
+
+describe("shouldOfferPurchase", () => {
+  it("offers the purchase when the store has the product", () => {
+    expect(
+      shouldOfferPurchase({ availability: "available", isEntitled: false })
+    ).toBe(true);
+  });
+
+  it("hides it when the store answered and had nothing to sell", () => {
+    // Product not created yet, or Paid Apps agreement not Active — a buy
+    // button here is dead on arrival.
+    expect(
+      shouldOfferPurchase({ availability: "unavailable", isEntitled: false })
+    ).toBe(false);
+  });
+
+  it("still offers it when the store could not be reached", () => {
+    // "unknown" is offline / StoreKit not ready. requestPurchase does not need
+    // the product object, so blocking here would stop a real customer paying.
+    expect(
+      shouldOfferPurchase({ availability: "unknown", isEntitled: false })
+    ).toBe(true);
+  });
+
+  it("never offers it to someone who already owns it", () => {
+    for (const availability of ["available", "unavailable", "unknown"] as const) {
+      expect(shouldOfferPurchase({ availability, isEntitled: true })).toBe(false);
+    }
   });
 });

@@ -41,15 +41,26 @@ export async function initStore(): Promise<boolean> {
   }
 }
 
+/** Whether the store has a sellable premium product right now. */
+export type ProductAvailability = "available" | "unavailable" | "unknown";
+
+export interface PremiumProductInfo {
+  availability: ProductAvailability;
+  /** Localized price, or null when the store returned no price. */
+  price: string | null;
+}
+
 /**
- * Localized price string for the paywall, or null if the store didn't answer.
+ * Ask the store about the premium product.
  *
- * Returning null is NOT a reason to disable purchasing — `requestPurchase`
- * does not need the product object, and an empty product list is most often
- * an App Store Connect state (Paid Apps agreement not yet active) rather than
- * a device problem. The paywall falls back to a hardcoded price.
+ * The distinction that matters: `fetchProducts` **throwing** means we could not
+ * reach the store ("unknown" — offline, StoreKit not ready), while it
+ * **returning an empty list** means the store answered and there is nothing to
+ * sell ("unavailable" — product not created, or the Paid Apps agreement isn't
+ * Active yet). Only the second is a reason to hide the buy button; treating a
+ * transient failure as "unavailable" would block a real customer from paying.
  */
-export async function fetchPremiumPrice(): Promise<string | null> {
+export async function fetchPremiumProduct(): Promise<PremiumProductInfo> {
   try {
     const products = await fetchProducts({
       skus: [PREMIUM_PRODUCT_ID],
@@ -57,10 +68,11 @@ export async function fetchPremiumPrice(): Promise<string | null> {
     });
     const list = (products ?? []) as { id?: string; displayPrice?: string }[];
     const match = list.find((p) => p?.id === PREMIUM_PRODUCT_ID) ?? list[0];
-    return match?.displayPrice ?? null;
+    if (!match) return { availability: "unavailable", price: null };
+    return { availability: "available", price: match.displayPrice ?? null };
   } catch (error) {
     console.warn("[iap] fetchProducts failed:", error);
-    return null;
+    return { availability: "unknown", price: null };
   }
 }
 

@@ -25,6 +25,7 @@ import {
 export default function ProfileSettingsScreen() {
   const {
     isEntitled,
+    isPurchaseOffered,
     priceLabel,
     isPurchasing,
     isRestoring,
@@ -434,7 +435,7 @@ export default function ProfileSettingsScreen() {
             </ThemedView>
           </ThemedView>
 
-          {!isEntitled && (
+          {isPurchaseOffered && (
             <Pressable
               style={styles.purchaseButton}
               onPress={() => setShowPaywall(true)}

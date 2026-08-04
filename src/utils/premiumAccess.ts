@@ -72,6 +72,33 @@ export function isQuestAccessible({
   return entitlement === "entitled";
 }
 
+/** Mirrors `ProductAvailability` in `src/iap/storeKit.ts`. */
+export type ProductAvailability = "available" | "unavailable" | "unknown";
+
+/**
+ * Whether to show a "buy" affordance at all.
+ *
+ * Hidden only when the store **answered** and had nothing to sell — product not
+ * created yet, or the Paid Apps agreement isn't Active. A store we simply
+ * couldn't reach ("unknown": offline, StoreKit not ready) still offers the
+ * button, because `requestPurchase` doesn't need the product object and
+ * blocking on a transient failure would stop a real customer from paying.
+ *
+ * Someone who already owns it is never offered the purchase again — but note
+ * Restore must stay reachable regardless, since that is the recovery path on a
+ * reinstall or a second device.
+ */
+export function shouldOfferPurchase({
+  availability,
+  isEntitled,
+}: {
+  availability: ProductAvailability;
+  isEntitled: boolean;
+}): boolean {
+  if (isEntitled) return false;
+  return availability !== "unavailable";
+}
+
 /** Presentation state for the quest badge. Cosmetic only — never a gate. */
 export type QuestLockState = "unlocked" | "locked" | "owned" | "indeterminate";
 
