@@ -25,8 +25,12 @@ Organization enrollment, Team ID, Developer Program License Agreement (2026-07-2
 
 **One thing left to observe, not do:** the Paid Apps agreement moves **Pending User Info → Processing → Active** on Apple's schedule (usually hours). Until it reads **Active** in Business → Agreements, `fetchProducts` returns an empty array and nothing about premium is testable. Check back rather than blocking on it.
 
-### PT.5 Re-issue signing credentials — **do this first, before any build**
-The app moved; the signing identity did not. Run `eas credentials`, remove the old distribution certificate and provisioning profile, and generate fresh ones against the Artifact Technologies LLC team. `ascAppId` (`eas.json:35`, `6749166223`) is unchanged — the Apple team behind it is not. **Do a throwaway build immediately** rather than discovering a signing failure at submission.
+### PT.5 Re-issue signing credentials — ✅ **credentials done 2026-08-04; build still to run**
+All three EAS-held credentials regenerated against **`S3UAQ48824` — Artifact Technologies LLC (Company/Organization)**, valid to 2027-08-04: distribution certificate, provisioning profile, and the **App Store Connect API Key**. That third one is easy to miss and is what `eas submit` authenticates with — leaving it on the old team means the build succeeds and the upload doesn't.
+
+Two findings worth keeping: the old certificate and profile had **already expired on 2026-07-25**, so this build was going to fail regardless of the transfer; and the old team was `CNQY33V8YV (Raul Jiminian (Individual))` — an *Individual* team, so "Organization" in the summary is the quick confirmation that a regeneration actually landed on the right account. The old API key `BX25HH65QC` was left in place rather than deleted: it lives in the partner's account and we no longer have the access to revoke it. It is simply unused now.
+
+**Still to do:** run `npx eas build -p ios --profile production --auto-submit` and confirm it signs, uploads and processes. Verified beforehand — all six `EXPO_PUBLIC_*` vars plus `SENTRY_AUTH_TOKEN` exist in the EAS `production` environment, so `configureAmplify()` will not throw. If submit rejects on a duplicate build number, App Store Connect remembers numbers from builds deleted for the transfer; re-run with an explicit higher one.
 
 ### PT.7 Settle ownership of the scan backend — **ask while the partner is still engaged**
 The app now belongs to the LLC; **the Flask CNN service that makes scanning work does not.** It lives in a separate repo on the partner's side, deployed to his Railway project (`https://artifact-server-production.up.railway.app/predict`, hardcoded at `scan.tsx:185`). Post-transfer that is a single point of *control* as well as the single point of failure already logged as Gaps #4 — if it stops, the app's headline feature stops, and there is no fallback path.
