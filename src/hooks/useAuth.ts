@@ -3,6 +3,7 @@ import * as Sentry from "@sentry/react-native";
 import {
   confirmResetPassword,
   confirmSignUp,
+  getCurrentUser,
   resetPassword,
   signIn,
   signOut,
@@ -10,6 +11,29 @@ import {
 } from "aws-amplify/auth";
 import { useCallback, useState } from "react";
 import { useUserData } from "./useUserData";
+
+/**
+ * Identify the Sentry session by Cognito sub, and nothing else.
+ *
+ * Deliberately NOT the email address or display name. Sentry is a third party,
+ * the sub is all that's needed to tell whether an error hits one user or many,
+ * and the published privacy policy describes exactly this — "an identifier for
+ * your account". Sending the email would make that live wording false and would
+ * hand a vendor every user's address for the sake of debugging.
+ *
+ * Must be called only AFTER sign-in succeeds: the sub does not exist until
+ * then, which is why the old call sat before `signIn` and used the email.
+ */
+const identifySentryUser = async (): Promise<void> => {
+  try {
+    const { userId } = await getCurrentUser();
+    Sentry.setUser({ id: userId });
+  } catch {
+    // Telemetry identification must never break sign-in. Leaving the previous
+    // identity attached would misattribute errors, so clear it instead.
+    Sentry.setUser(null);
+  }
+};
 
 export interface AuthError {
   message: string;
@@ -117,12 +141,6 @@ export function useAuth(): UseAuthReturn {
       setIsLoading(true);
       setError(null);
 
-      // Set user context for Sentry
-      Sentry.setUser({
-        email,
-        username: tempUsername || email,
-      });
-
       try {
         console.log("Starting sign in process for email:", email);
 
@@ -147,6 +165,8 @@ export function useAuth(): UseAuthReturn {
         );
 
         if (signInResult.isSignedIn) {
+          await identifySentryUser();
+
           // Ensure user exists in DynamoDB with the correct username and email
           await ensureUserInDB(tempUsername || undefined, email);
         }
@@ -170,6 +190,7 @@ export function useAuth(): UseAuthReturn {
             });
 
             if (retrySignInResult.isSignedIn) {
+              await identifySentryUser();
               await ensureUserInDB(tempUsername || undefined, email);
             }
 

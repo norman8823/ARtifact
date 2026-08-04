@@ -2,6 +2,7 @@ import { ScanResultModal } from "@/components/ScanResultModal";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import { SCAN_PREDICT_URL } from "@/src/config/scanApi";
 import { useScanSuccess } from "@/src/hooks/useScanSuccess";
 import { adaptFlaskResponse } from "@/src/utils/scanAdapter";
 import { FontAwesome } from "@expo/vector-icons";
@@ -182,16 +183,13 @@ export default function ScanScreen() {
       console.log("🔍 Calling Flask CNN API...");
 
       // Call Flask API
-      const response = await fetch(
-        "https://artifact-server-production.up.railway.app/predict",
-        {
-          method: "POST",
-          body: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await fetch(SCAN_PREDICT_URL, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (!response.ok) {
         throw new Error(
