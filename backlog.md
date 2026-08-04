@@ -20,14 +20,10 @@
 
 > **The transfer completed 2026-08-03.** ARtifact Museum (Apple ID `6749166223`) now belongs to Artifact Technologies LLC. The build-submission freeze is **lifted**, and P1A Sign in with Apple is **unblocked**. What's left below is cleanup the transfer did not do for us.
 
-### PT.3 Add the LLC bank account to App Store Connect — **gates premium only**
-**Done:** organization enrollment, Team ID, Developer Program License Agreement (2026-07-28), Account Holder role, Paid Apps Agreement signed, W-9 filed.
+### PT.3 LLC account setup — ✅ **complete 2026-08-04, pending agreement activation**
+Organization enrollment, Team ID, Developer Program License Agreement (2026-07-28), Account Holder role, Paid Apps Agreement, W-9, and the Mercury LLC business account are all done; **bank details are entered in App Store Connect.**
 
-**Remaining: banking.** The sequence is forced — sign Paid Apps → submit tax forms → *only then* can banking be entered. Agreement status runs **Pending User Info → Processing → Active**; it must reach **Active** before in-app purchase works (`fetchProducts` returns an empty array otherwise).
-
-**Status 2026-08-04: Mercury account approved** (EIN documentation cleared). Remaining step is an **initial deposit to activate** — Mercury withholds the account and routing numbers until the account is funded. That's activation, not a minimum-balance requirement. Fund it (Plaid link is instant; micro-deposit verification costs a couple of days), then take the account + routing numbers to App Store Connect. Record the transfer from personal funds as a **capital contribution** — that direction is fine; paying personal expenses *out of* the business account is what causes commingling problems. **None of this ever blocked the transfer** — it gates P1 premium and nothing else.
-
-**The bank account must be the LLC's, not personal.** Apple's field is for "the bank account number of the legal entity … enrolled in the Apple Developer Program", and the account-holder name must match the entity name exactly or payments are rejected. Independently of Apple: commingling revenue into a personal account undermines the corporate veil the LLC exists to provide.
+**One thing left to observe, not do:** the Paid Apps agreement moves **Pending User Info → Processing → Active** on Apple's schedule (usually hours). Until it reads **Active** in Business → Agreements, `fetchProducts` returns an empty array and nothing about premium is testable. Check back rather than blocking on it.
 
 ### PT.5 Re-issue signing credentials — **do this first, before any build**
 The app moved; the signing identity did not. Run `eas credentials`, remove the old distribution certificate and provisioning profile, and generate fresh ones against the Artifact Technologies LLC team. `ascAppId` (`eas.json:35`, `6749166223`) is unchanged — the Apple team behind it is not. **Do a throwaway build immediately** rather than discovering a signing failure at submission.
@@ -107,8 +103,10 @@ Two prerequisites before running:
 
 Do not remove the `GetFreshQuests` cache-bypass while doing this (CLAUDE.md landmine #4).
 
-### 1.5 App Store Connect setup — **now doable; blocked only on PT.3 banking**
-> The transfer completed before any IAP product was created, which is exactly what we wanted — the product gets created once, in the LLC account, and revenue lands there from the first sale.
+### 1.5 App Store Connect setup — **unblocked; do this next in App Store Connect**
+> Banking landed 2026-08-04 (PT.3). The transfer completed before any IAP product was created, which is exactly what we wanted — the product gets created once, in the LLC account, and revenue lands there from the first sale.
+
+The product ID must match `src/iap/products.ts` **character for character** — a typo surfaces as an empty product list with no error, which is miserable to debug. Add **sandbox testers** (Users and Access → Sandbox) in the same sitting. The product will sit at *Ready to Submit*; non-consumables are reviewed alongside the first build that uses them.
 
 Create the **non-consumable** product `com.rauljiminian.ARtifact.premium.lifetime` (the id in `src/iap/products.ts` must match exactly), set pricing, add sandbox testers. Not a subscription — no subscription group needed. Nothing about premium can be tested for real until this is done: `fetchProducts` returns an empty array until the Paid Apps agreement is active.
 
