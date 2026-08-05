@@ -123,7 +123,31 @@ README still documents Expo SDK 53, 8th Wall WebView AR, Lambda/Rekognition/API 
 ### 18. "Delete Account" was a non-functional stub — ✅ **FIXED 2026-07-27**
 The button answered with *"contact support"*, which guideline 5.1.1(v) does not accept. Now real: `src/hooks/useAccountDeletion.ts` + `src/utils/accountDeletion.ts`. Owned rows are deleted before the Cognito identity and `canDeleteIdentity()` aborts if any row failed — see CLAUDE.md § Project state for why that ordering is load-bearing. **Still owed:** device QA against a throwaway account, and Apple token revocation once Sign in with Apple ships (backlog 1A.6).
 
-### 19. **High** — Amplify auth config diverges from the live Cognito pool
+### 19. **High** — Amplify auth config diverges from the live Cognito pool — ✅ **RECONCILED 2026-08-05 (config fixed; a no-op `amplify push` still unproven)**
+
+**Read from the live pool, 2026-08-05** (`aws cognito-idp describe-user-pool`, pool `us-east-1_uZt2DWPi1` / `ARtifactUsers-dev`) — this is the authority, and it settles it:
+
+| | Live pool |
+|---|---|
+| `UsernameAttributes` | `["email", "phone_number"]` |
+| `AliasAttributes` | none |
+| `AutoVerifiedAttributes` | `["email"]` |
+| `LambdaConfig` | `{}` — no triggers |
+| MFA | OFF |
+| Username case-sensitivity | insensitive |
+| Required schema | `sub`, `email`, `phone_number` |
+
+So **`backend-config.json` was right all along** and `cli-inputs.json` was the only wrong file. Fixed: `["email, phone_number"]` (one malformed string) → `["email", "phone_number"]`. All three sources now agree.
+
+**The original reasoning below was wrong, and the error is worth keeping.** It argued `phone_number` could not really be a username attribute, because the shared dummy `+10000000000` would have collided on the second signup. **Six of the 12 users share that exact number** (two other numbers are duplicated as well). Cognito enforces uniqueness only on the attribute actually used as the sign-up username — `signUp({username: email})` — so a `phone_number` in `UsernameAttributes` that is never used as a username is just a non-unique attribute. The dummy-phone hack is safe, for a reason nobody had established.
+
+**Also found, and it lowers the risk of P1A materially:** the app client (`artifa037df7ce_app_client`) **already has `ALLOW_CUSTOM_AUTH`** in `ExplicitAuthFlows`, alongside `ALLOW_USER_SRP_AUTH`, `ALLOW_USER_PASSWORD_AUTH` and `ALLOW_REFRESH_TOKEN_AUTH`. It is inert today because `LambdaConfig` is empty — Cognito cannot run a custom flow with no `DefineAuthChallenge` trigger — but it means the client-side flag 1A.3 was going to enable is already set. **The security surface therefore opens the moment the triggers land, not when the flag flips.**
+
+**⬜ Still unproven:** that `amplify push` is now a no-op. The Amplify CLI is not installed on the dev machine, so `amplify status` could not be run. Do that before pushing anything auth-related, and stop if CFN proposes changing `UsernameAttributes` or `Schema` (both immutable). Note `backend-config.json` still carries `"customAuth": false` while the live client already allows it — a remaining divergence to watch when 1A.3 enables triggers.
+
+*One user is `UNCONFIRMED` with `email_verified: false` — exactly the case 1A.4's linking rules must refuse, and it exists in the pool today.*
+
+**Original finding, retained:**
 [cli-inputs.json:44-46](amplify/backend/auth/ARtifactAuth/cli-inputs.json#L44) declares `"usernameAttributes": ["email, phone_number"]` — a single malformed string, not a legal `UsernameAttributes` value — while [backend-config.json:69](amplify/backend/backend-config.json#L69) says `["EMAIL","PHONE_NUMBER"]`. Neither is likely to match reality: if `phone_number` were genuinely a username attribute, the second tester to sign up with the shared dummy `+10000000000` ([useAuth.ts:99](src/hooks/useAuth.ts#L99)) would have hit `UsernameExistsException`. No CloudFormation is checked in under `amplify/backend/auth/ARtifactAuth/`, so the Gen 1 CLI regenerates the whole auth template from `cli-inputs.json` on every push — meaning the *next* `amplify update auth` (for any reason) will either fail CFN validation or attempt to modify the immutable `UsernameAttributes` and roll the auth stack back. The AppSync API `dependsOn` auth, so that rollback can cascade. Reconcile against `describe-user-pool` before touching auth infrastructure; scoped as backlog 1A.1.
 
 ### 21. Privacy policy and the binary disagree *(backlog 0.6)*

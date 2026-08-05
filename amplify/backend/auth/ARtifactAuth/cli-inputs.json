@@ -42,7 +42,8 @@
     "useDefault": "manual",
     "thirdPartyAuth": false,
     "usernameAttributes": [
-      "email, phone_number"
+      "email",
+      "phone_number"
     ],
     "userPoolGroups": true,
     "adminQueries": false,
