@@ -223,8 +223,18 @@ Matrix: brand-new Apple user · Hide My Email user · existing email/password te
 ### 2.1 Guest API key expiry — **hard deadline 2026-12-06** *(Gaps #3)*
 Rotate the AppSync key, update `GUEST_API_KEY_EXPIRY` in `authMode.ts`, ship well before expiry (target: in the premium release or earlier — users need time to update). Consider a remote-config escape hatch so the next rotation doesn't require a forced app update.
 
-### 2.2 Rotate + relocate the ReactVision API key *(Gaps #2)*
-Move `rvApiKey` out of `app.json` into an EAS secret via `app.config.js`, then rotate the key. Do before the premium marketing push increases scrutiny.
+### 2.2 Rotate the ReactVision API key *(Gaps #2)* — **relocation done, rotation outstanding**
+> ✅ **Relocated 2026-08-04.** `rvApiKey` is out of `app.json`; `app.config.js` injects it from **`RV_API_KEY`**, which is set as a *sensitive* EAS variable in **all three environments** (production, preview, development — it was in `app.json` before, so every build had it, and production-only would have silently broken AR in dev/preview builds) plus the local `.env` for prebuilds. Missing value → build throws on the production profile, warns locally.
+
+**Rotation is the half that actually protects anything** — the old key is in git history *and* compiled into every shipped build.
+
+**Do it now, not later.** The old key is embedded in 1.0.35 (store) and 1.0.51 (TestFlight), so revoking it can break AR in those builds with no server-side fix. Right now the app is removed from sale and TestFlight is effectively one user, so the blast radius is ~zero. After the premium launch, rotating means knowingly breaking AR for paying users on older builds.
+
+**Create before revoking, never the reverse:**
+1. ReactVision dashboard → the project matching `rvProjectId` `56b4872e-26e5-4a1a-be24-3dc603579d9c` → issue a **new** key, leaving the old one live. If self-serve rotation isn't offered, their support can do it.
+2. `npx eas env:update` for all three environments + the `RV_API_KEY` line in local `.env`.
+3. Build, install on device, and **confirm AR loads a model** — a bad license key fails at scene load, which is release-only-regression territory.
+4. Only then revoke the old key.
 
 ### 2.3 Harden the Railway scan endpoint *(Gaps #4)*
 Paying users will expect scan to work. Add fetch timeout + one retry + in-flight dedup on the shutter button; add a "warming up" state for Railway cold starts (or move off scale-to-zero). Type the Flask response contract while in there *(Gaps #15)*.
