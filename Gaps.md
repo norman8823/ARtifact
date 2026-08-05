@@ -21,10 +21,13 @@
 ### 3. Guest API key hard-expires 2026-12-06
 [authMode.ts:13](src/aws/authMode.ts#L13) hardcodes `GUEST_API_KEY_EXPIRY = 2026-12-06`. When the AppSync API key is rotated, the app needs a client update or guest mode dies. ~5 months away as of this audit. There is no server-driven config to extend it remotely.
 
-### 4. Single point of failure: Railway scan endpoint — **and it is not owned by the app's owner**
-**Escalated 2026-08-03:** after the App Store transfer to Artifact Technologies LLC, the app is owned by the LLC but this service is not — it lives in a separate repo on the former partner's side, deployed to his Railway project. It is now a single point of *control* as well as of failure, and the "images are not retained" claim about to be published in the privacy policy depends on code the LLC can neither see nor freeze. Ownership needs settling (backlog PT.7). Original finding follows.
+### 4. Single point of failure: Railway scan endpoint — **control half ✅ FIXED, reliability half still open**
 
-[scan.tsx:185](app/scan.tsx#L185) hardcodes `https://artifact-server-production.up.railway.app/predict`. No timeout, no retry, no failover, no request deduplication (rapid shutter taps fire concurrent requests). Railway free-tier scales to zero → first scan of the day eats a server cold start with no user-facing "warming up" state.
+**Escalated 2026-08-03:** after the App Store transfer to Artifact Technologies LLC, the app was owned by the LLC but this service was not — it lived in a separate repo on the former partner's side, deployed to his Railway project. It was a single point of *control* as well as of failure, and the "images are not retained" claim published in the privacy policy depended on code the LLC could neither see nor freeze.
+
+**✅ Ownership/control FIXED 2026-08-05.** The service now runs on the LLC's own Railway project, builds from the LLC's own private repo (`norman8823/ARtifact-server`), and answers on an LLC-owned domain, `https://api.artifactar.com`. [scanApi.ts](src/config/scanApi.ts) defaults to that domain instead of the partner's `artifact-server-production.up.railway.app`, so a lost or lapsed hosting project is now a DNS change every shipped build follows — not an emergency App Store release. Guarded by `src/config/__tests__/scanApi.test.ts`. See CLAUDE.md § Scan backend.
+
+**Still open — the original reliability finding, untouched.** The fetch at [scan.tsx:186](app/scan.tsx#L186) has no timeout, no retry, no failover, and no request deduplication (rapid shutter taps fire concurrent requests). Railway scales to zero → first scan of the day eats a server cold start with no user-facing "warming up" state. Owning the address does not make the box more available; it only makes replacing it cheap. *(backlog 2.3.)*
 
 ## Data / business-logic bugs
 

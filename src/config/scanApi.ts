@@ -1,21 +1,26 @@
 /**
  * Scan recognition endpoint.
  *
- * The host is read from `EXPO_PUBLIC_SCAN_API_URL` so it can be repointed
- * without shipping an app update. That matters because the fallback below is a
- * Railway-generated subdomain living in a project the LLC does not control
- * (backlog PT.7) — with the hostname baked into shipped binaries, losing that
- * project would break scanning on every installed build with no server-side
- * fix. Once `api.artifactar.com` is in front of the service, set the env var to
- * it and the indirection becomes a DNS change instead of a release.
+ * The default below is a domain the LLC owns, pointed at the LLC's own Railway
+ * service (2026-08-05). That is the property that matters: moving or replacing
+ * the recognition service is a DNS change at Cloudflare that every shipped
+ * build follows on its next scan — no app update, no env var, no stranded
+ * users. It replaced a Railway-generated `*.up.railway.app` subdomain in a
+ * project the LLC did not control, where the same event would have meant a
+ * forced-update campaign.
+ *
+ * **Keep this default a hostname we own.** Baking a vendor-generated hostname
+ * back in would silently re-create that exposure.
+ *
+ * `EXPO_PUBLIC_SCAN_API_URL` survives as an override, for pointing a build at a
+ * local or replacement server without a code change.
  *
  * Deliberately NOT added to the required-env-var check in `src/aws/config.ts`:
  * that throws when a var is missing, so a value absent from the EAS build
  * environment would brick the app on launch. A missing value here degrades to
- * exactly today's behaviour instead.
+ * the default instead.
  */
-const FALLBACK_SCAN_API_URL =
-  "https://artifact-server-production.up.railway.app";
+const FALLBACK_SCAN_API_URL = "https://api.artifactar.com";
 
 const rawBaseUrl = process.env.EXPO_PUBLIC_SCAN_API_URL?.trim();
 

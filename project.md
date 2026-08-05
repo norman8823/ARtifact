@@ -65,7 +65,7 @@ The design ([QueryProvider.tsx](src/providers/QueryProvider.tsx), [queries.ts](s
 **Why:** AWS Rekognition Custom Labels was replaced by a custom-trained CNN served from Flask on Railway (commit `bda74f0` "swap AWS Rekognition with custom built CNN model") — the Rekognition Lambda + API Gateway still exist in `amplify/backend/` but are dead code.
 
 Flow ([app/scan.tsx](app/scan.tsx)):
-1. `expo-camera` capture (quality 0.8) → multipart POST to `https://artifact-server-production.up.railway.app/predict`
+1. `expo-camera` capture (quality 0.8) → multipart POST to `https://api.artifactar.com/predict` (host in `src/config/scanApi.ts`; LLC-owned domain in front of the LLC's Railway service since 2026-08-05, overridable via `EXPO_PUBLIC_SCAN_API_URL`)
 2. Response `{success, prediction, confidence}` is **transformed into the old Rekognition shape** (`labels[{Name, Confidence}]`) so downstream code ([useScanSuccess.ts](src/hooks/useScanSuccess.ts)) didn't have to change — an adapter kept the swap low-risk.
 3. Optional `expectedArtworkId` param (when launched from artDetail) validates you scanned the *right* artwork.
 4. Success → `Visited` record + **100 XP** (first visit only) → `updateQuestProgress` marks the artwork in every active quest, completing quests whose sets are full → haptic + result modal → navigate to artDetail.
