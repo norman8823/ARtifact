@@ -73,7 +73,6 @@
             "cameraUsagePermission": "ARtifact uses your camera for AR experiences."
           },
           "provider": "reactvision",
-          "rvApiKey": "rv_live_8fd77988d393f1cf2714dbb21b8f84c9a4e29d2aa4004c018c8122d0f5c376af",
           "rvProjectId": "56b4872e-26e5-4a1a-be24-3dc603579d9c"
         }
       ],
