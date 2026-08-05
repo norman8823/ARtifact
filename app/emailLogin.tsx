@@ -4,6 +4,7 @@ import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useGoBack } from "@/src/hooks/useGoBack";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Sentry from "@sentry/react-native";
 import { router } from "expo-router";
@@ -19,6 +20,7 @@ import {
 } from "react-native";
 
 export default function EmailLoginScreen() {
+  const goBack = useGoBack();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -196,10 +198,7 @@ export default function EmailLoginScreen() {
           {/* Header */}
           <ThemedView style={styles.header}>
             <ThemedView style={styles.headerTop}>
-              <Pressable
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
+              <Pressable style={styles.backButton} onPress={goBack}>
                 <FontAwesome
                   name="chevron-left"
                   size={20}

@@ -134,3 +134,14 @@ A policy is live at https://artifactar.com/privacy/, so the missing-URL blocker 
 
 ### 20. Missing observability outside the paywall *(backlog P3.12)*
 No analytics events for the core loop (scan success rate, quest completion, AR placement success), and no Sentry breadcrumbs around the two flakiest flows (scan network call, AR asset fetch). The Railway server's health is invisible to the client team. Paywall instrumentation now exists (backlog 1.6) — this is everything else. Numbered so it can be cited; it was previously an un-numbered trailing section and was therefore missed when Gaps items were mapped to the backlog.
+
+### 23. Back navigation: scan stranded users in the camera, and `router.back()` could no-op — ✅ **PARTIALLY FIXED 2026-08-05**
+Reported by a user in the wild ("back button doesn't work"), on a newer iPhone/iOS than the owner's; **not reproducible by the owner**, and the root cause is *not confirmed* — what follows is what was found and fixed while looking, not a diagnosis of that report.
+
+**✅ Fixed — `ScanResultModal` pushed instead of replacing.** `router.push("/artDetail")` left the scan screen in the back stack, so backing out of a scanned artwork reopened the **camera** rather than leaving; via artDetail → scan → artDetail it bounced the user artwork → camera → artwork before reaching the dashboard. That is indistinguishable, to a user, from a back button that does nothing. Now `router.replace`.
+
+**✅ Fixed — six unguarded `router.back()` calls.** `back()` is a **silent no-op** with an empty stack: no error, nothing in Sentry, a visibly dead control. Reachable via the `artifact://` deep-link scheme and after `router.replace()` on the auth paths. All live back controls now go through `useGoBack()` (`src/hooks/useGoBack.ts`) over the pure `resolveBackAction` (`src/utils/navigation.ts`, 3 tests), which falls back to `/home`.
+
+**✅ Mitigated — no second way out of a screen.** `fullScreenGestureEnabled: true` in the root `screenOptions` allows swipe-back from anywhere, not just the left edge. **Deliberately off for `arViewer`** (a full-surface gesture swallows the drag/pinch that positions the AR model — see landmine #1) **and `scan`** (an accidental swipe while framing should not abandon the scan); both keep the standard edge swipe.
+
+**⬜ Still open — the original report is unexplained.** Two theories were considered and rejected on evidence: the `freezeOnBlur` race (landmine #2) is ruled out by the symptom, which was *never* works rather than the documented *first press dropped*; and the bare-chevron tap target is a weak theory because UIKit gives the native back button a standard 44pt hit region regardless of `headerBackButtonDisplayMode`. **Next step is not more guessing** — ask the reporter whether they had scanned before it happened (if yes, the fix above is likely it), and otherwise add navigation breadcrumbs (Gaps #20) so the next report is diagnosable.

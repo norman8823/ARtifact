@@ -146,6 +146,13 @@ export default Sentry.wrap(function RootLayout() {
                   headerBackButtonDisplayMode: "minimal",
                   headerBackButtonMenuEnabled: false,
                   gestureEnabled: true,
+                  // Swipe back from anywhere on the screen, not just the left
+                  // edge. The header back button is a small target — with
+                  // `headerBackButtonDisplayMode: "minimal"` it is a bare
+                  // chevron — so this is the second way out of a screen when
+                  // that tap does not land. Screens where a full-surface drag
+                  // means something else (arViewer, scan) opt out below.
+                  fullScreenGestureEnabled: true,
                   animation: "slide_from_right",
                 }}
               >
@@ -237,6 +244,11 @@ export default Sentry.wrap(function RootLayout() {
                   options={{
                     headerShown: false,
                     gestureEnabled: true,
+                    // Edge-swipe only. A full-screen back gesture would swallow
+                    // the drag/pinch that positions the AR model — the same
+                    // gestures the tap overlay is unmounted to let through
+                    // (see landmine #1). arViewer keeps its own back button.
+                    fullScreenGestureEnabled: false,
                   }}
                 />
               </Stack>

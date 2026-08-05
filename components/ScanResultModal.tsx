@@ -127,7 +127,13 @@ export function ScanResultModal({
         onPress={() => {
           onClose();
           if (artworkId) {
-            router.push({
+            // `replace`, not `push`: the scan screen must not stay in the back
+            // stack. Pushing left the camera behind the artwork, so backing out
+            // of a scanned artwork reopened the camera instead of leaving —
+            // and in the artDetail → scan → artDetail flow it bounced the user
+            // between the artwork and the camera, which reads as a broken back
+            // button rather than as navigation history.
+            router.replace({
               pathname: "/artDetail",
               params: { id: artworkId }
             });

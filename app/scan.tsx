@@ -3,12 +3,13 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { SCAN_PREDICT_URL } from "@/src/config/scanApi";
+import { useGoBack } from "@/src/hooks/useGoBack";
 import { useScanSuccess } from "@/src/hooks/useScanSuccess";
 import { adaptFlaskResponse } from "@/src/utils/scanAdapter";
 import { FontAwesome } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Haptics from "expo-haptics";
-import { Stack, router, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -36,6 +37,7 @@ interface ScanResultState {
 }
 
 export default function ScanScreen() {
+  const goBack = useGoBack();
   const params = useLocalSearchParams();
   const expectedArtworkId = Array.isArray(params.expectedArtworkId)
     ? params.expectedArtworkId[0]
@@ -372,6 +374,9 @@ export default function ScanScreen() {
       <Stack.Screen
         options={{
           headerShown: false,
+          // Edge-swipe only: the whole surface is a camera preview, and an
+          // accidental swipe while framing a shot should not abandon the scan.
+          fullScreenGestureEnabled: false,
         }}
       />
       <SafeAreaView style={styles.container}>
@@ -379,7 +384,7 @@ export default function ScanScreen() {
         <View style={styles.backButtonContainer}>
           <Pressable
             style={[styles.backButton, pressedButton === 'back' && styles.buttonPressed]}
-            onPress={() => router.back()}
+            onPress={goBack}
             onPressIn={() => setPressedButton('back')}
             onPressOut={() => setPressedButton(null)}
           >

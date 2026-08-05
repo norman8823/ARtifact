@@ -1,8 +1,9 @@
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import type { ARSceneNavigatorProps } from "@/components/ar-scenes/ARSceneNavigator";
+import { useGoBack } from "@/src/hooks/useGoBack";
 import { FontAwesome } from "@expo/vector-icons";
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
 
@@ -33,6 +34,7 @@ function loadARSceneNavigator(): React.ComponentType<ARSceneNavigatorProps> {
 }
 
 export default function ARViewerScreen() {
+  const goBack = useGoBack();
   const params = useLocalSearchParams();
   const artworkTitle = Array.isArray(params.title)
     ? params.title[0]
@@ -47,9 +49,7 @@ export default function ARViewerScreen() {
   const [isModelPlaced, setIsModelPlaced] = useState(false);
   const [tapPoint, setTapPoint] = useState<{ x: number; y: number; seq: number } | null>(null);
 
-  const handleBack = () => {
-    router.back();
-  };
+  const handleBack = goBack;
 
   const handleStatusChange = (status: string) => {
     setArStatus(status);
