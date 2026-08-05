@@ -35,10 +35,10 @@ Two findings worth keeping: the old certificate and profile had **already expire
 
 **Free-tier submission queue:** `eas submit --auto-submit` sat **Queued in the Free Tier Queue for 40+ minutes**. Uploading the `.ipa` with Apple's **Transporter** app instead took ~1 minute. For anything time-sensitive, build without `--auto-submit` and upload manually — the queue is Expo's, not Apple's.
 
-### PT.7 Scan backend ownership — **✅ RESOLVED 2026-08-05, one check left**
+### PT.7 Scan backend ownership — **✅ RESOLVED 2026-08-05**
 The Flask CNN service is now entirely LLC-owned: our Railway project, our private repo (`norman8823/ARtifact-server`), our domain `https://api.artifactar.com`, and the app ships pointing at it (`src/config/scanApi.ts`). Nothing in the serving path depends on the former partner — the whole "ask him for a custom domain / a repo transfer / the Railway project" workstream is obsolete, so **don't spend access to him on it.** Rationale and operational traps are recorded in CLAUDE.md § Scan backend; full history in `~/main/ARtifact-server-notes.md`.
 
-**Remaining, and it is a release-checklist item:** confirm `EXPO_PUBLIC_SCAN_API_URL` is not pinned to the old `artifact-server-production.up.railway.app` host in the EAS **production** environment. `eas.json` sets `"environment": "production"`, so a value there overrides the compiled-in default silently, and it cannot be verified from this repo.
+**✅ EAS checked 2026-08-05 — no override exists.** The Expo project carries nine environment variables (the seven `EXPO_PUBLIC_*` AWS values, `RV_API_KEY`, `SENTRY_AUTH_TOKEN`) across all three environments, and `EXPO_PUBLIC_SCAN_API_URL` is **not** among them. So the compiled-in default in `src/config/scanApi.ts` is what production builds use — which is the intended design, not an oversight. **Do not add the var** unless a build genuinely needs a different host: it would duplicate the host into a second place that then has to be kept in sync.
 
 *Endpoint hardening (timeout, retry, dedup, cold-start UI) is unaffected by any of this and stays in 2.3.*
 
