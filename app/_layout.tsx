@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import "react-native-reanimated";
 
+import { HeaderBackButton } from "@/components/HeaderBackButton";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { configureAmplify } from "@/src/aws/config";
@@ -145,6 +146,11 @@ export default Sentry.wrap(function RootLayout() {
                   headerTintColor: Colors.darkGray,
                   headerBackButtonDisplayMode: "minimal",
                   headerBackButtonMenuEnabled: false,
+                  // Our own back control instead of UIKit's — the system button
+                  // stopped popping on iOS 27 beta while still highlighting on
+                  // press, and that path is not reachable from JS (Gaps #23).
+                  headerBackVisible: false,
+                  headerLeft: () => <HeaderBackButton />,
                   gestureEnabled: true,
                   // Swipe back from anywhere on the screen, not just the left
                   // edge. The header back button is a small target — with
