@@ -37,19 +37,23 @@ module.exports = ({ config }) => {
     }
 
     console.warn(`⚠️  ${message}`);
-    return config;
   }
 
   const plugins = (config.plugins ?? []).map((plugin) => {
     // Plugin entries are either a bare string or a [name, options] tuple; only
     // the tuple form carries the options object we need to extend.
-    if (!Array.isArray(plugin) || plugin[0] !== RV_PLUGIN) {
+    if (!rvApiKey || !Array.isArray(plugin) || plugin[0] !== RV_PLUGIN) {
       return plugin;
     }
 
     const [name, options] = plugin;
     return [name, { ...options, rvApiKey }];
   });
+
+  // Appended LAST on purpose: it strips permission strings the Viro plugin
+  // injects, so it must be applied after Viro. Applied whether or not the API
+  // key is present — the permission trim is independent of licensing.
+  plugins.push("./plugins/withTrimmedIosPermissions");
 
   return { ...config, plugins };
 };
