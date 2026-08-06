@@ -145,7 +145,22 @@ So **`backend-config.json` was right all along** and `cli-inputs.json` was the o
 
 **🛑 Found 2026-08-05 and more dangerous than the config drift: the Amplify project is NOT initialized in this working copy.** `amplify/.config/` contains only `project-config.json` — **`local-env-info.json` is missing**, so the CLI does not know the checkout is attached to the deployed `dev` environment. `amplify status` (CLI 14.5.1) consequently lists **every resource — `artifact`, `rekognitionApi`, `ARtifactAuth`, `analyzeImage`, `ARtifactStorage` — with Operation `Create`**, and ends with `🛑 No Amplify backend project files detected within this folder.` It is not reporting drift; it believes nothing is deployed. **Never run `amplify push` from this state** — it would target a parallel stack rather than update `amplify-artifact-dev-d3c4f`. Re-attach first with `amplify pull --appId d3v2ccj6cczx2 --envName dev` (region `us-east-1`), **which overwrites `amplify/backend/` from the cloud and will revert the `cli-inputs.json` fix — re-apply it from commit `57fc61d` afterwards and re-verify against `describe-user-pool` before pushing.**
 
-**⬜ Still unproven:** that `amplify push` is now a no-op. The Amplify CLI is not installed on the dev machine, so `amplify status` could not be run. Do that before pushing anything auth-related, and stop if CFN proposes changing `UsernameAttributes` or `Schema` (both immutable). Note `backend-config.json` still carries `"customAuth": false` while the live client already allows it — a remaining divergence to watch when 1A.3 enables triggers.
+**✅ Re-attached 2026-08-05** with `amplify pull --appId d3v2ccj6cczx2 --envName dev --yes`. `amplify status` now reports **Current Environment: dev**, with `artifact`, `rekognitionApi`, `analyzeImage` and `ARtifactStorage` all **No Change** and only `ARtifactAuth` as **Update** — that Update is our `cli-inputs.json` correction, nothing else. No codegen churn: `src/API.ts` and `src/graphql/*` were untouched, so the zero-error type baseline is intact.
+
+**⚠️ This is not a one-time fix.** Amplify's own `.gitignore` block ignores `amplify/.config/local-*`, so `local-env-info.json` is never committed — **every fresh clone starts unattached and will report every resource as `Create` again.** Run `amplify pull` before any push, on any machine, forever.
+
+**The corruption is stored in the cloud, and the danger is now proven rather than inferred.** The pull overwrote `cli-inputs.json` back to the malformed `["email, phone_number"]`, so that value lives in the Amplify app, not just locally. The generated build artifacts show exactly what a push would have deployed:
+
+```
+amplify/backend/auth/ARtifactAuth/build/parameters.json
+  usernameAttributes: ["email, phone_number"]     <- one bogus string
+live pool (describe-user-pool)
+  UsernameAttributes: ["email", "phone_number"]   <- two values
+```
+
+The template wires that parameter straight into `UserPool.UsernameAttributes` via `{"Ref": "usernameAttributes"}`. A push from the pre-fix state would therefore have attempted to modify an **immutable** property to an **invalid** value — CFN failure and auth-stack rollback, cascading to the AppSync API that `dependsOn` it. The re-applied fix makes the parameter match the live pool, so that property should now be a no-op.
+
+**⬜ Still unproven:** that `amplify push` is a no-op *overall*. The Amplify CLI is not installed on the dev machine, so `amplify status` could not be run. Do that before pushing anything auth-related, and stop if CFN proposes changing `UsernameAttributes` or `Schema` (both immutable). Note `backend-config.json` still carries `"customAuth": false` while the live client already allows it — a remaining divergence to watch when 1A.3 enables triggers.
 
 *One user is `UNCONFIRMED` with `email_verified: false` — exactly the case 1A.4's linking rules must refuse, and it exists in the pool today.*
 
