@@ -17,7 +17,12 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "This app uses the camera to scan artwork and provide AR experiences.",
-        "NSMotionUsageDescription": "This app uses motion sensors to provide immersive AR experiences."
+        "NSMotionUsageDescription": "This app uses motion sensors to provide immersive AR experiences.",
+        "NSPhotoLibraryUsageDescription": "The augmented-reality framework ARtifact uses includes photo-capture features. ARtifact does not read, upload or store photos from your library.",
+        "NSPhotoLibraryAddUsageDescription": "The augmented-reality framework ARtifact uses can save captured AR images to your photo library.",
+        "NSMicrophoneUsageDescription": "The augmented-reality framework ARtifact uses includes audio-recording features. ARtifact does not record audio.",
+        "NSLocationWhenInUseUsageDescription": "The augmented-reality framework ARtifact uses can request location for world tracking. ARtifact does not collect or store your location.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "The augmented-reality framework ARtifact uses can request location for world tracking. ARtifact does not collect or store your location."
       }
     },
     "android": {

@@ -50,10 +50,15 @@ module.exports = ({ config }) => {
     return [name, { ...options, rvApiKey }];
   });
 
-  // Appended LAST on purpose: it strips permission strings the Viro plugin
-  // injects, so it must be applied after Viro. Applied whether or not the API
-  // key is present — the permission trim is independent of licensing.
-  plugins.push("./plugins/withTrimmedIosPermissions");
+  // NOTE: a `withTrimmedIosPermissions` plugin used to be appended here to strip
+  // the photo-library / microphone / location usage strings the Viro plugin
+  // injects. It was **removed 2026-08-06** after App Store delivery of build
+  // 1.0.52 was rejected with ITMS-90683 for the missing photo-library and
+  // microphone strings. Apple's check is static analysis over *linked* code —
+  // ViroKit references those APIs — so the strings are mandatory regardless of
+  // whether the app calls them. All five are now declared explicitly in
+  // `app.json` so we control the wording instead of shipping Viro's defaults.
+  // **Do not reintroduce the trim.** See Gaps #22.
 
   return { ...config, plugins };
 };

@@ -170,7 +170,7 @@ The template wires that parameter straight into `UserPool.UsernameAttributes` vi
 ### 21. Privacy policy and the binary disagree *(backlog 0.6)*
 A policy is live at https://artifactar.com/privacy/, so the missing-URL blocker is closed. But it and the app disagree: **Sentry is not disclosed at all** despite receiving IP, identifiers and *screen recordings*; the policy says location is never requested while `app.json` still declares two location strings; and it claims images are "stored securely" when the app stores none (verified — the only S3 upload is in the commented-out dead Rekognition block at `scan.tsx:236`; the live path POSTs to Railway and retains nothing). The App Privacy questionnaire has also never been filled.
 
-### 22. Declared-but-unused permissions, and Sentry records screens — ✅ **FIXED 2026-07-27** *(policy text still to publish: backlog 0.6)*
+### 22. Declared-but-unused permissions, and Sentry records screens — ⚠️ **PERMISSION TRIM REVERSED 2026-08-06 — Apple rejected it** *(policy text still to publish: backlog 0.6)*
 **Location resolved 2026-07-27** — both usage strings removed and `expo-location` uninstalled. ~~`app.json` declares two location usage strings and ships `expo-location`, but nothing imports it;~~ Remaining: `expo-web-browser` appears unused too. Apple rejects unused permission requests, and each one adds an App Privacy obligation. Separately, `mobileReplayIntegration()` is active at a 10% session / 100% error sample rate, so real user screens are being recorded — fine for a beta, but undisclosed and worth an explicit decision before taking payments. `PrivacyInfo.xcprivacy` exists only under the gitignored `/ios`, so it is regenerated and effectively uncontrolled.
 
 ### 20. Missing observability outside the paywall *(backlog P3.12)*
@@ -192,3 +192,15 @@ Reported by a user in the wild ("back button doesn't work"), on a newer iPhone/i
 **⬜ Residual risk.** `headerLeft` still renders inside the native navigation bar, so it is not fully insulated from a UIKit regression. If iOS 27 confirmation fails, the next step is `headerShown: false` on pushed screens with a header rendered entirely in React — no dependence on `react-native-screens`' bar handling at all. Note `fullScreenGestureEnabled` is also implemented natively and may share the same exposure.
 
 **⬜ Superseded — the original report is unexplained.** Two theories were considered and rejected on evidence: the `freezeOnBlur` race (landmine #2) is ruled out by the symptom, which was *never* works rather than the documented *first press dropped*; and the bare-chevron tap target is a weak theory because UIKit gives the native back button a standard 44pt hit region regardless of `headerBackButtonDisplayMode`. **Next step is not more guessing** — ask the reporter whether they had scanned before it happened (if yes, the fix above is likely it), and otherwise add navigation breadcrumbs (Gaps #20) so the next report is diagnosable.
+
+
+### 24. Stripping SDK-referenced purpose strings breaks App Store delivery — ✅ **FIXED 2026-08-06**
+App Store delivery of build **1.0.52 was rejected** with two `ITMS-90683 Missing purpose string` errors — `NSPhotoLibraryUsageDescription` and `NSMicrophoneUsageDescription` — plus a non-blocking warning for `NSLocationWhenInUseUsageDescription`.
+
+**The premise of the 0.7 permissions pass was wrong.** `plugins/withTrimmedIosPermissions.js` deleted those keys on the reasoning that "nothing in the app calls Viro's `recordVideo`/`takeScreenshot` or touches audio, so the string is unnecessary — a usage string is only needed when the matching API is actually called." **Apple's check is static analysis over *linked* code, including third-party SDKs, not over what the app calls.** ViroKit references those APIs, so the strings are mandatory. Apple's wording: *"While your app might not use these APIs, a purpose string is still required."*
+
+**Fix:** the plugin is **deleted** and all five strings are declared explicitly in `app.json` (so the wording is ours, not Viro's generic defaults) alongside camera and motion. **Do not reintroduce the trim** — minimising the declared-permission surface is not worth a rejected upload, and the strings alone never prompt the user; only calling the API does.
+
+*Note the verification trap this exposed:* reading the generated `Info.plist` correctly confirmed the keys were gone, which is what the plugin intended — but the goal itself was wrong, so a green local check meant nothing. **The only authority on ITMS-90683 is an actual upload.**
+
+*Unaffected and still true:* Sentry session replay stays off, and `sendDefaultPii: true` remains a deliberate choice. Purpose strings are not data collection — declaring them does not change the App Privacy answers, which are about data actually collected.
