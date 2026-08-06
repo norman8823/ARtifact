@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import "react-native-reanimated";
 
-import { HeaderBackButton } from "@/components/HeaderBackButton";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { configureAmplify } from "@/src/aws/config";
@@ -146,11 +145,19 @@ export default Sentry.wrap(function RootLayout() {
                   headerTintColor: Colors.darkGray,
                   headerBackButtonDisplayMode: "minimal",
                   headerBackButtonMenuEnabled: false,
-                  // Our own back control instead of UIKit's — the system button
-                  // stopped popping on iOS 27 beta while still highlighting on
-                  // press, and that path is not reachable from JS (Gaps #23).
-                  headerBackVisible: false,
-                  headerLeft: () => <HeaderBackButton />,
+                  // NOTE: a custom `headerLeft` back button was tried here for
+                  // the iOS 27 dead-back-button report (Gaps #23) and **reverted
+                  // 2026-08-06**. iOS 26+ wraps navigation-bar items in a Liquid
+                  // Glass container we cannot opt out of — neither
+                  // react-native-screens 4.16 nor @react-navigation/native-stack
+                  // exposes a prop for it — so the custom view rendered inside a
+                  // heavy dark circle that looked broken. Hosting a React view in
+                  // the native bar on every push is also the prime suspect for
+                  // the artDetail slowdown reported on the same build.
+                  // The replacement is a header rendered entirely in React with
+                  // `headerShown: false`, which owns its own styling and does not
+                  // depend on the native bar at all. Do not reintroduce
+                  // `headerLeft` here.
                   gestureEnabled: true,
                   // Swipe back from anywhere on the screen, not just the left
                   // edge. The header back button is a small target — with

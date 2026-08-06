@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react-native";
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { PixelRatio } from "react-native";
 import {
@@ -97,18 +98,53 @@ const ArtworkARScene = (props: ArtworkARSceneProps) => {
     if (!isARReady) return;
     const fetchAssets = async () => {
       updateStatus("Loading AR content...");
+      Sentry.addBreadcrumb({
+        category: "ar",
+        level: "info",
+        message: "rvGetSceneAssets: requesting",
+        data: { sceneId },
+      });
       try {
         const result = await props.arSceneNavigator.rvGetSceneAssets(sceneId);
         if (result.success && result.assets && result.assets.length > 0) {
           assetRef.current = result.assets[0];
           setAsset(result.assets[0]);
+          Sentry.addBreadcrumb({
+            category: "ar",
+            level: "info",
+            message: "rvGetSceneAssets: loaded",
+            data: { sceneId, assetCount: result.assets.length },
+          });
           updateStatus("Tap a flat surface to place the artifact");
         } else {
+          // Both this branch and the catch below show the user the same
+          // "Failed to load AR content". Report them distinctly: an SDK that
+          // answered unsuccessfully and one that threw are different faults,
+          // and in a release build console.error goes nowhere (Gaps #20).
           console.error("rvGetSceneAssets error:", result.error);
+          Sentry.captureMessage("AR scene assets failed to load", {
+            level: "error",
+            tags: { component: "ar_scene", ar_stage: "asset_fetch" },
+            extra: {
+              sceneId,
+              outcome: "returned_unsuccessful",
+              success: result.success,
+              assetCount: result.assets?.length ?? 0,
+              // The SDK's own error — the thing that was previously lost.
+              sdkError:
+                typeof result.error === "string"
+                  ? result.error
+                  : JSON.stringify(result.error ?? null),
+            },
+          });
           updateStatus("Failed to load AR content");
         }
       } catch (err) {
         console.error("rvGetSceneAssets threw:", err);
+        Sentry.captureException(err, {
+          tags: { component: "ar_scene", ar_stage: "asset_fetch" },
+          extra: { sceneId, outcome: "threw" },
+        });
         updateStatus("Failed to load AR content");
       }
     };
