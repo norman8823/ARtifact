@@ -5,8 +5,8 @@ import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
-import { type ArtFact, useArtFacts } from "@/src/hooks/useArtFacts";
-import { type Artwork, useArtwork } from "@/src/hooks/useArtwork";
+import { useArtFactsQuery, useArtworkQuery } from "@/src/hooks/queries";
+import { type ArtFact } from "@/src/hooks/useArtFacts";
 import { useFavorites } from "@/src/hooks/useFavorites";
 import { useGalleryMaps } from "@/src/hooks/useGalleryMaps";
 import { useVisited } from "@/src/hooks/useVisited";
@@ -57,22 +57,15 @@ export default function ArtDetailScreen() {
   // Log the extracted values
   console.log("Art Detail Screen - Extracted values:", { source, id });
 
-  const {
-    getArtworkById,
-    isLoading: isLoadingArtwork,
-    error: artworkError,
-  } = useArtwork();
-  const {
-    getArtFactsByArtworkId,
-    isLoading: isLoadingFacts,
-    error: factsError,
-  } = useArtFacts();
+  // Cached (SWR) — a revisit paints from disk instantly and revalidates behind
+  // the scenes, instead of paying full network latency on every open.
+  const { data: artwork, error: artworkError } = useArtworkQuery(id);
+  const { data: artFacts = [] } = useArtFactsQuery(id);
+
   const { checkIfFavorited, toggleFavorite } = useFavorites();
   const { triggerRefresh } = useFavoritesContext();
   const { checkIfArtworkVisited } = useVisited();
-  const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [isVisited, setIsVisited] = useState(false);
-  const [artFacts, setArtFacts] = useState<ArtFact[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -146,41 +139,22 @@ export default function ArtDetailScreen() {
     const loadData = async () => {
       if (!id) return;
 
-      try {
-        const [artworkResult, facts] = await Promise.all([
-          getArtworkById(id),
-          getArtFactsByArtworkId(id),
-        ]);
+      // Favorited/visited used to wait for the artwork to resolve first, which
+      // put a second round trip on the critical path for no reason — they only
+      // ever needed `id`, which comes straight from the route params. They now
+      // fire immediately and apply independently, so neither blocks the other
+      // or the render. The artwork and its facts are handled by react-query.
+      checkIfFavorited(id)
+        .then((favorite) => setIsFavorited(!!favorite))
+        .catch((err) => console.error("Error checking favorite:", err));
 
-        if (artworkResult) {
-          setArtwork(artworkResult);
-          setSelectedImage(artworkResult.primaryImage);
-
-          // Favorited + visited checks are independent — run them in parallel.
-          const [favorite, visitRecord] = await Promise.all([
-            checkIfFavorited(id),
-            checkIfArtworkVisited(id),
-          ]);
-          setIsFavorited(!!favorite);
-          setIsVisited(!!visitRecord);
-        }
-
-        // Ensure facts match our ArtFact interface
-        const validFacts: ArtFact[] = facts.map((fact) => ({
-          id: fact.id,
-          artworkId: fact.artworkId,
-          content: fact.content || null,
-          isActive: fact.isActive || null,
-          timestamp: fact.timestamp || null,
-        }));
-        setArtFacts(validFacts);
-      } catch (err) {
-        console.error("Error loading artwork data:", err);
-      }
+      checkIfArtworkVisited(id)
+        .then((visitRecord) => setIsVisited(!!visitRecord))
+        .catch((err) => console.error("Error checking visited:", err));
     };
 
     loadData();
-  }, [id, getArtworkById, getArtFactsByArtworkId, checkIfFavorited, checkIfArtworkVisited]);
+  }, [id, checkIfFavorited, checkIfArtworkVisited]);
 
   useEffect(() => {
     loadGalleryMaps();
@@ -228,8 +202,12 @@ export default function ArtDetailScreen() {
     }
   };
 
-  // Show loading state
-  if (isLoadingArtwork || isLoadingFacts) {
+  // Gate on the artwork ONLY. The art facts render at the bottom of the page,
+  // below the fold and past a scroll most users never make, so waiting on them
+  // held the entire screen — title, image, metadata — on "Loading artwork
+  // details..." until the slower of two independent queries returned. Facts now
+  // fill in when they arrive.
+  if (artwork === undefined) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
         <ThemedText>Loading artwork details...</ThemedText>
@@ -237,13 +215,13 @@ export default function ArtDetailScreen() {
     );
   }
 
-  // Show error state
-  if (artworkError || factsError) {
+  // Same reasoning as the loading gate: a failed *facts* query must not blank
+  // the whole artwork. The facts section is already gated on
+  // `artFacts.length > 0`, so it simply stays hidden.
+  if (artworkError) {
     return (
       <ThemedView style={[styles.container, styles.centerContent]}>
-        <ThemedText>
-          Error loading artwork: {artworkError?.message || factsError?.message}
-        </ThemedText>
+        <ThemedText>Error loading artwork: {artworkError.message}</ThemedText>
       </ThemedView>
     );
   }
@@ -297,10 +275,24 @@ export default function ArtDetailScreen() {
         {/* Artwork Image */}
         <ThemedView style={styles.imageContainer}>
           <ThemedView style={styles.mainImageContainer}>
+            {/* Full resolution stays the source — the artwork is the product
+                and `primaryImageSmall` is only 435–599px wide, which is visibly
+                soft at this size. `primaryImageSmall` is the *placeholder*
+                instead: ~0.1MB lands almost immediately and paints, then the
+                1–5MB original replaces it once decoded. Same final fidelity,
+                without staring at an empty box. `placeholder` is ignored once
+                the source is in expo-image's cache, so revisits are instant. */}
             <Image
               source={{
                 uri: selectedImage || artwork.primaryImage || undefined,
               }}
+              placeholder={
+                artwork.primaryImageSmall
+                  ? { uri: artwork.primaryImageSmall }
+                  : undefined
+              }
+              placeholderContentFit="contain"
+              transition={200}
               style={styles.artworkImage}
               contentFit="contain"
             />

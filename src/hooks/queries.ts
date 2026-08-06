@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { useAuthContext } from "@/src/contexts/AuthContext";
+import { type Artwork as ArtworkDetail, useArtwork } from "./useArtwork";
+import { type ArtFact, useArtFacts } from "./useArtFacts";
 import { type Artwork, useArtworks } from "./useArtworks";
 import { type Department, useDepartments } from "./useDepartments";
 import { type DidYouKnowFact, useDidYouKnow } from "./useDidYouKnow";
@@ -141,5 +143,47 @@ export function useAllRanksQuery() {
     queryFn: getAllRanks,
     enabled: !!user,
     ...USER,
+  });
+}
+
+// ----- Artwork detail (catalog; keyed by artwork id) -----
+//
+// artDetail was the last screen with no cache at all — it refetched the artwork
+// and its facts on every open, so bouncing between a list and a detail page
+// paid full network latency every time (Gaps #9). These are catalog data and
+// effectively immutable, so SWR is a clean fit: a revisit paints instantly from
+// cache and revalidates behind the scenes.
+
+export function useArtworkQuery(id: string | undefined) {
+  const { getArtworkById } = useArtwork();
+  const { isAuthReady } = useAuthContext();
+  return useQuery<ArtworkDetail | null>({
+    queryKey: ["artwork", id],
+    queryFn: () => getArtworkById(id as string),
+    enabled: isAuthReady && !!id,
+    ...CATALOG,
+  });
+}
+
+export function useArtFactsQuery(id: string | undefined) {
+  const { getArtFactsByArtworkId } = useArtFacts();
+  const { isAuthReady } = useAuthContext();
+  return useQuery<ArtFact[]>({
+    queryKey: ["artFacts", id],
+    // The getter returns optional fields; `ArtFact` uses nullable ones. Normalise
+    // here, at the GraphQL→app boundary, rather than widening the interface —
+    // this mapping previously lived inline in artDetail.
+    queryFn: async () => {
+      const facts = await getArtFactsByArtworkId(id as string);
+      return facts.map((fact) => ({
+        id: fact.id,
+        artworkId: fact.artworkId,
+        content: fact.content ?? null,
+        isActive: fact.isActive ?? null,
+        timestamp: fact.timestamp ?? null,
+      }));
+    },
+    enabled: isAuthReady && !!id,
+    ...CATALOG,
   });
 }

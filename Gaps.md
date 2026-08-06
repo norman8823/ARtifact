@@ -45,7 +45,13 @@ Resolved 2026-07-13: `awardXP` now does a conditional-update CAS loop with retry
 
 ## Architecture debt
 
-### 9. Two coexisting data-fetch paradigms
+### 9. Two coexisting data-fetch paradigms — **artDetail migrated 2026-08-06**
+**artDetail is now cached** (`useArtworkQuery` / `useArtFactsQuery`), prompted by a user report of detail pages taking several seconds. Measured while investigating: the AppSync queries are ~150–220ms each, so the backend was never the problem. What was:
+- **The whole screen was gated on the art-facts query** (`isLoadingArtwork || isLoadingFacts`). Facts render at the very bottom of the page, past a scroll most users never make, yet nothing — title, image, metadata — painted until the *slower* of two independent queries returned. Now gated on the artwork alone, and the error gate likewise no longer blanks the page when only facts fail.
+- **Favourited/visited waited for the artwork to resolve**, adding a round trip for no reason — they only ever needed `id` from the route params. Now fired immediately.
+- **No cache at all**, so every open paid full network latency. Now SWR.
+- **The image is the real cost.** `primaryImage` is the full-resolution Met file — **1.3–4.7 MB, 2557–3811px wide** — rendered into a 300pt-tall box. `primaryImageSmall` is 0.05–0.27 MB but only **435–599px**, visibly soft at that size, so it is used as expo-image's `placeholder` rather than the source: it paints almost immediately and the full file replaces it, preserving fidelity.
+
 The react-query layer ([queries.ts](src/hooks/queries.ts)) covers home/profile/artQuest/favorites/artworksVisited. artDetail, questDetail, collection, and explore still use legacy imperative hooks with local `useState` — no cache, refetch on every mount. This is a deliberate incremental strategy, but the boundary is invisible to a new contributor; finishing the migration (or documenting the split) is owed. Residual UX from the split: artworksVisited still spins on its uncached `getArtworksByIds` detail fetch; profile/artQuest have a ~300ms user-state spinner pre-auth (userId-keyed cache can't hydrate until auth resolves).
 
 ### 10. Explore search/filter is client-side over the whole table
