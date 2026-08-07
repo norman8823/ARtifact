@@ -417,10 +417,10 @@ export default function HomeScreen() {
                           {/* No icon while entitlement is unresolved, so a
                               paying user never sees a lock flash on launch. */}
                           {featuredQuestLockState === "locked" && (
-                            <FontAwesome name="lock" size={11} color={Colors.darkYellow} />
+                            <FontAwesome name="lock" size={11} color={Colors.lightGray} />
                           )}
                           {featuredQuestLockState === "owned" && (
-                            <FontAwesome name="unlock" size={11} color={Colors.darkYellow} />
+                            <FontAwesome name="unlock" size={11} color={Colors.lightGray} />
                           )}
                           <ThemedText style={styles.premiumText}>Premium</ThemedText>
                         </ThemedView>
@@ -679,10 +679,14 @@ const styles = StyleSheet.create({
     color: Colors.darkMedGray,
   },
   premiumBadge: {
-    backgroundColor: Colors.darkYellow,
+    // Purple, NOT yellow: yellow means "in progress" elsewhere in the app.
+    backgroundColor: Colors.darkPurple,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   premiumText: {
     fontSize: 12,

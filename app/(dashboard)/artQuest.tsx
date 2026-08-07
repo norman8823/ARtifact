@@ -196,14 +196,14 @@ const AvailableQuestItem = React.memo(
                 <FontAwesome
                   name="lock"
                   size={11}
-                  color={Colors.darkYellow}
+                  color={Colors.darkPurple}
                 />
               )}
               {lockState === "owned" && (
                 <FontAwesome
                   name="unlock"
                   size={11}
-                  color={Colors.darkYellow}
+                  color={Colors.darkPurple}
                 />
               )}
               <ThemedText style={styles.premiumText}>Premium</ThemedText>
@@ -635,9 +635,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    // space-between alone let the premium badge butt right up against the XP
+    // value once a title got long. The gap guarantees breathing room whatever
+    // the title length, and the title shrinks instead of squeezing the badges.
+    gap: 8,
   },
   questTitle: {
     backgroundColor: Colors.medLightGray,
+    flexShrink: 1,
     fontSize: 18,
     flex: 1,
     paddingRight: 8,
@@ -703,7 +708,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   premiumBadge: {
-    backgroundColor: Colors.lightYellow,
+    // Purple, NOT yellow: yellow is "in progress" here (activeBadge and the
+    // progress-bar fill), and the two badges were indistinguishable.
+    backgroundColor: Colors.lightPurple,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -713,7 +720,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   premiumText: {
-    color: Colors.darkYellow,
+    color: Colors.darkPurple,
     fontSize: 14,
   },
   emptyStateContainer: {

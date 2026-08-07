@@ -11,6 +11,12 @@ export const UniversalColors = {
   lightGreen: "#f0fdf4",
   darkGreen: "#16a34a",
 
+  // Premium only. Yellow already means "in progress" (active quest badge and
+  // the progress-bar fill), so the premium badge must not reuse it — the two
+  // were indistinguishable on the quest cards.
+  lightPurple: "#f3e8ff",
+  darkPurple: "#7e22ce",
+
   metRed: "#E4012A",
   favoriteRed: "#ff4444",
 } as const;
