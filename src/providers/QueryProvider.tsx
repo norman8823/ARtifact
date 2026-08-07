@@ -49,7 +49,12 @@ export function QueryProvider({ children }: { children: ReactNode }) {
         maxAge: ONE_DAY_MS,
         // Bump to force-invalidate ALL persisted cache (e.g. after a data
         // model change that makes old cached shapes incompatible).
-        buster: "v1",
+        //
+        // v1 -> v2 (2026-08-07): the premium quest flags were written to
+        // DynamoDB in the same release. Without this, a device restoring a
+        // day-old cache would paint every quest as free — no lock badge, no
+        // gate — until revalidation landed.
+        buster: "v2",
       }}
     >
       {children}

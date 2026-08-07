@@ -118,15 +118,6 @@ The flow shipped (`useAccountDeletion`) but has **never run against a real accou
 
 > **No schema change or `amplify push` is required.** The entitlement plumbing (StoreKit adapter, `EntitlementContext`, pure rules in `src/utils/premiumAccess.ts`) is already built — see CLAUDE.md § Project state. What remains is the UI and the data.
 
-### 1.2 Mark quest data — script written, not yet run
-Free quests are decided: **Art Essentials, Bronze Legacy, Sacred Animals** (10 of 47 artworks); the other 9 are premium. `scripts/markPremiumQuests.js` does it, **dry-run by default** (`--apply` to write), and aborts unless all three titles match exactly.
-
-Two prerequisites before running:
-1. `.env` needs `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (absent today) — run without `--apply` first.
-2. **Timing:** apply only once the gating build is reaching users. Already-shipped builds render a "Premium" badge with no gate, so marking early shows a badge on quests users can still start free. Bump the react-query `buster` in `QueryProvider.tsx` from `"v1"` to `"v2"` in that release so no device paints pre-premium cached quest data.
-
-Do not remove the `GetFreshQuests` cache-bypass while doing this (CLAUDE.md landmine #4).
-
 ### 1.5 App Store Connect setup — **fully unblocked; this is the next thing to do in App Store Connect**
 > **Paid Apps agreement is Active and the bank account is linked (2026-08-04).** That was the last gate — `fetchProducts` will now return real products once one exists, so premium becomes testable for the first time. The transfer completed before any IAP product was created, which is exactly what we wanted: the product gets created once, in the LLC account, and revenue lands there from the first sale.
 
