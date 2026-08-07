@@ -27,7 +27,9 @@
 
 **✅ Ownership/control FIXED 2026-08-05.** The service now runs on the LLC's own Railway project, builds from the LLC's own private repo (`norman8823/ARtifact-server`), and answers on an LLC-owned domain, `https://api.artifactar.com`. [scanApi.ts](src/config/scanApi.ts) defaults to that domain instead of the partner's `artifact-server-production.up.railway.app`, so a lost or lapsed hosting project is now a DNS change every shipped build follows — not an emergency App Store release. Guarded by `src/config/__tests__/scanApi.test.ts`. See CLAUDE.md § Scan backend.
 
-**Still open — the original reliability finding, untouched.** The fetch at [scan.tsx:186](app/scan.tsx#L186) has no timeout, no retry, no failover, and no request deduplication (rapid shutter taps fire concurrent requests). Railway scales to zero → first scan of the day eats a server cold start with no user-facing "warming up" state. Owning the address does not make the box more available; it only makes replacing it cheap. *(backlog 2.3.)*
+**✅ Reliability half FIXED 2026-08-07.** Network policy now lives in [scanClient.ts](src/utils/scanClient.ts), out of the UI and unit-tested: a **20s timeout** via `AbortController` (sized for a Railway cold start loading TensorFlow and a 47MB model), **one retry** gated on `isRetriableScanFailure` (timeouts, network errors, 5xx and 429 retry; ordinary 4xx does not, since resending a bad request just doubles the wait), and a **"Waking up the scanner..." state** after 4s so a cold start reads as waking rather than broken. Rapid shutter taps are deduped by a **ref**, not state — `setState` is async, so two taps in the same tick both cleared the old state-based guard and fired concurrent uploads. Failures now reach Sentry with status/timedOut (Gaps #20), and the user-facing alert distinguishes a timeout from a connection failure.
+
+*Residual:* still no failover to a second host — that remains a deliberate non-goal; the custom domain makes replacing the box a DNS change instead.
 
 ## Data / business-logic bugs
 

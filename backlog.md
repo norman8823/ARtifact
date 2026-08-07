@@ -219,11 +219,6 @@ Rotate the AppSync key, update `GUEST_API_KEY_EXPIRY` in `authMode.ts`, ship wel
 3. Build, install on device, and **confirm AR loads a model** — a bad license key fails at scene load, which is release-only-regression territory.
 4. Only then revoke the old key.
 
-### 2.3 Harden the Railway scan endpoint *(Gaps #4)*
-Paying users will expect scan to work. Add fetch timeout + one retry + in-flight dedup on the shutter button; add a "warming up" state for Railway cold starts (or move off scale-to-zero). Type the Flask response contract while in there *(Gaps #15)*.
-
----
-
 ## P3 — Debt paydown (after premium ships)
 
 1. **Dead-code deletion batch** *(Gaps dead-code table)*: Rekognition Lambda + `rekognitionApi`, commented scan block, `ARPrewarmManager`/`ARPermissionManager`, `useSceneModel`, `arImage`, `aws-sdk` v2 app dep. One PR, pure deletions. *(The apple/google login stubs and the `phoneLogin` route moved to 1A.5 — they get deleted as part of the real Apple sign-in work.)*
@@ -236,7 +231,6 @@ Paying users will expect scan to work. Add fetch timeout + one retry + in-flight
 8. **Sparse GSI for `Artwork.isFeatured`** *(Gaps #11)* — the featured fetch is a bounded 5-page scan that silently breaks if a featured artwork lands past the bound. A direct `@index` is impossible (Boolean isn't a valid DynamoDB key type), so: add `featuredStatus: String @index(...)`, populate it with a constant **only** on featured rows so the index stays sparse, backfill via `scripts/`, then switch `getFeaturedArtworks` to the index query. Needs `amplify push`.
 9. **Auth guard for pushed routes** *(Gaps #12c)* — `app.json` registers `scheme: "artifact"` and pushed routes check only `isAuthReady`, so `artifact://questDetail?id=X` and `artifact://profileSettings` render for a guest (the latter throws `UserUnAuthenticatedException` from `ensureUserInDB` on mount). The premium gate handles its own case explicitly, but a shared guard would close the class rather than patching each screen.
 10. **Resolve the FeaturePoint contradiction** *(Gaps #13)* — `ArtworkARScene.tsx:137` includes `FeaturePoint` in the hit-test priority while `MIGRATION_NOTES.md:121` claims it's excluded so the model can't float in mid-air. One of them is wrong. Decide which behavior is intended, then fix the other. **Device-only to verify.**
-11. **Make `AR_TEST_MODE` non-shippable** *(Gaps #14)* — it's a source constant someone must remember to flip back; `true` in a commit would route every AR view to a hardcoded test scene. Replace with the `__DEV__ && process.env.EXPO_PUBLIC_*` pattern already used for the premium dev bypass in `EntitlementContext`, so it cannot ship enabled.
 12. **Observability for the core loop** *(Gaps #20)* — instrument scan success/failure rate, quest completion, and AR placement success, plus Sentry breadcrumbs around the scan network call and the AR asset fetch (the two flakiest flows). Paywall breadcrumbs already exist (1.6); this is everything else. Without it, a Railway outage or a drop in scan accuracy is invisible until users complain.
 
 ---

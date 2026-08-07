@@ -7,8 +7,14 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
 
-// --- Debug flag: set to true to bypass sceneId param and use a test scene ---
-const AR_TEST_MODE = false;
+// --- Debug flag: bypass the sceneId param and use a fixed test scene ---------
+// Env-driven and `__DEV__`-gated so it CANNOT ship enabled, matching the
+// premium dev bypass in EntitlementContext. It was previously a bare
+// `const AR_TEST_MODE = false` that someone had to remember to flip back —
+// committing it as `true` would have routed every AR view in a release build to
+// this one hardcoded scene (Gaps #14).
+const AR_TEST_MODE =
+  __DEV__ && process.env.EXPO_PUBLIC_DEV_AR_TEST_MODE === "1";
 const AR_TEST_SCENE_ID = "73f3603f-5579-4642-ad27-fccfc87922a3";
 // ---------------------------------------------------------------------------
 

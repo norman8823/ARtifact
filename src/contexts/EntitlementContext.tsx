@@ -244,6 +244,15 @@ export function EntitlementProvider({
     };
   }, [applyStoreResult]);
 
+  // Global Sentry tag so the paywall funnel can be sliced by entitlement —
+  // without it the breadcrumbs (paywall shown / purchase started / restore /
+  // quest-start blocked) can't distinguish a free user hitting the gate from a
+  // paying user hitting a bug, which was most of the point of instrumenting it
+  // (backlog 1.6). A tag rather than user data: it carries no identifier.
+  useEffect(() => {
+    Sentry.setTag("entitlement", entitlement);
+  }, [entitlement]);
+
   // Foreground refresh, throttled. This is how a refund propagates.
   useEffect(() => {
     const onChange = (status: AppStateStatus) => {

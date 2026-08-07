@@ -2,10 +2,11 @@ import { ScanResultModal } from "@/components/ScanResultModal";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
-import { SCAN_PREDICT_URL } from "@/src/config/scanApi";
 import { useGoBack } from "@/src/hooks/useGoBack";
 import { useScanSuccess } from "@/src/hooks/useScanSuccess";
 import { adaptFlaskResponse } from "@/src/utils/scanAdapter";
+import { requestPrediction, ScanRequestError } from "@/src/utils/scanClient";
+import * as Sentry from "@sentry/react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Haptics from "expo-haptics";
@@ -55,6 +56,10 @@ export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [cameraType, setCameraType] = useState<"back" | "front">("back");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isWarmingUp, setIsWarmingUp] = useState(false);
+  // Ref, not state: setState is async, so two rapid shutter taps can both clear
+  // a state-based guard and fire concurrent uploads.
+  const scanInFlight = useRef(false);
   const [analysisResult, setAnalysisResult] = useState<any>(null); // Renamed from rekognitionResult
   const [isLoading, setIsLoading] = useState(false);
   const [modalState, setModalState] = useState<ScanResultState>({
@@ -164,43 +169,27 @@ export default function ScanScreen() {
     }
   };
 
-  // NEW: Function to analyze image with Flask CNN model
+  // Analyze the photo with the recognition backend.
+  //
+  // Network policy (timeout, single retry, cold-start signalling) lives in
+  // `src/utils/scanClient.ts` so it is testable and out of the UI. A retriable
+  // failure is almost always Railway's scale-to-zero cold start — the app's
+  // only real server cold start.
   const analyzeWithFlask = async (uri: string) => {
     setIsAnalyzing(true);
+    setIsWarmingUp(false);
     setAnalysisResult(null);
 
+    Sentry.addBreadcrumb({
+      category: "scan",
+      level: "info",
+      message: "scan: requesting prediction",
+    });
+
     try {
-      console.log("📸 Starting Flask CNN analysis...");
-
-      // Create FormData for image upload
-      const formData = new FormData();
-
-      // Add image file to FormData
-      formData.append("image", {
-        uri: uri,
-        type: "image/jpeg",
-        name: "artwork.jpg",
-      } as any);
-
-      console.log("🔍 Calling Flask CNN API...");
-
-      // Call Flask API
-      const response = await fetch(SCAN_PREDICT_URL, {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const flaskResult = await requestPrediction(uri, {
+        onWarming: () => setIsWarmingUp(true),
       });
-
-      if (!response.ok) {
-        throw new Error(
-          `Flask API error: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const flaskResult = await response.json();
-      console.log("🔍 Flask CNN Result:", flaskResult);
 
       // Transform Flask response to match expected format for useScanSuccess
       const transformedResult = adaptFlaskResponse(flaskResult);
@@ -221,15 +210,27 @@ export default function ScanScreen() {
     } catch (error) {
       console.error("❌ Error analyzing image with Flask:", error);
 
+      // Scan failures were previously invisible outside the device (Gaps #20).
+      const scanError =
+        error instanceof ScanRequestError ? error : undefined;
+      Sentry.captureException(error, {
+        tags: { component: "scan", scan_stage: "predict" },
+        extra: {
+          status: scanError?.status,
+          timedOut: scanError?.timedOut ?? false,
+        },
+      });
+
       Alert.alert(
-        "Analysis Error",
-        `Failed to analyze image: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`,
+        "Scan Failed",
+        scanError?.timedOut
+          ? "The scanner took too long to respond. It may still be waking up — please try again in a moment."
+          : "We couldn't analyze that photo. Please check your connection and try again.",
         [{ text: "OK" }]
       );
     } finally {
       setIsAnalyzing(false);
+      setIsWarmingUp(false);
     }
   };
 
@@ -302,6 +303,10 @@ export default function ScanScreen() {
 
   const takePicture = async () => {
     if (!cameraRef.current || isAnalyzing || isProcessing) return;
+    // The state checks above lag a fast double-tap by a render; this ref closes
+    // that window so rapid shutter taps cannot fire concurrent uploads.
+    if (scanInFlight.current) return;
+    scanInFlight.current = true;
 
     try {
       setIsLoading(true);
@@ -323,6 +328,7 @@ export default function ScanScreen() {
       ]);
     } finally {
       setIsLoading(false);
+      scanInFlight.current = false;
     }
   };
 
@@ -403,9 +409,15 @@ export default function ScanScreen() {
                   <View style={styles.statusContainer}>
                     <ActivityIndicator size="small" color={Colors.lightGray} />
                     <ThemedText style={styles.statusText}>
-                      {isAnalyzing
-                        ? "Analyzing artwork..."
-                        : "Processing results..."}
+                      {/* Railway scales to zero, so the first scan of the day
+                          wakes a container loading TensorFlow and a 47MB model.
+                          Say so, rather than leaving "Analyzing..." sitting
+                          there long enough to look broken. */}
+                      {isProcessing
+                        ? "Processing results..."
+                        : isWarmingUp
+                          ? "Waking up the scanner..."
+                          : "Analyzing artwork..."}
                     </ThemedText>
                   </View>
                 ) : (
