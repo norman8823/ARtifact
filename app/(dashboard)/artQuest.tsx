@@ -425,7 +425,12 @@ export default function ArtQuestScreen() {
           <ThemedView style={[styles.section, { paddingTop: 0 }]}>
             <ThemedView style={styles.emptyStateContainer}>
               <ThemedText style={styles.emptyStateText}>
-                Complete quests to see them here and earn rewards!
+                {/* Deliberately no mention of "rewards" — this is a museum
+                    app, and users could reasonably read that as something
+                    physical. Completing a quest earns XP toward a rank, and
+                    the XP itself comes from scanning (CLAUDE.md § Settled
+                    decisions), so there is no completion prize to promise. */}
+                Complete quests to see them here!
               </ThemedText>
             </ThemedView>
           </ThemedView>
