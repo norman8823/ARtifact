@@ -330,8 +330,11 @@ export default function QuestDetailScreen() {
             </ThemedView>
           )}
 
-          {/* Progress Tracker - Only show if quest is started */}
-          {userQuest ? (
+          {/* Progress Tracker - Only show if quest is started.
+              There is deliberately no "Not Started" badge for the other case:
+              the button directly below already reads "Start Quest" or "Unlock
+              to Start", so a badge saying the same thing is pure noise. */}
+          {userQuest && (
             <ThemedView style={styles.progressTracker}>
               <ThemedView style={styles.progressLeft}>
                 <FontAwesome
@@ -349,7 +352,6 @@ export default function QuestDetailScreen() {
                   styles.statusBadge,
                   questStatus === "Completed" && styles.completedBadge,
                   questStatus === "In Progress" && styles.inProgressBadge,
-                  questStatus === "Not Started" && styles.notStartedBadge,
                 ]}
               >
                 <ThemedText
@@ -357,21 +359,8 @@ export default function QuestDetailScreen() {
                     styles.statusText,
                     questStatus === "Completed" && styles.completedText,
                     questStatus === "In Progress" && styles.inProgressText,
-                    questStatus === "Not Started" && styles.notStartedText,
                   ]}
                 >
-                  {questStatus}
-                </ThemedText>
-              </ThemedView>
-            </ThemedView>
-          ) : (
-            /* Status Badge Only - When quest not started */
-            <ThemedView style={styles.progressTracker}>
-              <ThemedView style={styles.progressLeft}>
-                {/* Empty space to push badge to the right */}
-              </ThemedView>
-              <ThemedView style={[styles.statusBadge, styles.notStartedBadge]}>
-                <ThemedText style={[styles.statusText, styles.notStartedText]}>
                   {questStatus}
                 </ThemedText>
               </ThemedView>
@@ -827,14 +816,6 @@ const styles = StyleSheet.create({
   },
   inProgressText: {
     color: Colors.darkYellow,
-  },
-  notStartedBadge: {
-    backgroundColor: Colors.medLightGray,
-    borderWidth: 1,
-    borderColor: Colors.darkMedGray,
-  },
-  notStartedText: {
-    color: Colors.darkMedGray,
   },
   startButton: {
     backgroundColor: Colors.darkGreen,
