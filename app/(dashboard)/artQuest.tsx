@@ -94,7 +94,11 @@ const ActiveQuestItem = React.memo(function ActiveQuestItem({ quest, questLookup
 
   return (
     <Pressable
-      style={[styles.questCard, isPressed && styles.questCardPressed]}
+      style={[
+        styles.questCard,
+        isCompleted ? styles.questCardCompleted : styles.questCardActive,
+        isPressed && styles.questCardPressed,
+      ]}
       onPress={() => router.push(`/questDetail?id=${quest.questId}`)}
       onPressIn={() => setIsPressed(true)}
       onPressOut={() => setIsPressed(false)}
@@ -184,10 +188,11 @@ const AvailableQuestItem = React.memo(
     <ThemedView style={styles.questHeader}>
       <ThemedView style={styles.questInfo}>
         <ThemedView style={styles.titleRow}>
-          <ThemedText type="title" style={styles.questTitle}>
-            {quest.title}
-          </ThemedText>
-          {quest.isPremium && (
+          <ThemedView style={styles.titleGroup}>
+            <ThemedText type="title" style={styles.questTitle}>
+              {quest.title}
+            </ThemedText>
+            {quest.isPremium && (
             <ThemedView style={styles.premiumBadge}>
               {/* "indeterminate" renders no icon: entitlement hasn't resolved
                   yet, and flashing a lock at a paying user on cold launch is
@@ -207,8 +212,9 @@ const AvailableQuestItem = React.memo(
                 />
               )}
               <ThemedText style={styles.premiumText}>Premium</ThemedText>
-            </ThemedView>
-          )}
+              </ThemedView>
+            )}
+          </ThemedView>
           <ThemedView style={styles.xpBadge}>
             <ThemedText style={styles.xpText}>{quest.xpReward} XP</ThemedText>
           </ThemedView>
@@ -275,7 +281,14 @@ export default function ArtQuestScreen() {
       const active = userQuests.filter((uq) => !uq.isCompleted);
       const completed = userQuests.filter((uq) => uq.isCompleted);
       const startedQuestIds = new Set(userQuests.map((uq) => uq.questId));
-      const available = allQuests.filter((q) => !startedQuestIds.has(q.id));
+      // Free quests first. They are the try-before-you-buy path, so burying
+      // them under nine locked cards is the wrong first impression. `.sort` is
+      // stable, so ordering within each group is unchanged.
+      const available = allQuests
+        .filter((q) => !startedQuestIds.has(q.id))
+        .sort(
+          (a, b) => Number(a.isPremium ?? false) - Number(b.isPremium ?? false)
+        );
 
       const lookup = new Map<string, BaseQuest>();
       allQuests.forEach((q) => lookup.set(q.id, q));
@@ -609,10 +622,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     ...shadowStyle,
   },
+  // The left border carries the card's state, one colour each:
+  // purple = premium/locked, yellow = in progress, green = completed.
   questCardLocked: {
     opacity: 0.75,
     borderLeftWidth: 4,
+    borderLeftColor: Colors.darkPurple,
+  },
+  questCardActive: {
+    borderLeftWidth: 4,
     borderLeftColor: Colors.darkYellow,
+  },
+  questCardCompleted: {
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.darkGreen,
   },
   questCardPressed: {
     shadowOpacity: 0.4,
@@ -635,10 +658,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    // space-between alone let the premium badge butt right up against the XP
-    // value once a title got long. The gap guarantees breathing room whatever
-    // the title length, and the title shrinks instead of squeezing the badges.
     gap: 8,
+  },
+  // Title and premium badge read as one unit on the left, XP pinned right.
+  // Under plain `space-between` the badge floated mid-row and drifted with
+  // title length, so the three never lined up.
+  titleGroup: {
+    backgroundColor: Colors.medLightGray,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flexShrink: 1,
   },
   questTitle: {
     backgroundColor: Colors.medLightGray,
