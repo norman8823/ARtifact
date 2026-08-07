@@ -684,7 +684,9 @@ const styles = StyleSheet.create({
   },
   xpBadge: {
     backgroundColor: Colors.medLightGray,
-    alignSelf: "flex-start",
+    // No `alignSelf` — it would override titleRow's `alignItems: center` and
+    // pin the XP to the top of the row. The title's line box is taller than
+    // this text, so that read as the XP floating above everything else.
   },
   xpText: {
     color: Colors.darkMedGray,
@@ -749,7 +751,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
-    alignSelf: "flex-start",
+    // Same reason as xpBadge: `alignSelf` here fought titleGroup's centring
+    // and pushed the badge above the title's baseline.
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
