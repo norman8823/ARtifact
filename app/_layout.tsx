@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import "react-native-reanimated";
 
+import { HeaderBackButton } from "@/components/HeaderBackButton";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { configureAmplify } from "@/src/aws/config";
@@ -145,19 +146,19 @@ export default Sentry.wrap(function RootLayout() {
                   headerTintColor: Colors.darkGray,
                   headerBackButtonDisplayMode: "minimal",
                   headerBackButtonMenuEnabled: false,
-                  // NOTE: a custom `headerLeft` back button was tried here for
-                  // the iOS 27 dead-back-button report (Gaps #23) and **reverted
-                  // 2026-08-06**. iOS 26+ wraps navigation-bar items in a Liquid
-                  // Glass container we cannot opt out of — neither
-                  // react-native-screens 4.16 nor @react-navigation/native-stack
-                  // exposes a prop for it — so the custom view rendered inside a
-                  // heavy dark circle that looked broken. Hosting a React view in
-                  // the native bar on every push is also the prime suspect for
-                  // the artDetail slowdown reported on the same build.
-                  // The replacement is a header rendered entirely in React with
-                  // `headerShown: false`, which owns its own styling and does not
-                  // depend on the native bar at all. Do not reintroduce
-                  // `headerLeft` here.
+                  // Our own back control instead of UIKit's. **Confirmed by the
+                  // reporter on iOS 27 beta (2026-08-07): the system button did
+                  // not pop, this one does.** UIKit draws and highlights its own
+                  // button, so the failure looked like a live control; the action
+                  // never reached the navigator and JS cannot intervene there.
+                  //
+                  // iOS 26+ wraps navigation-bar items in a Liquid Glass circle
+                  // with no opt-out, so `HeaderBackButton` is deliberately square
+                  // and centred — see its comments. Don't give it asymmetric
+                  // padding; the container wraps whatever box we hand it and the
+                  // arrow ends up visibly off-centre (shipped that way in 1.0.53).
+                  headerBackVisible: false,
+                  headerLeft: () => <HeaderBackButton />,
                   gestureEnabled: true,
                   // Swipe back from anywhere on the screen, not just the left
                   // edge. The header back button is a small target — with

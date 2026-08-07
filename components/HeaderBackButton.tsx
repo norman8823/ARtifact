@@ -35,15 +35,34 @@ export function HeaderBackButton() {
       accessibilityLabel="Go back"
       style={({ pressed }) => [styles.button, pressed && styles.pressed]}
     >
-      <FontAwesome name="chevron-left" size={20} color={Colors.darkGray} />
+      {/* `chevron-left` has visual weight to the left of its glyph box, so a
+          centred box still reads as off-centre. The 2pt nudge compensates. */}
+      <FontAwesome
+        name="chevron-left"
+        size={18}
+        color={Colors.darkGray}
+        style={styles.icon}
+      />
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  // iOS 26+ wraps navigation-bar items in a Liquid Glass container sized to the
+  // view we hand it, and there is no way to opt out (no glass/liquid prop
+  // exists in react-native-screens 4.16 or @react-navigation/native-stack).
+  // So the view must be SQUARE and its content centred, or the circle the
+  // system draws ends up with the arrow sitting off to one side — which is
+  // exactly what shipped in 1.0.53, where asymmetric padding (paddingRight: 8,
+  // no fixed size) gave the container a lopsided box to wrap.
   button: {
-    paddingVertical: 4,
-    paddingRight: 8,
+    width: 30,
+    height: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  icon: {
+    marginLeft: 2,
   },
   pressed: {
     opacity: 0.5,
