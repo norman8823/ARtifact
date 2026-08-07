@@ -56,7 +56,6 @@ export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [cameraType, setCameraType] = useState<"back" | "front">("back");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [isWarmingUp, setIsWarmingUp] = useState(false);
   // Ref, not state: setState is async, so two rapid shutter taps can both clear
   // a state-based guard and fire concurrent uploads.
   const scanInFlight = useRef(false);
@@ -171,13 +170,12 @@ export default function ScanScreen() {
 
   // Analyze the photo with the recognition backend.
   //
-  // Network policy (timeout, single retry, cold-start signalling) lives in
+  // Network policy (timeout, single retry) lives in
   // `src/utils/scanClient.ts` so it is testable and out of the UI. A retriable
   // failure is almost always Railway's scale-to-zero cold start — the app's
   // only real server cold start.
   const analyzeWithFlask = async (uri: string) => {
     setIsAnalyzing(true);
-    setIsWarmingUp(false);
     setAnalysisResult(null);
 
     Sentry.addBreadcrumb({
@@ -187,9 +185,7 @@ export default function ScanScreen() {
     });
 
     try {
-      const flaskResult = await requestPrediction(uri, {
-        onWarming: () => setIsWarmingUp(true),
-      });
+      const flaskResult = await requestPrediction(uri);
 
       // Transform Flask response to match expected format for useScanSuccess
       const transformedResult = adaptFlaskResponse(flaskResult);
@@ -230,7 +226,6 @@ export default function ScanScreen() {
       );
     } finally {
       setIsAnalyzing(false);
-      setIsWarmingUp(false);
     }
   };
 
@@ -409,15 +404,9 @@ export default function ScanScreen() {
                   <View style={styles.statusContainer}>
                     <ActivityIndicator size="small" color={Colors.lightGray} />
                     <ThemedText style={styles.statusText}>
-                      {/* Railway scales to zero, so the first scan of the day
-                          wakes a container loading TensorFlow and a 47MB model.
-                          Say so, rather than leaving "Analyzing..." sitting
-                          there long enough to look broken. */}
-                      {isProcessing
-                        ? "Processing results..."
-                        : isWarmingUp
-                          ? "Waking up the scanner..."
-                          : "Analyzing artwork..."}
+                      {isAnalyzing
+                        ? "Analyzing artwork..."
+                        : "Processing results..."}
                     </ThemedText>
                   </View>
                 ) : (

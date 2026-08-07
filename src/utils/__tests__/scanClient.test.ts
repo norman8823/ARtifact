@@ -1,9 +1,4 @@
-import {
-  SCAN_MAX_ATTEMPTS,
-  SCAN_TIMEOUT_MS,
-  SCAN_WARMING_MS,
-  isRetriableScanFailure,
-} from "../scanClient";
+import { SCAN_MAX_ATTEMPTS, isRetriableScanFailure } from "../scanClient";
 
 describe("isRetriableScanFailure", () => {
   /**
@@ -40,11 +35,7 @@ describe("isRetriableScanFailure", () => {
   });
 });
 
-describe("scan timing constants", () => {
-  it("warns about warming well before giving up", () => {
-    expect(SCAN_WARMING_MS).toBeLessThan(SCAN_TIMEOUT_MS);
-  });
-
+describe("scan retry budget", () => {
   it("allows exactly one retry", () => {
     expect(SCAN_MAX_ATTEMPTS).toBe(2);
   });

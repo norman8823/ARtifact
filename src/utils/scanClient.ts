@@ -11,15 +11,10 @@ import type { FlaskPredictResponse } from "./scanAdapter";
  * - **No timeout** meant a hung connection span forever with a spinner.
  * - **No retry** meant Railway's scale-to-zero cold start — the only real
  *   server cold start in the app — surfaced as an outright failure.
- * - **Cold starts are slow enough to look broken**, so the UI needs to say
- *   "warming up" rather than leave the user guessing.
  */
 
 /** Generous: a Railway cold start loads TensorFlow and a 47MB model. */
 export const SCAN_TIMEOUT_MS = 20_000;
-
-/** After this long, tell the user the server is waking rather than stalling. */
-export const SCAN_WARMING_MS = 4_000;
 
 /** One retry. More would keep a user staring at a broken scan even longer. */
 export const SCAN_MAX_ATTEMPTS = 2;
@@ -56,20 +51,9 @@ export class ScanRequestError extends Error {
   }
 }
 
-interface RequestOptions {
-  /** Fires when the request passes SCAN_WARMING_MS and is still in flight. */
-  onWarming?: () => void;
-}
-
-async function postOnce(
-  uri: string,
-  onWarming?: () => void
-): Promise<FlaskPredictResponse> {
+async function postOnce(uri: string): Promise<FlaskPredictResponse> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), SCAN_TIMEOUT_MS);
-  const warming = onWarming
-    ? setTimeout(onWarming, SCAN_WARMING_MS)
-    : undefined;
 
   const formData = new FormData();
   // Field name is `image` — the server's contract, do not rename.
@@ -107,7 +91,6 @@ async function postOnce(
     );
   } finally {
     clearTimeout(timeout);
-    if (warming) clearTimeout(warming);
   }
 }
 
@@ -119,14 +102,13 @@ async function postOnce(
  * successful response, not an error.
  */
 export async function requestPrediction(
-  uri: string,
-  { onWarming }: RequestOptions = {}
+  uri: string
 ): Promise<FlaskPredictResponse> {
   let lastError: ScanRequestError | undefined;
 
   for (let attempt = 1; attempt <= SCAN_MAX_ATTEMPTS; attempt++) {
     try {
-      return await postOnce(uri, onWarming);
+      return await postOnce(uri);
     } catch (err) {
       lastError = err as ScanRequestError;
       const canRetry =
@@ -136,8 +118,6 @@ export async function requestPrediction(
           timedOut: lastError.timedOut,
         });
       if (!canRetry) throw lastError;
-      // A cold start is already underway; the retry rides the same wake-up.
-      onWarming?.();
     }
   }
 
