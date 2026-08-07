@@ -216,6 +216,12 @@ App Store delivery of build **1.0.52 was rejected** with two `ITMS-90683 Missing
 
 **Fix:** the plugin is **deleted** and all five strings are declared explicitly in `app.json` (so the wording is ours, not Viro's generic defaults) alongside camera and motion. **Do not reintroduce the trim** — minimising the declared-permission surface is not worth a rejected upload, and the strings alone never prompt the user; only calling the API does.
 
+**⚠️ It also broke AR at runtime, which nobody had connected.** The same tester who hit the dead back button reported **"Failed to load AR content"** on 1.0.51 — the build with the strings stripped — and **confirmed AR works on 1.0.53** with them restored (2026-08-07). `app.json` configures `"provider": "reactvision"`, and the Viro plugin injects the location/microphone/photo-library strings *because* a provider is set; removing them disabled something the SDK's asset-fetch path needs. On iOS a protected API touched without its usage string fails hard rather than degrading.
+
+**So the trim had two distinct failure modes** — a rejected upload (ITMS-90683) *and* a broken headline feature for real users — from one "cleanup" that looked correct locally. A single retest cannot completely exclude a transient network fault, but the failure/fix correlation matches a documented mechanism.
+
+*Diagnostic note for the future:* "Failed to load AR content" appears **only after `isARReady`**, i.e. after ARKit tracking succeeded. It is a failure of the HTTPS asset fetch, never of AR capability — so device class, LiDAR and ARKit support are all irrelevant when triaging it.
+
 *Note the verification trap this exposed:* reading the generated `Info.plist` correctly confirmed the keys were gone, which is what the plugin intended — but the goal itself was wrong, so a green local check meant nothing. **The only authority on ITMS-90683 is an actual upload.**
 
 *Unaffected and still true:* Sentry session replay stays off, and `sendDefaultPii: true` remains a deliberate choice. Purpose strings are not data collection — declaring them does not change the App Privacy answers, which are about data actually collected.
