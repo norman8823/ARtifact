@@ -8,7 +8,7 @@ import {
   type StoreResult,
 } from "../premiumAccess";
 
-const PRODUCT = "com.rauljiminian.ARtifact.premium.lifetime";
+const PRODUCT = "com.artquest.ARtifact.premium.lifetime";
 
 const cache = (
   isEntitled: boolean,

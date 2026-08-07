@@ -2,7 +2,7 @@
 
 *Drafted 2026-07-13. Facts about third-party options verified against live sources on that date (see Sources).*
 
-> **Status (2026-07-27): decided and implemented.** **D1 → one-time lifetime unlock**, not a subscription. **D2 → `expo-iap` 4.7.1.** Product `com.rauljiminian.ARtifact.premium.lifetime`, non-consumable, `$5.99` fallback price (`src/iap/products.ts`). The adapter, `EntitlementContext` and the pure gating rules are built; see [CLAUDE.md § Project state](CLAUDE.md). **D3 → free quests are Art Essentials (4), Bronze Legacy (3), Sacred Animals (3)** = 10 of 47 artworks; the other 9 quests are premium. All three titles verified present in the live Quest table. Marking the data is backlog 1.2 (`scripts/markPremiumQuests.js`). This doc is now historical rationale; it is not the source of truth for status.
+> **Status (2026-07-27): decided and implemented.** **D1 → one-time lifetime unlock**, not a subscription. **D2 → `expo-iap` 4.7.1.** Product `com.artquest.ARtifact.premium.lifetime`, non-consumable, `$5.99` fallback price (`src/iap/products.ts`). The adapter, `EntitlementContext` and the pure gating rules are built; see [CLAUDE.md § Project state](CLAUDE.md). **D3 → free quests are Art Essentials (4), Bronze Legacy (3), Sacred Animals (3)** = 10 of 47 artworks; the other 9 quests are premium. All three titles verified present in the live Quest table. Marking the data is backlog 1.2 (`scripts/markPremiumQuests.js`). This doc is now historical rationale; it is not the source of truth for status.
 
 ## Goal
 
