@@ -78,8 +78,10 @@ export function PaywallModal({
               {headline}
             </ThemedText>
             <ThemedText style={styles.subMessage}>
-              A one-time purchase unlocks every Art Quest, forever. No
-              subscription.
+              {/* "one-time purchase" already rules out a subscription, and
+                  "forever" is a promise about the app's lifetime that we are
+                  not in a position to make. */}
+              A one-time purchase unlocks every Art Quest.
             </ThemedText>
 
             {/* Primary CTA */}
