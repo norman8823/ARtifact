@@ -83,6 +83,12 @@ const isTrue = (claim) => String(claim) === "true";
  */
 function defineAuthChallenge(event) {
   const { session = [], userNotFound } = event.request;
+  // DIAGNOSTIC: shapes only, no token, no email.
+  console.log("DEFINE", JSON.stringify({
+    sessionLen: session.length,
+    userNotFound: !!userNotFound,
+    steps: session.map((s) => ({ n: s?.challengeName, r: s?.challengeResult })),
+  }));
 
   event.response.issueTokens = false;
   event.response.failAuthentication = false;
@@ -136,13 +142,28 @@ function createAuthChallenge(event) {
 async function verifyAuthChallenge(event) {
   event.response.answerCorrect = false;
 
-  const payload = await verifyAppleToken(event.request.challengeAnswer);
+  const answer = event.request.challengeAnswer;
+  const payload = await verifyAppleToken(answer);
+  // DIAGNOSTIC: booleans only — never the token, never the addresses.
+  console.log("VERIFY", JSON.stringify({
+    answerType: typeof answer,
+    answerLen: typeof answer === "string" ? answer.length : 0,
+    tokenVerified: !!payload,
+  }));
   if (!payload) return event;
 
   const claimEmail = String(payload.email ?? "").toLowerCase();
   const userEmail = String(
     event.request.userAttributes?.email ?? ""
   ).toLowerCase();
+
+  console.log("VERIFY_CLAIMS", JSON.stringify({
+    hasClaimEmail: !!claimEmail,
+    hasUserEmail: !!userEmail,
+    emailsMatch: !!claimEmail && claimEmail === userEmail,
+    appleEmailVerified: isTrue(payload.email_verified),
+    cognitoEmailVerified: isTrue(event.request.userAttributes?.email_verified),
+  }));
 
   if (!claimEmail || !userEmail || claimEmail !== userEmail) return event;
 
@@ -195,6 +216,7 @@ async function preSignUp(event) {
 }
 
 export const handler = async (event) => {
+  console.log("TRIGGER", event.triggerSource);
   switch (event.triggerSource) {
     case "DefineAuthChallenge_Authentication":
       return defineAuthChallenge(event);

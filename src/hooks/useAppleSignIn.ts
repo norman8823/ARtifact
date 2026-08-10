@@ -8,6 +8,7 @@ import { confirmSignIn, signIn, signOut, signUp } from "aws-amplify/auth";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
+import { Alert } from "react-native";
 
 import { useUserData } from "./useUserData";
 
@@ -36,6 +37,7 @@ export function useAppleSignIn() {
 
   const signInWithApple = useCallback(async () => {
     setIsSigningIn(true);
+    let lastStep = "(not started)";
     try {
       const credential = await AppleAuthentication.signInAsync({
         requestedScopes: [
@@ -64,13 +66,22 @@ export function useAppleSignIn() {
           username: email,
           options: { authFlowType: "CUSTOM_WITHOUT_SRP" },
         });
+        lastStep = result.nextStep?.signInStep ?? "(none)";
+        if (result.isSignedIn) return;
         if (
           result.nextStep?.signInStep ===
           "CONFIRM_SIGN_IN_WITH_CUSTOM_CHALLENGE"
         ) {
           // The Lambda verifies this token; the client only carries it.
-          await confirmSignIn({ challengeResponse: identityToken });
+          const confirmed = await confirmSignIn({
+            challengeResponse: identityToken,
+          });
+          lastStep = `confirmed:${confirmed.nextStep?.signInStep ?? "done"}`;
+          return;
         }
+        // Anything else is unexpected — surface it instead of silently
+        // returning as though sign-in had succeeded.
+        throw new Error(`Unexpected sign-in step: ${lastStep}`);
       };
 
       try {
@@ -82,10 +93,13 @@ export function useAppleSignIn() {
         if (name === "UserAlreadyAuthenticatedException") {
           await signOut();
           await runCustomAuth();
-        } else if (
-          name === "UserNotFoundException" ||
-          name === "NotAuthorizedException"
-        ) {
+        } else if (name === "UserNotFoundException") {
+          // ONLY UserNotFoundException means "create the account". Treating
+          // NotAuthorizedException as that too was wrong: Cognito raises it for
+          // several reasons, so a genuine auth failure got misrouted into
+          // signUp, which then hit an existing account and buried the real
+          // error (observed 2026-08-10 — the Lambda logs showed
+          // userNotFound:false and a challenge issued, then PreSignUp_SignUp).
           // First time this Apple account has been seen. Create the Cognito
           // user ourselves — this is the whole point of CUSTOM_AUTH: WE supply
           // the dummy phone, so Cognito never has to derive one from Apple.
@@ -100,7 +114,15 @@ export function useAppleSignIn() {
               clientMetadata: { appleIdentityToken: identityToken },
             },
           });
-          await runCustomAuth();
+          try {
+            await runCustomAuth();
+          } catch (retryErr) {
+            const retryName = (retryErr as { name?: string })?.name;
+            // The account already existed — the signUp was unnecessary, so just
+            // authenticate.
+            if (retryName === "UsernameExistsException") await runCustomAuth();
+            else throw retryErr;
+          }
         } else {
           throw err;
         }
@@ -117,10 +139,18 @@ export function useAppleSignIn() {
       const code = (err as { code?: string })?.code;
       // The user tapping Cancel on Apple's sheet is not an error.
       if (code !== "ERR_REQUEST_CANCELED") {
+        const e = err as { name?: string; message?: string };
         Sentry.captureException(err, {
           tags: { component: "useAppleSignIn", action: "signIn" },
+          extra: { lastStep },
         });
-        throw err;
+        // TEMPORARY: surface the real failure on screen. Sentry is not
+        // reachable and a silent bounce back to the login page tells us
+        // nothing. Remove once Apple sign-in is confirmed working.
+        Alert.alert(
+          "Apple sign-in failed",
+          `step: ${lastStep}\n${e?.name ?? "Error"}: ${e?.message ?? String(err)}`
+        );
       }
     } finally {
       setIsSigningIn(false);
