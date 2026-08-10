@@ -1,3 +1,4 @@
+import { ScreenHeader } from "@/components/ScreenHeader";
 import { AuthPromptModal } from "@/components/AuthPromptModal";
 import { PaywallModal } from "@/components/PaywallModal";
 import { ThemedText } from "@/components/ThemedText";
@@ -282,6 +283,7 @@ export default function QuestDetailScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <ScreenHeader />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}

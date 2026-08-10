@@ -1,3 +1,4 @@
+import { ScreenHeader } from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { type UserQuest, useUserQuests } from "@/src/hooks/useUserQuests";
@@ -90,6 +91,7 @@ export default function QuestsCompletedScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <ScreenHeader title="Quests Completed" />
       <Stack.Screen
         options={{
           title: "Quests Completed",

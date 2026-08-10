@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import "react-native-reanimated";
 
-import { HeaderBackButton } from "@/components/HeaderBackButton";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { configureAmplify } from "@/src/aws/config";
@@ -146,19 +145,12 @@ export default Sentry.wrap(function RootLayout() {
                   headerTintColor: Colors.darkGray,
                   headerBackButtonDisplayMode: "minimal",
                   headerBackButtonMenuEnabled: false,
-                  // Our own back control instead of UIKit's. **Confirmed by the
-                  // reporter on iOS 27 beta (2026-08-07): the system button did
-                  // not pop, this one does.** UIKit draws and highlights its own
-                  // button, so the failure looked like a live control; the action
-                  // never reached the navigator and JS cannot intervene there.
-                  //
-                  // iOS 26+ wraps navigation-bar items in a Liquid Glass circle
-                  // with no opt-out, so `HeaderBackButton` is deliberately square
-                  // and centred — see its comments. Don't give it asymmetric
-                  // padding; the container wraps whatever box we hand it and the
-                  // arrow ends up visibly off-centre (shipped that way in 1.0.53).
-                  headerBackVisible: false,
-                  headerLeft: () => <HeaderBackButton />,
+                  // Pushed screens render their own header via
+                  // <ScreenHeader/>. The native navigation bar is off
+                  // everywhere: its back button stopped popping on iOS 27, and
+                  // supplying a custom headerLeft put it inside iOS 26's Liquid
+                  // Glass circle, which has no opt-out. See Gaps #23.
+                  headerShown: false,
                   gestureEnabled: true,
                   // Swipe back from anywhere on the screen, not just the left
                   // edge. The header back button is a small target — with
@@ -199,7 +191,6 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen
                   name="profileSettings"
                   options={{
-                    headerTitle: "Profile Settings",
                     gestureEnabled: true,
                     animation: "slide_from_right",
                   }}
@@ -207,7 +198,6 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen
                   name="artworksVisited"
                   options={{
-                    headerTitle: "Artworks Visited",
                     gestureEnabled: true,
                     animation: "slide_from_right",
                   }}
@@ -215,7 +205,6 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen
                   name="favorites"
                   options={{
-                    headerTitle: "Favorites",
                     gestureEnabled: true,
                     animation: "slide_from_right",
                   }}
@@ -223,7 +212,6 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen
                   name="questsCompleted"
                   options={{
-                    headerTitle: "Quests Completed",
                     gestureEnabled: true,
                     animation: "slide_from_right",
                   }}
@@ -231,7 +219,6 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen
                   name="collection"
                   options={{
-                    headerTitle: "",
                     gestureEnabled: true,
                     animation: "slide_from_right",
                   }}
@@ -239,7 +226,6 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen
                   name="artDetail"
                   options={{
-                    headerTitle: "",
                     gestureEnabled: true,
                     animation: "slide_from_right",
                   }}
@@ -247,7 +233,6 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen
                   name="questDetail"
                   options={{
-                    headerTitle: "",
                     gestureEnabled: true,
                     animation: "slide_from_right",
                   }}

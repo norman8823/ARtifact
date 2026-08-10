@@ -1,3 +1,4 @@
+import { ScreenHeader } from "@/components/ScreenHeader";
 import { AuthPromptModal, type AuthPromptContext } from "@/components/AuthPromptModal";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -12,7 +13,7 @@ import { useGalleryMaps } from "@/src/hooks/useGalleryMaps";
 import { useVisited } from "@/src/hooks/useVisited";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -266,11 +267,7 @@ export default function ArtDetailScreen() {
         onClose={() => setAuthModalVisible(false)}
         context={authModalContext}
       />
-      <Stack.Screen
-        options={{
-          title: "Artwork Details",
-        }}
-      />
+      <ScreenHeader />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Artwork Image */}
         <ThemedView style={styles.imageContainer}>

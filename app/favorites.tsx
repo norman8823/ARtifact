@@ -1,3 +1,4 @@
+import { ScreenHeader } from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
@@ -77,6 +78,7 @@ export default function FavoritesScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <ScreenHeader title="Favorites" />
       <Stack.Screen
         options={{
           title: "Favorites",

@@ -1,3 +1,4 @@
+import { ScreenHeader } from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useDepartmentDetail } from "@/src/hooks/useDepartmentDetail";
@@ -64,6 +65,8 @@ export default function CollectionScreen() {
   }
 
   return (
+    <>
+      <ScreenHeader />
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header Image */}
       <ThemedView style={styles.headerContainer}>
@@ -154,6 +157,7 @@ export default function CollectionScreen() {
         </ThemedView>
       </ThemedView>
     </ScrollView>
+    </>
   );
 }
 

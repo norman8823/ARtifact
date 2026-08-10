@@ -1,3 +1,4 @@
+import { ScreenHeader } from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
@@ -240,6 +241,7 @@ export default function ProfileSettingsScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <ScreenHeader title="Profile Settings" />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}

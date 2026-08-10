@@ -1,3 +1,4 @@
+import { ScreenHeader } from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { type Artwork, useArtworksByIds } from "@/src/hooks/useArtworksByIds";
@@ -126,6 +127,7 @@ export default function ArtworksVisitedScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <ScreenHeader title="Artworks Visited" />
       <Stack.Screen
         options={{
           title: "Artworks Visited",

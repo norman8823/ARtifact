@@ -1,13 +1,7 @@
-import { InvokeCommand, LambdaClient } from "@aws-sdk/client-lambda";
 import * as Sentry from "@sentry/react-native";
-import { fetchAuthSession } from "aws-amplify/auth";
-import * as AppleAuthentication from "expo-apple-authentication";
 
 /** Set when a user signs in with Apple; read by the deletion flow. */
 export const APPLE_LINKED_KEY = "artifact.appleLinked";
-
-const FUNCTION_NAME = "artifactAppleRevoke";
-const REGION = "us-east-1";
 
 /**
  * Revoke the user's Apple token as part of deleting their account.
@@ -25,51 +19,29 @@ const REGION = "us-east-1";
  * Invoked over the Cognito Identity Pool's authenticated role. There is no
  * public endpoint; only a signed-in user of this app can reach the function.
  */
+/**
+ * ⚠️ NOT WIRED UP YET — returns false, and account deletion proceeds without
+ * revoking. The Lambda (`artifactAppleRevoke`) is deployed and working; what is
+ * missing is a way for the app to CALL it.
+ *
+ * `@aws-sdk/client-lambda` was tried and had to be reverted: it pulls in
+ * `@smithy/node-http-handler`, which requires `node:https`, and React Native
+ * has no such module — the app failed to bundle at all. Do not reinstall it.
+ *
+ * Remaining options, none of which are a one-liner:
+ *  - a Lambda Function URL with `AWS_IAM` auth, signed with SigV4 (needs a
+ *    SubtleCrypto-capable signer; React Native has no SubtleCrypto)
+ *  - a route on the existing API Gateway, called via Amplify's REST client,
+ *    which already signs with Identity Pool credentials and is RN-safe
+ *  - an AppSync mutation backed by the Lambda (requires `amplify push`)
+ *
+ * The second is the most likely: `aws-amplify` is already a dependency and
+ * already configured with a REST endpoint.
+ */
 export async function revokeAppleToken(): Promise<boolean> {
-  try {
-    const credential = await AppleAuthentication.signInAsync({
-      requestedScopes: [AppleAuthentication.AppleAuthenticationScope.EMAIL],
-    });
-
-    const authorizationCode = credential.authorizationCode;
-    if (!authorizationCode) return false;
-
-    const session = await fetchAuthSession();
-    const idToken = session.tokens?.idToken?.toString();
-    const credentials = session.credentials;
-    if (!idToken || !credentials) return false;
-
-    const client = new LambdaClient({
-      region: REGION,
-      credentials: {
-        accessKeyId: credentials.accessKeyId,
-        secretAccessKey: credentials.secretAccessKey,
-        sessionToken: credentials.sessionToken,
-      },
-    });
-
-    const result = await client.send(
-      new InvokeCommand({
-        FunctionName: FUNCTION_NAME,
-        Payload: new TextEncoder().encode(
-          JSON.stringify({ idToken, authorizationCode })
-        ),
-      })
-    );
-
-    const raw = result.Payload
-      ? new TextDecoder().decode(result.Payload)
-      : "{}";
-    const parsed = JSON.parse(raw) as { statusCode?: number };
-    return parsed.statusCode === 200;
-  } catch (err) {
-    // Never block deletion on this. A user who wants their account gone is
-    // entitled to that even if Apple's endpoint is unreachable — failing the
-    // whole flow here would be a worse 5.1.1(v) outcome than a token that
-    // outlives the account. Reported so it does not fail silently.
-    Sentry.captureException(err, {
-      tags: { component: "appleRevocation", action: "revoke" },
-    });
-    return false;
-  }
+  Sentry.captureMessage("Apple token revocation skipped: transport not wired", {
+    level: "warning",
+    tags: { component: "appleRevocation" },
+  });
+  return false;
 }
