@@ -14,6 +14,8 @@ import {
 } from "@/src/graphql/queries";
 import * as Sentry from "@sentry/react-native";
 import { deleteUser as deleteCognitoUser } from "aws-amplify/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { APPLE_LINKED_KEY, revokeAppleToken } from "@/src/utils/appleRevocation";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
 import { useAuthContext } from "@/src/contexts/AuthContext";
@@ -170,6 +172,30 @@ export function useAccountDeletion() {
           message:
             "Some of your data couldn't be deleted, so your account was kept. Nothing was lost — please check your connection and try again.",
         };
+      }
+
+      // Apple requires the token to be revoked when the account is deleted
+      // (pairs with 5.1.1(v)). Do it AFTER the abort check — so nothing is
+      // revoked for an account we then keep — but BEFORE the identity is
+      // destroyed, since revocation needs a signed-in session.
+      //
+      // Best effort by design: a user entitled to delete their account should
+      // not be blocked because Apple's endpoint is unreachable. Failures are
+      // reported rather than swallowed.
+      if ((await AsyncStorage.getItem(APPLE_LINKED_KEY)) === "true") {
+        const revoked = await revokeAppleToken();
+        Sentry.addBreadcrumb({
+          category: "account",
+          message: "apple_token_revocation",
+          data: { revoked },
+        });
+        if (!revoked) {
+          Sentry.captureMessage("Apple token revocation failed", {
+            level: "warning",
+            tags: { component: "useAccountDeletion" },
+          });
+        }
+        await AsyncStorage.removeItem(APPLE_LINKED_KEY);
       }
 
       // Point of no return.

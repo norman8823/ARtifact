@@ -1,4 +1,6 @@
+import { APPLE_LINKED_KEY } from "@/src/utils/appleRevocation";
 import { useAuthContext } from "@/src/contexts/AuthContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   generateThrowawayPassword,
   readAppleEmailClaim,
@@ -132,6 +134,11 @@ export function useAppleSignIn() {
       // await refreshAuth, THEN navigate. Navigating first leaves
       // getAuthMode() on "apiKey" and every owner-scoped query on Home is
       // denied — an empty-state bug that only reproduces under release timing.
+      // Remember that this account is Apple-linked: account deletion must
+      // revoke the Apple token, and there is no other way to tell afterwards
+      // (Cognito shows only the email, which the email flow also uses).
+      await AsyncStorage.setItem(APPLE_LINKED_KEY, "true");
+
       await ensureUserInDB(displayName, email);
       await refreshAuth();
       router.replace("/home");

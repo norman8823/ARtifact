@@ -1,0 +1,9 @@
+{
+  "name": "artifact-apple-revoke",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "aws-jwt-verify": "^5.0.0"
+  }
+}
