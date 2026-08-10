@@ -92,6 +92,28 @@ export const configureAmplify = async (): Promise<void> => {
           userPoolId: requiredEnvVars.userPoolId,
           userPoolClientId: requiredEnvVars.userPoolClientId,
           identityPoolId: requiredEnvVars.identityPoolId,
+          // Sign in with Apple, via Cognito's hosted UI rather than Apple's
+          // native sheet. Cognito user pools cannot exchange a native Apple
+          // token for user-pool tokens — federation is hosted-UI only — so the
+          // alternative was a CUSTOM_AUTH flow backed by Lambda triggers.
+          //
+          // These values are NOT env vars on purpose: `configureAmplify`
+          // throws on a missing required var, so a value absent from the EAS
+          // build environment would brick launch. They are also not secrets —
+          // the domain is public and the redirect is this app's own scheme.
+          //
+          // Must match the Cognito app client exactly (`artifact://`, no
+          // trailing path, no https). A mismatch fails at the end of the Apple
+          // flow as a redirect error, not at configuration time.
+          loginWith: {
+            oauth: {
+              domain: "artifact-auth.auth.us-east-1.amazoncognito.com",
+              scopes: ["openid", "email", "profile"],
+              redirectSignIn: ["artifact://"],
+              redirectSignOut: ["artifact://"],
+              responseType: "code",
+            },
+          },
         },
       },
       API: {

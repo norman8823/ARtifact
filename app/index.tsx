@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
+import { useAppleSignIn } from "@/src/hooks/useAppleSignIn";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -18,6 +19,7 @@ import {
 export default function LandingScreen() {
   const router = useRouter();
   const { isAuthReady, isAuthenticated } = useAuthContext();
+  const { signInWithApple, isSigningIn } = useAppleSignIn();
 
   // Redirect to home if user is already authenticated
   useEffect(() => {
@@ -93,6 +95,33 @@ export default function LandingScreen() {
 
           {/* Login Options */}
           <View style={styles.loginOptions}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.appleButton,
+              pressed && styles.loginButtonPressed
+            ]}
+            onPress={signInWithApple}
+            disabled={isSigningIn}
+          >
+            <View style={styles.buttonContent}>
+              {isSigningIn ? (
+                <ActivityIndicator size="small" color={Colors.lightGray} />
+              ) : (
+                <>
+                  <FontAwesome
+                    name="apple"
+                    size={20}
+                    color={Colors.lightGray}
+                    style={styles.buttonIcon}
+                  />
+                  <ThemedText style={styles.appleButtonText}>
+                    Continue with Apple
+                  </ThemedText>
+                </>
+              )}
+            </View>
+          </Pressable>
+
           <Pressable
             style={({ pressed }) => [
               styles.loginButton,
@@ -192,6 +221,24 @@ const styles = StyleSheet.create({
   },
   loginOptions: {
     marginTop: 12,
+  },
+  // Apple's HIG requires the Sign in with Apple button to be at least as
+  // prominent as other sign-in options, so it leads and uses Apple's black
+  // treatment. Same geometry as loginButton, minus the trailing chevron.
+  appleButton: {
+    backgroundColor: "#000000",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    ...shadowStyle,
+  },
+  appleButtonText: {
+    color: Colors.lightGray,
+    fontSize: 16,
+    fontWeight: "600",
   },
   loginButton: {
     backgroundColor: Colors.medLightGray,
