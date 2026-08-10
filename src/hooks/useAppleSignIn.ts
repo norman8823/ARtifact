@@ -1,23 +1,32 @@
 import { useAuthContext } from "@/src/contexts/AuthContext";
+import {
+  generateThrowawayPassword,
+  readAppleEmailClaim,
+} from "@/src/utils/appleToken";
 import * as Sentry from "@sentry/react-native";
-import { fetchUserAttributes, signInWithRedirect } from "aws-amplify/auth";
-import { Hub } from "aws-amplify/utils";
+import { confirmSignIn, signIn, signOut, signUp } from "aws-amplify/auth";
+import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { useUserData } from "./useUserData";
 
 /**
- * Sign in with Apple, through Cognito's hosted UI.
+ * Sign in with Apple — native sheet, via a Cognito CUSTOM_AUTH flow.
  *
- * Cognito user pools cannot exchange Apple's *native* sheet token for
- * user-pool tokens — federation is hosted-UI only — so this opens a browser
- * session rather than the native Apple sheet. The alternative was a
- * CUSTOM_AUTH flow backed by Lambda triggers.
+ * NOT hosted-UI federation. That path is impossible on this pool: `phone_number`
+ * is a required attribute, Cognito force-maps required attributes from an IdP
+ * claim, Apple has no phone claim, and Cognito validates the field as E.164 —
+ * so federated user creation always fails with `Invalid phone number format`,
+ * and the mapping cannot be removed (proven 2026-08-10; see CLAUDE.md).
  *
- * The completion runs in a Hub listener, not after the `signInWithRedirect`
- * call: that call returns as soon as the browser opens, and control comes back
- * via the `artifact://` deep link, which may even relaunch the app.
+ * CUSTOM_AUTH sidesteps it because the *app* creates the account and supplies
+ * the same valid dummy phone the email flow already uses. It also means Apple's
+ * native sheet instead of a browser session — one tap and Face ID.
+ *
+ * The Lambda (`artifactAppleAuth`) is the security boundary: it verifies the
+ * identity token against Apple's JWKS and refuses to issue tokens unless the
+ * verified email matches the Cognito user. Nothing here is trusted.
  */
 export function useAppleSignIn() {
   const router = useRouter();
@@ -25,68 +34,98 @@ export function useAppleSignIn() {
   const { ensureUserInDB } = useUserData();
   const [isSigningIn, setIsSigningIn] = useState(false);
 
-  useEffect(() => {
-    const stop = Hub.listen("auth", async ({ payload }) => {
-      switch (payload.event) {
-        case "signInWithRedirect": {
-          try {
-            const attrs = await fetchUserAttributes();
-            // Apple only returns a name on the user's FIRST authorization, and
-            // Cognito does not persist it (the app client can only write email
-            // and phone_number). So fall back rather than treating it as
-            // reliably present.
-            const displayName =
-              [attrs.given_name, attrs.family_name].filter(Boolean).join(" ") ||
-              attrs.name ||
-              undefined;
-
-            // Same sequence as emailLogin, and the order is load-bearing:
-            // ensureUserInDB, then await refreshAuth, THEN navigate. Navigating
-            // before refreshAuth resolves leaves getAuthMode() on "apiKey", and
-            // every owner-scoped query on Home is denied — an empty-state bug
-            // that only reproduces under release timing.
-            await ensureUserInDB(displayName, attrs.email);
-            await refreshAuth();
-            router.replace("/home");
-          } catch (err) {
-            Sentry.captureException(err, {
-              tags: { component: "useAppleSignIn", action: "complete" },
-            });
-          } finally {
-            setIsSigningIn(false);
-          }
-          break;
-        }
-        case "signInWithRedirect_failure": {
-          setIsSigningIn(false);
-          Sentry.captureMessage("Apple sign-in failed", {
-            level: "error",
-            tags: { component: "useAppleSignIn", action: "redirect" },
-            extra: { data: JSON.stringify(payload.data ?? null) },
-          });
-          break;
-        }
-      }
-    });
-
-    return stop;
-  }, [ensureUserInDB, refreshAuth, router]);
-
   const signInWithApple = useCallback(async () => {
     setIsSigningIn(true);
     try {
-      await signInWithRedirect({ provider: "Apple" });
-    } catch (err) {
-      setIsSigningIn(false);
-      // A user dismissing the browser is not an error worth reporting.
-      const name = (err as { name?: string })?.name;
-      if (name !== "UserCancelledError") {
-        Sentry.captureException(err, {
-          tags: { component: "useAppleSignIn", action: "start" },
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      const identityToken = credential.identityToken;
+      if (!identityToken) throw new Error("Apple returned no identity token");
+
+      // Read the email from the TOKEN, not from `credential.email` — the latter
+      // is null on every sign-in after the user's first authorization.
+      const email = readAppleEmailClaim(identityToken);
+      if (!email) throw new Error("Apple identity token carried no email");
+
+      // Apple sends the name only on that first authorization, so treat it as a
+      // bonus rather than something to depend on.
+      const displayName =
+        [credential.fullName?.givenName, credential.fullName?.familyName]
+          .filter(Boolean)
+          .join(" ") || undefined;
+
+      const runCustomAuth = async () => {
+        const result = await signIn({
+          username: email,
+          options: { authFlowType: "CUSTOM_WITHOUT_SRP" },
         });
+        if (
+          result.nextStep?.signInStep ===
+          "CONFIRM_SIGN_IN_WITH_CUSTOM_CHALLENGE"
+        ) {
+          // The Lambda verifies this token; the client only carries it.
+          await confirmSignIn({ challengeResponse: identityToken });
+        }
+      };
+
+      try {
+        await runCustomAuth();
+      } catch (err) {
+        const name = (err as { name?: string })?.name;
+
+        // Amplify refuses a new sign-in while a stale session exists.
+        if (name === "UserAlreadyAuthenticatedException") {
+          await signOut();
+          await runCustomAuth();
+        } else if (
+          name === "UserNotFoundException" ||
+          name === "NotAuthorizedException"
+        ) {
+          // First time this Apple account has been seen. Create the Cognito
+          // user ourselves — this is the whole point of CUSTOM_AUTH: WE supply
+          // the dummy phone, so Cognito never has to derive one from Apple.
+          // The token goes in clientMetadata, where the PreSignUp trigger
+          // verifies it before auto-confirming; without that branch PreSignUp
+          // would auto-confirm the email flow too.
+          await signUp({
+            username: email,
+            password: generateThrowawayPassword(),
+            options: {
+              userAttributes: { email, phone_number: "+10000000000" },
+              clientMetadata: { appleIdentityToken: identityToken },
+            },
+          });
+          await runCustomAuth();
+        } else {
+          throw err;
+        }
       }
+
+      // Order is load-bearing and mirrors emailLogin: ensureUserInDB, then
+      // await refreshAuth, THEN navigate. Navigating first leaves
+      // getAuthMode() on "apiKey" and every owner-scoped query on Home is
+      // denied — an empty-state bug that only reproduces under release timing.
+      await ensureUserInDB(displayName, email);
+      await refreshAuth();
+      router.replace("/home");
+    } catch (err) {
+      const code = (err as { code?: string })?.code;
+      // The user tapping Cancel on Apple's sheet is not an error.
+      if (code !== "ERR_REQUEST_CANCELED") {
+        Sentry.captureException(err, {
+          tags: { component: "useAppleSignIn", action: "signIn" },
+        });
+        throw err;
+      }
+    } finally {
+      setIsSigningIn(false);
     }
-  }, []);
+  }, [ensureUserInDB, refreshAuth, router]);
 
   return { signInWithApple, isSigningIn };
 }

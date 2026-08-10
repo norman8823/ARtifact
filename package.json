@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@aws-amplify/react-native": "^1.1.1",
-    "@aws-amplify/rtn-web-browser": "^1.4.0",
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "^11.4.1",

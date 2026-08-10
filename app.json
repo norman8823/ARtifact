@@ -13,6 +13,7 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.rauljiminian.ARtifact",
       "appleTeamId": "S3UAQ48824",
+      "usesAppleSignIn": true,
       "buildNumber": "1.0.37",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
