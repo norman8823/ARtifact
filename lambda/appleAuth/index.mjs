@@ -126,8 +126,15 @@ function defineAuthChallenge(event) {
  * be an enumeration oracle.
  */
 function createAuthChallenge(event) {
-  event.response.publicChallengeParameters = {};
-  event.response.privateChallengeParameters = {};
+  // Cognito rejects the sign-in outright if these are empty — it ran Define and
+  // Create, then returned NotAuthorizedException ("Incorrect username or
+  // password") before the client ever saw a challenge (observed 2026-08-10).
+  // The values are a CONSTANT on purpose: publicChallengeParameters is returned
+  // to an unauthenticated caller, so anything user-specific here would be an
+  // enumeration oracle. There is no secret to carry — the client already holds
+  // the Apple token, and verification happens against Apple's JWKS.
+  event.response.publicChallengeParameters = { challenge: "APPLE_IDENTITY_TOKEN" };
+  event.response.privateChallengeParameters = { challenge: "APPLE_IDENTITY_TOKEN" };
   event.response.challengeMetadata = "APPLE_IDENTITY_TOKEN";
   return event;
 }

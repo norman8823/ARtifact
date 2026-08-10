@@ -144,12 +144,12 @@ export function useAppleSignIn() {
           tags: { component: "useAppleSignIn", action: "signIn" },
           extra: { lastStep },
         });
-        // TEMPORARY: surface the real failure on screen. Sentry is not
-        // reachable and a silent bounce back to the login page tells us
-        // nothing. Remove once Apple sign-in is confirmed working.
+        // A real failure the user can act on, without leaking internals.
+        // (`lastStep` still goes to Sentry for diagnosis.)
+        void e;
         Alert.alert(
-          "Apple sign-in failed",
-          `step: ${lastStep}\n${e?.name ?? "Error"}: ${e?.message ?? String(err)}`
+          "Sign-in failed",
+          "We couldn't complete sign in with Apple. Please try again."
         );
       }
     } finally {

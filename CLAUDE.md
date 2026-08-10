@@ -99,7 +99,26 @@ Model: **one-time non-consumable $5.99 lifetime unlock** (not a subscription —
 
 **Account deletion — shipped (guideline 5.1.1(v) unblocked).** `src/hooks/useAccountDeletion.ts` + `src/utils/accountDeletion.ts`. **Ordering is load-bearing:** every owned row (`Favorited`, `Visited`, `UserQuest`, `UserXP`, `User`) is deleted BEFORE the Cognito identity, and `canDeleteIdentity()` aborts the whole thing if any row failed — all user models are `@auth(allow: owner)`, so killing the identity with rows left behind makes them permanently unreadable and undeletable. Identity deletion uses Amplify v6's client-side `deleteUser()` — no admin IAM, no Lambda. UI is a single red-button warning modal (a typed-DELETE step was built then removed as redundant). Still owed: device QA against a throwaway account, and Apple token revocation once Sign in with Apple ships (backlog 1A.6).
 
-**Sign in with Apple — shipped to TestFlight 1.0.55 (2026-08-10), unverified against a real sign-in.** Built as **Cognito hosted UI federation**, NOT the native sheet + CUSTOM_AUTH design in backlog P1A: user pools cannot exchange a native Apple token for user-pool tokens (federation is hosted-UI only), and the alternative was one Lambda with four triggers opening a password-free auth path against every user in the pool. Tradeoff accepted: a browser sheet instead of Apple's native sheet.
+**Sign in with Apple — ✅ WORKING, confirmed end to end on device 2026-08-10 (build 1.0.57 + a Lambda fix).** Native Apple sheet via a Cognito **CUSTOM_AUTH** flow — the design backlog P1A specified all along.
+
+**Hosted-UI federation is impossible on this pool. Do not retry it.** Proven, not assumed:
+- `admin-create-user` with an Apple-`sub`-shaped `phone_number` → `InvalidParameterException: Invalid phone number format`
+- `update-identity-provider` removing the `phone_number` mapping → **accepted, then silently restored by Cognito**
+
+`phone_number` is required (a pool-creation mistake — Cognito never required it; `Required` is immutable), Cognito force-maps every required attribute from an IdP claim, Apple has no phone claim, and the field is validated as E.164. No Lambda can intervene: the mapping is applied *during* user creation. CUSTOM_AUTH sidesteps it entirely because the **app** calls `signUp()` and supplies the same valid dummy `+10000000000` the email flow already uses.
+
+**Live pieces:** Lambda `artifactAppleAuth` (Node 20, `aws-jwt-verify`, source in `lambda/appleAuth/`), attached as **four** triggers — PreSignUp, DefineAuthChallenge, CreateAuthChallenge, VerifyAuthChallengeResponse. Client: `src/hooks/useAppleSignIn.ts`, `ios.usesAppleSignIn: true`.
+
+**Three traps that cost hours, all silent:**
+1. **`CreateAuthChallenge` must NOT return empty parameter bags.** With `publicChallengeParameters`/`privateChallengeParameters` empty, Cognito runs Define *and* Create, then fails the whole attempt with `NotAuthorizedException: Incorrect username or password` — before the client ever sees a challenge. The message names neither the trigger nor the real cause.
+2. **`NotAuthorizedException` does not mean "user does not exist".** Treating it as such routed genuine auth failures into `signUp`, which then collided with the existing account and buried the original error. Only `UserNotFoundException` means create.
+3. **Read the email from the identity token, not `credential.email`** — Apple returns the latter only on a user's first-ever authorization.
+
+**Security:** enabling `ALLOW_CUSTOM_AUTH` opens a password-free path against every user in the pool, so both relevant handlers fail closed — one challenge attempt only, no retry budget, `answerCorrect`/`issueTokens` start false, and the verified Apple email must match the Cognito user. `PreSignUp` branches on `clientMetadata.appleIdentityToken`; without that branch it would auto-confirm the **email** signup flow too, letting anyone create a confirmed account on someone else's address.
+
+**⬜ Still owed — and Apple requires it (backlog 1A.6):** revoking the Apple token on account deletion. The deletion flow is client-only, so this needs a server-side piece it does not have.
+
+*Superseded note — the original hosted-UI attempt:* Built as **Cognito hosted UI federation**, NOT the native sheet + CUSTOM_AUTH design in backlog P1A: user pools cannot exchange a native Apple token for user-pool tokens (federation is hosted-UI only), and the alternative was one Lambda with four triggers opening a password-free auth path against every user in the pool. Tradeoff accepted: a browser sheet instead of Apple's native sheet.
 
 - **Configured directly in the Cognito console, not through Amplify.** The IAM user `ARtifact_dev` is **read-only for Cognito** (`CreateUserPoolDomain`, `UpdateUserPoolClient` and all of IAM are denied), so this cannot be scripted — and doing it in the console also avoids regenerating the auth CloudFormation stack, which is the operation that can roll back and cascade to AppSync. It widens the Amplify drift in Gaps #19; that is the deliberate trade.
 - **Live config:** hosted UI domain `artifact-auth`, provider `SignInWithApple`, Services ID `com.artquest.ARtifact.signin` (note the capital `AR` — Apple and Cognito match it literally), Team `S3UAQ48824`, Key `UM9ZX7RVS8`. App client callbacks/logout are `artifact://` and **must not carry an `https://` prefix** — the console adds one silently, which fails at the end of the Apple flow as a redirect mismatch.
