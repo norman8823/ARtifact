@@ -92,24 +92,20 @@ Full audit and draft wording: `privacy-updates.md`. **Delete that file once the 
 
 §5 (in-app deletion, no email required) is accurate as of the deletion flow shipping — but still unverified against a real account, which is 0.9.
 
-### 0.7 The permissions pass did not actually reach the binary — **reopened 2026-08-04**
-> **This was believed shipped and is not.** `app.json` is clean — `ios.infoPlist` declares only camera and motion. But `npx expo config --type prebuild` resolves to an Info.plist that *also* contains **`NSPhotoLibraryUsageDescription`, `NSPhotoLibraryAddUsageDescription`, `NSMicrophoneUsageDescription`, `NSLocationWhenInUseUsageDescription` and `NSLocationAlwaysAndWhenInUseUsageDescription`**. The ReactVision plugin re-injects them at prebuild — exactly the failure mode CLAUDE.md warned about, except deleting them from `app.json` and the plugin block does not prevent it. **Shipped builds through 1.0.51 almost certainly carry all five.**
+### 0.7 Permission strings — ✅ RESOLVED 2026-08-06, but the CONCLUSION INVERTED
+**The original plan was wrong and must not be retried.** This item used to say the Viro-injected photo-library, microphone and location usage strings should be stripped. They were stripped — and **App Store delivery of build 1.0.52 was REJECTED** with `ITMS-90683 Missing purpose string` for `NSPhotoLibraryUsageDescription` and `NSMicrophoneUsageDescription`.
 
-**Where they come from** — `node_modules/@reactvision/react-viro/dist/plugins/withViroIos.js`, in `withDefaultInfoPlist`:
-- Camera, microphone and both photo-library strings are set **unconditionally** (`config.ios.infoPlist.X = config.ios.infoPlist.X || <default>`).
-- The two location strings are set **only when** `geospatialAnchorProvider` is `"arcore"`/`"reactvision"` or `includeARCore === true` (`:228-233`). Our plugin block passes `"provider": "reactvision"`, and the location strings do appear in the resolved config — so that condition is being met.
+Apple's check is **static analysis over linked code, including third-party SDKs** — not over what the app calls. ViroKit references those APIs, so the strings are mandatory regardless of use: *"While your app might not use these APIs, a purpose string is still required."* Stripping them also **broke AR at runtime** for a real tester (Gaps #24).
 
-**Why it matters:** the published policy says *"The App does not request or use your location"* and App Privacy will answer **Location = No**. Functionally that is still true — `expo-location` is gone and nothing calls a location API, so no prompt is ever shown — but a binary that declares the strings while the label says No is the precise policy/binary inconsistency 0.6 exists to eliminate, and it is reviewer-visible.
+**Current state:** `plugins/withTrimmedIosPermissions.js` is deleted and all five strings are declared explicitly in `app.json`, so the wording is ours rather than Viro's defaults. Build 1.0.53 delivered clean. `android.permissions` is trimmed to `CAMERA` and de-duplicated.
 
-**Two fixes, both needing device AR verification before shipping:**
-1. **Strip the keys in a post-mod** in the new `app.config.js` (runs after the Viro plugin). Deterministic, and the file already exists.
-2. **Stop the plugin injecting them** by changing the props — likely the geospatial/`provider` setting. Cleaner, but the app uses image/plane hit-testing rather than geospatial anchors, so confirm `provider: "reactvision"` is not what licenses the SDK before touching it.
+**⬜ What this changes for 0.6, and it needs a decision:** the binary now declares **location, microphone and photo-library** usage strings, while the published policy says *"The App does not request or use your location"* and App Privacy will answer **Location = No**.
 
-*Do not ship either blind* — this touches AR config, which is release-only-regression territory (CLAUDE.md landmines).
+That is defensible and probably correct as-is — **a usage string is not data collection.** App Privacy asks what you *collect*; nothing in the app calls a location, microphone or photo API, so no prompt is ever shown and nothing is gathered. But it is now a reviewer-visible mismatch between the binary and the label, which is exactly the class of thing 0.6 exists to eliminate. Before submitting, either:
+- confirm the current answers stand (recommended — declaring collection we don't do is its own mismatch), and be ready to explain in App Review notes that the strings come from the AR SDK; or
+- add a sentence to the policy noting the AR framework declares these capabilities though the app does not use them.
 
-**Also wrong, lower stakes:** `app.json` `android.permissions` still lists `RECORD_AUDIO`, `ACCESS_FINE_LOCATION` and `ACCESS_COARSE_LOCATION` — **and lists the whole set twice**. The app is iOS-only so nothing ships from it, but it should not stay in the file.
-
-**Still open from before:** `PrivacyInfo.xcprivacy` lives only in the gitignored `/ios`, so it is regenerated and uncontrolled. If it ever needs curating, drive it from `app.json` `privacyManifests` — the same lesson as 1A.2.
+**Still open from before:** `PrivacyInfo.xcprivacy` lives only in the gitignored `/ios`, so it is regenerated and uncontrolled. If it ever needs curating, drive it from `app.json` `privacyManifests`.
 
 ### 0.9 Device QA the account-deletion flow
 The flow shipped (`useAccountDeletion`) but has **never run against a real account** — it can't be tested in the Simulator without signing in, and the ordering is unforgiving: if it deletes the Cognito identity while rows remain, those rows become permanently unreadable. Test on a throwaway account, confirm all five models are emptied, then confirm sign-out. Guideline 5.1.1(v) is checked by reviewers, and a deletion button that half-works is worse than the old stub.
