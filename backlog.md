@@ -184,31 +184,6 @@ Adds the `PreSignUp` branch and the client's create-on-failure fallback. No `Adm
 ### 1A.5 Cleanup
 Delete `app/appleLogin.tsx` and `app/googleLogin.tsx` and drop the dead `phoneLogin` route registration (`app/_layout.tsx:155-157`) — this **supersedes those entries in P3.1**. While in `useUserData.ts`, strip the debug `listUsers` limit-100 scan at lines 54-64 that logs every user's PII to the console on every sign-in. Remove the token-bearing `console.log`s from the auth path. Update the navigation line in `project.md` that still calls out the stubs.
 
-### 1A.6 Apple token revocation — Lambda done, TRANSPORT MISSING
-Apple requires revoking the user's token on account deletion (pairs with
-5.1.1(v); reviewers check). **The server half is built and deployed:**
-`lambda/appleRevoke` → `artifactAppleRevoke`, which verifies the caller's
-Cognito ID token, exchanges a fresh Apple authorization code and revokes it.
-Deliberately stores nothing — no per-user refresh token — and the Apple sheet
-doubles as confirmation before an irreversible action.
-
-**What is missing is a way for the app to call it.** `@aws-sdk/client-lambda`
-was tried and reverted: it pulls in `@smithy/node-http-handler`, which requires
-`node:https`, and React Native has no such module — **the app failed to bundle
-entirely**. Do not reinstall it. A Lambda Function URL is also out: public
-Function URLs are blocked at the account level (403 regardless of policy).
-
-Remaining options:
-- **A route on the existing API Gateway**, called with Amplify's REST client —
-  most likely, since `aws-amplify` is already a dependency, already configured
-  with a REST endpoint, and signs with Identity Pool credentials.
-- A Function URL with `AWS_IAM` auth — needs SigV4 signing, and React Native
-  has no SubtleCrypto.
-- An AppSync mutation backed by the Lambda — requires `amplify push`.
-
-`revokeAppleToken()` currently returns false and reports to Sentry; deletion
-proceeds without revoking, which is the right failure mode but not compliant.
-
 ### 1A.7 TestFlight QA pass
 Matrix: brand-new Apple user · Hide My Email user · existing email/password tester linking via Apple (verify XP, favorites and quest progress all survive) · sign out → sign in with Apple in the same session · guest → `AuthPromptModal` → Apple → returns to the gated action. Re-verify the AR landmines (release-only regressions) since the auth path touches app launch ordering.
 
