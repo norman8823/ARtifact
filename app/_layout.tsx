@@ -169,8 +169,6 @@ export default Sentry.wrap(function RootLayout() {
                     gestureEnabled: false,
                   }}
                 />
-                <Stack.Screen name="googleLogin" options={{ headerShown: false }} />
-                <Stack.Screen name="appleLogin" options={{ headerShown: false }} />
                 <Stack.Screen name="emailLogin" options={{ headerShown: false }} />
                 <Stack.Screen
                   name="(dashboard)"
