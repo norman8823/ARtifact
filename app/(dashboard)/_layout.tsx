@@ -1,7 +1,7 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React, { useState } from "react";
-import { Platform } from "react-native";
+import { Platform, type ColorValue } from "react-native";
 
 import { AuthPromptModal, type AuthPromptContext } from "@/components/AuthPromptModal";
 import { HapticTab } from "@/components/HapticTab";
@@ -100,7 +100,7 @@ export default function TabLayout() {
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
+  color: ColorValue;
 }) {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
