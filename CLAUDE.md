@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan to identify them, gamified quests/XP/ranks, native AR viewing). Expo SDK 54 / RN 0.81.5 / React 19 / TypeScript / expo-router v6, new architecture enabled.
+ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan to identify them, gamified quests/XP/ranks, native AR viewing). Expo SDK 57 / RN 0.86 / React 19.2 / TypeScript / expo-router 57, new architecture enabled. ViroReact 3.x.
 
 **⚠️ The README is stale** — it describes Expo 53, 8th Wall WebView AR, and a Lambda/Rekognition scan backend. All replaced. Trust this file and `project.md` (full architecture) / `Gaps.md` (known debt), not the README.
 
@@ -138,6 +138,8 @@ Model: **one-time non-consumable $5.99 lifetime unlock** (not a subscription —
 ## Conventions
 
 - Match conventional-commit prefixes and keep commits scoped (see git log).
+- **Import navigation APIs from `expo-router`, never `@react-navigation/*`.** Since SDK 57, expo-router ships its own copy of React Navigation (`useFocusEffect`, `ThemeProvider`, `DefaultTheme` from `expo-router`; tab APIs from `expo-router/tabs`; `PlatformPressable` from `expo-router/react-navigation`). A separate `@react-navigation` install is a *second* copy whose hooks can't see the router's navigation context. The packages were removed from `package.json` so this can't come back by accident.
+- **React Compiler lint rules** (`set-state-in-effect`, `refs`, `immutability`, `static-components`, `purity`) are warnings in `eslint.config.js`, not errors — they flag pre-SDK-57 patterns. Fix them, then promote back to error.
 - **No spaces in asset filenames.** Metro's dev server URL-encodes them and fails to resolve the asset, so the image silently vanishes on the Simulator while working fine in release builds on device (Gaps #13b).
 - Colors from `constants/Colors.ts` (`metRed` #E4012A is the brand color); shared shadows from `constants/Shadow.ts`.
 - Artwork IDs are MET Object IDs (strings). Quest progress = string-set intersection over artwork IDs.
