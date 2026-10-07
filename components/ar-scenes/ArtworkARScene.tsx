@@ -6,10 +6,16 @@ import {
   ViroAmbientLight,
   ViroSpotLight,
   Viro3DObject,
+  ViroNode,
   ViroARHitTestResult,
 } from "@reactvision/react-viro";
+import {
+  clampUserScale,
+  yawFacingCamera,
+  type Vec3,
+} from "@/src/utils/arPlacement";
 
-type Viro3DPoint = [number, number, number];
+type Viro3DPoint = Vec3;
 type ModelType = "GLB" | "GLTF" | "OBJ" | "VRX";
 
 interface SceneAPIAsset {
@@ -76,13 +82,22 @@ const ArtworkARScene = (props: ArtworkARSceneProps) => {
   const [modelPosition, setModelPosition] = useState<Viro3DPoint | null>(null);
 
   const [asset, setAsset] = useState<SceneAPIAsset | null>(null);
-  const [userRotationY, setUserRotationY] = useState(0);
+  // Set once at placement so the model's front faces the user, then fixed —
+  // deliberately not updated as the camera moves.
+  const [placementYaw, setPlacementYaw] = useState(0);
   const [userScale, setUserScale] = useState(1.0);
 
-  const modelRef = useRef<any>(null);
+  // The placement node owns position, the placement yaw, drag and pinch; the
+  // model inside it keeps the Studio-authored rotation and scale. Splitting
+  // them keeps the yaw a pure rotation about world up (the model stays
+  // upright) whatever the authored X/Z rotation is. Viro bubbles gestures from
+  // the model's geometry up to the first ancestor that handles them.
+  const placementNodeRef = useRef<any>(null);
   const assetRef = useRef<SceneAPIAsset | null>(null);
-  const committedRotationY = useRef(0);
   const committedScale = useRef(1.0);
+  // Guards the async hit-test + camera query so a second tap during it can't
+  // place the model twice.
+  const placingRef = useRef(false);
   // Locked at placement height so the drag plane doesn't shift during drag.
   const dragPlaneOrigin = useRef<Viro3DPoint>([0, 0, 0]);
 
@@ -152,13 +167,35 @@ const ArtworkARScene = (props: ArtworkARSceneProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneId, isARReady]);
 
+  // Yaw that turns the model's front toward where the user stands at the
+  // moment of placement. Falls back to the authored orientation (0) if the
+  // camera query fails — placement itself must never be blocked by it.
+  const resolvePlacementYaw = async (pos: Viro3DPoint): Promise<number> => {
+    try {
+      const camera = await sceneRef.current.getCameraOrientationAsync();
+      return yawFacingCamera(pos, camera.position, camera.forward);
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        category: "ar",
+        level: "warning",
+        message: "getCameraOrientationAsync failed; using authored orientation",
+        data: { error: String(error) },
+      });
+      return 0;
+    }
+  };
+
   // Tap-to-place: hit-test at the exact screen pixel the user tapped.
   // Only accepted on real detected planes — FeaturePoint is intentionally
   // excluded so the model cannot float in mid-air or land on a wall.
   useEffect(() => {
     if (!tapPoint || !isARReady || modelPlaced || !sceneRef.current) return;
+    // Nothing to place until the scene's asset has arrived; the status line
+    // still reads "Loading AR content..." so the user knows to tap again.
+    if (!assetRef.current || placingRef.current) return;
 
     const runHitTest = async () => {
+      placingRef.current = true;
       try {
         const pr = PixelRatio.get();
         const x = tapPoint.x * pr;
@@ -175,15 +212,20 @@ const ArtworkARScene = (props: ArtworkARSceneProps) => {
         if (planeHit) {
           const pos = planeHit.transform.position as Viro3DPoint;
           dragPlaneOrigin.current = pos;
+          setPlacementYaw(await resolvePlacementYaw(pos));
           setModelPosition(pos);
           setModelPlaced(true);
           onPlaced?.();
-          updateStatus("Drag • Pinch to scale • Two fingers to rotate");
+          // Placed ≠ visible: the model streams in after this. Viro3DObject's
+          // onLoadEnd/onError below move the status on from here.
+          updateStatus("Loading model...");
         } else {
           updateStatus("No flat surface detected — try a floor or table");
         }
       } catch (error) {
         console.error("Hit test error:", error);
+      } finally {
+        placingRef.current = false;
       }
     };
 
@@ -211,48 +253,57 @@ const ArtworkARScene = (props: ArtworkARSceneProps) => {
     setModelPosition(dragToPos);
   }, []);
 
-  const handleRotate = useCallback(
-    (rotateState: number, rotationFactor: number) => {
-      const a = assetRef.current;
-      if (!a) return;
-      if (rotateState === 3) {
-        committedRotationY.current -= rotationFactor;
-        setUserRotationY(committedRotationY.current);
+  // Pinch resizes the model (the placement node), never the camera. Live
+  // updates go through setNativeProps to avoid a React render per frame; the
+  // clamped value is committed to state when the gesture ends (state 3).
+  const handlePinch = useCallback(
+    (pinchState: number, scaleFactor: number) => {
+      const s = clampUserScale(committedScale.current * scaleFactor);
+      if (pinchState === 3) {
+        committedScale.current = s;
+        setUserScale(s);
       } else {
-        modelRef.current?.setNativeProps({
-          rotation: [
-            a.rotationX,
-            a.rotationY + committedRotationY.current - rotationFactor,
-            a.rotationZ,
-          ],
-        });
+        placementNodeRef.current?.setNativeProps({ scale: [s, s, s] });
       }
     },
     [],
   );
 
-  const handlePinch = useCallback(
-    (pinchState: number, scaleFactor: number) => {
-      const a = assetRef.current;
-      if (!a) return;
-      const newScale = committedScale.current * scaleFactor;
-      if (pinchState === 3) {
-        committedScale.current = newScale;
-        setUserScale(newScale);
-      } else {
-        const s = a.scale * newScale;
-        modelRef.current?.setNativeProps({ scale: [s, s, s] });
-      }
+  const handleModelLoadEnd = useCallback(() => {
+    Sentry.addBreadcrumb({
+      category: "ar",
+      level: "info",
+      message: "model loaded",
+      data: { sceneId },
+    });
+    updateStatus("Drag to move • Pinch to resize");
+  }, [sceneId, updateStatus]);
+
+  const handleModelError = useCallback(
+    (event: { nativeEvent?: { error?: unknown } }) => {
+      const error = event?.nativeEvent?.error;
+      console.error("Viro3DObject load error:", error);
+      Sentry.captureMessage("AR model failed to load", {
+        level: "error",
+        tags: { component: "ar_scene", ar_stage: "model_load" },
+        extra: {
+          sceneId,
+          fileUrl: assetRef.current?.fileUrl,
+          error: typeof error === "string" ? error : JSON.stringify(error ?? null),
+        },
+      });
+      updateStatus("Failed to load the 3D model");
     },
-    [],
+    [sceneId, updateStatus],
   );
 
   const modelScale: Viro3DPoint | undefined = asset
-    ? [asset.scale * userScale, asset.scale * userScale, asset.scale * userScale]
+    ? [asset.scale, asset.scale, asset.scale]
     : undefined;
   const modelRotation: Viro3DPoint | undefined = asset
-    ? [asset.rotationX, asset.rotationY + userRotationY, asset.rotationZ]
+    ? [asset.rotationX, asset.rotationY, asset.rotationZ]
     : undefined;
+  const isDraggable = asset?.isDraggable !== false;
 
   return (
     <ViroARScene ref={sceneRef} onTrackingUpdated={handleTrackingUpdated}>
@@ -267,23 +318,30 @@ const ArtworkARScene = (props: ArtworkARSceneProps) => {
       />
 
       {modelPlaced && modelPosition && asset && (
-        <Viro3DObject
-          ref={modelRef}
-          source={{ uri: asset.fileUrl }}
+        <ViroNode
+          ref={placementNodeRef}
           position={modelPosition}
-          scale={modelScale}
-          rotation={modelRotation}
-          type={inferModelType(asset)}
-          dragType={asset.isDraggable !== false ? "FixedToPlane" : undefined}
+          rotation={[0, placementYaw, 0]}
+          scale={[userScale, userScale, userScale]}
+          dragType={isDraggable ? "FixedToPlane" : undefined}
           dragPlane={{
             planePoint: dragPlaneOrigin.current,
             planeNormal: [0, 1, 0],
             maxDistance: 10,
           }}
-          onDrag={handleDrag}
-          onRotate={handleRotate}
+          // Viro enables native drag only when onDrag is set.
+          onDrag={isDraggable ? handleDrag : undefined}
           onPinch={handlePinch}
-        />
+        >
+          <Viro3DObject
+            source={{ uri: asset.fileUrl }}
+            scale={modelScale}
+            rotation={modelRotation}
+            type={inferModelType(asset)}
+            onLoadEnd={handleModelLoadEnd}
+            onError={handleModelError}
+          />
+        </ViroNode>
       )}
     </ViroARScene>
   );
