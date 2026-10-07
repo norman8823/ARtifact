@@ -104,7 +104,7 @@ export default function ARViewerScreen() {
         />
 
         {/* Tap overlay — captures real screen coordinates before placement.
-            Removed after placement so drag/pinch/rotate reach Viro directly. */}
+            Removed after placement so drag/pinch reach Viro directly. */}
         {!isModelPlaced && (
           <View
             style={StyleSheet.absoluteFillObject}
