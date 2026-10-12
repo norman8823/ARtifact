@@ -1,0 +1,104 @@
+diff --git a/node_modules/@reactvision/react-viro/dist/components/Studio/domain/placementStore.js b/node_modules/@reactvision/react-viro/dist/components/Studio/domain/placementStore.js
+index bc92b1c..1729e45 100644
+--- a/node_modules/@reactvision/react-viro/dist/components/Studio/domain/placementStore.js
++++ b/node_modules/@reactvision/react-viro/dist/components/Studio/domain/placementStore.js
+@@ -97,10 +97,14 @@ function matToEuler(m) {
+ function cameraBasis(forward, up) {
+     if (!forward || !up)
+         return null;
+-    const f = normalize(forward);
+-    const u0 = normalize(up);
+-    if (!f || !u0)
++    // [ARtifact patch] Yaw-only basis: keep where the user was facing, drop the
++    // camera's pitch and roll, so a model placed while the phone points down
++    // at the floor stands upright instead of tilting with the phone. When the
++    // camera looks straight down, its up vector points the way the user faces.
++    const f = normalize([forward[0], 0, forward[2]]) ?? normalize([up[0], 0, up[2]]);
++    if (!f)
+         return null;
++    const u0 = [0, 1, 0];
+     const right = normalize(cross(f, u0));
+     if (!right)
+         return null;
+diff --git a/node_modules/@reactvision/react-viro/dist/components/Studio/domain/viroNodeFactory.js b/node_modules/@reactvision/react-viro/dist/components/Studio/domain/viroNodeFactory.js
+index cd0ba09..b51614e 100644
+--- a/node_modules/@reactvision/react-viro/dist/components/Studio/domain/viroNodeFactory.js
++++ b/node_modules/@reactvision/react-viro/dist/components/Studio/domain/viroNodeFactory.js
+@@ -178,6 +178,34 @@ function inferModelType(url) {
+         return "VRX";
+     return "GLB";
+ }
++// [ARtifact patch] Pinch-to-scale for 3D models, clamped to a multiple of the
++// Studio-authored scale. Live updates go through setNativeProps; the clamped
++// factor is committed to state when the gesture ends (pinchState 3).
++const PINCH_MIN_SCALE = 0.25;
++const PINCH_MAX_SCALE = 4;
++const PinchableModel = ({ nodeRef, scale, ...rest }) => {
++    const inner = React.useRef(null);
++    const committed = React.useRef(1);
++    const [factor, setFactor] = React.useState(1);
++    const base = scale ?? [1, 1, 1];
++    const setRef = React.useCallback((r) => {
++        inner.current = r;
++        nodeRef?.(r);
++    }, [nodeRef]);
++    const onPinch = React.useCallback((pinchState, scaleFactor) => {
++        const next = Math.min(PINCH_MAX_SCALE, Math.max(PINCH_MIN_SCALE, committed.current * scaleFactor));
++        if (!Number.isFinite(next))
++            return;
++        if (pinchState === 3) {
++            committed.current = next;
++            setFactor(next);
++        }
++        else {
++            inner.current?.setNativeProps({ scale: [base[0] * next, base[1] * next, base[2] * next] });
++        }
++    }, [base[0], base[1], base[2]]);
++    return (0, jsx_runtime_1.jsx)(Viro3DObject_1.Viro3DObject, { ...rest, ref: setRef, scale: [base[0] * factor, base[1] * factor, base[2] * factor], onPinch: onPinch });
++};
+ function create3DObject(asset, config, onAssetLoaded, notifyPhysicsDrag, onCollision, nodeRef) {
+     if (!asset.file_url) {
+         console.warn(`[Studio] 3D model "${asset.name}" has no file_url`);
+@@ -188,7 +216,7 @@ function create3DObject(asset, config, onAssetLoaded, notifyPhysicsDrag, onColli
+     const shaderOverrides = hasMaterialConfig
+         ? [(0, materialConfig_1.studioMaterialName)(asset.id)]
+         : undefined;
+-    return ((0, jsx_runtime_1.jsx)(Viro3DObject_1.Viro3DObject, { ...(nodeRef ? { ref: nodeRef } : {}), source: { uri: asset.file_url }, position: config.position, rotation: config.rotation, scale: config.scale, type: modelType, dragType: config.dragType, dragPlane: config.dragPlane, animation: config.animation, onClick: config.onClick, ...(config.onNodeHandle ? { onNodeHandle: config.onNodeHandle } : {}), onLoadEnd: () => onAssetLoaded?.(asset.id), onError: assetErrorHandler(asset, config, "3D model"), ...(config.dragType
++    return ((0, jsx_runtime_1.jsx)(PinchableModel, { nodeRef: nodeRef, source: { uri: asset.file_url }, position: config.position, rotation: config.rotation, scale: config.scale, type: modelType, dragType: config.dragType, dragPlane: config.dragPlane, animation: config.animation, onClick: config.onClick, ...(config.onNodeHandle ? { onNodeHandle: config.onNodeHandle } : {}), onLoadEnd: () => onAssetLoaded?.(asset.id), onError: assetErrorHandler(asset, config, "3D model"), ...(config.dragType
+             ? { onDrag: (to) => notifyPhysicsDrag?.(asset.id, to) }
+             : {}), ...(shaderOverrides ? { shaderOverrides } : {}), ...(config.physicsBody
+             ? { physicsBody: config.physicsBody, viroTag: config.viroTag }
+@@ -269,7 +297,7 @@ const VisibleNode = ({ assetId, store, children }) => {
+  * wrapper: the position is in the frame the node renders in, world coordinates
+  * at the scene root, or scene-origin coordinates while shared.
+  */
+-const PlaceableNode = ({ assetId, store, authorPosition, authorRotation, visibilityStore, children, }) => {
++const PlaceableNode = ({ assetId, store, authorPosition, authorRotation, authorDragPlane, visibilityStore, children, }) => {
+     // The position rather than a placed flag: a shared session can move an asset
+     // that is already placed, and only a new position re-renders it.
+     const [placedAt, setPlacedAt] = React.useState(() => store.getPosition(assetId));
+@@ -281,7 +309,14 @@ const PlaceableNode = ({ assetId, store, authorPosition, authorRotation, visibil
+         return null;
+     const position = store.resolvePlacedPosition(assetId, authorPosition) ?? authorPosition;
+     const rotation = store.resolvePlacedRotation(assetId, authorRotation) ?? authorRotation;
+-    return ((0, jsx_runtime_1.jsx)(VisibleNode, { assetId: assetId, store: visibilityStore, children: React.cloneElement(children, { position, rotation }) }));
++    // [ARtifact patch] The drag plane was built from the authored position, which
++    // for a tap-to-place asset is not where it sits; re-anchor it at the placed
++    // position so the first drag slides along the tapped surface instead of
++    // snapping to the authored height.
++    const placedProps = authorDragPlane
++        ? { position, rotation, dragPlane: { ...authorDragPlane, planePoint: position } }
++        : { position, rotation };
++    return ((0, jsx_runtime_1.jsx)(VisibleNode, { assetId: assetId, store: visibilityStore, children: React.cloneElement(children, placedProps) }));
+ };
+ /** Far below what can be seen, and enough to make a prop a change. */
+ const DRAG_REPAINT_NUDGE_M = 1e-6;
+@@ -399,7 +434,7 @@ registerProximityNode, onAssetError) {
+     // to the user's facing, and wraps it in VisibleNode itself. A marker asset is
+     // never gated this way, whatever the flag says (isTapToPlaceAsset).
+     if ((0, placementStore_1.isTapToPlaceAsset)(asset) && runtimeCtx?.placementStore) {
+-        return ((0, jsx_runtime_1.jsx)(PlaceableNode, { assetId: asset.id, store: runtimeCtx.placementStore, authorPosition: config.position, authorRotation: config.rotation, visibilityStore: runtimeCtx?.visibilityStore, children: node }, asset.id));
++        return ((0, jsx_runtime_1.jsx)(PlaceableNode, { assetId: asset.id, store: runtimeCtx.placementStore, authorPosition: config.position, authorRotation: config.rotation, authorDragPlane: config.dragPlane, visibilityStore: runtimeCtx?.visibilityStore, children: node }, asset.id));
+     }
+     // Drive show/hide/toggle from the visibility store (Set Visibility actions);
+     // seeded from the asset's author-time hidden_on_load default.

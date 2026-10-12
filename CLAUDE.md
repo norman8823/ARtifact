@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan to identify them, gamified quests/XP/ranks, native AR viewing). Expo SDK 54 / RN 0.81.5 / React 19 / TypeScript / expo-router v6, new architecture enabled.
+ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan to identify them, gamified quests/XP/ranks, native AR viewing). Expo SDK 57 / RN 0.86 / React 19.2 / TypeScript / expo-router 57, new architecture enabled. ViroReact 3.x.
 
 **⚠️ The README is stale** — it describes Expo 53, 8th Wall WebView AR, and a Lambda/Rekognition scan backend. All replaced. Trust this file and `project.md` (full architecture) / `Gaps.md` (known debt), not the README.
 
@@ -26,16 +26,12 @@ ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan 
 - **Scan path:** `app/scan.tsx` → multipart POST to **Railway Flask CNN** `https://api.artifactar.com/predict` (host in `src/config/scanApi.ts`, overridable via `EXPO_PUBLIC_SCAN_API_URL`) → response adapted to the legacy Rekognition shape (`labels[{Name: artworkId, Confidence}]`) → `useScanSuccess` awards 100 XP on first visit + updates quest progress. Railway scales to zero → the only real server cold start in the app, scan-only. The Rekognition Lambda in `amplify/backend/function/analyzeImage` is **dead code**, kept intentionally.
 - **Auth:** dual-mode. Signed-in = Cognito userPool; guest = AppSync API key (read-only, expires **2026-12-06**, hardcoded in `src/aws/authMode.ts:13`). `authMode.ts` is a module singleton — **only AuthContext calls `setAuthMode()`**; hooks read `getAuthMode()` synchronously. Never add `fetchAuthSession()` calls to data hooks (that redundancy was a major perf bug, deliberately removed).
 - **Caching:** react-query v5 + AsyncStorage persistence (`src/providers/QueryProvider.tsx`, buster "v1", 24h). Wrappers in `src/hooks/queries.ts` reuse the legacy imperative hooks as queryFns. **staleTime is set at call sites**: catalog 5min, user-state 0 (SWR). `queryClient.clear()` on sign-out. Cache hydrates from disk *before* auth resolves — cached screens paint pre-auth by design.
-- **AR:** ReactVision/Viro. `artDetail` → `/arViewer?sceneId=…` → `ViroARSceneNavigator` → `components/ar-scenes/ArtworkARScene.tsx`. Assets come from the ReactVision SDK `rvGetSceneAssets(sceneId)` (not `useSceneModel` — that's a dead stub).
+- **AR:** ReactVision Studio. `artDetail` → `/arViewer?sceneId=…` → `components/ar-scenes/ARSceneNavigator.tsx` (lazy-loaded) → Viro's **`StudioSceneNavigator`**, which fetches the Studio scene and owns tap-to-place and drag. The wrapper only maps Studio events (`onSceneLoaded`, `onError`, `useStudioPlacement()`) to the status line. **SDK patch:** `patches/@reactvision+react-viro+3.0.3.patch` (applied by `postinstall: patch-package`) adds (1) upright, yaw-only camera-facing placement — stock 3.0.3 composes the camera's full pitch/roll, tilting the model when you tap the floor with the phone angled down; (2) drag plane anchored at the placed position — stock builds it from the authored position, so the first drag snaps the model off the surface; (3) clamped pinch-to-scale (0.25×–4×) — Studio has no pinch at all. **On every ViroReact upgrade the patch must be re-made against the new `dist/components/Studio/domain/{placementStore,viroNodeFactory}.js`; patch-package fails the install loudly if it no longer applies.** **Studio settings each artwork's scene needs:** the 3D model asset has *Tap to place* and *Draggable* on, and the scene's plane detection is *Automatic* or *Manual* (with *None*, Studio drags at fixed distance from the camera instead of along the floor). A misconfigured scene still renders and logs a Sentry warning `AR scene not configured for tap-to-place viewer`.
 - **Navigation:** 4 dashboard tabs (home/explore/artQuest/profile); scan, artDetail, questDetail, arViewer etc. are pushed stack routes. Guests are blocked from artQuest/profile tabs and quest/AR/scan/favorite actions via `AuthPromptModal`.
 
 ## Landmines — do not "clean up" these without understanding them
 
-1. **AR ordering invariants** (three release-only regressions live here):
-   - `Viro3DObject` mounts **only after tap-to-place** (mounting early = invisible model in release builds, fix `9feea4f`).
-   - Scene-asset fetch gates on `isARReady` (fetching early = broken tap-to-place, fix `15b6d3e`).
-   - The tap overlay in `arViewer.tsx` unmounts after placement so drag/pinch reach Viro.
-   - AR bugs often reproduce **only in release/TestFlight builds**, not dev.
+1. **AR: nothing may cover the Studio navigator** except the status line (`pointerEvents="none"`) and the back/info buttons. Studio's own tap overlay takes the placement tap and unmounts after placement so drag/pinch reach the model; a host overlay on top would swallow both. (The pre-Studio invariants — mount `Viro3DObject` only after tap, gate asset fetch on tracking — now live inside Studio's renderer.) AR bugs often reproduce **only in release/TestFlight builds**, not dev.
 2. **`freezeOnBlur: true`** on the dashboard in `app/_layout.tsx` — prevents cold-launch cache-hydration re-renders from desyncing react-native-screens (symptom: first back press dropped). Don't remove.
 3. **250ms cold-start delay** in `AuthContext.tsx` — guards a Cognito token-hydration race. Gated to cold start only. Has a TODO; replace only with a deterministic wait, never just delete.
 4. **`useQuests` AppSync cache-bypass** (custom timestamped `GetFreshQuests` query) — deliberate, guards quest-definition freshness. Has a TODO. Do not revert to the standard query without solving the staleness it works around.
@@ -138,6 +134,8 @@ Model: **one-time non-consumable $5.99 lifetime unlock** (not a subscription —
 ## Conventions
 
 - Match conventional-commit prefixes and keep commits scoped (see git log).
+- **Import navigation APIs from `expo-router`, never `@react-navigation/*`.** Since SDK 57, expo-router ships its own copy of React Navigation (`useFocusEffect`, `ThemeProvider`, `DefaultTheme` from `expo-router`; tab APIs from `expo-router/tabs`; `PlatformPressable` from `expo-router/react-navigation`). A separate `@react-navigation` install is a *second* copy whose hooks can't see the router's navigation context. The packages were removed from `package.json` so this can't come back by accident.
+- **React Compiler lint rules** (`set-state-in-effect`, `refs`, `immutability`, `static-components`, `purity`) are warnings in `eslint.config.js`, not errors — they flag pre-SDK-57 patterns. Fix them, then promote back to error.
 - **No spaces in asset filenames.** Metro's dev server URL-encodes them and fails to resolve the asset, so the image silently vanishes on the Simulator while working fine in release builds on device (Gaps #13b).
 - Colors from `constants/Colors.ts` (`metRed` #E4012A is the brand color); shared shadows from `constants/Shadow.ts`.
 - Artwork IDs are MET Object IDs (strings). Quest progress = string-set intersection over artwork IDs.
