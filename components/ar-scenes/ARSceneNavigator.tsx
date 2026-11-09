@@ -6,6 +6,10 @@ import {
   useStudioPlacement,
   type StudioSceneResponse,
 } from "@reactvision/react-viro";
+import {
+  applyViewerDefaults,
+  hasPlaceableModel,
+} from "@/src/utils/arSceneDefaults";
 
 /**
  * Thin wrapper that owns the ReactVision imports.
@@ -20,7 +24,9 @@ import {
  *
  * Rendering is Studio's `StudioSceneNavigator`: it fetches the scene, runs
  * tap-to-place with its own overlay (removed once the model is placed, so drag
- * and pinch reach the model) and handles drag. Upright camera-facing placement,
+ * and pinch reach the model) and handles drag. Every scene gets the viewer
+ * defaults in `src/utils/arSceneDefaults.ts` (tap-to-place, draggable, floor
+ * drag) whatever its Studio settings. Upright camera-facing placement,
  * a drag plane at the placed height and clamped pinch-to-scale come from
  * `patches/@reactvision+react-viro+3.0.3.patch`. This wrapper only translates
  * Studio's events into the screen's status line.
@@ -29,32 +35,6 @@ export interface ARSceneNavigatorProps {
   sceneId: string;
   onStatusChange: (status: string) => void;
   style?: StyleProp<ViewStyle>;
-}
-
-/**
- * Logs (once per load) when a scene isn't set up for this viewer. The scene
- * still renders, but without tap-to-place the model appears at its authored
- * position, and without is_draggable it can't be moved.
- */
-function reportSceneCompatibility(
-  sceneId: string,
-  scene: StudioSceneResponse,
-): boolean {
-  const model = scene.assets.find((a) => a.asset_type_name === "3D-MODEL");
-  const tapToPlace = !!model?.tap_to_place && !model.trigger_image_url;
-  if (model && tapToPlace && model.is_draggable) return true;
-  Sentry.captureMessage("AR scene not configured for tap-to-place viewer", {
-    level: "warning",
-    tags: { component: "ar_scene", ar_stage: "scene_config" },
-    extra: {
-      sceneId,
-      hasModel: !!model,
-      tapToPlace: model?.tap_to_place ?? null,
-      isDraggable: model?.is_draggable ?? null,
-      planeDetection: scene.scene.plane_detection,
-    },
-  });
-  return tapToPlace;
 }
 
 export default function ARSceneNavigator({
@@ -98,13 +78,18 @@ export default function ARSceneNavigator({
         message: "studio scene loaded",
         data: { sceneId, assetCount: scene.assets.length },
       });
-      // A scene without tap-to-place shows the model at its authored spot as
-      // soon as tracking settles, so there is no tap step to prompt for.
-      onStatusChange(
-        reportSceneCompatibility(sceneId, scene)
-          ? "Scanning your space..."
-          : "Look around to find the artifact",
-      );
+      // The scene arrives here with the viewer defaults already applied, so
+      // any scene with a model goes on to the tap prompt.
+      if (hasPlaceableModel(scene)) {
+        onStatusChange("Scanning your space...");
+        return;
+      }
+      Sentry.captureMessage("AR scene has no 3D model", {
+        level: "warning",
+        tags: { component: "ar_scene", ar_stage: "scene_config" },
+        extra: { sceneId, assetCount: scene.assets.length },
+      });
+      onStatusChange("This artwork has no 3D model yet");
     },
     [sceneId, onStatusChange],
   );
@@ -124,6 +109,7 @@ export default function ARSceneNavigator({
     <StudioSceneNavigator
       sceneId={sceneId}
       autofocus
+      transformSceneData={applyViewerDefaults}
       onSceneLoaded={handleSceneLoaded}
       onError={handleError}
       // The screen draws its own status line and top chrome (back / info).

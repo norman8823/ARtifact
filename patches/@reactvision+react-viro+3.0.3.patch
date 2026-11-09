@@ -1,3 +1,50 @@
+diff --git a/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.d.ts b/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.d.ts
+index a9cbb9c..403144a 100644
+--- a/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.d.ts
++++ b/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.d.ts
+@@ -55,6 +55,8 @@ export interface StudioSceneNavigatorProps {
+     questMenuItems?: readonly StudioQuestMenuItem[];
+     /** Fired after the scene is fetched and parsed, before it is pushed. */
+     onSceneLoaded?: (sceneData: StudioSceneResponse) => void;
++    /** [ARtifact patch] Returns the scene to render in place of the fetched one. */
++    transformSceneData?: (sceneData: StudioSceneResponse) => StudioSceneResponse;
+     /** Threaded to the initial scene's StudioARScene (initial scene only). */
+     onPlaneDetected?: () => void;
+     onPlaneSelected?: () => void;
+diff --git a/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.js b/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.js
+index fc0c1b5..650e6dd 100644
+--- a/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.js
++++ b/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.js
+@@ -181,7 +181,7 @@ const StudioPlacementOverlay = ({ store, apiRef, getName }) => {
+  * ready. This means VRActivity always launches with the actual content scene
+  * as its initial scene, avoiding the LoadingVRScene → replace timing race.
+  */
+-exports.StudioSceneNavigator = (0, react_1.forwardRef)(function StudioSceneNavigator({ sceneId, worldAlignment = "Gravity", autofocus = true, style, onSceneReady, onError, onSceneChange, onExitViro, renderQuestPanel, questMenuItems, onSceneLoaded, onPlaneDetected, onPlaneSelected, noAssetsMessage, loadingView, renderError, recordingIndicator = true, placementIndicator = true, colocation, colocationIndicator = true, onColocationStateChange, onColocationRoom, }, ref) {
++exports.StudioSceneNavigator = (0, react_1.forwardRef)(function StudioSceneNavigator({ sceneId, worldAlignment = "Gravity", autofocus = true, style, onSceneReady, onError, onSceneChange, onExitViro, renderQuestPanel, questMenuItems, onSceneLoaded, transformSceneData, onPlaneDetected, onPlaneSelected, noAssetsMessage, loadingView, renderError, recordingIndicator = true, placementIndicator = true, colocation, colocationIndicator = true, onColocationStateChange, onColocationRoom, }, ref) {
+     const navigatorRef = (0, react_1.useRef)(null);
+     const loadedSceneIdRef = (0, react_1.useRef)(null);
+     const [isSceneReady, setIsSceneReady] = (0, react_1.useState)(false);
+@@ -295,6 +295,9 @@ exports.StudioSceneNavigator = (0, react_1.forwardRef)(function StudioSceneNavig
+     onErrorRef.current = onError;
+     onSceneChangeRef.current = onSceneChange;
+     onSceneLoadedRef.current = onSceneLoaded;
++    // [ARtifact patch] Host hook to adjust a fetched scene before anything reads it.
++    const transformSceneDataRef = (0, react_1.useRef)(transformSceneData);
++    transformSceneDataRef.current = transformSceneData;
+     onPlaneDetectedRef.current = onPlaneDetected;
+     onPlaneSelectedRef.current = onPlaneSelected;
+     noAssetsMessageRef.current = noAssetsMessage;
+@@ -407,7 +410,9 @@ exports.StudioSceneNavigator = (0, react_1.forwardRef)(function StudioSceneNavig
+         if (typeof result.data !== "string") {
+             throw new Error("rvGetScene returned no data");
+         }
+-        const sceneData = JSON.parse(result.data);
++        const fetchedSceneData = JSON.parse(result.data);
++        // [ARtifact patch] See transformSceneData above.
++        const sceneData = transformSceneDataRef.current?.(fetchedSceneData) ?? fetchedSceneData;
+         if (isCancelled())
+             return;
+         loadedSceneIdRef.current = resolvedSceneId;
 diff --git a/node_modules/@reactvision/react-viro/dist/components/Studio/domain/placementStore.js b/node_modules/@reactvision/react-viro/dist/components/Studio/domain/placementStore.js
 index bc92b1c..1729e45 100644
 --- a/node_modules/@reactvision/react-viro/dist/components/Studio/domain/placementStore.js
