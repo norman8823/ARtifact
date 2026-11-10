@@ -107,7 +107,7 @@ export default function ARViewerScreen() {
             Removed after placement so drag/pinch/rotate reach Viro directly. */}
         {!isModelPlaced && (
           <View
-            style={StyleSheet.absoluteFillObject}
+            style={StyleSheet.absoluteFill}
             onStartShouldSetResponder={() => true}
             onResponderGrant={(evt) => {
               const { pageX, pageY } = evt.nativeEvent;
