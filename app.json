@@ -8,7 +8,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "artifact",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.rauljiminian.ARtifact",
@@ -31,7 +30,6 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "permissions": [
         "CAMERA"
       ],

@@ -51,15 +51,9 @@ export default function ARViewerScreen() {
 
   const effectiveSceneId = AR_TEST_MODE ? AR_TEST_SCENE_ID : sceneId;
 
-  const [arStatus, setArStatus] = useState("Initializing AR...");
-  const [isModelPlaced, setIsModelPlaced] = useState(false);
-  const [tapPoint, setTapPoint] = useState<{ x: number; y: number; seq: number } | null>(null);
+  const [arStatus, setArStatus] = useState("Loading AR content...");
 
   const handleBack = goBack;
-
-  const handleStatusChange = (status: string) => {
-    setArStatus(status);
-  };
 
   // No sceneId provided (bypassed in test mode)
   if (!effectiveSceneId) {
@@ -92,29 +86,14 @@ export default function ARViewerScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
-        {/* AR Scene Navigator */}
+        {/* Studio scene. It owns tap-to-place (its own overlay, removed once
+            the model is placed so drag/pinch reach it); nothing here may sit
+            over it except the status line and the buttons below. */}
         <ARSceneNavigator
-          viroAppProps={{
-            sceneId: effectiveSceneId,
-            onStatusChange: handleStatusChange,
-            onPlaced: () => setIsModelPlaced(true),
-            tapPoint,
-          }}
+          sceneId={effectiveSceneId}
+          onStatusChange={setArStatus}
           style={styles.arNavigator}
         />
-
-        {/* Tap overlay — captures real screen coordinates before placement.
-            Removed after placement so drag/pinch/rotate reach Viro directly. */}
-        {!isModelPlaced && (
-          <View
-            style={StyleSheet.absoluteFillObject}
-            onStartShouldSetResponder={() => true}
-            onResponderGrant={(evt) => {
-              const { pageX, pageY } = evt.nativeEvent;
-              setTapPoint({ x: pageX, y: pageY, seq: Date.now() });
-            }}
-          />
-        )}
 
         {/* Status bar */}
         <View style={styles.statusContainer} pointerEvents="none">

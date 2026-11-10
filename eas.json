@@ -10,7 +10,7 @@
       "environment": "development",
       "ios": {
         "simulator": true,
-        "image": "macos-sequoia-15.5-xcode-26.0"
+        "image": "macos-tahoe-26.5-xcode-26.6"
       }
     },
     "preview": {
@@ -20,14 +20,14 @@
         "buildType": "apk"
       },
       "ios": {
-        "image": "macos-sequoia-15.5-xcode-26.0"
+        "image": "macos-tahoe-26.5-xcode-26.6"
       }
     },
     "production": {
       "autoIncrement": true,
       "environment": "production",
       "ios": {
-        "image": "macos-sequoia-15.5-xcode-26.0"
+        "image": "macos-tahoe-26.5-xcode-26.6"
       }
     }
   },
