@@ -8,9 +8,8 @@
 
 export type AppSyncAuthMode = "userPool" | "apiKey";
 
-// Guest access API key expiry — regenerate in the AWS AppSync console before
-// this date or guest reads will start failing.
-const GUEST_API_KEY_EXPIRY = new Date("2026-12-06T04:00:00Z");
+// AppSync owns the key's expiration. Extend the existing key in AWS to keep
+// installed clients working; a baked-in date becomes false after renewal.
 
 // Default to guest until AuthContext resolves the session. Screens gate their
 // fetches on `isAuthReady`, so this is updated before any query reads it.
@@ -22,11 +21,6 @@ let currentAuthMode: AppSyncAuthMode = "apiKey";
  */
 export function setAuthMode(mode: AppSyncAuthMode): void {
   currentAuthMode = mode;
-  if (mode === "apiKey" && new Date() > GUEST_API_KEY_EXPIRY) {
-    console.error(
-      "Guest access API key has expired (Dec 6, 2026 04:00 GMT). Please generate a new API key in the AWS AppSync console."
-    );
-  }
 }
 
 /** Synchronous read of the auth mode resolved by AuthContext. */

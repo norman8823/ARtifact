@@ -67,3 +67,6 @@ seed/**
 scripts/
 scripts/**
 android/build/
+# Generate native projects from app configuration on every EAS build.
+/ios
+/android
