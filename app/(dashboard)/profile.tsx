@@ -1,8 +1,10 @@
+import { avatarUrl } from "@/src/utils/avatar";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
 import { useAuthContext } from "@/src/contexts/AuthContext";
+import { useEntitlementContext } from "@/src/contexts/EntitlementContext";
 import { useFavoritesContext } from "@/src/contexts/FavoritesContext";
 import {
   useAllRanksQuery,
@@ -36,6 +38,7 @@ export default function ProfileScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { signOut: authHookSignOut, isLoading } = useAuth();
   const { isAuthReady, isAuthenticated, signOut: contextSignOut } = useAuthContext();
+  const { isEntitled, isEntitlementReady } = useEntitlementContext();
   const { currentUser, ensureUserInDB } = useUserData();
   const { lastRefreshTime } = useFavoritesContext();
 
@@ -227,13 +230,23 @@ export default function ProfileScreen() {
           <ThemedView style={styles.userInfo}>
             <Image
               source={{
-                uri: `https://api.dicebear.com/9.x/lorelei-neutral/svg?seed=${currentUser?.profileImage || "Felix"}`,
+                uri: avatarUrl(currentUser?.profileImage),
               }}
               style={styles.avatar}
             />
             <ThemedText style={styles.userName}>
               {currentUser?.username || "Loading..."}
             </ThemedText>
+            {isEntitlementReady && isEntitled && (
+              <ThemedView
+                style={styles.premiumBadge}
+                accessible
+                accessibilityLabel="ARtifact Premium active"
+              >
+                <FontAwesome name="diamond" size={12} color={Colors.darkPurple} />
+                <ThemedText style={styles.premiumBadgeText}>Premium</ThemedText>
+              </ThemedView>
+            )}
             <ThemedView style={styles.rankContainer}>
               <FontAwesome
                 name={(currentRank?.icon as any) || "trophy"}
@@ -492,6 +505,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "baseline",
     gap: 8,
+  },
+  premiumBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: Colors.lightPurple,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    marginBottom: 12,
+  },
+  premiumBadgeText: {
+    color: Colors.darkPurple,
+    fontSize: 13,
+    fontWeight: "700",
   },
   rankText: {
     fontSize: 16,

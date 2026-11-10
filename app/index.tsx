@@ -1,3 +1,4 @@
+import { PrivacyPolicyLink } from "@/components/PrivacyPolicyLink";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { shadowStyle } from "@/constants/Shadow";
@@ -12,6 +13,7 @@ import {
   Dimensions,
   Pressable,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
@@ -59,7 +61,7 @@ export default function LandingScreen() {
   return (
     <View style={styles.outerContainer}>
       <SafeAreaView style={styles.container}>
-        <View style={styles.contentContainer}>
+        <ScrollView contentContainerStyle={styles.contentContainer}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.logoContainer}>
@@ -158,9 +160,10 @@ export default function LandingScreen() {
               Browse as Guest
             </ThemedText>
           </Pressable>
+          <PrivacyPolicyLink />
           </View>
         </View>
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </View>
   );
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
     backgroundColor: BACKGROUND_COLOR,
   },
   contentContainer: {
-    flex: 1,
+    flexGrow: 1,
   },
   header: {
     paddingHorizontal: 20,
