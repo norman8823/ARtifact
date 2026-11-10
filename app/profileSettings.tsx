@@ -1,3 +1,6 @@
+import { APPLE_MANUAL_REVOCATION_MESSAGE } from "@/src/utils/appleAccount";
+import { PrivacyPolicyLink } from "@/components/PrivacyPolicyLink";
+import { AVATAR_SEEDS, avatarUrl, safeAvatarSeed } from "@/src/utils/avatar";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -11,10 +14,12 @@ import { useProfileUpdate } from "@/src/hooks/useProfileUpdate";
 import { useUserData } from "@/src/hooks/useUserData";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Linking,
   Modal,
   Pressable,
   ScrollView,
@@ -24,6 +29,7 @@ import {
 } from "react-native";
 
 export default function ProfileSettingsScreen() {
+  const router = useRouter();
   const {
     isEntitled,
     isPurchaseOffered,
@@ -47,15 +53,30 @@ export default function ProfileSettingsScreen() {
       // The Cognito user is gone; drop local session + cached data. The auth
       // state change navigates away on its own.
       await signOut();
+      router.replace("/");
       Alert.alert(
         "Account Deleted",
-        "Your account and all associated data have been permanently deleted."
+        "Your account and associated app data have been deleted." +
+          (result.appleRevocation === "manual" ? `\n\n${APPLE_MANUAL_REVOCATION_MESSAGE}` : ""),
+        result.appleRevocation === "manual"
+          ? [
+              { text: "Done", style: "cancel" },
+              {
+                text: "Apple Account",
+                onPress: () => {
+                  void Linking.openURL("https://account.apple.com/").catch(() => {
+                    Alert.alert("Apple Account", APPLE_MANUAL_REVOCATION_MESSAGE);
+                  });
+                },
+              },
+            ]
+          : [{ text: "Done" }]
       );
       return;
     }
 
-    // Deliberately reassuring: on a data failure we kept the account, so
-    // nothing was lost and retrying is safe.
+    // Cleanup can be partial; explain that retrying is needed without
+    // promising the already-deleted rows are still there.
     Alert.alert(
       result.reason === "data-incomplete"
         ? "Account Not Deleted"
@@ -106,32 +127,6 @@ export default function ProfileSettingsScreen() {
     ensureUserInDB();
   }, [ensureUserInDB]);
 
-  // Generate avatar options based on user ID/email
-  const generateAvatarSeeds = () => {
-    const baseSeeds = ["Felix"]; // Default option first
-    if (currentUser?.id) {
-      baseSeeds.push(
-        currentUser.id,
-        `${currentUser.id}-1`,
-        `${currentUser.id}-2`,
-        `${currentUser.id}-3`,
-        `${currentUser.id}-art`,
-        `${currentUser.id}-quest`,
-        `${currentUser.id}-museum`
-      );
-    }
-    if (currentUser?.email) {
-      baseSeeds.push(
-        currentUser.email,
-        `${currentUser.email}-variant`,
-        `${currentUser.email}-alt`,
-        `${currentUser.email}-creative`
-      );
-    }
-    // Take first 12 unique seeds
-    return [...new Set(baseSeeds)].slice(0, 12);
-  };
-
   // Update formData when currentUser changes
   useEffect(() => {
     if (currentUser) {
@@ -142,7 +137,7 @@ export default function ProfileSettingsScreen() {
       }));
 
       // Set current avatar seed (stored in profileImage field) or default to Felix
-      const currentSeed = currentUser.profileImage || "Felix";
+      const currentSeed = safeAvatarSeed(currentUser.profileImage);
       setSelectedAvatarSeed(currentSeed);
       setTempSelectedSeed(currentSeed);
     }
@@ -253,7 +248,7 @@ export default function ProfileSettingsScreen() {
             <Pressable onPress={() => setShowPhotoModal(true)}>
               <Image
                 source={{
-                  uri: `https://api.dicebear.com/9.x/lorelei-neutral/svg?seed=${selectedAvatarSeed}`,
+                  uri: avatarUrl(selectedAvatarSeed),
                 }}
                 style={styles.avatar}
                 contentFit="cover"
@@ -465,6 +460,8 @@ export default function ProfileSettingsScreen() {
           </Pressable>
         </ThemedView>
 
+        <PrivacyPolicyLink />
+
         {/* Buttons */}
         <Pressable
           style={[styles.saveButton, isUpdating && styles.disabledButton]}
@@ -553,7 +550,7 @@ export default function ProfileSettingsScreen() {
               showsVerticalScrollIndicator={false}
             >
               <ThemedView style={styles.avatarGridContainer}>
-                {generateAvatarSeeds().map((item) => (
+                {AVATAR_SEEDS.map((item) => (
                   <Pressable
                     key={item}
                     style={[
@@ -564,7 +561,7 @@ export default function ProfileSettingsScreen() {
                   >
                     <Image
                       source={{
-                        uri: `https://api.dicebear.com/9.x/lorelei-neutral/svg?seed=${item}`,
+                        uri: avatarUrl(item),
                       }}
                       style={styles.avatarOptionImage}
                       contentFit="cover"
@@ -612,8 +609,7 @@ export default function ProfileSettingsScreen() {
       </Modal>
 
 
-      {/* Step 2 of 2: type-to-confirm. An irreversible action shouldn't be one
-          mistap away, and Apple requires deletion to be deliberate. */}
+      {/* Confirm the irreversible deletion before starting cleanup. */}
       <Modal
         visible={showDeleteModal}
         transparent
@@ -627,7 +623,8 @@ export default function ProfileSettingsScreen() {
             </ThemedText>
             <ThemedText style={styles.deleteModalBody}>
               This erases your XP, rank, favorites, visited artworks and quest
-              progress. It cannot be undone.
+              progress. It cannot be undone. If you used Apple, you may be asked
+              to confirm with Apple to remove its access as well.
             </ThemedText>
             <ThemedView style={styles.deleteModalButtons}>
               <Pressable

@@ -184,9 +184,6 @@ Matrix: brand-new Apple user · Hide My Email user · existing email/password te
 
 ## P2 — Operational deadlines (calendar-driven; schedule around premium launch)
 
-### 2.1 Guest API key expiry — **hard deadline 2026-12-06** *(Gaps #3)*
-Rotate the AppSync key, update `GUEST_API_KEY_EXPIRY` in `authMode.ts`, ship well before expiry (target: in the premium release or earlier — users need time to update). Consider a remote-config escape hatch so the next rotation doesn't require a forced app update.
-
 ### 2.2 Rotate the ReactVision API key *(Gaps #2)* — **relocation done, rotation outstanding**
 > ✅ **Relocated 2026-08-04.** `rvApiKey` is out of `app.json`; `app.config.js` injects it from **`RV_API_KEY`**, which is set as a *sensitive* EAS variable in **all three environments** (production, preview, development — it was in `app.json` before, so every build had it, and production-only would have silently broken AR in dev/preview builds) plus the local `.env` for prebuilds. Missing value → build throws on the production profile, warns locally.
 

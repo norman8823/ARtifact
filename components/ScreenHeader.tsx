@@ -26,7 +26,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
  * cannot break the back button the same way. The cost is that we handle the
  * safe-area inset ourselves, which UIKit was doing for free.
  */
-export function ScreenHeader({ title }: { title?: string }) {
+export function ScreenHeader({ title, backLabel }: { title?: string; backLabel?: string }) {
   const goBack = useGoBack();
   const insets = useSafeAreaInsets();
 
@@ -38,9 +38,14 @@ export function ScreenHeader({ title }: { title?: string }) {
         hitSlop={{ top: 12, bottom: 12, left: 16, right: 16 }}
         accessibilityRole="button"
         accessibilityLabel="Go back"
-        style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
+        style={({ pressed }) => [
+          styles.backButton,
+          backLabel ? styles.labeledBackButton : null,
+          pressed && styles.pressed,
+        ]}
       >
         <FontAwesome name="chevron-left" size={20} color={Colors.darkGray} />
+        {backLabel ? <ThemedText style={styles.backLabel}>{backLabel}</ThemedText> : null}
       </Pressable>
 
       {title ? (
@@ -50,7 +55,7 @@ export function ScreenHeader({ title }: { title?: string }) {
       ) : null}
 
       {/* Balances the back button so a title sits optically centred. */}
-      <View style={styles.spacer} />
+      <View style={[styles.spacer, backLabel ? styles.labeledSpacer : null]} />
     </View>
   );
 }
@@ -66,9 +71,24 @@ const styles = StyleSheet.create({
   },
   backButton: {
     width: 40,
-    height: 40,
+    minHeight: 44,
+    backgroundColor: "transparent",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+  },
+  labeledBackButton: {
+    width: "auto",
+    minWidth: 80,
+    gap: 8,
+    paddingHorizontal: 4,
+  },
+  backLabel: {
+    color: Colors.darkGray,
+    fontSize: 16,
+  },
+  labeledSpacer: {
+    width: 80,
   },
   pressed: {
     opacity: 0.5,

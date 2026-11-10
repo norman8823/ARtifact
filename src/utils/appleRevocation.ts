@@ -2,58 +2,34 @@ import * as Sentry from "@sentry/react-native";
 import { post } from "aws-amplify/api";
 import { fetchAuthSession } from "aws-amplify/auth";
 import * as AppleAuthentication from "expo-apple-authentication";
-
-/** Set when a user signs in with Apple; read by the deletion flow. */
-export const APPLE_LINKED_KEY = "artifact.appleLinked";
+import { readAppleEmailClaim } from "./appleToken";
 
 /**
- * Revoke the user's Apple token as part of deleting their account.
- *
- * Apple requires this of any app offering Sign in with Apple — skip it and the
- * account disappears on our side while Apple still lists ARtifact under the
- * user's Apple ID. It pairs with guideline 5.1.1(v) and reviewers check it.
- *
- * Revocation needs a `client_secret` signed with the Apple private key, so it
- * happens in the `artifactAppleRevoke` Lambda. Rather than storing a refresh
- * token per user forever, we ask Apple for a FRESH authorization code here and
- * the Lambda exchanges and revokes it immediately — nothing is stored, and the
- * Apple sheet doubles as confirmation before an irreversible action.
- *
- * Invoked over the Cognito Identity Pool's authenticated role. There is no
- * public endpoint; only a signed-in user of this app can reach the function.
- */
-/**
- * Revoke the user's Apple token as part of deleting their account.
- *
- * Apple requires this of any app offering Sign in with Apple — skip it and the
- * account disappears on our side while Apple still lists ARtifact under the
- * user's Apple ID. It pairs with guideline 5.1.1(v) and reviewers check.
- *
- * Revocation needs a `client_secret` signed with the Apple private key, so it
- * happens in the `artifactAppleRevoke` Lambda. Rather than storing a refresh
- * token per user forever, the app requests a FRESH authorization code here and
- * the Lambda exchanges and revokes it immediately — nothing is stored, and the
- * Apple sheet doubles as confirmation before an irreversible action.
- *
- * TRANSPORT: Amplify's REST client, which signs with the Identity Pool's
- * authenticated credentials. Two alternatives are dead ends, recorded so they
- * are not retried:
- *  - `@aws-sdk/client-lambda` requires `node:https`; React Native has no such
- *    module and the app fails to bundle entirely.
- *  - Lambda Function URLs are blocked at the account level (403 regardless of
- *    the resource policy).
+ * Request a fresh Apple code and exchange/revoke it through the existing
+ * authenticated REST endpoint. A false result means deletion must offer
+ * manual Apple removal (TN3194); it must never claim revocation succeeded.
  */
 export async function revokeAppleToken(): Promise<boolean> {
   try {
+    const session = await fetchAuthSession();
+    const idToken = session.tokens?.idToken?.toString();
+    const accountEmail = session.tokens?.idToken?.payload.email;
+    if (!idToken || typeof accountEmail !== "string") return false;
+
     const credential = await AppleAuthentication.signInAsync({
       requestedScopes: [AppleAuthentication.AppleAuthenticationScope.EMAIL],
     });
     const authorizationCode = credential.authorizationCode;
     if (!authorizationCode) return false;
 
-    const session = await fetchAuthSession();
-    const idToken = session.tokens?.idToken?.toString();
-    if (!idToken) return false;
+    // Prevent accidentally revoking a different Apple account selected in
+    // the sheet. The server authenticates the Cognito token independently.
+    const appleEmail = credential.identityToken
+      ? readAppleEmailClaim(credential.identityToken)
+      : null;
+    if (!appleEmail || appleEmail.toLowerCase() !== accountEmail.toLowerCase()) {
+      return false;
+    }
 
     const { body } = await post({
       apiName: "rekognitionApi",
@@ -64,9 +40,8 @@ export async function revokeAppleToken(): Promise<boolean> {
     const parsed = (await body.json()) as { revoked?: boolean } | null;
     return parsed?.revoked === true;
   } catch (err) {
-    // Never block deletion on this. A user entitled to delete their account
-    // should not be stopped because Apple is unreachable — a token outliving
-    // the account is a better outcome than an account that cannot be deleted.
+    if ((err as { code?: string })?.code === "ERR_REQUEST_CANCELED") return false;
+    // Keep deletion available and surface the manual-removal fallback.
     Sentry.captureException(err, {
       tags: { component: "appleRevocation", action: "revoke" },
     });

@@ -210,8 +210,11 @@ export default function ArtDetailScreen() {
   // fill in when they arrive.
   if (artwork === undefined) {
     return (
-      <ThemedView style={[styles.container, styles.centerContent]}>
-        <ThemedText>Loading artwork details...</ThemedText>
+      <ThemedView style={styles.container}>
+        <ScreenHeader backLabel="Back" />
+        <ThemedView style={[styles.container, styles.centerContent]}>
+          <ThemedText>Loading artwork details...</ThemedText>
+        </ThemedView>
       </ThemedView>
     );
   }
@@ -221,8 +224,11 @@ export default function ArtDetailScreen() {
   // `artFacts.length > 0`, so it simply stays hidden.
   if (artworkError) {
     return (
-      <ThemedView style={[styles.container, styles.centerContent]}>
-        <ThemedText>Error loading artwork: {artworkError.message}</ThemedText>
+      <ThemedView style={styles.container}>
+        <ScreenHeader backLabel="Back" />
+        <ThemedView style={[styles.container, styles.centerContent]}>
+          <ThemedText>Error loading artwork: {artworkError.message}</ThemedText>
+        </ThemedView>
       </ThemedView>
     );
   }
@@ -230,8 +236,11 @@ export default function ArtDetailScreen() {
   // Show not found state
   if (!artwork) {
     return (
-      <ThemedView style={[styles.container, styles.centerContent]}>
-        <ThemedText>Artwork not found. ID: {id}</ThemedText>
+      <ThemedView style={styles.container}>
+        <ScreenHeader backLabel="Back" />
+        <ThemedView style={[styles.container, styles.centerContent]}>
+          <ThemedText>Artwork not found. ID: {id}</ThemedText>
+        </ThemedView>
       </ThemedView>
     );
   }
@@ -267,7 +276,7 @@ export default function ArtDetailScreen() {
         onClose={() => setAuthModalVisible(false)}
         context={authModalContext}
       />
-      <ScreenHeader />
+      <ScreenHeader backLabel="Back" />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Artwork Image */}
         <ThemedView style={styles.imageContainer}>

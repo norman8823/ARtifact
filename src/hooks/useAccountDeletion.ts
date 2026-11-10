@@ -14,8 +14,8 @@ import {
 } from "@/src/graphql/queries";
 import * as Sentry from "@sentry/react-native";
 import { deleteUser as deleteCognitoUser } from "aws-amplify/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { APPLE_LINKED_KEY, revokeAppleToken } from "@/src/utils/appleRevocation";
+import { revokeAppleToken } from "@/src/utils/appleRevocation";
+import { forgetAppleAccount, isKnownAppleAccount } from "@/src/utils/appleAccount";
 import { generateClient } from "aws-amplify/api";
 import { useCallback, useState } from "react";
 import { useAuthContext } from "@/src/contexts/AuthContext";
@@ -29,7 +29,7 @@ import {
 const getClient = () => generateClient();
 
 export type DeletionResult =
-  | { ok: true; rowsDeleted: number }
+  | { ok: true; rowsDeleted: number; appleRevocation: "revoked" | "manual" }
   | { ok: false; reason: "data-incomplete" | "identity-failed"; message: string };
 
 /**
@@ -76,6 +76,9 @@ export function useAccountDeletion() {
           );
         }
         const page = result.data?.[listKey];
+        if (!page || !Array.isArray(page.items)) {
+          throw new Error("Couldn't load account data for deletion. Please try again.");
+        }
         (page?.items ?? [])
           .filter((item: unknown) => item !== null)
           .forEach((item: { id: string }) => ids.push(item.id));
@@ -170,43 +173,40 @@ export function useAccountDeletion() {
           ok: false,
           reason: "data-incomplete",
           message:
-            "Some of your data couldn't be deleted, so your account was kept. Nothing was lost — please check your connection and try again.",
+            "Some data may already have been deleted, but your account was kept because cleanup is incomplete. Please check your connection and try again.",
         };
       }
 
-      // Apple requires the token to be revoked when the account is deleted
-      // (pairs with 5.1.1(v)). Do it AFTER the abort check — so nothing is
-      // revoked for an account we then keep — but BEFORE the identity is
-      // destroyed, since revocation needs a signed-in session.
-      //
-      // Best effort by design: a user entitled to delete their account should
-      // not be blocked because Apple's endpoint is unreachable. Failures are
-      // reported rather than swallowed.
-      if ((await AsyncStorage.getItem(APPLE_LINKED_KEY)) === "true") {
-        const revoked = await revokeAppleToken();
-        Sentry.addBreadcrumb({
-          category: "account",
-          message: "apple_token_revocation",
-          data: { revoked },
-        });
-        if (!revoked) {
-          Sentry.captureMessage("Apple token revocation failed", {
-            level: "warning",
-            tags: { component: "useAccountDeletion" },
-          });
+      // Apple TN3194 requires deletion to remain available when revocation
+      // credentials are missing. Unknown/legacy accounts and failed attempts
+      // get explicit manual-removal instructions after deletion, never a
+      // silent success. A local hint is not an account-wide source of truth.
+      let appleRevocation: "revoked" | "manual" = "manual";
+      try {
+        if (await isKnownAppleAccount(user.userId)) {
+          if (await revokeAppleToken()) appleRevocation = "revoked";
         }
-        await AsyncStorage.removeItem(APPLE_LINKED_KEY);
+      } catch (error) {
+        Sentry.captureException(error, { tags: { component: "appleAccount" } });
       }
 
-      // Point of no return.
+      // Point of no return. Keep the revocation hint if identity deletion fails
+      // so retrying cannot silently skip automatic revocation.
       await deleteCognitoUser();
+      try {
+        await forgetAppleAccount(user.userId);
+      } catch (error) {
+        // The account is already deleted; cache cleanup must not report that
+        // the identity operation failed. This contains no tokens or email.
+        Sentry.captureException(error, { tags: { component: "appleAccount" } });
+      }
 
       Sentry.addBreadcrumb({
         category: "account",
         message: "account_deletion_completed",
         data: { rowsDeleted: summary.totalDeleted },
       });
-      return { ok: true, rowsDeleted: summary.totalDeleted };
+      return { ok: true, rowsDeleted: summary.totalDeleted, appleRevocation };
     } catch (error) {
       Sentry.captureException(error, {
         tags: { component: "useAccountDeletion", action: "delete_account" },

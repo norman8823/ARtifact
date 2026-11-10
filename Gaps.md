@@ -18,8 +18,8 @@
 ### 2. Live ReactVision API key committed in `app.json`
 `rvApiKey: "rv_live_8fd77..."` sits in [app.json](app.json) plugin config (with `rvProjectId`). It ships in the binary anyway, but being in git history means it can't be rotated by config alone. Move to an EAS secret / env-substituted config (`app.config.js`) and rotate the key.
 
-### 3. Guest API key hard-expires 2026-12-06
-[authMode.ts:13](src/aws/authMode.ts#L13) hardcodes `GUEST_API_KEY_EXPIRY = 2026-12-06`. When the AppSync API key is rotated, the app needs a client update or guest mode dies. ~5 months away as of this audit. There is no server-driven config to extend it remotely.
+### 3. Guest API key renewal — ✅ RESOLVED for this release (user-reported 2026-10-05)
+The key matched locally in the read-only AWS check on 2026-10-04 expired on **2026-12-06 04:00 UTC**. The user confirmed the renewed guest key expires on **October 5, 2027**; the exact new AWS timestamp has not been rechecked. Extending the existing key preserves installed clients without a binary or EAS environment change. The misleading hardcoded client expiry warning was removed. Future renewals remain an operational responsibility: extend before the live expiry, using AppSync `UpdateApiKey` (1–365 days from the update).
 
 ### 4. Single point of failure: Railway scan endpoint — **control half ✅ FIXED, reliability half still open**
 
