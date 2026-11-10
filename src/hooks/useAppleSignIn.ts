@@ -1,12 +1,11 @@
-import { APPLE_LINKED_KEY } from "@/src/utils/appleRevocation";
+import { rememberAppleAccount } from "@/src/utils/appleAccount";
 import { useAuthContext } from "@/src/contexts/AuthContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   generateThrowawayPassword,
   readAppleEmailClaim,
 } from "@/src/utils/appleToken";
 import * as Sentry from "@sentry/react-native";
-import { confirmSignIn, signIn, signOut, signUp } from "aws-amplify/auth";
+import { confirmSignIn, getCurrentUser, signIn, signOut, signUp } from "aws-amplify/auth";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
@@ -79,6 +78,9 @@ export function useAppleSignIn() {
             challengeResponse: identityToken,
           });
           lastStep = `confirmed:${confirmed.nextStep?.signInStep ?? "done"}`;
+          if (!confirmed.isSignedIn) {
+            throw new Error(`Apple sign-in incomplete: ${lastStep}`);
+          }
           return;
         }
         // Anything else is unexpected — surface it instead of silently
@@ -134,10 +136,15 @@ export function useAppleSignIn() {
       // await refreshAuth, THEN navigate. Navigating first leaves
       // getAuthMode() on "apiKey" and every owner-scoped query on Home is
       // denied — an empty-state bug that only reproduces under release timing.
-      // Remember that this account is Apple-linked: account deletion must
-      // revoke the Apple token, and there is no other way to tell afterwards
-      // (Cognito shows only the email, which the email flow also uses).
-      await AsyncStorage.setItem(APPLE_LINKED_KEY, "true");
+      // Scope the local revocation hint to the verified Cognito account.
+      // Failure to cache it must not break an otherwise successful sign-in:
+      // deletion offers manual Apple removal whenever revocation is unconfirmed.
+      try {
+        const { userId } = await getCurrentUser();
+        await rememberAppleAccount(userId);
+      } catch (error) {
+        Sentry.captureException(error, { tags: { component: "appleAccount" } });
+      }
 
       await ensureUserInDB(displayName, email);
       await refreshAuth();
