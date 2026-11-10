@@ -476,7 +476,7 @@ export default function ArtQuestScreen() {
       default:
         return null;
     }
-  }, [questLookup]);
+  }, [questLookup, entitlement, isEntitlementReady]);
 
   // Data fetches on mount via the query hooks (enabled once authenticated).
   // No manual initial-load effect needed.
