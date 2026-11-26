@@ -22,14 +22,12 @@ import {
  * arViewer requires this module lazily, at render time, so the Viro graph is
  * only evaluated when AR is actually opened.
  *
- * Rendering is Studio's `StudioSceneNavigator`: it fetches the scene, runs
- * tap-to-place with its own overlay (removed once the model is placed, so drag
- * and pinch reach the model) and handles drag. Every scene gets the viewer
- * defaults in `src/utils/arSceneDefaults.ts` (tap-to-place, draggable, floor
- * drag) whatever its Studio settings. Upright camera-facing placement,
- * a drag plane at the placed height and clamped pinch-to-scale come from
- * `patches/@reactvision+react-viro+3.0.3.patch`. This wrapper only translates
- * Studio's events into the screen's status line.
+ * Rendering is Studio's `StudioSceneNavigator`: it fetches the scene and runs
+ * tap-to-place with its own overlay. Every scene gets the viewer defaults in
+ * `src/utils/arSceneDefaults.ts` (tap-to-place, fixed in place once placed,
+ * horizontal plane detection) whatever its Studio settings. Upright
+ * camera-facing placement comes from `patches/@reactvision+react-viro+3.0.3.patch`.
+ * This wrapper only translates Studio's events into the screen's status line.
  */
 export interface ARSceneNavigatorProps {
   sceneId: string;
@@ -65,7 +63,7 @@ export default function ARSceneNavigator({
         message: "model placed",
         data: { sceneId },
       });
-      onStatusChange("Drag to move • Pinch to resize");
+      onStatusChange("Walk around to see it from every side");
     }
   }, [loaded, isPlacing, showMiss, sceneId, onStatusChange]);
 

@@ -86,9 +86,9 @@ export default function ARViewerScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
-        {/* Studio scene. It owns tap-to-place (its own overlay, removed once
-            the model is placed so drag/pinch reach it); nothing here may sit
-            over it except the status line and the buttons below. */}
+        {/* Studio scene. It owns tap-to-place through its own overlay, which
+            needs the placement tap; nothing here may sit over it except the
+            status line and the buttons below. */}
         <ARSceneNavigator
           sceneId={effectiveSceneId}
           onStatusChange={setArStatus}

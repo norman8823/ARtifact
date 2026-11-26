@@ -5,7 +5,7 @@ const model = {
   asset_type_name: "3D-MODEL",
   trigger_image_url: null as string | null,
   tap_to_place: false,
-  is_draggable: false,
+  is_draggable: true,
   position_x: 0,
   position_y: -1.8,
   position_z: 0,
@@ -20,18 +20,33 @@ const scene = (assets: (typeof model)[]) => ({
 });
 
 describe("applyViewerDefaults", () => {
-  it("makes a model tap-to-place, draggable and placed at the tap point", () => {
-    const out = applyViewerDefaults(scene([model]));
+  it("makes a model tap-to-place and fixed in place, centred on the tap point", () => {
+    const out = applyViewerDefaults(
+      scene([{ ...model, position_x: 0.7, position_z: -2.1 }]),
+    );
     expect(out.assets[0]).toMatchObject({
       tap_to_place: true,
-      is_draggable: true,
+      is_draggable: false,
       position_x: 0,
-      position_y: 0,
       position_z: 0,
     });
   });
 
-  it("turns on horizontal plane detection so drag follows the floor", () => {
+  it("keeps the Studio height, negative values included", () => {
+    expect(applyViewerDefaults(scene([model])).assets[0].position_y).toBe(-1.8);
+    expect(
+      applyViewerDefaults(scene([{ ...model, position_y: 0.35 }])).assets[0].position_y,
+    ).toBe(0.35);
+  });
+
+  it("treats a missing Studio height as the floor", () => {
+    const out = applyViewerDefaults(
+      scene([{ ...model, position_y: null as unknown as number }]),
+    );
+    expect(out.assets[0].position_y).toBe(0);
+  });
+
+  it("turns on horizontal plane detection for the placement tap", () => {
     const out = applyViewerDefaults(scene([model]));
     expect(out.scene.plane_detection).toBe("AUTOMATIC");
     expect(out.scene.plane_direction).toBe("Horizontal");
