@@ -16,9 +16,19 @@
  * Everything else still comes from Studio, and is how each artwork is tuned
  * without an app release: the model file, its size (scale), facing
  * (rotation) and height, plus animations and click actions.
+ *
+ * With AR_AUTO_FIT on (src/config/arFit.ts) a measured model's size, facing
+ * and height are then adjusted on top of Studio's — see src/utils/arModelFit.ts.
+ * Studio's scale becomes the preferred size within the living-room limits, and
+ * Studio's height is replaced by the offset that puts the base on the floor.
  */
+import { AR_AUTO_FIT, AR_FIT_LIMITS, type ARFitLimits } from "@/src/config/arFit";
+import measuredBounds from "@/src/config/arModelBounds.json";
+import pickedFacing from "@/src/config/arModelFacing.json";
+import { fitModel, type ModelBounds } from "@/src/utils/arModelFit";
 
 interface SceneAssetLike {
+  id?: string;
   asset_type_name: string | null;
   trigger_image_url: string | null;
   tap_to_place?: boolean | null;
@@ -26,6 +36,47 @@ interface SceneAssetLike {
   position_x: number | null;
   position_y: number | null;
   position_z: number | null;
+  scale?: number | null;
+  rotation_x?: number | null;
+  rotation_y?: number | null;
+  rotation_z?: number | null;
+}
+
+export interface AutoFitOptions {
+  enabled: boolean;
+  /** Model bounds keyed by Studio asset id (scripts/measureArModels.js). */
+  bounds: Record<string, ModelBounds>;
+  /** Extra yaw in degrees keyed by Studio asset id (the facing picker). */
+  facing: Record<string, number>;
+  limits: ARFitLimits;
+}
+
+export const DEFAULT_AUTO_FIT: AutoFitOptions = {
+  enabled: AR_AUTO_FIT,
+  bounds: measuredBounds as Record<string, ModelBounds>,
+  facing: pickedFacing as Record<string, number>,
+  limits: AR_FIT_LIMITS,
+};
+
+/** Studio values replaced by auto-fit, or null when it does not apply. */
+function autoFit<A extends SceneAssetLike>(asset: A, options: AutoFitOptions) {
+  if (!options.enabled || !asset.id) return null;
+  const bounds = options.bounds[asset.id];
+  if (!bounds) return null;
+  const fit = fitModel(
+    bounds,
+    { scale: asset.scale, rotation: [asset.rotation_x, asset.rotation_y, asset.rotation_z] },
+    options.limits,
+    options.facing[asset.id] ?? 0,
+  );
+  if (!fit) return null;
+  return {
+    scale: fit.scale,
+    rotation_x: fit.rotation[0],
+    rotation_y: fit.rotation[1],
+    rotation_z: fit.rotation[2],
+    position_y: fit.positionY,
+  };
 }
 
 interface SceneLike<A extends SceneAssetLike> {
@@ -47,6 +98,7 @@ export function hasPlaceableModel<A extends SceneAssetLike>(
 /** Returns a copy of `scene` with the viewer defaults applied. */
 export function applyViewerDefaults<A extends SceneAssetLike, S extends SceneLike<A>>(
   scene: S,
+  autoFitOptions: AutoFitOptions = DEFAULT_AUTO_FIT,
 ): S {
   return {
     ...scene,
@@ -77,6 +129,7 @@ export function applyViewerDefaults<A extends SceneAssetLike, S extends SceneLik
             position_x: 0,
             position_y: asset.position_y ?? 0,
             position_z: 0,
+            ...autoFit(asset, autoFitOptions),
           }
         : asset,
     ),

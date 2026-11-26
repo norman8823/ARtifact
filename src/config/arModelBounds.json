@@ -1,0 +1,772 @@
+{
+  "95b89603-3f55-4d22-988f-b2ae8969f1fc": {
+    "scene": "10911_Memory2",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793181531-ba85ac07.glb",
+    "min": [
+      -0.62023,
+      0.55208,
+      -0.61058
+    ],
+    "max": [
+      0.64546,
+      2.21776,
+      0.62341
+    ]
+  },
+  "5669e892-0b5d-4d0b-9c05-4134e5a4ea54": {
+    "scene": "11768_Fragilina",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793176387-a7242714.glb",
+    "min": [
+      -0.71434,
+      0.89546,
+      -0.61508
+    ],
+    "max": [
+      0.2811,
+      2.22259,
+      0.36082
+    ]
+  },
+  "bef9ed97-cb29-43c3-a06f-05c0466cbaab": {
+    "scene": "11790_California",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793175294-5025b8e8.glb",
+    "min": [
+      0.19254,
+      0.2218,
+      0.25956
+    ],
+    "max": [
+      0.38444,
+      0.779,
+      0.42685
+    ]
+  },
+  "2813dd1c-93c9-430c-b1cd-e520669f3c48": {
+    "scene": "11916_TheFallingGladiator2",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793180422-7d61e84e.glb",
+    "min": [
+      -0.32123,
+      0.22503,
+      -0.19238
+    ],
+    "max": [
+      0.13026,
+      0.93129,
+      0.26308
+    ]
+  },
+  "10110023-76e6-4008-aad6-d604b97b9c28": {
+    "scene": "11951_NydiatheBlindFlowerGirlofPompeii",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793179694-48e2d99d.glb",
+    "min": [
+      -0.41473,
+      0.64384,
+      -0.54236
+    ],
+    "max": [
+      0.42794,
+      2.06297,
+      0.47861
+    ]
+  },
+  "23d3992c-d288-41c5-a5ef-634cf5485b67": {
+    "scene": "11952_RuthGleaning3",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1776704749659-14ddc528.glb",
+    "min": [
+      -0.34989,
+      0.47342,
+      -0.34586
+    ],
+    "max": [
+      0.34174,
+      1.52994,
+      0.34586
+    ]
+  },
+  "6f636f48-7aeb-4692-b6f6-f57946df31ac": {
+    "scene": "12004_Hiawatha2",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793181896-6b2221be.glb",
+    "min": [
+      -0.70094,
+      0.39088,
+      -0.56256
+    ],
+    "max": [
+      0.36606,
+      2.2953,
+      0.61252
+    ]
+  },
+  "ee8fe7d4-5010-4aba-94ef-0d2cbad63b15": {
+    "scene": "186832_TheseusFightingtheCentaurBianor",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793169578-48a36f70.glb",
+    "min": [
+      -0.14979,
+      0.71183,
+      -1.14192
+    ],
+    "max": [
+      1.19184,
+      2.46306,
+      0.17328
+    ]
+  },
+  "3dddbf85-3951-4687-acc1-14845bf23647": {
+    "scene": "195221_Herakles",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793170476-0a6ad732.glb",
+    "min": [
+      -0.90012,
+      0,
+      -0.91521
+    ],
+    "max": [
+      1.13319,
+      2.49313,
+      0.97986
+    ]
+  },
+  "762a5721-608c-42c0-ab30-1bb72a381397": {
+    "scene": "196439_TheLittleFourteenYearOldDancer",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793185444-8339cec3.glb",
+    "min": [
+      -0.41292,
+      0,
+      -0.40901
+    ],
+    "max": [
+      0.41374,
+      1.10852,
+      0.42326
+    ]
+  },
+  "03033595-a4b9-408a-9c0c-dcaea5ded1bd": {
+    "scene": "202614_Winter",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793170714-df2db20c.glb",
+    "min": [
+      -0.17955,
+      0.02681,
+      -0.24086
+    ],
+    "max": [
+      0.19927,
+      1.43116,
+      0.17038
+    ]
+  },
+  "d3b008fa-752c-42c8-9ddb-a74a01f8946c": {
+    "scene": "204758_PerseusMedusa2",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793177947-c6a405ea.glb",
+    "min": [
+      -0.64188,
+      0.41676,
+      -1.03841
+    ],
+    "max": [
+      0.64913,
+      2.96097,
+      1.03841
+    ]
+  },
+  "c4315075-1d76-48f6-8b6f-8ad364fbe038": {
+    "scene": "204812_UgolinoAndHisSons",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793179736-d1e7caee.glb",
+    "min": [
+      -0.86242,
+      0.03675,
+      -0.6477
+    ],
+    "max": [
+      0.86242,
+      2.22133,
+      0.6477
+    ]
+  },
+  "1cc20b84-2066-4f00-bf66-ed2eafbe687b": {
+    "scene": "206399_Bacchanal",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1776705822298-1a803646.glb",
+    "min": [
+      -0.22167,
+      0.39871,
+      -0.31465
+    ],
+    "max": [
+      0.20753,
+      1.53235,
+      0.33411
+    ]
+  },
+  "304dfe17-d94c-4127-abef-9b744c2640f8": {
+    "scene": "211486_Marsyas",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793168914-ff39e476.glb",
+    "min": [
+      -0.22896,
+      0,
+      -0.21379
+    ],
+    "max": [
+      0.22896,
+      1.14253,
+      0.21379
+    ]
+  },
+  "2c906127-5200-46c7-9904-929e66db1678": {
+    "scene": "211505_Paris",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793168988-fe105802.glb",
+    "min": [
+      -0.42298,
+      1.22331,
+      -0.35264
+    ],
+    "max": [
+      0.37468,
+      3.33881,
+      0.64616
+    ]
+  },
+  "49778bb1-1385-4533-8f77-26794bd73b03": {
+    "scene": "212215_Lucretia",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793171860-c14f8993.glb",
+    "min": [
+      -0.66155,
+      0.68513,
+      -0.31427
+    ],
+    "max": [
+      0.63696,
+      1.45365,
+      0.374
+    ]
+  },
+  "eb5fc3e0-b8d1-424c-ab9c-f80e2886f8f2": {
+    "scene": "22634_Burgonet",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793178904-e600da1a.glb",
+    "min": [
+      -0.25049,
+      0.07422,
+      -0.19861
+    ],
+    "max": [
+      0.2217,
+      0.42371,
+      0.20128
+    ]
+  },
+  "68258443-5d4d-43b0-9a74-0c8d25f63941": {
+    "scene": "239234_Thetis2",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793180200-c7a15486.glb",
+    "min": [
+      -0.56592,
+      0.13904,
+      -0.68208
+    ],
+    "max": [
+      0.58576,
+      1.39077,
+      0.60887
+    ]
+  },
+  "4efc0846-05a3-4e11-8b8d-f562cab960b8": {
+    "scene": "246701_camillus",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1776706125712-123ab54a.glb",
+    "min": [
+      -0.4202,
+      0.13591,
+      -0.3688
+    ],
+    "max": [
+      0.55619,
+      1.936,
+      0.25221
+    ]
+  },
+  "2cd06e46-c56e-4510-b208-9eba85ef3733": {
+    "scene": "24671_ArmorofHenryII",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793180493-85735fd0.glb",
+    "min": [
+      -0.31989,
+      0.3166,
+      -0.33665
+    ],
+    "max": [
+      0.3235,
+      2.21472,
+      0.29455
+    ]
+  },
+  "6dc4ee90-f736-49ac-b0e7-9d7e1d667b60": {
+    "scene": "246990_MarbleStatueofDionysosSeatedonaPanther3",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793179440-85c365f1.glb",
+    "min": [
+      -0.4941,
+      0.86708,
+      -0.8592
+    ],
+    "max": [
+      0.43205,
+      2.48024,
+      0.42893
+    ]
+  },
+  "d4979aa7-7be6-4eee-8039-ba8496b9c3a5": {
+    "scene": "247000_Hercules",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1776893304165-f4d9d0e3.glb",
+    "min": [
+      -0.7299,
+      0.28646,
+      -0.37491
+    ],
+    "max": [
+      0.49616,
+      2.81784,
+      0.56828
+    ]
+  },
+  "39a43131-4e62-4b3b-8c02-bab82bb1e90c": {
+    "scene": "248132_MarbleStatueofanOldWoman",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793178696-52572eb3.glb",
+    "min": [
+      -0.42179,
+      0.17563,
+      -0.51586
+    ],
+    "max": [
+      0.41329,
+      1.38181,
+      0.50289
+    ]
+  },
+  "66641a74-364c-427f-a685-c84195affe12": {
+    "scene": "248579_Marbleheadofanathlete",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793179039-48dd494c.glb",
+    "min": [
+      -0.2613,
+      0.14147,
+      -0.25746
+    ],
+    "max": [
+      0.33434,
+      1.02945,
+      0.37171
+    ]
+  },
+  "fee3d07f-fafa-4f98-99a3-9d530258cff7": {
+    "scene": "248895_Marbleheadofayouth",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793169432-7b1053fe.glb",
+    "min": [
+      -0.1109,
+      0,
+      -0.1157
+    ],
+    "max": [
+      0.10316,
+      0.37693,
+      0.10496
+    ]
+  },
+  "302bc36e-908a-4afd-a4a6-d98b4ebb9674": {
+    "scene": "252958_BasaltStatueofAphrodite",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793175201-a152cc1a.glb",
+    "min": [
+      -0.28161,
+      0.05914,
+      -0.20444
+    ],
+    "max": [
+      0.33116,
+      1.17132,
+      0.37818
+    ]
+  },
+  "5c09d86c-c568-4722-b799-cb9f08e4d907": {
+    "scene": "254697_MarbleStatueofAphrodite",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793178014-747064a3.glb",
+    "min": [
+      -0.0995,
+      0.20126,
+      -0.10933
+    ],
+    "max": [
+      0.10223,
+      0.82715,
+      0.10102
+    ]
+  },
+  "e25c0ff7-672b-46a9-88e6-85624e4eb794": {
+    "scene": "255973_HopeDionysos",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793179559-a4c4fa0d.glb",
+    "min": [
+      -0.49074,
+      0.47893,
+      -0.48911
+    ],
+    "max": [
+      0.45015,
+      2.53588,
+      0.45182
+    ]
+  },
+  "09f53d24-1fd4-437f-a211-d68342320691": {
+    "scene": "256403_MarbleStatueGroupoftheThreeGraces",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793178930-fd3835ba.glb",
+    "min": [
+      -0.35832,
+      0.53412,
+      -0.42401
+    ],
+    "max": [
+      0.36342,
+      1.65885,
+      0.55433
+    ]
+  },
+  "04ae768f-a7d1-4284-bc09-807c0a163ec6": {
+    "scene": "309404_Chahk",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793179731-fe42d658.glb",
+    "min": [
+      -0.22212,
+      0.27825,
+      -0.26674
+    ],
+    "max": [
+      0.24115,
+      2.12705,
+      0.29924
+    ]
+  },
+  "6be0207d-bb47-49cd-9aeb-fe24d98dbbfb": {
+    "scene": "309959_FuneraryMaks",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1777496233545-d1c4f2ee.glb",
+    "min": [
+      -0.21746,
+      0.12718,
+      -0.5173
+    ],
+    "max": [
+      0.50088,
+      0.97784,
+      0.49634
+    ]
+  },
+  "fdfacbbc-09d2-408c-a9b5-2ee1ee5eda2d": {
+    "scene": "310325_SeatedCouple",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793178073-c57a18bb.glb",
+    "min": [
+      -0.43332,
+      0,
+      -0.43776
+    ],
+    "max": [
+      0.43467,
+      1.31167,
+      0.42871
+    ]
+  },
+  "89115528-6bdd-47c4-bbc9-b483de70e286": {
+    "scene": "310750_Banda_mask",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1776893290261-bcf3a7b6.glb",
+    "min": [
+      -0.27643,
+      0.00051,
+      -0.3013
+    ],
+    "max": [
+      0.25702,
+      1.28553,
+      0.23309
+    ]
+  },
+  "c92bde71-f1b0-46cb-94f8-10afe2c51dd4": {
+    "scene": "310765_PriestWithRaisedArms",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793169439-ed486604.glb",
+    "min": [
+      -0.18578,
+      0,
+      -0.17164
+    ],
+    "max": [
+      0.18126,
+      2.54379,
+      0.18956
+    ]
+  },
+  "76991ae8-5e39-4252-bf86-7a635406622f": {
+    "scene": "311741_BodyMask",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1776705357658-6536656d.glb",
+    "min": [
+      -0.44099,
+      0.62004,
+      -0.50442
+    ],
+    "max": [
+      0.32075,
+      2.80262,
+      0.49071
+    ]
+  },
+  "d4fa289f-e587-4a2d-b029-0bcf2dc8b405": {
+    "scene": "312781_StandingFigure",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793175800-4e3766d2.glb",
+    "min": [
+      -0.27897,
+      0.19155,
+      -0.28028
+    ],
+    "max": [
+      0.17035,
+      1.42393,
+      0.1789
+    ]
+  },
+  "e3e7db1f-3ccb-4bd1-be04-9eaec46f829e": {
+    "scene": "316008_Hampatong",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793177955-076550fb.glb",
+    "min": [
+      -0.26066,
+      0,
+      -0.26718
+    ],
+    "max": [
+      0.26168,
+      1.38214,
+      0.26813
+    ]
+  },
+  "b63dcb05-5ea8-4fb7-bd38-f075464ffe00": {
+    "scene": "318622_Pendant_mask",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1776893301507-b858cf83.glb",
+    "min": [
+      -0.22072,
+      0,
+      -0.22996
+    ],
+    "max": [
+      0.18507,
+      1.002,
+      0.17618
+    ]
+  },
+  "0ae55d73-4057-4dc1-95f0-89e6bca2af29": {
+    "scene": "319468_EffigyUrn",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793180732-e866cb20.glb",
+    "min": [
+      -0.45752,
+      0.2487,
+      -0.36303
+    ],
+    "max": [
+      0.31256,
+      1.27148,
+      0.42961
+    ]
+  },
+  "3211c4f2-7eda-443c-85d6-bcc83bf212c3": {
+    "scene": "320053_MangaakaPowerFigure",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793178545-68a29218.glb",
+    "min": [
+      -0.33752,
+      0.36019,
+      -0.30455
+    ],
+    "max": [
+      0.31151,
+      1.56802,
+      0.34985
+    ]
+  },
+  "ffd4042f-be51-4249-89f3-f2d2b027ec4c": {
+    "scene": "38304_BustofHevajra",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793179689-a904a643.glb",
+    "min": [
+      -0.4649,
+      0.13392,
+      -0.40422
+    ],
+    "max": [
+      0.38036,
+      1.50181,
+      0.24241
+    ]
+  },
+  "0f9cdf76-7b4f-41af-bc2f-bdd86a65da86": {
+    "scene": "451042_IncenseBurner",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793178034-6546fe72.glb",
+    "min": [
+      -0.43179,
+      0.16174,
+      -0.20217
+    ],
+    "max": [
+      0.41413,
+      1.11477,
+      0.20527
+    ]
+  },
+  "d9c8fa9f-92a6-4c3a-9268-f3d606c1e663": {
+    "scene": "485540_Uniqueformsofcontinuityinspace3",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793177094-ca135203.glb",
+    "min": [
+      -0.30452,
+      0.24046,
+      -0.26345
+    ],
+    "max": [
+      0.39239,
+      1.30345,
+      0.46028
+    ]
+  },
+  "b48aa392-db64-4cb5-9595-9b544c41a888": {
+    "scene": "544442_SphinxofHatshepsut",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1776707511501-156e6946.glb",
+    "min": [
+      -1.06401,
+      0.28935,
+      -1.97741
+    ],
+    "max": [
+      0.80811,
+      1.67663,
+      1.22166
+    ]
+  },
+  "526a19f6-82fb-4d85-aeae-339cf04487a9": {
+    "scene": "544752_HeadofKingSetII",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793176634-5e9df0ad.glb",
+    "min": [
+      -0.3753,
+      0.25328,
+      -0.36872
+    ],
+    "max": [
+      0.38757,
+      1.32369,
+      0.38709
+    ]
+  },
+  "1acf2019-4693-4ed5-b279-8333d731ad58": {
+    "scene": "545879_HeadofaKing",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/ef0e81ad-dc60-4e36-9e74-647c39ae1631.glb",
+    "min": [
+      -0.01367,
+      0,
+      -0.01491
+    ],
+    "max": [
+      0.02136,
+      0.03702,
+      0.02032
+    ]
+  },
+  "eb11c362-d75a-45a1-a4db-83ed6eea0908": {
+    "scene": "549029_HeadandShouldersofaSphinxofHatshepsut",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793179832-a6926a70.glb",
+    "min": [
+      -0.49316,
+      0.58148,
+      -0.46256
+    ],
+    "max": [
+      0.4676,
+      1.92519,
+      0.49369
+    ]
+  },
+  "e55fc9e0-3fcb-4e9d-bc5f-26c38cb0946f": {
+    "scene": "626371_Bulul",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793178416-bcdb6635.glb",
+    "min": [
+      -0.14481,
+      0.16807,
+      -0.16887
+    ],
+    "max": [
+      0.15764,
+      1.40614,
+      0.17754
+    ]
+  },
+  "1d2f6ca7-fb6f-45b7-8c06-0e59a04bbfa8": {
+    "scene": "635680Throne_of_Njouteu",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1776895129961-8c81247f.glb",
+    "min": [
+      -0.30842,
+      0.31115,
+      -0.3822
+    ],
+    "max": [
+      0.36529,
+      1.9185,
+      0.29965
+    ]
+  },
+  "15cc0482-117c-4293-b5b9-db20664121c4": {
+    "scene": "735917_TsesahCrest",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793178819-775f5f07.glb",
+    "min": [
+      -0.32793,
+      0.19434,
+      -0.42209
+    ],
+    "max": [
+      0.34958,
+      1.64321,
+      0.3987
+    ]
+  },
+  "f25c7f87-a308-45c8-b68e-5c4d0ee35a91": {
+    "scene": "769187_Galatea",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793178561-a3fc4c1d.glb",
+    "min": [
+      -0.23247,
+      0.25859,
+      -0.18154
+    ],
+    "max": [
+      0.18488,
+      1.19951,
+      0.17224
+    ]
+  },
+  "eb7a6cc2-6683-487f-bd4d-d692fca61e71": {
+    "scene": "769257_RitualDish",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793174757-a9681935.glb",
+    "min": [
+      -0.08721,
+      0.26588,
+      -0.18891
+    ],
+    "max": [
+      0.11157,
+      0.97877,
+      0.21883
+    ]
+  },
+  "8b17da7c-46d9-4e87-a3fd-9d92cf7e447b": {
+    "scene": "824469_WhyBornEnslaved",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793168814-42781ed2.glb",
+    "min": [
+      -0.21628,
+      0,
+      -0.2099
+    ],
+    "max": [
+      0.21156,
+      0.6249,
+      0.21309
+    ]
+  },
+  "4f3022bd-9c5b-47b1-bf50-2a0bdf36f4d6": {
+    "scene": "Head of a King - AI Generated",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/019eba24-fe95-7773-85a6-31c2ac138907.glb",
+    "min": [
+      -0.52522,
+      0,
+      -0.146
+    ],
+    "max": [
+      0.52506,
+      0.90181,
+      0.22324
+    ]
+  }
+}
