@@ -108,6 +108,11 @@ export default function ARSceneNavigator({
       sceneId={sceneId}
       autofocus
       transformSceneData={applyViewerDefaults}
+      // Viro defaults this to "reactvision", which turns on its GPS
+      // geospatial anchors and asks for location the first time AR opens.
+      // Placement is plane hit-testing only; nothing here needs location.
+      // (Cloud anchors share this switch and are only used by colocation.)
+      provider="none"
       onSceneLoaded={handleSceneLoaded}
       onError={handleError}
       // The screen draws its own status line and top chrome (back / info).

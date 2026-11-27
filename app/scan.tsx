@@ -395,54 +395,56 @@ export default function ScanScreen() {
         </View>
         {/* Camera View */}
         <View style={styles.cameraContainer}>
-          <CameraView ref={cameraRef} style={styles.camera} facing={cameraType}>
-            {/* Camera Controls Overlay */}
-            <View style={styles.cameraOverlay}>
-              {/* Center Viewfinder */}
-              <View style={styles.viewfinderContainer}>
-                {isAnalyzing || isProcessing ? (
-                  <View style={styles.statusContainer}>
-                    <ActivityIndicator size="small" color={Colors.lightGray} />
-                    <ThemedText style={styles.statusText}>
-                      {isAnalyzing
-                        ? "Analyzing artwork..."
-                        : "Processing results..."}
-                    </ThemedText>
-                  </View>
-                ) : (
-                  <ThemedText style={styles.instructionText}>
-                    Position artwork in view
+          <CameraView ref={cameraRef} style={styles.camera} facing={cameraType} />
+          {/* Controls sit on top of the preview as a SIBLING, never as
+              CameraView children: expo-camera does not support children, and
+              since SDK 57 they are not drawn at all — the shutter button
+              vanished from TestFlight 1.0.59 while still being in the tree. */}
+          <View style={styles.cameraOverlay} pointerEvents="box-none">
+            {/* Center Viewfinder */}
+            <View style={styles.viewfinderContainer}>
+              {isAnalyzing || isProcessing ? (
+                <View style={styles.statusContainer}>
+                  <ActivityIndicator size="small" color={Colors.lightGray} />
+                  <ThemedText style={styles.statusText}>
+                    {isAnalyzing
+                      ? "Analyzing artwork..."
+                      : "Processing results..."}
                   </ThemedText>
-                )}
-              </View>
-
-              {/* Bottom Controls */}
-              <View style={styles.bottomControls}>
-                <Pressable
-                  style={[
-                    styles.captureButton,
-                    (isAnalyzing || isLoading || isProcessing) &&
-                      styles.captureButtonDisabled,
-                    pressedButton === 'capture' && styles.buttonPressed,
-                  ]}
-                  onPress={takePicture}
-                  onPressIn={() => setPressedButton('capture')}
-                  onPressOut={() => setPressedButton(null)}
-                  disabled={isAnalyzing || isLoading || isProcessing}
-                >
-                  {isLoading || isAnalyzing || isProcessing ? (
-                    <ActivityIndicator size="large" color={Colors.lightGray} />
-                  ) : (
-                    <FontAwesome
-                      name="camera"
-                      size={32}
-                      color={Colors.lightGray}
-                    />
-                  )}
-                </Pressable>
-              </View>
+                </View>
+              ) : (
+                <ThemedText style={styles.instructionText}>
+                  Position artwork in view
+                </ThemedText>
+              )}
             </View>
-          </CameraView>
+
+            {/* Bottom Controls */}
+            <View style={styles.bottomControls}>
+              <Pressable
+                style={[
+                  styles.captureButton,
+                  (isAnalyzing || isLoading || isProcessing) &&
+                    styles.captureButtonDisabled,
+                  pressedButton === 'capture' && styles.buttonPressed,
+                ]}
+                onPress={takePicture}
+                onPressIn={() => setPressedButton('capture')}
+                onPressOut={() => setPressedButton(null)}
+                disabled={isAnalyzing || isLoading || isProcessing}
+              >
+                {isLoading || isAnalyzing || isProcessing ? (
+                  <ActivityIndicator size="large" color={Colors.lightGray} />
+                ) : (
+                  <FontAwesome
+                    name="camera"
+                    size={32}
+                    color={Colors.lightGray}
+                  />
+                )}
+              </Pressable>
+            </View>
+          </View>
         </View>
       </SafeAreaView>
 
@@ -503,7 +505,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cameraOverlay: {
-    flex: 1,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: "transparent",
   },
   viewfinderContainer: {

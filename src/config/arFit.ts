@@ -1,9 +1,9 @@
 /**
  * AR auto-fit — grounds every placed artwork on the floor, keeps it within
- * living-room limits, and turns it to face the viewer (src/utils/arModelFit.ts).
+ * living-room limits (src/utils/arModelFit.ts). Rotation always comes from Studio.
  *
  * TO TURN IT OFF: set AR_AUTO_FIT to false. Every artwork then renders with
- * its plain Studio size, facing and height, exactly as before auto-fit
+ * its plain Studio size and height, exactly as before auto-fit
  * existed. It is JS-only, so in a debug build a reload is enough; a release
  * build needs a new binary.
  */
@@ -16,6 +16,17 @@ export const AR_FIT_LIMITS = {
   maxWidth: 1.5,
   /** Shortest a model may stand; smaller ones are scaled up, within maxWidth. */
   minHeight: 0.3,
+  /**
+   * Highest a positive Studio Height may lift a model off the floor, in
+   * metres. Chest level is about 1.1; a mistyped value (Head of a King once
+   * had 3.98) would otherwise put the piece out of sight above the viewer.
+   */
+  maxLift: 1.5,
 } as const;
 
-export type ARFitLimits = { maxHeight: number; maxWidth: number; minHeight: number };
+export type ARFitLimits = {
+  maxHeight: number;
+  maxWidth: number;
+  minHeight: number;
+  maxLift: number;
+};

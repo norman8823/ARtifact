@@ -227,3 +227,13 @@ App Store delivery of build **1.0.52 was rejected** with two `ITMS-90683 Missing
 *Note the verification trap this exposed:* reading the generated `Info.plist` correctly confirmed the keys were gone, which is what the plugin intended — but the goal itself was wrong, so a green local check meant nothing. **The only authority on ITMS-90683 is an actual upload.**
 
 *Unaffected and still true:* Sentry session replay stays off, and `sendDefaultPii: true` remains a deliberate choice. Purpose strings are not data collection — declaring them does not change the App Privacy answers, which are about data actually collected.
+
+
+### 25. Scan shutter button not drawn on SDK 57 — ✅ **FIXED in code 2026-11-26 (needs device confirmation)**
+TestFlight 1.0.59 showed the scan camera with no shutter button, so no photo could be taken. The controls were children of expo-camera's `<CameraView>`, which has never supported children (it warns) and since SDK 57 does not draw them. Moved to an absolutely positioned sibling with `pointerEvents="box-none"`. CLAUDE.md landmine #0.
+
+### 26. AR asked for location permission — ✅ **FIXED in code 2026-11-26 (needs device confirmation)**
+`ViroARSceneNavigator`'s `provider` defaults to `"reactvision"`, which enables ReactVision geospatial anchors; ViroKit then starts Core Location and iOS prompts on first AR open. The app never uses location, and the privacy answers say so. The Viro patch now lets `StudioSceneNavigator` pass `provider`, and the wrapper sets `"none"`. The Info.plist location string stays (static analysis, #24).
+
+### 27. **Blocker** — scan backend gone from Railway — ⬜ **OPEN 2026-11-26**
+`https://api.artifactar.com/predict` and the service's own `web-production-cfab9e.up.railway.app` both return `404 {"message":"Application not found"}` (Railway's edge answer for a domain with no live service). The Cloudflare CNAME (`tmnm5rfu.up.railway.app`) and `_railway-verify` TXT are intact. Cause not yet confirmed — check the Railway dashboard (project paused or deleted, trial or billing). Every installed build follows the hostname, so restoring the service needs no app release. Verify with a real `/predict`, not `GET /`.

@@ -1,18 +1,24 @@
 diff --git a/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.d.ts b/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.d.ts
-index a9cbb9c..403144a 100644
+index a9cbb9c..2679c4e 100644
 --- a/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.d.ts
 +++ b/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.d.ts
-@@ -55,6 +55,8 @@ export interface StudioSceneNavigatorProps {
+@@ -55,6 +55,14 @@ export interface StudioSceneNavigatorProps {
      questMenuItems?: readonly StudioQuestMenuItem[];
      /** Fired after the scene is fetched and parsed, before it is pushed. */
      onSceneLoaded?: (sceneData: StudioSceneResponse) => void;
 +    /** [ARtifact patch] Returns the scene to render in place of the fetched one. */
 +    transformSceneData?: (sceneData: StudioSceneResponse) => StudioSceneResponse;
++    /**
++     * [ARtifact patch] Passed to ViroARSceneNavigator's `provider`, which
++     * otherwise defaults to "reactvision" and enables the GPS geospatial
++     * provider — that starts Core Location and shows the location prompt.
++     */
++    provider?: "none" | "arcore" | "reactvision";
      /** Threaded to the initial scene's StudioARScene (initial scene only). */
      onPlaneDetected?: () => void;
      onPlaneSelected?: () => void;
 diff --git a/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.js b/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.js
-index fc0c1b5..650e6dd 100644
+index fc0c1b5..ca13c7c 100644
 --- a/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.js
 +++ b/node_modules/@reactvision/react-viro/dist/components/Studio/StudioSceneNavigator.js
 @@ -181,7 +181,7 @@ const StudioPlacementOverlay = ({ store, apiRef, getName }) => {
@@ -20,7 +26,7 @@ index fc0c1b5..650e6dd 100644
   * as its initial scene, avoiding the LoadingVRScene → replace timing race.
   */
 -exports.StudioSceneNavigator = (0, react_1.forwardRef)(function StudioSceneNavigator({ sceneId, worldAlignment = "Gravity", autofocus = true, style, onSceneReady, onError, onSceneChange, onExitViro, renderQuestPanel, questMenuItems, onSceneLoaded, onPlaneDetected, onPlaneSelected, noAssetsMessage, loadingView, renderError, recordingIndicator = true, placementIndicator = true, colocation, colocationIndicator = true, onColocationStateChange, onColocationRoom, }, ref) {
-+exports.StudioSceneNavigator = (0, react_1.forwardRef)(function StudioSceneNavigator({ sceneId, worldAlignment = "Gravity", autofocus = true, style, onSceneReady, onError, onSceneChange, onExitViro, renderQuestPanel, questMenuItems, onSceneLoaded, transformSceneData, onPlaneDetected, onPlaneSelected, noAssetsMessage, loadingView, renderError, recordingIndicator = true, placementIndicator = true, colocation, colocationIndicator = true, onColocationStateChange, onColocationRoom, }, ref) {
++exports.StudioSceneNavigator = (0, react_1.forwardRef)(function StudioSceneNavigator({ sceneId, worldAlignment = "Gravity", autofocus = true, style, onSceneReady, onError, onSceneChange, onExitViro, renderQuestPanel, questMenuItems, onSceneLoaded, transformSceneData, provider, onPlaneDetected, onPlaneSelected, noAssetsMessage, loadingView, renderError, recordingIndicator = true, placementIndicator = true, colocation, colocationIndicator = true, onColocationStateChange, onColocationRoom, }, ref) {
      const navigatorRef = (0, react_1.useRef)(null);
      const loadedSceneIdRef = (0, react_1.useRef)(null);
      const [isSceneReady, setIsSceneReady] = (0, react_1.useState)(false);
@@ -45,6 +51,15 @@ index fc0c1b5..650e6dd 100644
          if (isCancelled())
              return;
          loadedSceneIdRef.current = resolvedSceneId;
+@@ -479,7 +484,7 @@ exports.StudioSceneNavigator = (0, react_1.forwardRef)(function StudioSceneNavig
+         // centring it here shrank it to its content's width.
+         return ((0, jsx_runtime_1.jsx)(react_native_1.View, { style: styles.loader, children: overlay ?? ((0, jsx_runtime_1.jsx)(react_native_1.View, { style: styles.spinner, children: (0, jsx_runtime_1.jsx)(react_native_1.ActivityIndicator, { size: "large", color: "#ffffff" }) })) }));
+     }
+-    return ((0, jsx_runtime_1.jsx)(StudioSceneErrorBoundary_1.StudioSceneErrorBoundary, { sceneId: sceneId, onError: onError, renderError: renderError, children: (0, jsx_runtime_1.jsxs)(react_native_1.View, { style: style ?? react_native_1.StyleSheet.absoluteFill, children: [(0, jsx_runtime_1.jsx)(ViroXRSceneNavigator_1.ViroXRSceneNavigator, { ref: navigatorRef, arInitialScene: { scene: LoadingARScene }, vrInitialScene: vrSceneEntry ?? { scene: LoadingVRScene }, worldAlignment: worldAlignment, autofocus: autofocus, numberOfTrackedImages: numberOfTrackedImages, occlusionMode: occlusionMode, 
++    return ((0, jsx_runtime_1.jsx)(StudioSceneErrorBoundary_1.StudioSceneErrorBoundary, { sceneId: sceneId, onError: onError, renderError: renderError, children: (0, jsx_runtime_1.jsxs)(react_native_1.View, { style: style ?? react_native_1.StyleSheet.absoluteFill, children: [(0, jsx_runtime_1.jsx)(ViroXRSceneNavigator_1.ViroXRSceneNavigator, { ref: navigatorRef, arInitialScene: { scene: LoadingARScene }, vrInitialScene: vrSceneEntry ?? { scene: LoadingVRScene }, worldAlignment: worldAlignment, autofocus: autofocus, numberOfTrackedImages: numberOfTrackedImages, occlusionMode: occlusionMode, ...(provider !== undefined ? { provider } : {}), 
+                     // Bloom defaults on natively and the editor does not preview it, so a
+                     // bright material glows on the phone and nowhere else.
+                     //
 diff --git a/node_modules/@reactvision/react-viro/dist/components/Studio/domain/placementStore.js b/node_modules/@reactvision/react-viro/dist/components/Studio/domain/placementStore.js
 index bc92b1c..1729e45 100644
 --- a/node_modules/@reactvision/react-viro/dist/components/Studio/domain/placementStore.js
