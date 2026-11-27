@@ -197,6 +197,12 @@ Matrix: brand-new Apple user · Hide My Email user · existing email/password te
 3. Build, install on device, and **confirm AR loads a model** — a bad license key fails at scene load, which is release-only-regression territory.
 4. Only then revoke the old key.
 
+### 2.3 Build with the iOS 27 SDK before April 2027 *(ITMS-90725 on 1.0.59)*
+Apple warned on the 1.0.59 upload (2026-11-26): from **April 2027** uploads must be built with the iOS 27 SDK (Xcode 27+). 1.0.59 itself is fine to ship. Before the first upload after that date:
+1. Move the EAS image in `eas.json` (all three profiles) to an Xcode 27 image — explicit, not `latest`.
+2. **On SDK 57 that also needs `ios.enableSceneSupport` in expo-build-properties**, or the app runs on iOS 27 only in the UIKit scene life cycle; or upgrade to an Expo SDK that targets Xcode 27, which is the likelier route by then.
+3. Local Xcode 27 for device builds; device smoke test incl. AR (release build).
+
 ## P3 — Debt paydown (after premium ships)
 
 1. **Dead-code deletion batch** *(Gaps dead-code table)*: Rekognition Lambda + `rekognitionApi`, commented scan block, `ARPrewarmManager`/`ARPermissionManager`, `useSceneModel`, `arImage`, `aws-sdk` v2 app dep. One PR, pure deletions. *(The apple/google login stubs and the `phoneLogin` route moved to 1A.5 — they get deleted as part of the real Apple sign-in work.)*
