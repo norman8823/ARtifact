@@ -17,7 +17,7 @@ import { questLockState, type QuestLockState } from "@/src/utils/premiumAccess";
 import { type UserQuest } from "@/src/hooks/useUserQuests";
 import { type UserXP } from "@/src/hooks/useUserXP";
 import { FontAwesome } from "@expo/vector-icons";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { router } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import {
