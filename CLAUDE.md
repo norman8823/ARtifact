@@ -49,7 +49,9 @@ ARtifact — iOS museum companion app for the Met (browse artworks, camera-scan 
 
 ## Project state — **the ultimate source of truth for project status**
 
-**Steps 1–3 of the release plan done 2026-11-26: #6 and #8 merged into `development` (`717e21c`). Next is step 4, the production EAS build — the user's.**
+**Steps 1–3 done 2026-11-26; step 4 built and uploaded — TestFlight QA is next (user).**
+
+**Release build 1.1 (1.0.59), 2026-11-26:** EAS build `0c0fc35c-e8a5-46ed-ae57-9278887e5b24` ([logs](https://expo.dev/accounts/artifact-expo/projects/ARtifact/builds/0c0fc35c-e8a5-46ed-ae57-9278887e5b24)) from `development` at `a91e007`, image `macos-tahoe-26.5-xcode-26.6`. Signing: LLC distribution certificate (serial `78FAE84D…`, expires 2027-08-04) and a **new** App Store profile `MAAPD2T2HU` (team `S3UAQ48824`) — EAS reported the previous one, `PVNS99P8R7`, "no longer valid" and regenerated it. Both are LLC-owned; the `com.rauljiminian` in profile names is just the permanent bundle ID. Submitted with the existing ASC API key `B32PZU9LMV`: submission `668fe9f6-1ea1-48b5-a888-a12151eeae3c` ([status](https://expo.dev/accounts/artifact-expo/projects/ARtifact/submissions/668fe9f6-1ea1-48b5-a888-a12151eeae3c)), uploaded to App Store Connect. **Do not submit 1.0.59 again.** Export compliance is pre-answered (`ITSAppUsesNonExemptEncryption: false`). Open: TestFlight QA (purchase, **restore — never tested**, scan, AR size caps and lift), then step 5.
 
 `development` at `717e21c` carries everything the release will ship (it was `feat/studio-scene-navigator`, merged with CI green on all three jobs): #6 (Expo 57 / RN 0.86) + #8 (StudioSceneNavigator) + the release fixes TestFlight 1.0.58 was built from (four commits on `development`, merged in with no conflicts) + the AR changes below.
 
