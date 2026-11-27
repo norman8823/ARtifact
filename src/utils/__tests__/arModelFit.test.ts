@@ -110,6 +110,18 @@ describe("applyViewerDefaults with auto-fit", () => {
     expect(out).toMatchObject({ rotation_x: 0, rotation_y: 0, rotation_z: 0 });
   });
 
+  it("ignores a negative Studio height: the model stays on the floor", () => {
+    // Paris's -1.19 was a hand-made lowering; grounding supersedes it.
+    const out = applyViewerDefaults(scene, options()).assets[0];
+    expect(out.position_y).toBeCloseTo(-1.22 * (1.8 / 2.12));
+  });
+
+  it("lifts the model by a positive Studio height", () => {
+    const floating = { ...scene, assets: [{ ...asset, position_y: 1.1 }] };
+    const out = applyViewerDefaults(floating, options()).assets[0];
+    expect(out.position_y).toBeCloseTo(-1.22 * (1.8 / 2.12) + 1.1);
+  });
+
   it("is a no-op when switched off: plain Studio values", () => {
     const out = applyViewerDefaults(scene, options({ enabled: false })).assets[0];
     expect(out).toMatchObject({ scale: 1, position_y: -1.19, rotation_y: 0 });

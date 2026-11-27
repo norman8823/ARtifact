@@ -21,7 +21,11 @@
  * height are then adjusted on top of Studio's — see src/utils/arModelFit.ts.
  * Facing stays Studio's alone.
  * Studio's scale becomes the preferred size within the living-room limits, and
- * Studio's height is replaced by the offset that puts the base on the floor.
+ * Studio's height is replaced by the offset that puts the base on the floor,
+ * plus a lift: a positive Studio height raises the base that far above the
+ * floor (Head of a King floats at chest level this way). Zero or negative
+ * means "on the floor" — the negative values several scenes still carry were
+ * hand-made attempts to lower a model to the floor, which grounding now does.
  */
 import { AR_AUTO_FIT, AR_FIT_LIMITS, type ARFitLimits } from "@/src/config/arFit";
 import measuredBounds from "@/src/config/arModelBounds.json";
@@ -56,6 +60,11 @@ export const DEFAULT_AUTO_FIT: AutoFitOptions = {
 };
 
 /** Studio values replaced by auto-fit, or null when it does not apply. */
+/** Studio height read as a lift above the floor, in metres; never below it. */
+function floorLift(y: number | null | undefined): number {
+  return typeof y === "number" && Number.isFinite(y) && y > 0 ? y : 0;
+}
+
 function autoFit<A extends SceneAssetLike>(asset: A, options: AutoFitOptions) {
   if (!options.enabled || !asset.id) return null;
   const bounds = options.bounds[asset.id];
@@ -66,7 +75,7 @@ function autoFit<A extends SceneAssetLike>(asset: A, options: AutoFitOptions) {
     options.limits,
   );
   if (!fit) return null;
-  return { scale: fit.scale, position_y: fit.positionY };
+  return { scale: fit.scale, position_y: fit.positionY + floorLift(asset.position_y) };
 }
 
 interface SceneLike<A extends SceneAssetLike> {
