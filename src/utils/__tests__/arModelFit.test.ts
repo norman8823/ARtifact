@@ -1,7 +1,7 @@
 import { fitModel } from "../arModelFit";
 import { applyViewerDefaults, type AutoFitOptions } from "../arSceneDefaults";
 
-const limits = { maxHeight: 1.8, maxWidth: 1.5, minHeight: 0.3, maxLift: 1.5 };
+const limits = { maxHeight: 1.8, maxWidth: 1.5, minHeight: 0.3 };
 const upright = { scale: 1, rotation: [0, 0, 0] as [number, number, number] };
 /** A box `h` tall whose base sits `base` above its origin, `w` wide. */
 const box = (h: number, base = 0, w = 0.5) => ({
@@ -120,13 +120,6 @@ describe("applyViewerDefaults with auto-fit", () => {
     const floating = { ...scene, assets: [{ ...asset, position_y: 1.1 }] };
     const out = applyViewerDefaults(floating, options()).assets[0];
     expect(out.position_y).toBeCloseTo(-1.22 * (1.8 / 2.12) + 1.1);
-  });
-
-  it("caps the lift at maxLift", () => {
-    // Head of a King's Studio height of 3.98 put it 4 m up, out of sight.
-    const high = { ...scene, assets: [{ ...asset, position_y: 3.98 }] };
-    const out = applyViewerDefaults(high, options()).assets[0];
-    expect(out.position_y).toBeCloseTo(-1.22 * (1.8 / 2.12) + 1.5);
   });
 
   it("is a no-op when switched off: plain Studio values", () => {

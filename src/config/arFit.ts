@@ -16,17 +16,6 @@ export const AR_FIT_LIMITS = {
   maxWidth: 1.5,
   /** Shortest a model may stand; smaller ones are scaled up, within maxWidth. */
   minHeight: 0.3,
-  /**
-   * Highest a positive Studio Height may lift a model off the floor, in
-   * metres. Chest level is about 1.1; a mistyped value (Head of a King once
-   * had 3.98) would otherwise put the piece out of sight above the viewer.
-   */
-  maxLift: 1.5,
 } as const;
 
-export type ARFitLimits = {
-  maxHeight: number;
-  maxWidth: number;
-  minHeight: number;
-  maxLift: number;
-};
+export type ARFitLimits = { maxHeight: number; maxWidth: number; minHeight: number };

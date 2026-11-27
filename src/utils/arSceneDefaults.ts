@@ -23,7 +23,7 @@
  * Studio's scale becomes the preferred size within the living-room limits, and
  * Studio's height is replaced by the offset that puts the base on the floor,
  * plus a lift: a positive Studio height raises the base that far above the
- * floor, up to `maxLift` (Head of a King floats at chest level this way). Zero or negative
+ * floor (Head of a King floats at chest level this way). Zero or negative
  * means "on the floor" — the negative values several scenes still carry were
  * hand-made attempts to lower a model to the floor, which grounding now does.
  */
@@ -60,11 +60,12 @@ export const DEFAULT_AUTO_FIT: AutoFitOptions = {
 };
 
 /**
- * Studio height read as a lift above the floor, in metres: never below the
- * floor, never above `maxLift`.
+ * Studio height read as a lift above the floor, in metres; never below it.
+ * Deliberately uncapped: some artworks are meant to float, so the Studio value
+ * is the authority.
  */
-function floorLift(y: number | null | undefined, maxLift: number): number {
-  return typeof y === "number" && Number.isFinite(y) && y > 0 ? Math.min(y, maxLift) : 0;
+function floorLift(y: number | null | undefined): number {
+  return typeof y === "number" && Number.isFinite(y) && y > 0 ? y : 0;
 }
 
 /** Studio values replaced by auto-fit, or null when it does not apply. */
@@ -78,7 +79,7 @@ function autoFit<A extends SceneAssetLike>(asset: A, options: AutoFitOptions) {
     options.limits,
   );
   if (!fit) return null;
-  return { scale: fit.scale, position_y: fit.positionY + floorLift(asset.position_y, options.limits.maxLift) };
+  return { scale: fit.scale, position_y: fit.positionY + floorLift(asset.position_y) };
 }
 
 interface SceneLike<A extends SceneAssetLike> {
