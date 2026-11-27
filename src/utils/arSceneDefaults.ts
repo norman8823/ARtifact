@@ -17,14 +17,14 @@
  * without an app release: the model file, its size (scale), facing
  * (rotation) and height, plus animations and click actions.
  *
- * With AR_AUTO_FIT on (src/config/arFit.ts) a measured model's size, facing
- * and height are then adjusted on top of Studio's — see src/utils/arModelFit.ts.
+ * With AR_AUTO_FIT on (src/config/arFit.ts) a measured model's size and
+ * height are then adjusted on top of Studio's — see src/utils/arModelFit.ts.
+ * Facing stays Studio's alone.
  * Studio's scale becomes the preferred size within the living-room limits, and
  * Studio's height is replaced by the offset that puts the base on the floor.
  */
 import { AR_AUTO_FIT, AR_FIT_LIMITS, type ARFitLimits } from "@/src/config/arFit";
 import measuredBounds from "@/src/config/arModelBounds.json";
-import pickedFacing from "@/src/config/arModelFacing.json";
 import { fitModel, type ModelBounds } from "@/src/utils/arModelFit";
 
 interface SceneAssetLike {
@@ -46,15 +46,12 @@ export interface AutoFitOptions {
   enabled: boolean;
   /** Model bounds keyed by Studio asset id (scripts/measureArModels.js). */
   bounds: Record<string, ModelBounds>;
-  /** Extra yaw in degrees keyed by Studio asset id (the facing picker). */
-  facing: Record<string, number>;
   limits: ARFitLimits;
 }
 
 export const DEFAULT_AUTO_FIT: AutoFitOptions = {
   enabled: AR_AUTO_FIT,
   bounds: measuredBounds as Record<string, ModelBounds>,
-  facing: pickedFacing as Record<string, number>,
   limits: AR_FIT_LIMITS,
 };
 
@@ -67,16 +64,9 @@ function autoFit<A extends SceneAssetLike>(asset: A, options: AutoFitOptions) {
     bounds,
     { scale: asset.scale, rotation: [asset.rotation_x, asset.rotation_y, asset.rotation_z] },
     options.limits,
-    options.facing[asset.id] ?? 0,
   );
   if (!fit) return null;
-  return {
-    scale: fit.scale,
-    rotation_x: fit.rotation[0],
-    rotation_y: fit.rotation[1],
-    rotation_z: fit.rotation[2],
-    position_y: fit.positionY,
-  };
+  return { scale: fit.scale, position_y: fit.positionY };
 }
 
 interface SceneLike<A extends SceneAssetLike> {
