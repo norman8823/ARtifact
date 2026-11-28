@@ -349,6 +349,20 @@
       0.37171
     ]
   },
+  "9a8780fe-83d1-47c0-9283-73f5a676b9dd": {
+    "scene": "248891_BronzeStatueOfAristocraticBoy",
+    "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793168393-e4d4e291.glb",
+    "min": [
+      -0.3093,
+      0,
+      -0.23137
+    ],
+    "max": [
+      0.3093,
+      1.70934,
+      0.23137
+    ]
+  },
   "fee3d07f-fafa-4f98-99a3-9d530258cff7": {
     "scene": "248895_Marbleheadofayouth",
     "file": "https://platform.reactvision.xyz/storage/v1/object/public/assets/baea7ae6-38ff-47f8-b90b-2207f7727fa8/1773793169432-7b1053fe.glb",
