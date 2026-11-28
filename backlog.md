@@ -203,6 +203,13 @@ Apple warned on the 1.0.59 upload (2026-11-26): from **April 2027** uploads must
 2. **On SDK 57 that also needs `ios.enableSceneSupport` in expo-build-properties**, or the app runs on iOS 27 only in the UIKit scene life cycle; or upgrade to an Expo SDK that targets Xcode 27, which is the likelier route by then.
 3. Local Xcode 27 for device builds; device smoke test incl. AR (release build).
 
+### 2.4 AR "Reposition" button — first update after launch (1.1.1)
+AR is place-only, so a mis-placed artwork (e.g. dropped on a tabletop when the user meant the floor) can only be redone by going Back and reopening AR. Add a **Reposition** button (circular-arrow icon; not "Move", which implies drag) that clears the placement so the next floor tap places it again.
+- **Studio has no unplace API.** `StudioPlacementStore.place()` is a no-op once an asset is placed locally (`dist/components/Studio/domain/placementStore.js`). The right fix is a new patch hunk adding an `unplace`/reset that notifies the per-asset and global listeners, so the node unmounts and Studio's placement UI re-activates, plus a way to reach it from the wrapper. That is instant and keeps tracking.
+- **Rejected shortcut:** remounting `StudioSceneNavigator` with a new `key` re-fetches the scene and restarts tracking (3–5 s), which is no better than Back + reopen.
+- Show it only after placement. Put it in the top chrome beside Back/Info. **Nothing large may cover the navigator** (landmine #1), or it swallows the placement tap.
+- Deliberately kept out of 1.0.60: it touches Studio's placement code, and AR bugs tend to reproduce only in release builds. **Verify on a release/TestFlight build.**
+
 ## P3 — Debt paydown (after premium ships)
 
 1. **Dead-code deletion batch** *(Gaps dead-code table)*: Rekognition Lambda + `rekognitionApi`, commented scan block, `ARPrewarmManager`/`ARPermissionManager`, `useSceneModel`, `arImage`, `aws-sdk` v2 app dep. One PR, pure deletions. *(The apple/google login stubs and the `phoneLogin` route moved to 1A.5 — they get deleted as part of the real Apple sign-in work.)*
